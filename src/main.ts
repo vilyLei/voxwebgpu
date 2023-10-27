@@ -3,7 +3,7 @@
 //////////////////////////////////////////////////////////////////////////////////////////
 
 
-// import { VertColorTriangle as Demo } from "./voxgpu/sample/VertColorTriangle";
+import { VertColorTriangle as Demo } from "./voxgpu/sample/VertColorTriangle";
 // import { VertColorCube as Demo } from "./voxgpu/sample/VertColorCube";
 // import { ImgTexturedCube as Demo } from "./voxgpu/sample/ImgTexturedCube";
 // import { TexturedCube as Demo } from "./voxgpu/sample/TexturedCube";
