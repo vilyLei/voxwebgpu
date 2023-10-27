@@ -25,12 +25,16 @@ class WGImageTextureData implements WGTextureDataType {
 	build(ctx: WebGPUContext): GPUTexture {
 
 		if (this.mImgs && !this.mTex) {
+			// console.log("this.mImgs: ", this.mImgs, this.dimension);
 			switch(this.dimension) {
 				case "cube":
 					this.mTex = ctx.texture.createTexCubeByImages(this.mImgs, this.generateMipmaps, this.flipY, this.format, this.mUrl);
 					break;
 				case "2d":
 					this.mTex = ctx.texture.createTex2DByImage(this.mImgs[0], this.generateMipmaps, this.flipY, this.format, this.mUrl);
+					break;
+				default:
+					console.error("Illegal operation !!!");
 					break;
 			}
 			this.mTex.url = this.mUrl;

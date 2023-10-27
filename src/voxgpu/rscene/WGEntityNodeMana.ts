@@ -30,8 +30,12 @@ class WGEntityNodeMana {
 				// console.log("ppp b 01");
 				const ms = node.entity.materials;
 				if(ms) {
+					// console.log("ppp b 03");
 					for(let j = 0; j < ms.length; ++j) {
-						this.updateMaterial( ms[j] );
+						if(!ms[j].isREnabled()) {
+							// console.log("ppp b 03 b");
+							this.updateMaterial( ms[j] );
+						}
 					}
 				}
 			}

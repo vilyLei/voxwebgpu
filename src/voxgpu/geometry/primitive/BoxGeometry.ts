@@ -23,14 +23,12 @@ export default class BoxGeometry extends MeshBase {
     private m_vs: Float32Array = null;
     private m_uvs: Float32Array = null;
     private m_nvs: Float32Array = null;
-    private m_cvs: Float32Array = null;
 
     flipVerticalUV = false;
     uvPartsNumber = 0;
     getVS() { return this.m_vs; }
     getUVS() { return this.m_uvs; }
     getNVS() { return this.m_nvs; }
-    getCVS() { return this.m_cvs; }
 
     setPositionAt(i: number, position: Vector3): void {
         if (i >= 0 && i < 8) {
@@ -409,7 +407,6 @@ export default class BoxGeometry extends MeshBase {
             this.m_vs = null;
             this.m_uvs = null;
             this.m_nvs = null;
-            this.m_cvs = null;
             super.__$destroy();
         }
     }
