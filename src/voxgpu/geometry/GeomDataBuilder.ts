@@ -8,6 +8,7 @@ import BoxGeometry from "./primitive/BoxGeometry";
 import { VtxPipelinDescParam } from "../render/pipeline/IWGRPipelineContext";
 import AABB from "../cgeom/AABB";
 import RectPlaneGeometry from "./primitive/RectPlaneGeometry";
+import SphereGeometry from "./primitive/SphereGeometry";
 
 type GeomRDataType = {
 	vs?: Float32Array, uvs?: Float32Array, nvs?: Float32Array, ivs?: Uint16Array | Uint32Array,
@@ -25,6 +26,28 @@ class GeomDataBuilder {
 		this.mWGCtx = wgCtx;
 	}
 
+	createSphere(radius: number, longitudeNumSegments: number = 20, latitudeNumSegments: number = 20): GeomRDataType {
+		let mesh = new SphereGeometry();
+		mesh.setBufSortFormat(0xfffffff);
+		mesh.initialize(radius, longitudeNumSegments, latitudeNumSegments, false);
+
+		let vbufs: GPUBuffer[];
+		let ibuf: GPUBuffer;
+		let vs = mesh.getVS();
+		let uvs = mesh.getUVS();
+		let nvs = mesh.getNVS();
+		let ivs = mesh.getIVS();
+
+		let vtTotal = vs.length / 3;
+		let vsBuf = this.mWGCtx ? this.mWGCtx.buffer.createVertexBuffer(vs, 0, [3]) : null;
+		let uvsBuf = this.mWGCtx ? this.mWGCtx.buffer.createVertexBuffer(uvs, 0, [uvs.length / vtTotal]) : null;
+		vbufs = [vsBuf, uvsBuf];
+
+		ibuf = this.mWGCtx ? this.mWGCtx.buffer.createIndexBuffer(ivs) : null;
+
+		const vtxDescParam = { vertex: { buffers: vbufs, attributeIndicesArray: [[0], [0]] } };
+		return {ivs, vs, uvs, nvs, vbufs: vbufs, ibuf: ibuf, vtxDescParam: vtxDescParam, bounds: mesh.bounds};
+	}
 	createCubeWithSize(size: number): GeomRDataType {
 		size *= 0.5;
 		let minV = new Vector3(-size, -size, -size);
