@@ -11,6 +11,7 @@ import { WebGPUContext } from "../../gpu/WebGPUContext";
 import { BufDataParamType, VtxDescParam, VtxPipelinDescParam, IWGRPipelineContext } from "./IWGRPipelineContext";
 import { WGRPipelineCtxParams } from "./WGRPipelineCtxParams";
 import { WGRUniformParam, WGRUniformContext } from "../uniform/WGRUniformContext";
+import { GPUQueue } from "../../gpu/GPUQueue";
 
 class WGRPipelineContext implements IWGRPipelineContext {
 
@@ -20,7 +21,8 @@ class WGRPipelineContext implements IWGRPipelineContext {
 	private mPipelineParams: WGRPipelineCtxParams;
 
 	pipeline: GPURenderPipeline = new GPURenderPipelineEmpty();
-
+	queue: GPUQueue;
+	
 	uid = 0;
 	name = "PipelineContext";
 	readonly uniform = new WGRUniformContext();

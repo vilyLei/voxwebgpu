@@ -66,6 +66,9 @@ class WGRObjBuilder {
 		if(entity.uniformTransform) {
 			uvalues.push(entity.uniformTransform);
 		}
+		if(material.uniformValues) {
+			uvalues = uvalues.concat( material.uniformValues );
+		}
 		if(uvalues.length > 0) {
 			ru.setUniformValues(uvalues);
 		}
@@ -78,6 +81,7 @@ class WGRObjBuilder {
 					texParams: utexes
 				}
 			]);
+			console.log("XXXXXXX ru.uniforms: ", ru.uniforms);
 		}
 
 		return ru;

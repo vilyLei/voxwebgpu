@@ -6,12 +6,6 @@ class WGRStorageValue extends WGRUniformValue {
 		super(data, bufferIndex, uniformIndexInRUnit);
 		this.toStorage();
 	}
-	toStorage(): void {
-		this.usage = GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST;
-	}
-	upate(): void {
-		this.version ++;
-	}
 	clone(data: NumberArrayDataType): WGRStorageValue {
 
 		const u = new WGRStorageValue(data, this.bufferIndex, this.index);

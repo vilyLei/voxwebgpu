@@ -4,7 +4,7 @@ class WGRUniformValue {
 
 	uid = 0;
 	/**
-	 * uniform Index of RUnit instance uniforms array
+	 * Uniform index of RUnit instance uniforms array
 	 */
 	index = 0;
 
@@ -20,6 +20,7 @@ class WGRUniformValue {
 		this.data = data;
 		this.bufferIndex = bufferIndex;
 		this.index = uniformIndexInRUnit;
+		if(data.byteLength <= 16)this.arrayStride = data.byteLength;
 		this.upate();
 	}
 	toUniform(): void {

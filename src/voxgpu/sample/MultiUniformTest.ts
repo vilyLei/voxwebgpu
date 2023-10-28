@@ -14,7 +14,7 @@ import Vector3 from "../math/Vector3";
 import { WGRStorageValue } from "../render/uniform/WGRStorageValue";
 import { WGRUniformValue } from "../render/uniform/WGRUniformValue";
 
-export class StorageTest {
+export class MultiUniformTest {
 
 	private mEntity: Entity3D;
 
@@ -23,7 +23,7 @@ export class StorageTest {
 
 	initialize(): void {
 
-		console.log("StorageTest::initialize() ...");
+		console.log("MultiUniformTest::initialize() ...");
 
 		let rsv = new WGRStorageValue(new Float32Array(16));
 		console.log("xxxxxx rsv.isStorage(): ", rsv.isStorage());

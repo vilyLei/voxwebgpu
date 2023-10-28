@@ -52,6 +52,7 @@ class UCtxInstance {
 						this.mBuffers.push(buffer);
 					}
 				}
+				console.log("XXX this.mBuffers: ", this.mBuffers);
 				for (let i = 0; i < ls.length; ++i) {
 					const uf = this.mList[i].uniform;
 					if (uf) {
@@ -189,6 +190,7 @@ class WGRUniformContext implements IWGRUniformContext {
 			const bufDataParams: { size: number, usage: number }[] = [];
 			for (let i = 0; i < values.length; ++i) {
 				bufDataParams.push({ size: values[i].arrayStride, usage: values[i].usage });
+				values[i].bufferIndex = i;
 			}
 			return uctx.createUniform(groupIndex, bufDataParams, texParams);
 		}

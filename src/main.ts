@@ -12,7 +12,8 @@
 // import { BlendTest as Demo } from "./voxgpu/sample/BlendTest";
 // import { MultiMaterialPass as Demo } from "./voxgpu/sample/MultiMaterialPass";
 
-import { StorageTest as Demo } from "./voxgpu/sample/StorageTest";
+import { MultiUniformTest as Demo } from "./voxgpu/sample/MultiUniformTest";
+// import { StorageTest as Demo } from "./voxgpu/sample/StorageTest";
 
 let demoIns = new Demo();
 function main(): void {
