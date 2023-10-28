@@ -13,8 +13,6 @@ export class VertColorCube {
 	geomData = new GeomDataBuilder();
 	renderer = new WGRenderer();
 
-	constructor() {}
-
 	initialize(): void {
 		console.log("VertColorCube::initialize() ...");
 
@@ -31,9 +29,9 @@ export class VertColorCube {
 			shaderCodeSrc: shdSrc
 		});
 
-		const geometry = new WGGeometry();
-		geometry.addAttribute({ shdVarName: "position", data: rgd.vs, strides: [3] });
-		geometry.setIndexBuffer({ name: "geomIndex", data: rgd.ivs });
+		const geometry = new WGGeometry()
+			.addAttribute({ shdVarName: "position", data: rgd.vs, strides: [3] })
+			.setIndexBuffer({ name: "geomIndex", data: rgd.ivs });
 
 		const entity = new Entity3D();
 		entity.materials = [material];

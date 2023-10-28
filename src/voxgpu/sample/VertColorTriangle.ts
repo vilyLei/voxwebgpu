@@ -13,8 +13,6 @@ export class VertColorTriangle {
 
 	renderer = new WGRenderer();
 
-	constructor() {}
-
 	initialize(): void {
 		console.log("VertColorTriangle::initialize() ...");
 		this.createEntity();
@@ -31,14 +29,13 @@ export class VertColorTriangle {
 			shaderCodeSrc: shdSrc
 		});
 
-		const geometry = new WGGeometry();
-		geometry.addAttributes([
+		const geometry = new WGGeometry().addAttributes([
 			{ shdVarName: "position", data: positions, strides: [3] },
 			{ shdVarName: "color", data: colors, strides: [3] }
 		]);
 
 		const entity = new Entity3D(false);
-		entity.materials = [ material ];
+		entity.materials = [material];
 		entity.geometry = geometry;
 		entity.applyCamera(this.renderer.camera);
 

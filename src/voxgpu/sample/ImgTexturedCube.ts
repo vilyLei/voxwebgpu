@@ -15,8 +15,6 @@ export class ImgTexturedCube {
 	geomData = new GeomDataBuilder();
 	renderer = new WGRenderer();
 
-	constructor() {}
-
 	initialize(): void {
 		console.log("ImgTexturedCube::initialize() ...");
 
@@ -57,10 +55,10 @@ export class ImgTexturedCube {
 		const renderer = this.renderer;
 
 		const rgd = this.geomData.createCubeWithSize(200);
-		const geometry = new WGGeometry();
-		geometry.addAttribute({ shdVarName: "position", data: rgd.vs, strides: [3] });
-		geometry.addAttribute({ shdVarName: "uv", data: rgd.uvs, strides: [2] });
-		geometry.setIndexBuffer({ name: "geomIndex", data: rgd.ivs });
+		const geometry = new WGGeometry()
+			.addAttribute({ shdVarName: "position", data: rgd.vs, strides: [3] })
+			.addAttribute({ shdVarName: "uv", data: rgd.uvs, strides: [2] })
+			.setIndexBuffer({ name: "geomIndex", data: rgd.ivs });
 
 		const entity = new Entity3D();
 		entity.materials = materials;

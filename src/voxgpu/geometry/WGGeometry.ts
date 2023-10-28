@@ -15,10 +15,6 @@ class WGGeomAttributeBlock {
 	 * buffer bytes offset
 	 */
 	bufferOffset = 0;
-	// /**
-	//  * 确定使用当前buffer的attribute index有哪些, 例如可以是: [0, 2]
-	//  */
-	// attributeIndices = [0];
 	data: NumberArrayViewType;
 }
 class WGGeomIndexBuffer {
@@ -37,13 +33,14 @@ class WGGeometry {
 	attributes: WGGeomAttributeBlock[];
 	indexBuffer: WGGeomIndexBuffer;
 	bounds: AABB;
-	setIndexBuffer(param: { name?: string; data: IndexArrayViewType }): void {
+	setIndexBuffer(param: { name?: string; data: IndexArrayViewType }): WGGeometry {
 		this.indexBuffer = new WGGeomIndexBuffer(param);
+		return this;
 	}
 	/**
 	 * 每次添加，实际上是添加一个 attribute 组合
 	 */
-	addAttribute(param: WGGeomAttributeParam): void {
+	addAttribute(param: WGGeomAttributeParam): WGGeometry {
 		if (param) {
 			const p = new WGGeomAttributeBlock();
 			const ab = p as any;
@@ -56,13 +53,15 @@ class WGGeometry {
 				this.attributes = [p];
 			}
 		}
+		return this;
 	}
-	addAttributes(params: WGGeomAttributeParam[]): void {
+	addAttributes(params: WGGeomAttributeParam[]): WGGeometry {
 		if(params) {
 			for(let i = 0; i < params.length; ++i) {
 				this.addAttribute(params[i]);
 			}
 		}
+		return this;
 	}
 
 	isREnabled(): boolean {

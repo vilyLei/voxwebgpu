@@ -122,8 +122,10 @@ class GeomDataBuilder {
 		const vtxDescParam = { vertex: { buffers: vbufs, attributeIndicesArray: [[0], [0]] } };
 		return {ivs, vs, uvs, nvs, vbufs: vbufs, ibuf: ibuf, vtxDescParam: vtxDescParam, bounds: geom.bounds};
 	}
-	
-	createPlane(px: number, py: number, pw: number, ph: number, axisFlag = 0): GeomRDataType {
+	createSquare(size: number, axisFlag = 0): GeomRDataType {
+		return this.createRect(-0.5 * size, -0.5 * size, size, size, axisFlag);
+	}
+	createRect(px: number, py: number, pw: number, ph: number, axisFlag = 0): GeomRDataType {
 
 		let geom = new RectPlaneGeometry();
 		geom.axisFlag = axisFlag

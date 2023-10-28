@@ -16,8 +16,6 @@ export class BlendTest {
 	geomData = new GeomDataBuilder();
 	renderer = new WGRenderer();
 
-	constructor() {}
-
 	initialize(): void {
 		console.log("BlendTest::initialize() ...");
 
@@ -25,14 +23,15 @@ export class BlendTest {
 			vertShaderSrc: { code: vertWGSL, uuid: "vtxShdCode" },
 			fragShaderSrc: { code: fragWGSL, uuid: "fragShdCode" }
 		};
-		let material = this.createMaterial(shdSrc, [new WGImage2DTextureData("static/assets/box.jpg")]);
-		this.createEntity([material], new Vector3(0, 0, -50));
-		material = this.createMaterial(shdSrc, [new WGImage2DTextureData("static/assets/default.jpg")], ["add"]);
-		this.createEntity([material], new Vector3(0, 0, 0));
-		material = this.createMaterial(shdSrc, [new WGImage2DTextureData("static/assets/xulie_08_61.png")], ["alpha_add"]);
-		this.createEntity([material], new Vector3(0, 0, 50));
-		material = this.createMaterial(shdSrc, [new WGImage2DTextureData("static/assets/blueTransparent.png")], ["add"]);
-		this.createEntity([material], new Vector3(0, 0, 100));
+		let materials = [
+			this.createMaterial(shdSrc, [new WGImage2DTextureData("static/assets/box.jpg")]),
+			this.createMaterial(shdSrc, [new WGImage2DTextureData("static/assets/default.jpg")], ["add"]),
+			this.createMaterial(shdSrc, [new WGImage2DTextureData("static/assets/xulie_08_61.png")], ["alpha_add"]),
+			this.createMaterial(shdSrc, [new WGImage2DTextureData("static/assets/blueTransparent.png")], ["add"])
+		]
+		for(let i = 0; i < materials.length; ++i) {
+			this.createEntity([materials[i]], new Vector3(0, 0, -50 + i * 50));
+		}
 	}
 
 	private createMaterial(
@@ -65,12 +64,12 @@ export class BlendTest {
 	private createEntity(materials: WGMaterial[], pv: Vector3): Entity3D {
 
 		const renderer = this.renderer;
+		const rgd = this.geomData.createSquare(600);
 
-		const rgd = this.geomData.createPlane(-300, -300, 600, 600);
-		const geometry = new WGGeometry();
-		geometry.addAttribute({ shdVarName: "position", data: rgd.vs, strides: [3] });
-		geometry.addAttribute({ shdVarName: "uv", data: rgd.uvs, strides: [2] });
-		geometry.setIndexBuffer({ name: "geomIndex", data: rgd.ivs });
+		const geometry = new WGGeometry()
+			.addAttribute({ shdVarName: "position", data: rgd.vs, strides: [3] })
+			.addAttribute({ shdVarName: "uv", data: rgd.uvs, strides: [2] })
+			.setIndexBuffer({ name: "geomIndex", data: rgd.ivs });
 
 		const entity = new Entity3D();
 		entity.materials = materials;

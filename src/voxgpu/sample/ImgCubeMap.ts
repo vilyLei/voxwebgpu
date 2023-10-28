@@ -15,38 +15,26 @@ export class ImgCubeMap {
 	geomData = new GeomDataBuilder();
 	renderer = new WGRenderer();
 
-	constructor() {}
-
 	initialize(): void {
 
 		console.log("ImgCubeMap::initialize() ...");
 
-		// let urls = [
-        //     "static/assets/hw_morning/morning_ft.jpg",
-        //     "static/assets/hw_morning/morning_bk.jpg",
-        //     "static/assets/hw_morning/morning_dn.jpg",
-        //     "static/assets/hw_morning/morning_up.jpg",
-        //     "static/assets/hw_morning/morning_rt.jpg",
-        //     "static/assets/hw_morning/morning_lf.jpg"
-        // ];
-
 		let urls = [
-            "static/assets/hw_morning/morning_ft.jpg",
-            "static/assets/hw_morning/morning_bk.jpg",
-            "static/assets/hw_morning/morning_up.jpg",
-            "static/assets/hw_morning/morning_dn.jpg",
-            "static/assets/hw_morning/morning_rt.jpg",
-            "static/assets/hw_morning/morning_lf.jpg"
-        ];
+			"static/assets/hw_morning/morning_ft.jpg",
+			"static/assets/hw_morning/morning_bk.jpg",
+			"static/assets/hw_morning/morning_up.jpg",
+			"static/assets/hw_morning/morning_dn.jpg",
+			"static/assets/hw_morning/morning_rt.jpg",
+			"static/assets/hw_morning/morning_lf.jpg"
+		];
 
-		let td01 = new WGImage2DTextureData("static/assets/box.jpg");
-		let td02 = new WGImageCubeTextureData(urls);
+		let td = new WGImageCubeTextureData(urls);
 
 		const shdSrc = {
 			vertShaderSrc: { code: vertWGSL, uuid: "vtxShdCode" },
 			fragShaderSrc: { code: fragWGSL, uuid: "fragShdCode" }
 		};
-		const material = this.createMaterial(shdSrc, [td02]);
+		const material = this.createMaterial(shdSrc, [td]);
 		this.createEntity([material]);
 	}
 
@@ -78,9 +66,9 @@ export class ImgCubeMap {
 		const renderer = this.renderer;
 
 		const rgd = this.geomData.createCubeWithSize(200);
-		const geometry = new WGGeometry();
-		geometry.addAttribute({ shdVarName: "position", data: rgd.vs, strides: [3] });
-		geometry.setIndexBuffer({ name: "geomIndex", data: rgd.ivs });
+		const geometry = new WGGeometry()
+			.addAttribute({ shdVarName: "position", data: rgd.vs, strides: [3] })
+			.setIndexBuffer({ name: "geomIndex", data: rgd.ivs });
 
 		const entity = new Entity3D();
 		entity.materials = materials;
