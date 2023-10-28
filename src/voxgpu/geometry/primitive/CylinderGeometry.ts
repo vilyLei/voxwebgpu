@@ -1,0 +1,231 @@
+/***************************************************************************/
+/*                                                                         */
+/*  Copyright 2018-2023 by                                                 */
+/*  Vily(vily313@126.com)                                                  */
+/*                                                                         */
+/***************************************************************************/
+
+
+import SurfaceNormalCalc from "../../cgeom/SurfaceNormalCalc";
+import AABB from "../../cgeom/AABB";
+import GeometryBase from "./GeometryBase";
+import GeometryVertex from "./GeometryVertex";
+
+export default class CylinderGeometry extends GeometryBase {
+    constructor() {
+        super();
+    }
+
+    private m_vs: Float32Array = null;
+    private m_uvs: Float32Array = null;
+    private m_nvs: Float32Array = null;
+
+    inverseUV: boolean = false;
+    uScale: number = 1.0;
+    vScale: number = 1.0;
+
+    getVS(): Float32Array { return this.m_vs; }
+    getUVS(): Float32Array { return this.m_uvs; }
+    getNVS(): Float32Array { return this.m_nvs; }
+    getIVS(): Uint16Array | Uint32Array { return this.m_ivs; }
+
+    initialize(radius: number, height: number, longitudeNumSegments: number, latitudeNumSegments: number, uvType: number = 1, alignYRatio: number = -0.5) {
+        if (this.vtxTotal < 1) {
+            if (radius < 0.01) return;
+
+            if (longitudeNumSegments < 2) longitudeNumSegments = 2;
+            latitudeNumSegments = 3;
+            
+            let m_radius = Math.abs(radius);
+            let m_height = Math.abs(height);
+            
+            let plongitudeNumSegments = longitudeNumSegments;
+            let platitudeNumSegments = latitudeNumSegments;
+            
+            let i = 1
+            let j = 0;
+            let trisTot = 0;
+            let yRad = 0;
+            let px = 0;
+            let py = 0;
+            let minY = alignYRatio * m_height;
+            this.bounds = new AABB();
+            this.bounds.min.setXYZ(-radius, minY, -radius);
+            this.bounds.max.setXYZ(radius, minY + m_height, radius);
+            this.bounds.updateFast();
+            
+            let vtx = new GeometryVertex();
+            vtx.y = minY;
+
+            // two independent circles and a cylinder wall
+            let vtxVec: GeometryVertex[] = [];
+            let vtxRows: GeometryVertex[][] = [];
+            vtxRows.push([]);
+            let vtxRow: GeometryVertex[] = vtxRows[0];
+            vtx.u = 0.5; vtx.v = 0.5;
+            vtx.nx = 0.0; vtx.ny = -1.0; vtx.nz = 0.0;
+            vtxRow.push(vtx.cloneVertex());
+            vtxVec.push(vtxRow[0]);
+            
+            for (; i < platitudeNumSegments; ++i) {
+                
+                vtx.y = minY + m_height * (i - 1);
+                vtxRows.push([]);
+                let row = vtxRows[i];
+                for (j = 0; j < plongitudeNumSegments; ++j) {
+                    yRad = (Math.PI * 2 * j) / plongitudeNumSegments;
+                    ++trisTot;
+                    
+                    px = Math.sin(yRad);
+                    py = Math.cos(yRad);
+                    
+                    vtx.x = px * m_radius;
+                    vtx.z = py * m_radius;
+                    vtx.index = trisTot;
+
+                    // calc uv
+                    px *= 0.495;
+                    py *= 0.495;
+                    vtx.u = 0.5 + px;
+                    vtx.v = 0.5 + py;
+                    
+                    if (i < 2) {
+                        vtx.nx = 0.0; vtx.ny = -1.0; vtx.nz = 0.0;
+                    }
+                    else {
+                        vtx.nx = 0.0; vtx.ny = 1.0; vtx.nz = 0.0;
+                    }
+                    
+                    row.push(vtx.cloneVertex());
+                    vtxVec.push(row[j]);
+                }
+                row.push(row[0]);
+            }
+            ++trisTot;
+            vtx.index = trisTot;
+            vtx.x = 0; vtx.y = minY + m_height; vtx.z = 0.0;
+            vtx.u = 0.5; vtx.v = 0.5;
+            vtx.nx = 0.0; vtx.ny = 1.0; vtx.nz = 0.0;
+            vtxRows.push([]);
+            let lastRow: GeometryVertex[] = vtxRows[3];
+            lastRow.push(vtx.cloneVertex());
+            vtxVec.push(lastRow[0]);
+            // two circles's vertexes calc end;
+            // calc cylinder wall vertexes
+            let f = 1.0 / m_radius;
+            for (i = 0; i < 2; ++i) {
+                let preRow = vtxRows[i + 1];
+                vtxRows.push([]);
+                let row = vtxRows[vtxRows.length - 1];
+                for (j = 0; j <= plongitudeNumSegments; ++j) {
+                    ++trisTot;
+                    vtx.copyFrom(preRow[j]);
+                    vtx.index = trisTot;
+                    if (uvType < 1) {
+                        if (i < 1) {
+                            vtx.v = 0.0;
+                        }
+                        else {
+                            vtx.v = this.vScale;
+                        }
+                        vtx.u = this.uScale * (j / plongitudeNumSegments);
+                    }
+                    else {
+                        if (i < 1) {
+                            vtx.u = 0.0;
+                        }
+                        else {
+                            vtx.u = this.uScale;
+                        }
+                        vtx.v = this.vScale * (j / plongitudeNumSegments);
+                    }
+                    vtx.ny = 0.0;
+                    vtx.nx = vtx.x * f;
+                    vtx.nz = vtx.z * f;
+                    row.push(vtx.cloneVertex());
+                    vtxVec.push(row[j]);
+                }
+            }
+            let pvtx: GeometryVertex = null;
+            let pivs: number[] = [];
+            i = 1;
+            let rowa: GeometryVertex[] = null;
+            let rowb: GeometryVertex[] = null;
+            for (; i <= platitudeNumSegments; ++i) {
+                rowa = vtxRows[i - 1];
+                rowb = vtxRows[i];
+                for (j = 1; j <= plongitudeNumSegments; ++j) {
+                    if (i == 1) {
+                        pivs.push(rowa[0].index); pivs.push(rowb[j].index); pivs.push(rowb[j - 1].index);
+                    }
+                    else if (i == platitudeNumSegments) {
+                        pivs.push(rowa[j].index); pivs.push(rowb[0].index); pivs.push(rowa[j - 1].index);
+                    }
+                }
+            }
+            // create cylinder wall triangles
+            rowa = vtxRows[vtxRows.length - 2];
+            rowb = vtxRows[vtxRows.length - 1];
+            for (j = 1; j <= plongitudeNumSegments; ++j) {
+                pivs.push(rowa[j].index); pivs.push(rowb[j - 1].index); pivs.push(rowa[j - 1].index);
+                pivs.push(rowa[j].index); pivs.push(rowb[j].index); pivs.push(rowb[j - 1].index);
+            }
+            
+            this.vtxTotal = vtxVec.length;
+            this.m_vs = new Float32Array(this.vtxTotal * 3);
+            i = 0;
+            for (j = 0; j < this.vtxTotal; ++j) {
+                pvtx = vtxVec[j];
+                this.m_vs[i] = pvtx.x; this.m_vs[i + 1] = pvtx.y; this.m_vs[i + 2] = pvtx.z;
+                i += 3;
+            }
+            if (this.m_transMatrix != null) {
+                this.m_transMatrix.transformVectorsSelf(this.m_vs, this.m_vs.length);
+                this.bounds.addFloat32Arr(this.m_vs);
+                this.bounds.updateFast();
+            }
+            
+            this.m_ivs = new Uint16Array(pivs);
+            
+            this.vtCount = this.m_ivs.length;
+            this.trisNumber = this.vtCount / 3;
+            
+            if (true) {
+                this.m_uvs = new Float32Array(this.vtxTotal * 2);
+                i = 0;
+                for (j = 0; j < this.vtxTotal; ++j) {
+                    pvtx = vtxVec[j];
+                    this.m_uvs[i] = pvtx.u; this.m_uvs[i + 1] = pvtx.v;
+                    i += 2;
+                }
+            }
+            if (true) {
+                this.m_nvs = new Float32Array(this.vtxTotal * 3);
+                if (this.m_transMatrix != null) {
+                    SurfaceNormalCalc.ClacTrisNormal(this.m_vs, this.m_vs.length, this.trisNumber, this.m_ivs, this.m_nvs);
+                }
+                else {
+                    i = 0;
+                    for (j = 0; j < this.vtxTotal; ++j) {
+                        pvtx = vtxVec[j];
+                        this.m_nvs[i] = pvtx.nx; this.m_nvs[i + 1] = pvtx.ny; this.m_nvs[i + 2] = pvtx.nz;
+                        i += 3;
+                    }
+                }
+            }
+
+            this.vtCount = this.m_ivs.length;
+            this.trisNumber = this.vtCount / 3;
+        }
+    }
+    __$destroy(): void {
+        if (this.m_ivs) {
+            this.bounds = null;
+
+            this.m_vs = null;
+            this.m_uvs = null;
+            this.m_nvs = null;
+            super.__$destroy();
+        }
+    }
+}

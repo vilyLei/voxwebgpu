@@ -9,6 +9,8 @@ import { VtxPipelinDescParam } from "../render/pipeline/IWGRPipelineContext";
 import AABB from "../cgeom/AABB";
 import RectPlaneGeometry from "./primitive/RectPlaneGeometry";
 import SphereGeometry from "./primitive/SphereGeometry";
+import CylinderGeometry from "./primitive/CylinderGeometry";
+import TorusGeometry from "./primitive/TorusGeometry";
 
 type GeomRDataType = {
 	vs?: Float32Array, uvs?: Float32Array, nvs?: Float32Array, ivs?: Uint16Array | Uint32Array,
@@ -26,17 +28,61 @@ class GeomDataBuilder {
 		this.mWGCtx = wgCtx;
 	}
 
-	createSphere(radius: number, longitudeNumSegments: number = 20, latitudeNumSegments: number = 20): GeomRDataType {
-		let mesh = new SphereGeometry();
-		mesh.setBufSortFormat(0xfffffff);
-		mesh.initialize(radius, longitudeNumSegments, latitudeNumSegments, false);
+	createTorus(ringRadius: number, axisRadius = 20, longitudeNumSegments = 20, latitudeNumSegments = 20): GeomRDataType {
+		let geom = new TorusGeometry();
+		geom.setBufSortFormat(0xfffffff);
+		geom.initialize(ringRadius, axisRadius, longitudeNumSegments, latitudeNumSegments);
 
 		let vbufs: GPUBuffer[];
 		let ibuf: GPUBuffer;
-		let vs = mesh.getVS();
-		let uvs = mesh.getUVS();
-		let nvs = mesh.getNVS();
-		let ivs = mesh.getIVS();
+		let vs = geom.getVS();
+		let uvs = geom.getUVS();
+		let nvs = geom.getNVS();
+		let ivs = geom.getIVS();
+
+		let vtTotal = vs.length / 3;
+		let vsBuf = this.mWGCtx ? this.mWGCtx.buffer.createVertexBuffer(vs, 0, [3]) : null;
+		let uvsBuf = this.mWGCtx ? this.mWGCtx.buffer.createVertexBuffer(uvs, 0, [uvs.length / vtTotal]) : null;
+		vbufs = [vsBuf, uvsBuf];
+
+		ibuf = this.mWGCtx.buffer.createIndexBuffer(ivs);
+
+		const vtxDescParam = { vertex: { buffers: vbufs, attributeIndicesArray: [[0], [0]] } } as VtxPipelinDescParam;
+		return {ivs, vs, uvs, nvs, vbufs: vbufs, ibuf: ibuf, vtxDescParam: vtxDescParam, bounds: geom.bounds};
+	}
+	createCylinder(radius: number, height = 200, longitudeNumSegments = 20, latitudeNumSegments = 20): GeomRDataType {
+		let geom = new CylinderGeometry();
+		geom.setBufSortFormat(0xfffffff);
+		geom.initialize(radius, height, longitudeNumSegments, latitudeNumSegments);
+
+		let vbufs: GPUBuffer[];
+		let ibuf: GPUBuffer;
+		let vs = geom.getVS();
+		let uvs = geom.getUVS();
+		let nvs = geom.getNVS();
+		let ivs = geom.getIVS();
+
+		let vtTotal = vs.length / 3;
+		let vsBuf = this.mWGCtx.buffer.createVertexBuffer(vs, 0, [3]);
+		let uvsBuf = this.mWGCtx.buffer.createVertexBuffer(uvs, 0, [uvs.length / vtTotal]);
+		vbufs = [vsBuf, uvsBuf];
+
+		ibuf = this.mWGCtx.buffer.createIndexBuffer(ivs);
+
+		const vtxDescParam = { vertex: { buffers: vbufs, attributeIndicesArray: [[0], [0]] } };
+		return {ivs, vs, uvs, nvs, vbufs: vbufs, ibuf: ibuf, vtxDescParam: vtxDescParam, bounds: geom.bounds};
+	}
+	createSphere(radius: number, longitudeNumSegments = 20, latitudeNumSegments = 20): GeomRDataType {
+		let geom = new SphereGeometry();
+		geom.setBufSortFormat(0xfffffff);
+		geom.initialize(radius, longitudeNumSegments, latitudeNumSegments, false);
+
+		let vbufs: GPUBuffer[];
+		let ibuf: GPUBuffer;
+		let vs = geom.getVS();
+		let uvs = geom.getUVS();
+		let nvs = geom.getNVS();
+		let ivs = geom.getIVS();
 
 		let vtTotal = vs.length / 3;
 		let vsBuf = this.mWGCtx ? this.mWGCtx.buffer.createVertexBuffer(vs, 0, [3]) : null;
@@ -46,7 +92,7 @@ class GeomDataBuilder {
 		ibuf = this.mWGCtx ? this.mWGCtx.buffer.createIndexBuffer(ivs) : null;
 
 		const vtxDescParam = { vertex: { buffers: vbufs, attributeIndicesArray: [[0], [0]] } };
-		return {ivs, vs, uvs, nvs, vbufs: vbufs, ibuf: ibuf, vtxDescParam: vtxDescParam, bounds: mesh.bounds};
+		return {ivs, vs, uvs, nvs, vbufs: vbufs, ibuf: ibuf, vtxDescParam: vtxDescParam, bounds: geom.bounds};
 	}
 	createCubeWithSize(size: number): GeomRDataType {
 		size *= 0.5;
