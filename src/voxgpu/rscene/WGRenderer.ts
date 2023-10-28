@@ -7,6 +7,17 @@ import { WGRPipelineContextDefParam, WGRPassParams, WGRenderPassBlock } from "..
 import { WGEntityNodeMana } from "./WGEntityNodeMana";
 import Vector3 from "../math/Vector3";
 
+import { GPUCanvasConfiguration } from "../gpu/GPUCanvasConfiguration";
+
+interface WGRenderConfig {
+
+	gpuCanvasCfg?: GPUCanvasConfiguration,
+	ctx?: WebGPUContext,
+	canvas?: HTMLCanvasElement,
+	callback?: (type?: string) => void
+}
+
+//wgConfig?: GPUCanvasConfiguration
 class WGRenderer {
 
 	private mInit = true;
@@ -21,10 +32,10 @@ class WGRenderer {
 
 	enabled = true;
 
-	constructor(param?: { ctx: WebGPUContext }) {
+	constructor(config?: WGRenderConfig) {
 		this.mNodeMana.target = this;
-		if (param) {
-			this.initialize(param);
+		if (config) {
+			this.initialize(config);
 		}
 	}
 	private initCamera(width: number, height: number): void {
@@ -36,11 +47,11 @@ class WGRenderer {
 		cam.update();
 	}
 
-	initialize(param?: { ctx?: WebGPUContext; canvas?: HTMLCanvasElement; callback?: (type?: string) => void }): void {
+	initialize(config?: WGRenderConfig): void {
 
 		if (this.mInit && !this.mWGCtx) {
 			this.mInit = false;
-			const wgCtx = param ? param.ctx : null;
+			const wgCtx = config ? config.ctx : null;
 
 			if (wgCtx) {
 				// console.log("WGRenderer::initialize(), a 01");
@@ -50,21 +61,29 @@ class WGRenderer {
 				this.initCamera(canvas.width, canvas.height);
 			} else {
 				// console.log("WGRenderer::initialize(), b 01");
+				let canvasCFG: GPUCanvasConfiguration = { alphaMode: "premultiplied" };
+				let canvas: HTMLCanvasElement;
+				if(config) {
+					canvas = config.canvas;
+					if(config.gpuCanvasCfg) {
+						canvasCFG = config.gpuCanvasCfg;
+					}
+				}
+				if(!canvas) {
+					canvas = document.createElement("canvas");
+					canvas.width = 512;
+					canvas.height = 512;
+					document.body.appendChild(canvas);
+				}
 
-				let canvas = param ? param.canvas : null;
-				canvas = canvas ? canvas : document.createElement("canvas");
-				canvas.width = 512;
-				canvas.height = 512;
-				document.body.appendChild(canvas);
-				
 				this.mWGCtx = new WebGPUContext();
-				this.mWGCtx.initialize(canvas, { alphaMode: "premultiplied" }).then(() => {
+				this.mWGCtx.initialize(canvas, canvasCFG).then(() => {
 
 					this.init();
 
 					console.log("WGRenderer::initialize(), webgpu initialization success ...");
-					if (param && param.callback) {
-						param.callback("");
+					if (config && config.callback) {
+						config.callback("renderer-init");
 					}
 					this.mNodeMana.updateToTarget();
 				});
@@ -74,7 +93,7 @@ class WGRenderer {
 	private init(): void {
 		const canvas = this.mWGCtx.canvas;
 		this.initCamera(canvas.width, canvas.height);
-		for(let i = 0; i < this.mPassParams.length; ++i) {
+		for (let i = 0; i < this.mPassParams.length; ++i) {
 			this.createRenderBlock(this.mPassParams[i]);
 		}
 		this.mPassParams = [];
@@ -117,7 +136,7 @@ class WGRenderer {
 			const rb = new WGRenderPassBlock(this.mWGCtx, param);
 			this.mRPBlocks.push(rb);
 			return rb;
-		}else {
+		} else {
 			this.mPassParams.push(param);
 		}
 		return null;
