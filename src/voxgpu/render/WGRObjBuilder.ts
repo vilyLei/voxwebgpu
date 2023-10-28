@@ -81,7 +81,6 @@ class WGRObjBuilder {
 					texParams: utexes
 				}
 			]);
-			console.log("XXXXXXX ru.uniforms: ", ru.uniforms);
 		}
 
 		return ru;

@@ -6,17 +6,6 @@ import { BufDataParamType, IWGRPipelineContext } from "../pipeline/IWGRPipelineC
 import { WGRUniformValue } from "./WGRUniformValue";
 import { WGRUniformParam, WGRUniformTexParam, WGRUniformWrapper, IWGRUniformContext } from "./IWGRUniformContext";
 
-// type WGRUniformTexParam = { texView: GPUTextureView, sampler?: GPUSampler };
-// type WGRUniformParam = { layoutName: string, groupIndex: number, values: WGRUniformValue[], texParams?: WGRUniformTexParam[] };
-// class WGRUniformWrapper {
-// 	uniform: WGRUniform | null = null;
-// 	bufDataParams?: BufDataParamType[];
-// 	bufDataDescs?: { index: number; buffer: GPUBuffer; bufferSize: number }[];
-// 	texParams?: { texView: GPUTextureView; sampler?: GPUSampler }[];
-// 	usage = 0;
-// 	groupIndex = 0;
-// }
-
 class UCtxInstance {
 	private mList: WGRUniformWrapper[] = [];
 	private mPipelineCtx: IWGRPipelineContext | null = null;
@@ -52,7 +41,7 @@ class UCtxInstance {
 						this.mBuffers.push(buffer);
 					}
 				}
-				console.log("XXX this.mBuffers: ", this.mBuffers);
+				// console.log("XXX this.mBuffers: ", this.mBuffers);
 				for (let i = 0; i < ls.length; ++i) {
 					const uf = this.mList[i].uniform;
 					if (uf) {
