@@ -37,6 +37,7 @@ class WGRPipelineContext implements IWGRPipelineContext {
 			const p = this.mPipelineParams;
 			if (p) {
 				p.build(ctx.device);
+				console.log("pipeline param:\n", p);
 				this.pipeline = ctx.device.createRenderPipeline(p);
 			}
 		}

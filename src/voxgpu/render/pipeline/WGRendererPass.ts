@@ -42,11 +42,9 @@ class WGRendererPass {
 		return this.mParams;
 	}
     build(params: WGRPassParams): void {
-		if(params.sampleCount && params.sampleCount > 1) {
-			params.multisampleEnabled = true;
-		}else {
-			params.multisampleEnabled = false;
-		}
+
+        params.multisampleEnabled = params.sampleCount && params.sampleCount > 1;
+        
         this.mParams = params;
         this.createRenderPassTexture(params);
     }

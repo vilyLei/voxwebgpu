@@ -96,7 +96,7 @@ declare namespace GPUShaderStage {
 	/**
 	 * The bind group entry will be accessible to vertex shaders.
 	 */
-	const VERTEX: number;		//   = 0x1;
+	const VERTEX: number;		// = 0x1;
 	/**
 	 * The bind group entry will be accessible to fragment shaders.
 	 */
@@ -104,7 +104,7 @@ declare namespace GPUShaderStage {
 	/**
 	 * The bind group entry will be accessible to compute shaders.
 	 */
-    const COMPUTE: number;		//  = 0x4;
+    const COMPUTE: number;		// = 0x4;
 }
 declare type IndexArrayViewType = Uint32Array | Uint16Array;
 declare type NumberArrayViewType = Float32Array | Int32Array | Int16Array | Uint8Array | Int8Array | IndexArrayViewType;

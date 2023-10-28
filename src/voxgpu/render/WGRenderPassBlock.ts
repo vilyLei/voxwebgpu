@@ -99,15 +99,20 @@ class WGRenderPassBlock {
 		return this.createRenderPipeline(pipeParams, pipelineVtxParam);
 	}
 	createRenderPipeline(pipelineParams: WGRPipelineCtxParams, vtxDesc: VtxPipelinDescParam): WGRPipelineContext {
-		let pipelineCtx = new WGRPipelineContext(this.mWGCtx);
+		const pipelineCtx = new WGRPipelineContext(this.mWGCtx);
 		this.mPipelineCtxs.push(pipelineCtx);
 		pipelineParams.setDepthStencilFormat(this.rendererPass.depthTexture.format);
 
-		let passParam = this.rendererPass.getPassParams();
+		const passParam = this.rendererPass.getPassParams();
 		if (passParam.multisampleEnabled) {
-			pipelineParams.multisample = {
-				count: passParam.sampleCount
-			};
+			if (pipelineParams.multisample) {
+				pipelineParams.multisample.count = passParam.sampleCount;
+			} else {
+				pipelineParams.multisample = {
+					count: passParam.sampleCount
+				};
+			}
+			pipelineParams.sampleCount = passParam.sampleCount;
 		}
 
 		pipelineCtx.createRenderPipelineWithBuf(pipelineParams, vtxDesc);

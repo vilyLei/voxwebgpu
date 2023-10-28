@@ -10,6 +10,8 @@ import { WGRenderer } from "../rscene/WGRenderer";
 import { WGImage2DTextureData, WGTextureWrapper } from "../texture/WGTextureWrapper";
 import { WGRShderSrcType } from "../material/WGMaterialDescripter";
 import Vector3 from "../math/Vector3";
+import { WGRStorageValue } from "../render/uniform/WGRStorageValue";
+import { WGRUniformValue } from "../render/uniform/WGRUniformValue";
 
 export class StorageTest {
 
@@ -19,15 +21,23 @@ export class StorageTest {
 	renderer = new WGRenderer();
 
 	initialize(): void {
+
 		console.log("StorageTest::initialize() ...");
 
+		let rsv = new WGRStorageValue(new Float32Array(16));
+		console.log("xxxxxx rsv.isStorage(): ", rsv.isStorage());
+		console.log("xxxxxx rsv.isUniform(): ", rsv.isUniform());
+
+		let ruv = new WGRUniformValue(new Float32Array(16));
+		console.log("xxxxxx ruv.isStorage(): ", ruv.isStorage());
+		console.log("xxxxxx ruv.isUniform(): ", ruv.isUniform());
+		
 		const shdSrc = {
 			vertShaderSrc: { code: vertWGSL, uuid: "vtxShdCode" },
 			fragShaderSrc: { code: fragWGSL, uuid: "fragShdCode" }
 		};
-		let material0 = this.createMaterial(shdSrc, [new WGImage2DTextureData("static/assets/blueTransparent.png")], ["transparent"], "front");
-		let material1 = this.createMaterial(shdSrc, [new WGImage2DTextureData("static/assets/blueTransparent.png")], ["transparent"], "back");
-		this.mEntity = this.createEntity([material0, material1]);
+		let material = this.createMaterial(shdSrc, [new WGImage2DTextureData("static/assets/box.jpg")], ["solid"], "back");
+		this.mEntity = this.createEntity([material]);
 	}
 
 	private createMaterial(shdSrc: WGRShderSrcType, texDatas?: WGImage2DTextureData[], blendModes: string[] = [], faceCullMode = "back"): WGMaterial {
