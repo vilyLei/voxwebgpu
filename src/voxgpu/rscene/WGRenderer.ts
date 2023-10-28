@@ -56,6 +56,7 @@ class WGRenderer {
 				canvas.width = 512;
 				canvas.height = 512;
 				document.body.appendChild(canvas);
+				
 				this.mWGCtx = new WebGPUContext();
 				this.mWGCtx.initialize(canvas, { alphaMode: "premultiplied" }).then(() => {
 
