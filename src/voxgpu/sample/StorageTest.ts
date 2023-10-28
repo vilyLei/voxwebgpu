@@ -59,13 +59,9 @@ export class StorageTest {
 		});
 		let ufv = new WGRUniformValue(new Float32Array([1,0,0,1]));
 		material.uniformValues = [ufv];
-		if (texTotal > 0) {
-
-			const texWrappers: WGTextureWrapper[] = new Array(texTotal);
-			for (let i = 0; i < texTotal; ++i) {
-				texWrappers[i] = new WGTextureWrapper({ texture: { data: texDatas[i], shdVarName: "texture" + i } });
-			}
-			material.textures = texWrappers;
+		
+		for (let i = 0; i < texTotal; ++i) {
+			material.addTextureWithParam({ texture: { data: texDatas[i], shdVarName: "texture" + i } });
 		}
 		return material;
 	}

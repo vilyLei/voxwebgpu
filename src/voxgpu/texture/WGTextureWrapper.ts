@@ -20,13 +20,13 @@ class WGImageTextureData implements WGTextureDataType {
 	flipY = false;
 	format = "rgba8unorm";
 	dimension = "2d";
-	constructor(){}
+	constructor() { }
 
 	build(ctx: WebGPUContext): GPUTexture {
 
 		if (this.mImgs && !this.mTex) {
 			// console.log("this.mImgs: ", this.mImgs, this.dimension);
-			switch(this.dimension) {
+			switch (this.dimension) {
 				case "cube":
 					this.mTex = ctx.texture.createTexCubeByImages(this.mImgs, this.generateMipmaps, this.flipY, this.format, this.mUrl);
 					break;
@@ -41,10 +41,10 @@ class WGImageTextureData implements WGTextureDataType {
 		}
 		return this.mTex;
 	}
-	destroy(): void {}
+	destroy(): void { }
 }
 class WGImage2DTextureData extends WGImageTextureData {
-	constructor(url: string){
+	constructor(url: string) {
 		super();
 		this.initByURL(url);
 	}
@@ -72,7 +72,7 @@ class WGImage2DTextureData extends WGImageTextureData {
 	}
 }
 class WGImageCubeTextureData extends WGImageTextureData {
-	constructor(urls: string[]){
+	constructor(urls: string[]) {
 		super();
 		this.initCubeMapURLs(urls);
 	}
@@ -89,7 +89,7 @@ class WGImageCubeTextureData extends WGImageTextureData {
 
 		this.dimension = 'cube';
 		this.mUrl = urls[0];
-		this.createCubeMapImgsByUrls( urls ).then((imgs: ImageBitmap[]): void => {
+		this.createCubeMapImgsByUrls(urls).then((imgs: ImageBitmap[]): void => {
 			this.mImgs = imgs;
 		});
 		return this;
@@ -130,13 +130,17 @@ class WGTexSampler implements WGTexSamplerType {
 	shdVarName = "";
 	sampler: GPUSampler;
 }
+interface WGTextureWrapperParam {
+	texture: WGTextureType;
+	sampler?: WGTexSamplerType;
+}
 class WGTextureWrapper {
 	bindGroupIndex = 0;
 
 	texture: WGTexture;
 	sampler?: WGTexSampler;
 
-	constructor(param: { texture: WGTextureType; sampler?: WGTexSamplerType }) {
+	constructor(param: WGTextureWrapperParam) {
 
 		const tp = param.texture;
 		this.texture = new WGTexture();
@@ -144,12 +148,12 @@ class WGTextureWrapper {
 		for (var k in tp) {
 			tex[k] = (tp as any)[k];
 		}
-		if(this.texture.data) {
+		if (this.texture.data) {
 			let td = this.texture.data;
-			if(td.generateMipmaps) tex.generateMipmaps = td.generateMipmaps;
-			if(td.flipY) tex.flipY = td.flipY;
-			if(td.dimension) tex.dimension = td.dimension;
-			if(td.format) tex.format = td.format;
+			if (td.generateMipmaps) tex.generateMipmaps = td.generateMipmaps;
+			if (td.flipY) tex.flipY = td.flipY;
+			if (td.dimension) tex.dimension = td.dimension;
+			if (td.format) tex.format = td.format;
 		}
 
 		const sp = param.sampler;
@@ -165,4 +169,4 @@ class WGTextureWrapper {
 
 	}
 }
-export { WGImageTextureData, WGImage2DTextureData, WGImageCubeTextureData, WGTextureDataType, WGTextureType, WGTexSamplerType, WGTextureWrapper, WGTexture };
+export { WGImageTextureData, WGImage2DTextureData, WGImageCubeTextureData, WGTextureDataType, WGTextureType, WGTexSamplerType, WGTexture, WGTextureWrapperParam, WGTextureWrapper };

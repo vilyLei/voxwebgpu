@@ -1,4 +1,4 @@
-import { WGTextureWrapper } from "../texture/WGTextureWrapper";
+import { WGTextureWrapperParam, WGTextureWrapper } from "../texture/WGTextureWrapper";
 
 import { WGRPipelineContextDefParam, WGRShderSrcType } from "../render/pipeline/WGRPipelineCtxParams";
 import { VtxPipelinDescParam, IWGRPipelineContext } from "../render/pipeline/IWGRPipelineContext";
@@ -21,9 +21,21 @@ class WGMaterial implements WGMaterialDescripter {
 	// textures: { [key: string]: WGTextureWrapper } = {};
 
 	textures: WGTextureWrapper[];
-	
+
 	constructor(descriptor?: WGMaterialDescripter) {
 		this.setDescriptor(descriptor);
+	}
+	addTextureWithParam(param: WGTextureWrapperParam): void {
+		if (this.textures) {
+			this.textures.push(new WGTextureWrapper(param));
+		} else {
+			this.textures = [new WGTextureWrapper(param)];
+		}
+	}
+	addTextureWithParams(params: WGTextureWrapperParam[]): void {
+		for (let i = 0; i < params.length; ++i) {
+			this.addTextureWithParam(params[i]);
+		}
 	}
 	isREnabled(): boolean {
 		const texs = this.textures;
@@ -59,6 +71,6 @@ class WGMaterial implements WGMaterialDescripter {
 	copyfrom(src: WGMaterial): WGMaterial {
 		return this;
 	}
-	destroy(): void {}
+	destroy(): void { }
 }
 export { WGMaterial };

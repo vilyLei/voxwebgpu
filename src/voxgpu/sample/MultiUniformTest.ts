@@ -32,7 +32,7 @@ export class MultiUniformTest {
 		let ruv = new WGRUniformValue(new Float32Array(16));
 		console.log("xxxxxx ruv.isStorage(): ", ruv.isStorage());
 		console.log("xxxxxx ruv.isUniform(): ", ruv.isUniform());
-		
+
 		const shdSrc = {
 			vertShaderSrc: { code: vertWGSL, uuid: "vtxShdCode" },
 			fragShaderSrc: { code: frag2WGSL, uuid: "fragShdCode" }
@@ -57,15 +57,10 @@ export class MultiUniformTest {
 			shaderCodeSrc: shdSrc,
 			pipelineDefParam
 		});
-		let ufv = new WGRUniformValue(new Float32Array([1,0,0,1]));
+		let ufv = new WGRUniformValue(new Float32Array([1, 0, 0, 1]));
 		material.uniformValues = [ufv];
-		if (texTotal > 0) {
-
-			const texWrappers: WGTextureWrapper[] = new Array(texTotal);
-			for (let i = 0; i < texTotal; ++i) {
-				texWrappers[i] = new WGTextureWrapper({ texture: { data: texDatas[i], shdVarName: "texture" + i } });
-			}
-			material.textures = texWrappers;
+		for (let i = 0; i < texTotal; ++i) {
+			material.addTextureWithParam({ texture: { data: texDatas[i], shdVarName: "texture" + i } });
 		}
 		return material;
 	}
@@ -92,7 +87,7 @@ export class MultiUniformTest {
 		this.mRotY += 0.5;
 		this.mEntity.transform.setRotationXYZ(0, this.mRotY, this.mRotY + 0.5);
 		this.mEntity.update();
-		
+
 		this.renderer.run();
 	}
 }
