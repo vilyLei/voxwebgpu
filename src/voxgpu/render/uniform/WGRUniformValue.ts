@@ -20,7 +20,7 @@ class WGRUniformValue {
 		this.data = data;
 		this.bufferIndex = bufferIndex;
 		this.index = uniformIndexInRUnit;
-		if(data.byteLength <= 16)this.arrayStride = data.byteLength;
+		if(data.byteLength <= 64)this.arrayStride = data.byteLength;
 		this.upate();
 	}
 	toUniform(): void {

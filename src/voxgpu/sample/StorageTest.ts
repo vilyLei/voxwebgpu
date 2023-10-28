@@ -58,7 +58,6 @@ export class StorageTest {
 			pipelineDefParam
 		});
 		let ufv = new WGRUniformValue(new Float32Array([1,0,0,1]));
-		// ufv.arrayStride = 16;
 		material.uniformValues = [ufv];
 		if (texTotal > 0) {
 

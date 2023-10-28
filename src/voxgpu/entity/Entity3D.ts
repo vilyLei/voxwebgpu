@@ -26,7 +26,6 @@ class Entity3D {
 			this.transform = ROTransform.Create();
 			this.transform.update();
 			this.uniformTransform = new WGRUniformValue(this.mMat.getLocalFS32());
-			this.uniformTransform.arrayStride = 64;
 		}
 		// console.log("this.uniformTransform: ", this.uniformTransform);
 	}
