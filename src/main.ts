@@ -10,7 +10,9 @@
 
 // import { MultiTexturedCube as Demo } from "./voxgpu/sample/MultiTexturedCube";
 // import { BlendTest as Demo } from "./voxgpu/sample/BlendTest";
-import { MultiMaterialPass as Demo } from "./voxgpu/sample/MultiMaterialPass";
+// import { MultiMaterialPass as Demo } from "./voxgpu/sample/MultiMaterialPass";
+
+import { StorageTest as Demo } from "./voxgpu/sample/StorageTest";
 
 let demoIns = new Demo();
 function main(): void {

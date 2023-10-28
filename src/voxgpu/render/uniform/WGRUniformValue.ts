@@ -1,3 +1,4 @@
+import BitConst from "../../utils/BitConst";
 class WGRUniformValue {
 	name?: string;
 
@@ -11,26 +12,41 @@ class WGRUniformValue {
 	bufferIndex: number;
 	data?: NumberArrayDataType;
 
-	byteOffset = 0
+	byteOffset = 0;
 	arrayStride = 1;
 	usage = GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST;
+
 	constructor(data: NumberArrayDataType, bufferIndex = 0, uniformIndexInRUnit = 0) {
 		this.data = data;
 		this.bufferIndex = bufferIndex;
 		this.index = uniformIndexInRUnit;
 		this.upate();
 	}
+	toUniform(): void {
+		this.usage = GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST;
+	}
+	toStorage(): void {
+		this.usage = GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST;
+	}
+	isUniform(): boolean {
+		return BitConst.containsBit(this.usage, GPUBufferUsage.UNIFORM);
+	}
+	isStorage(): boolean {
+		return BitConst.containsBit(this.usage, GPUBufferUsage.STORAGE);
+	}
 	upate(): void {
 		this.version ++;
 	}
+	
 	clone(data: NumberArrayDataType): WGRUniformValue {
+
 		const u = new WGRUniformValue(data, this.bufferIndex, this.index);
 		u.name = this.name;
 		u.byteOffset = this.byteOffset;
 		u.arrayStride = this.arrayStride;
 		u.usage = this.usage;
 
-		return u
+		return u;
 	}
 }
 export { WGRUniformValue }

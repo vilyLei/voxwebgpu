@@ -17,7 +17,6 @@ interface WGRenderConfig {
 	callback?: (type?: string) => void
 }
 
-//wgConfig?: GPUCanvasConfiguration
 class WGRenderer {
 
 	private mInit = true;
