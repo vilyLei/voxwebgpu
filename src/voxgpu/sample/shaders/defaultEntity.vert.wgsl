@@ -17,7 +17,7 @@ fn main(
   @location(1) uv : vec2<f32>
 ) -> VertexOutput {
   var output : VertexOutput;
-  output.Position = uniforms.modelViewProjectionMatrix * vec4(position.xyz, 1.0);
+  output.Position = projMat * viewMat * objMat * vec4(position.xyz, 1.0);
   output.fragUV = uv;
   var pv: vec4<f32>;
   pv = 0.5 * (vec4<f32>(normalize(position.xyz) * 2.0, 1.0) + vec4<f32>(1.0, 1.0, 1.0, 1.0));

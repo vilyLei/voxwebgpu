@@ -8,15 +8,20 @@ import { WGRUnit } from "./WGRUnit";
 import { GPUBuffer } from "../gpu/GPUBuffer";
 import { WGRPrimitive } from "./WGRPrimitive";
 import { WGMaterialDescripter } from "../material/WGMaterialDescripter";
+import Camera from "../view/Camera";
 
 class WGRenderPassBlock {
+
 	private mWGCtx: WebGPUContext;
 	private mPipelineCtxs: WGRPipelineContext[] = [];
 	private mUnits: IWGRUnit[] = [];
-	private rendererPass = new WGRendererPass();
+	private mRPass = new WGRendererPass();
+
+	camera: Camera;
+	rcommands: GPUCommandBuffer[];
 
 	enabled = true;
-	rcommands: GPUCommandBuffer[];
+
 	constructor(wgCtx?: WebGPUContext, param?: WGRPassParams) {
 		this.initialize(wgCtx, param);
 	}
@@ -26,8 +31,8 @@ class WGRenderPassBlock {
 	initialize(wgCtx: WebGPUContext, param?: WGRPassParams): void {
 		if (!this.mWGCtx && wgCtx) {
 			this.mWGCtx = wgCtx;
-			this.rendererPass.initialize(wgCtx);
-			this.rendererPass.build(param);
+			this.mRPass.initialize(wgCtx);
+			this.mRPass.build(param);
 		}
 	}
 	addRUnit(unit: IWGRUnit): void {
@@ -101,9 +106,9 @@ class WGRenderPassBlock {
 	createRenderPipeline(pipelineParams: WGRPipelineCtxParams, vtxDesc: VtxPipelinDescParam): WGRPipelineContext {
 		const pipelineCtx = new WGRPipelineContext(this.mWGCtx);
 		this.mPipelineCtxs.push(pipelineCtx);
-		pipelineParams.setDepthStencilFormat(this.rendererPass.depthTexture.format);
+		pipelineParams.setDepthStencilFormat(this.mRPass.depthTexture.format);
 
-		const passParam = this.rendererPass.getPassParams();
+		const passParam = this.mRPass.getPassParams();
 		if (passParam.multisampleEnabled) {
 			if (pipelineParams.multisample) {
 				pipelineParams.multisample.count = passParam.sampleCount;
@@ -122,7 +127,7 @@ class WGRenderPassBlock {
 	runBegin(): void {
 		this.rcommands = [];
 		if (this.enabled) {
-			this.rendererPass.runBegin();
+			this.mRPass.runBegin();
 			for (let i = 0; i < this.mPipelineCtxs.length; ++i) {
 				this.mPipelineCtxs[i].runBegin();
 			}
@@ -133,12 +138,12 @@ class WGRenderPassBlock {
 			for (let i = 0; i < this.mPipelineCtxs.length; ++i) {
 				this.mPipelineCtxs[i].runEnd();
 			}
-			this.rcommands = [this.rendererPass.runEnd()];
+			this.rcommands = [this.mRPass.runEnd()];
 		}
 	}
 	run(): void {
 		if (this.enabled) {
-			const rc = this.rendererPass.passEncoder;
+			const rc = this.mRPass.passEncoder;
 			const uts = this.mUnits;
 			const utsLen = uts.length;
 			for (let i = 0; i < utsLen; ++i) {

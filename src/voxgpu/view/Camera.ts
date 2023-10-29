@@ -13,6 +13,7 @@ import Plane from "../cgeom/Plane";
 import AABB from "../cgeom/AABB";
 // import {IShaderUniformProbe} from "../../vox/material/IShaderUniformProbe";
 import {IRenderCamera} from "../render/IRenderCamera";
+import { WGRUniformValue } from "../render/uniform/WGRUniformValue";
 
 const pmin = MathConst.MATH_MIN_POSITIVE;
 class CameraBase implements IRenderCamera {
@@ -23,6 +24,10 @@ class CameraBase implements IRenderCamera {
     // matUProbe: IShaderUniformProbe = null;
     // ufrustumProbe: IShaderUniformProbe = null;
     // ucameraPosProbe: IShaderUniformProbe;
+
+    viewUniformV: WGRUniformValue;
+    projUniformV: WGRUniformValue;
+
     uniformEnabled = false;
     name = "Camera";
 
@@ -92,6 +97,7 @@ class CameraBase implements IRenderCamera {
             Vector3.Cross(this.m_lookAtDirec, this.m_up, this.m_initRV);
             this.m_initRV.normalize();
             this.m_changed = true;
+            this.viewUniformV = new WGRUniformValue(this.m_viewMat.getLocalFS32());
         }
     }
     lookAtRH(camPos: Vector3, lookAtPos: Vector3, up: Vector3): void {
@@ -108,6 +114,7 @@ class CameraBase implements IRenderCamera {
             this.m_initRV.normalize();
             this.m_up.copyFrom(this.m_initUP);
             this.m_changed = true;
+            this.viewUniformV = new WGRUniformValue(this.m_viewMat.getLocalFS32());
         }
     }
 
@@ -136,6 +143,7 @@ class CameraBase implements IRenderCamera {
             this.m_perspectiveEnabled = true;
             this.m_rightHandEnabled = false;
             this.m_changed = true;
+            this.projUniformV = new WGRUniformValue(this.m_projMat.getLocalFS32());
         }
     }
     /**
@@ -157,6 +165,7 @@ class CameraBase implements IRenderCamera {
             this.m_perspectiveEnabled = true;
             this.m_rightHandEnabled = true;
             this.m_changed = true;
+            this.projUniformV = new WGRUniformValue(this.m_projMat.getLocalFS32());
         }
     }
     perspectiveRH2(fovRadian: number, pw: number, ph: number, zNear: number, zFar: number): void {
@@ -171,6 +180,7 @@ class CameraBase implements IRenderCamera {
             this.m_project2Enabled = true;
             this.m_rightHandEnabled = true;
             this.m_changed = true;
+            this.projUniformV = new WGRUniformValue(this.m_projMat.getLocalFS32());
         }
     }
 	getFOVRandian(): number {
@@ -187,6 +197,7 @@ class CameraBase implements IRenderCamera {
             this.m_perspectiveEnabled = false;
             this.m_rightHandEnabled = true;
             this.m_changed = true;
+            this.projUniformV = new WGRUniformValue(this.m_projMat.getLocalFS32());
         }
     }
     orthoLH(zNear: number, zFar: number, b: number, t: number, l: number, r: number): void {
@@ -198,6 +209,7 @@ class CameraBase implements IRenderCamera {
             this.m_perspectiveEnabled = false;
             this.m_rightHandEnabled = false;
             this.m_changed = true;
+            this.projUniformV = new WGRUniformValue(this.m_projMat.getLocalFS32());
         }
     }
     isPerspectiveEnabled(): boolean {
@@ -1010,7 +1022,7 @@ class CameraBase implements IRenderCamera {
         if (this.m_changed) {
             this.version++;
             this.m_changed = false;
-            if(this.m_viewMatrix == null) {
+            if(!this.m_viewMatrix) {
 
                 if (this.m_axisRotEnabled) {
                     this.m_matrix.appendRotationPivot(this.m_rotDegree * MathConst.MATH_PI_OVER_180, this.m_rotAxis, this.m_rotPivotPoint);
@@ -1066,6 +1078,8 @@ class CameraBase implements IRenderCamera {
         //     this.ucameraPosProbe.setVec4DataAt(0, this.m_camPos.x,this.m_camPos.y,this.m_camPos.z,1.0);
         //     this.ucameraPosProbe.update();
         // }
+        this.viewUniformV.upate();
+        this.projUniformV.upate();
     }
     destroy(): void {
     }

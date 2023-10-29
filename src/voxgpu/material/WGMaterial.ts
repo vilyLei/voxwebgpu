@@ -26,19 +26,21 @@ class WGMaterial implements WGMaterialDescripter {
 		this.setDescriptor(descriptor);
 	}
 	addTextureWithDatas(datas: WGImage2DTextureData[], shdVarNames?: string[]): void {
-		
-		if(shdVarNames) {
-			for (let i = 0; i < datas.length; ++i) {
-				this.addTextureWithData(datas[i], shdVarNames[i]);
-			}
-		}else {
-			for (let i = 0; i < datas.length; ++i) {
-				this.addTextureWithData(datas[i]);
+
+		if (datas) {
+			if (shdVarNames) {
+				for (let i = 0; i < datas.length; ++i) {
+					this.addTextureWithData(datas[i], shdVarNames[i]);
+				}
+			} else {
+				for (let i = 0; i < datas.length; ++i) {
+					this.addTextureWithData(datas[i]);
+				}
 			}
 		}
 	}
 	addTextureWithData(data: WGImage2DTextureData, shdVarName = ""): void {
-		if(shdVarName === "") {
+		if (shdVarName === "") {
 			shdVarName = "texture" + (this.textures ? this.textures.length : 0);
 		}
 		this.addTextureWithParam({ texture: { data: data, shdVarName } });

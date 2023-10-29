@@ -129,8 +129,10 @@ class WGRenderer {
 		return this.mRPBlocks[i];
 	}
 	createRenderBlock(param?: WGRPassParams): WGRenderPassBlock {
+		
 		if (this.mWGCtx) {
 			const rb = new WGRenderPassBlock(this.mWGCtx, param);
+			rb.camera = this.camera;
 			this.mRPBlocks.push(rb);
 			return rb;
 		} else {

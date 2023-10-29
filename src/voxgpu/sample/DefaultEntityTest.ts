@@ -1,7 +1,7 @@
 import { GeomDataBuilder } from "../geometry/GeomDataBuilder";
 
-import vertWGSL from "./shaders/vs3uvs2.vert.wgsl";
-import fragWGSL from "./shaders/sampleTextureColorParam.frag.wgsl";
+import vertWGSL from "./shaders/defaultEntity.vert.wgsl";
+import fragWGSL from "./shaders/defaultEntity.frag.wgsl";
 
 import { WGMaterial } from "../material/WGMaterial";
 import { WGGeometry } from "../geometry/WGGeometry";
@@ -28,8 +28,9 @@ export class DefaultEntityTest {
 			vertShaderSrc: { code: vertWGSL, uuid: "vtxShdCode" },
 			fragShaderSrc: { code: fragWGSL, uuid: "fragShdCode" }
 		};
-		let material = this.createMaterial(shdSrc, [new WGImage2DTextureData("static/assets/box.jpg")], ["solid"], "back");
-		this.mEntity = this.createEntity([material]);
+		// let material = this.createMaterial(shdSrc, [new WGImage2DTextureData("static/assets/box.jpg")], ["solid"], "back");
+		let material = this.createMaterial( shdSrc );
+		this.mEntity = this.createEntity( [material] );
 	}
 
 	private createMaterial(shdSrc: WGRShderSrcType, texDatas?: WGImage2DTextureData[], blendModes: string[] = [], faceCullMode = "back"): WGMaterial {
@@ -51,7 +52,7 @@ export class DefaultEntityTest {
 		});
 
 		let ufv = new WGRStorageValue(new Float32Array([1,0,0,1]));
-		material.uniformValues = [ufv];
+		// material.uniformValues = [ufv];
 		material.addTextureWithDatas( texDatas );
 
 		return material;

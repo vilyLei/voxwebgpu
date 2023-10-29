@@ -63,9 +63,19 @@ class WGRObjBuilder {
 		ru.pipelinectx = pctx;
 
 		let uvalues: WGRUniformValue[] = [];
-		if(entity.uniformTransform) {
-			uvalues.push(entity.uniformTransform);
+
+		// if(entity.uniformTransform) {
+		// 	uvalues.push(entity.uniformTransform);
+		// }
+		const cam = block.camera;
+		if(entity.transform) {
+			uvalues.push(entity.transform.uniformv);
 		}
+		if(entity.cameraViewing) {
+			uvalues.push(cam.viewUniformV);
+			uvalues.push(cam.projUniformV);
+		}
+
 		if(material.uniformValues) {
 			uvalues = uvalues.concat( material.uniformValues );
 		}
@@ -111,7 +121,6 @@ class WGRObjBuilder {
 			}
 			ru = new WGRUnit();
 			ru.passes = passes;
-			// return ru;
 		} else {
 			ru = this.createRPass(entity, block, primitive);
 		}
