@@ -114,7 +114,6 @@ class WGRenderer {
 					});
 				}
 				if (processIndex >= 0 && processIndex < this.mRPBlocks.length) {
-					// entity.applyCamera(this.camera);
 					entity.update();
 					const rb = this.mRPBlocks[processIndex];
 					const runit = this.mROBuilder.createRUnit(entity, rb);

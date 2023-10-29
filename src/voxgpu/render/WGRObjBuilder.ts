@@ -7,7 +7,7 @@ import { WGRenderPassBlock } from "../render/WGRenderPassBlock";
 import { WGRUniformValue } from "./uniform/WGRUniformValue";
 import { GPUTextureView } from "../gpu/GPUTextureView";
 
-type GeomType = { indexBuffer?: GPUBuffer; vertexBuffers: GPUBuffer[]; indexCount?: number; vertexCount?: number };
+type GeomType = { indexBuffer?: GPUBuffer, vertexBuffers: GPUBuffer[], indexCount?: number; vertexCount?: number };
 
 class WGRObjBuilder {
 	constructor() {}
@@ -64,9 +64,6 @@ class WGRObjBuilder {
 
 		let uvalues: WGRUniformValue[] = [];
 
-		// if(entity.uniformTransform) {
-		// 	uvalues.push(entity.uniformTransform);
-		// }
 		const cam = block.camera;
 		if(entity.transform) {
 			uvalues.push(entity.transform.uniformv);

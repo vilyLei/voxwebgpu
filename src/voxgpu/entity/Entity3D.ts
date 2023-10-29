@@ -1,15 +1,9 @@
 import ROTransform from "./ROTransform";
 import AABB from "../Cgeom/AABB";
-// import Matrix4 from "../math/Matrix4";
-// import { IRenderCamera } from "../render/IRenderCamera";
 import { WGGeometry } from "../geometry/WGGeometry";
 import { WGMaterial } from "../material/WGMaterial";
-// import { WGRUniformValue } from "../render/uniform/WGRUniformValue";
 
 class Entity3D {
-
-	// private mMat = new Matrix4();
-	// private mCamera: IRenderCamera;
 
 	uuid?: string;
 	materials: WGMaterial[];
@@ -17,7 +11,6 @@ class Entity3D {
 
 	bounds: AABB;
 	transform: ROTransform;
-	// uniformTransform: WGRUniformValue;
 
 	cameraViewing = true;
 
@@ -27,12 +20,8 @@ class Entity3D {
 	protected init(transformEnabled: boolean): void {
 		if (transformEnabled) {
 			this.transform = ROTransform.Create();
-			this.transform.update();
-			// this.uniformTransform = new WGRUniformValue(this.mMat.getLocalFS32());
 		}
-		// console.log("this.uniformTransform: ", this.uniformTransform);
 	}
-	// initialize(): void {}
 
 	isREnabled(): boolean {
 		const ms = this.materials;
@@ -55,24 +44,7 @@ class Entity3D {
 		}
 		return true;
 	}
-
-	// // for test
-	// applyCamera(cam?: IRenderCamera): void {
-
-	// 	this.mCamera = cam ? cam : this.mCamera;
-
-	// 	// const trans = this.transform;
-	// 	// if (this.mCamera && trans) {
-	// 	// 	const mat = this.mMat;
-
-	// 	// 	trans.update();
-	// 	// 	mat.copyFrom(trans.getMatrix());
-	// 	// 	mat.append((this.mCamera as any).getVPMatrix());
-	// 	// 	this.uniformTransform.upate();
-	// 	// }
-	// }
 	update(): void {
-		// this.applyCamera();
 		if(this.transform) {
 			this.transform.update();
 		}
