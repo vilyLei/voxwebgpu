@@ -50,6 +50,46 @@ class WGRenderer {
 	getCanvas(): HTMLCanvasElement {
 		return this.mWGCtx.canvas;
 	}
+	checkConfig(config?: WGRenderConfig): void {
+		let canvasCFG: GPUCanvasConfiguration = { alphaMode: "premultiplied" };
+		let canvas: HTMLCanvasElement;// = config.canvas;
+		let div: HTMLDivElement;// = config.div;
+		if (config) {
+			canvas = config.canvas;
+			div = config.div;
+			if (config.gpuCanvasCfg) {
+				canvasCFG = config.gpuCanvasCfg;
+			}
+		} else {
+			config = { canvas: null };
+		}
+		let width = 512;
+		let height = 512;
+		if (!div) {
+			div = document.createElement("div");
+			document.body.appendChild(div);
+
+			const style = div.style;
+			style.display = "bolck";
+			style.position = "absolute";
+
+			if (style.left == "") {
+				style.left = "0px";
+				style.top = "0px";
+			}
+			div.style.width = width + "px";
+			div.style.height = height + "px";
+		}
+		if (!canvas) {
+			canvas = document.createElement("canvas");
+			canvas.width = width;
+			canvas.height = height;
+			div.appendChild(canvas);
+		}
+		config.canvas = canvas;
+		config.div = div;
+		config.gpuCanvasCfg = canvasCFG;
+	}
 	initialize(config?: WGRenderConfig): void {
 
 		if (this.mInit && !this.mWGCtx) {
@@ -59,11 +99,12 @@ class WGRenderer {
 			if (wgCtx) {
 				// console.log("WGRenderer::initialize(), a 01");
 
+				this.mDiv = config.div;
 				this.mWGCtx = wgCtx;
 				const canvas = wgCtx.canvas;
-				this.mDiv = config.div;
 				this.initCamera(canvas.width, canvas.height);
 			} else {
+				/*
 				// console.log("WGRenderer::initialize(), b 01");
 				let canvasCFG: GPUCanvasConfiguration = { alphaMode: "premultiplied" };
 				let canvas: HTMLCanvasElement;
@@ -77,7 +118,7 @@ class WGRenderer {
 				}
 				let width = 512;
 				let height = 512;
-				if (!canvas) {
+				if (!div) {
 					div = document.createElement("div");
 					document.body.appendChild(div);
 
@@ -98,10 +139,11 @@ class WGRenderer {
 					canvas.height = height;
 					div.appendChild(canvas);
 				}
-
-				this.mDiv = div;
+				//*/
+				this.checkConfig(config);
+				this.mDiv = config.div;
 				this.mWGCtx = new WebGPUContext();
-				this.mWGCtx.initialize(canvas, canvasCFG).then(() => {
+				this.mWGCtx.initialize(config.canvas, config.gpuCanvasCfg).then(() => {
 
 					this.init();
 
@@ -175,6 +217,9 @@ class WGRenderer {
 		}
 		return material;
 	}
+	isEnabled(): boolean {
+		return this.mWGCtx && this.mWGCtx.enabled;
+	}
 	run(): void {
 		if (this.enabled) {
 			const ctx = this.mWGCtx;
@@ -200,4 +245,4 @@ class WGRenderer {
 		}
 	}
 }
-export { WGRPipelineContextDefParam, WGRenderer };
+export { WGRenderConfig, WGRPipelineContextDefParam, WGRenderer };

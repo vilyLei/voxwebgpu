@@ -4,6 +4,7 @@ import {IRenderCamera} from "../render/IRenderCamera";
 
 interface IRendererScene {
 
+	getUid(): number;
 	getStage3D(): IRenderStage3D;
 	getCamera(): IRenderCamera;
 	enableMouseEvent(enabled?: boolean): void;

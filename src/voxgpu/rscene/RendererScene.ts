@@ -3,18 +3,47 @@ import IRenderStage3D from "../render/IRenderStage3D";
 import { IRenderCamera } from "../render/IRenderCamera";
 import { RAdapterContext } from "./context/RAdapterContext";
 import { IRendererScene } from "./IRendererScene";
-import { WGRenderer } from "./WGRenderer";
+import Stage3D from "./Stage3D";
+import { WGRenderConfig, WGRenderer } from "./WGRenderer";
+import { Entity3D } from "../entity/Entity3D";
 
 class RendererScene implements IRendererScene {
 
-	enabled = true;
+	private mInit = true;
+	private static sUid = 0;
+	private mUid = 0;
+	private mStage: Stage3D;
 
+	enabled = true;
 	renderer: WGRenderer;
 	racontext: RAdapterContext;
 	camera: Camera;
-	constructor() {
+
+	constructor(uidBase: number = 0) {
+		this.mUid = uidBase + RendererScene.sUid++;
 	}
-	initialize(): void {
+
+	getUid(): number {
+		return this.mUid;
+	}
+
+	initialize(config?: WGRenderConfig): void {
+
+		if (this.mInit) {
+
+			this.mInit = false;
+			config = config ? config : { canvas: null };
+			const renderer = new WGRenderer();
+			renderer.checkConfig(config);
+			
+			this.mStage = new Stage3D(this.getUid(), document);
+			this.racontext = new RAdapterContext();
+			this.racontext.initialize({ stage: this.mStage, canvas: config.canvas, div: config.div });
+			renderer.initialize(config);
+
+			this.renderer = renderer;
+			this.camera = renderer.camera;
+		}
 	}
 	getStage3D(): IRenderStage3D {
 		return this.racontext.getStage();
@@ -25,6 +54,9 @@ class RendererScene implements IRendererScene {
 	enableMouseEvent(enabled = true): void {
 	}
 
+	addEntity(entity: Entity3D, processIndex = 0, deferred = true): void {
+		this.renderer.addEntity(entity, processIndex, deferred);
+	}
 	/**
 	 * @param type event type
 	 * @param target event listerner
@@ -46,7 +78,7 @@ class RendererScene implements IRendererScene {
 		st.removeEventListener(type, target, func);
 	}
 	run(): void {
-		if(this.renderer) {
+		if (this.enabled && this.renderer && this.renderer.isEnabled()) {
 			this.camera.update();
 			const st = this.racontext.getStage();
 			st.enterFrame();
