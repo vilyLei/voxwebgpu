@@ -6,6 +6,7 @@
 // import { VertColorTriangle as Demo } from "./voxgpu/sample/VertColorTriangle";
 // import { VertColorCube as Demo } from "./voxgpu/sample/VertColorCube";
 // import { VertEntityTest as Demo } from "./voxgpu/sample/VertEntityTest";
+
 // import { DefaultEntityTest as Demo } from "./voxgpu/sample/DefaultEntityTest";
 // import { ImgTexturedCube as Demo } from "./voxgpu/sample/ImgTexturedCube";
 // import { ImgCubeMap as Demo } from "./voxgpu/sample/ImgCubeMap";
