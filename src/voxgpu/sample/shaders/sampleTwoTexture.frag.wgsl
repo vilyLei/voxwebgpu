@@ -1,7 +1,7 @@
-@group(0) @binding(1) var mySampler0: sampler;
-@group(0) @binding(2) var myTexture0: texture_2d<f32>;
-@group(0) @binding(3) var mySampler1: sampler;
-@group(0) @binding(4) var myTexture1: texture_2d<f32>;
+@group(0) @binding(3) var mySampler0: sampler;
+@group(0) @binding(4) var myTexture0: texture_2d<f32>;
+@group(0) @binding(5) var mySampler1: sampler;
+@group(0) @binding(6) var myTexture1: texture_2d<f32>;
 
 @fragment
 fn main(

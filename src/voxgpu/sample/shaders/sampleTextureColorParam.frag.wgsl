@@ -1,6 +1,6 @@
-@group(0) @binding(1) var<storage> param: vec4f;
-@group(0) @binding(2) var mySampler: sampler;
-@group(0) @binding(3) var myTexture: texture_2d<f32>;
+@group(0) @binding(3) var<storage> param: vec4f;
+@group(0) @binding(4) var mySampler: sampler;
+@group(0) @binding(5) var myTexture: texture_2d<f32>;
 
 @fragment
 fn main(

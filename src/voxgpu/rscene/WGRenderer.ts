@@ -99,7 +99,7 @@ class WGRenderer {
 		return this.mWGCtx;
 	}
 	addEntity(entity: Entity3D, processIndex = 0, deferred = true): void {
-		
+
 		if (this.mInit) {
 			this.initialize();
 		}
@@ -115,6 +115,7 @@ class WGRenderer {
 				}
 				if (processIndex >= 0 && processIndex < this.mRPBlocks.length) {
 					// entity.applyCamera(this.camera);
+					entity.update();
 					const rb = this.mRPBlocks[processIndex];
 					const runit = this.mROBuilder.createRUnit(entity, rb);
 				} else {

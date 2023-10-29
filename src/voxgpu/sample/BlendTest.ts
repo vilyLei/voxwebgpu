@@ -1,6 +1,6 @@
 import { GeomDataBuilder } from "../geometry/GeomDataBuilder";
 
-import vertWGSL from "./shaders/vs3uvs2.vert.wgsl";
+import vertWGSL from "./shaders/defaultEntity.vert.wgsl";
 import fragWGSL from "./shaders/sampleTextureMixColor.frag.wgsl";
 
 import { WGMaterial } from "../material/WGMaterial";
@@ -75,7 +75,6 @@ export class BlendTest {
 		entity.materials = materials;
 		entity.geometry = geometry;
 		entity.transform.setPosition(pv);
-
 		renderer.addEntity(entity);
 		return entity;
 	}
