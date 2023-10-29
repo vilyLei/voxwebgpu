@@ -122,7 +122,6 @@ class WGTexture implements WGTextureType {
 
 	view?: GPUTextureView;
 	data?: WGTextureDataType;
-	// __$build(): void{};
 }
 class WGTexSampler implements WGTexSamplerType {
 	name = "WGTexture";

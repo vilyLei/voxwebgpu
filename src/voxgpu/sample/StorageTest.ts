@@ -1,8 +1,7 @@
 import { GeomDataBuilder } from "../geometry/GeomDataBuilder";
 
 import vertWGSL from "./shaders/vs3uvs2.vert.wgsl";
-import fragWGSL from "./shaders/sampleTextureMixColor.frag.wgsl";
-import frag2WGSL from "./shaders/sampleTextureColorParam.frag.wgsl";
+import fragWGSL from "./shaders/sampleTextureColorParam.frag.wgsl";
 
 import { WGMaterial } from "../material/WGMaterial";
 import { WGGeometry } from "../geometry/WGGeometry";
@@ -35,7 +34,7 @@ export class StorageTest {
 		
 		const shdSrc = {
 			vertShaderSrc: { code: vertWGSL, uuid: "vtxShdCode" },
-			fragShaderSrc: { code: frag2WGSL, uuid: "fragShdCode" }
+			fragShaderSrc: { code: fragWGSL, uuid: "fragShdCode" }
 		};
 		let material = this.createMaterial(shdSrc, [new WGImage2DTextureData("static/assets/box.jpg")], ["solid"], "back");
 		this.mEntity = this.createEntity([material]);
@@ -59,10 +58,9 @@ export class StorageTest {
 		});
 		let ufv = new WGRUniformValue(new Float32Array([1,0,0,1]));
 		material.uniformValues = [ufv];
+
+		material.addTextureWithDatas( texDatas );
 		
-		for (let i = 0; i < texTotal; ++i) {
-			material.addTextureWithParam({ texture: { data: texDatas[i], shdVarName: "texture" + i } });
-		}
 		return material;
 	}
 	private createEntity(materials: WGMaterial[], pv?: Vector3): Entity3D {

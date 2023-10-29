@@ -1,22 +1,35 @@
 import { GeomDataBuilder } from "../geometry/GeomDataBuilder";
 
 import vertWGSL from "./shaders/vs3uvs2.vert.wgsl";
-import fragWGSL from "./shaders/sampleTextureMixColor.frag.wgsl";
-import frag2WGSL from "./shaders/sampleTextureColorParam.frag.wgsl";
+import fragWGSL from "./shaders/sampleTwoTextureParam.frag.wgsl";
 
 import { WGMaterial } from "../material/WGMaterial";
 import { WGGeometry } from "../geometry/WGGeometry";
 import { Entity3D } from "../entity/Entity3D";
 import { WGRenderer } from "../rscene/WGRenderer";
-import { WGImage2DTextureData, WGTextureWrapper } from "../texture/WGTextureWrapper";
+import { WGImage2DTextureData } from "../texture/WGTextureWrapper";
 import { WGRShderSrcType } from "../material/WGMaterialDescripter";
 import Vector3 from "../math/Vector3";
 import { WGRStorageValue } from "../render/uniform/WGRStorageValue";
 import { WGRUniformValue } from "../render/uniform/WGRUniformValue";
 
+class MixValue extends WGRUniformValue {
+	constructor() {
+		super(new Float32Array([1, 1, 1, 1]));
+	}
+	setFactors(f0: number, f1: number, f2: number): void {
+		const factors = this.data as Float32Array;
+		factors[0] = f0;
+		factors[1] = f1;
+		factors[2] = f2;
+		this.upate();
+	}
+
+}
 export class MultiUniformTest {
 
 	private mEntity: Entity3D;
+	private mMixValue = new MixValue();
 
 	geomData = new GeomDataBuilder();
 	renderer = new WGRenderer();
@@ -34,10 +47,14 @@ export class MultiUniformTest {
 		console.log("xxxxxx ruv.isUniform(): ", ruv.isUniform());
 
 		const shdSrc = {
-			vertShaderSrc: { code: vertWGSL, uuid: "vtxShdCode" },
-			fragShaderSrc: { code: frag2WGSL, uuid: "fragShdCode" }
+			vertShaderSrc: { code: vertWGSL, uuid: "vertShdCode" },
+			fragShaderSrc: { code: fragWGSL, uuid: "fragShdCode" }
 		};
-		let material = this.createMaterial(shdSrc, [new WGImage2DTextureData("static/assets/box.jpg")], ["solid"], "back");
+		let tds = [
+			new WGImage2DTextureData("static/assets/box.jpg"),
+			new WGImage2DTextureData("static/assets/default.jpg")
+		];
+		let material = this.createMaterial(shdSrc, tds, ["solid"], "back");
 		this.mEntity = this.createEntity([material]);
 	}
 
@@ -57,11 +74,8 @@ export class MultiUniformTest {
 			shaderCodeSrc: shdSrc,
 			pipelineDefParam
 		});
-		let ufv = new WGRUniformValue(new Float32Array([1, 0, 0, 1]));
-		material.uniformValues = [ufv];
-		for (let i = 0; i < texTotal; ++i) {
-			material.addTextureWithParam({ texture: { data: texDatas[i], shdVarName: "texture" + i } });
-		}
+		material.uniformValues = [this.mMixValue];
+		material.addTextureWithDatas(texDatas);
 		return material;
 	}
 	private createEntity(materials: WGMaterial[], pv?: Vector3): Entity3D {
@@ -82,7 +96,15 @@ export class MultiUniformTest {
 		return entity;
 	}
 	private mRotY = 0.0;
+	private mTime = 0.0;
 	run(): void {
+
+		this.mTime += 0.02;
+		this.mMixValue.setFactors(
+			Math.abs(Math.cos(this.mTime))
+			, Math.cos(this.mTime) * 0.5 + 0.5
+			, Math.sin(this.mTime + 2.0) * 0.5 + 0.5
+		);
 
 		this.mRotY += 0.5;
 		this.mEntity.transform.setRotationXYZ(0, this.mRotY, this.mRotY + 0.5);
