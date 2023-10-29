@@ -7,7 +7,7 @@ import { WGMaterial } from "../material/WGMaterial";
 import { WGGeometry } from "../geometry/WGGeometry";
 import { Entity3D } from "../entity/Entity3D";
 import { WGRenderer } from "../rscene/WGRenderer";
-import { WGImage2DTextureData, WGTextureWrapper } from "../texture/WGTextureWrapper";
+import { WGImage2DTextureData } from "../texture/WGTextureWrapper";
 import { WGRShderSrcType } from "../material/WGMaterialDescripter";
 import Vector3 from "../math/Vector3";
 
@@ -46,15 +46,7 @@ export class MultiMaterialPass {
 			shaderCodeSrc: shdSrc,
 			pipelineDefParam
 		});
-
-		if (texTotal > 0) {
-
-			const texWrappers: WGTextureWrapper[] = new Array(texTotal);
-			for (let i = 0; i < texTotal; ++i) {
-				texWrappers[i] = new WGTextureWrapper({ texture: { data: texDatas[i], shdVarName: "texture" + i } });
-			}
-			material.textures = texWrappers;
-		}
+		material.addTextureWithDatas(texDatas);
 		return material;
 	}
 	private createEntity(materials: WGMaterial[], pv?: Vector3): Entity3D {

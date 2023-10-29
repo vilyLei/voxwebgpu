@@ -36,8 +36,13 @@ class RAdapterContext {
 		this.m_viewEle.setDivStyleSize(pw, ph);
 	}
 	private m_resizeFlag = true;
-
-	setCanvas(canvas: HTMLCanvasElement): boolean {
+	initialize(param: {stage: IRenderStage3D, canvas: HTMLCanvasElement, div: HTMLDivElement}): void {
+		this.mStage = param.stage;
+		this.mDiv = param.div;
+		this.m_viewEle.setDiv(param.div);
+		this.setCanvas(param.canvas);
+	}
+	private setCanvas(canvas: HTMLCanvasElement): boolean {
 		let c0 = this.mCanvas;
 		this.m_viewEle.setCanvas(canvas);
 		let c1 = this.m_viewEle.getCanvas();

@@ -12,10 +12,16 @@ import { WGRShderSrcType } from "../material/WGMaterialDescripter";
 import Vector3 from "../math/Vector3";
 import { WGRStorageValue } from "../render/uniform/WGRStorageValue";
 import { WGRUniformValue } from "../render/uniform/WGRUniformValue";
+import Stage3D from "../rscene/Stage3D";
+import MouseEvent from "../event/MouseEvent";
+import { RAdapterContext } from "../rscene/context/RAdapterContext";
 
 export class RendererContext {
 
 	private mEntity: Entity3D;
+
+	private mStage: Stage3D;
+	private mRACtx: RAdapterContext;
 
 	geomData = new GeomDataBuilder();
 	renderer = new WGRenderer();
@@ -23,23 +29,35 @@ export class RendererContext {
 	initialize(): void {
 
 		console.log("RendererContext::initialize() ...");
-
-		let rsv = new WGRStorageValue(new Float32Array(16));
-		console.log("xxxxxx rsv.isStorage(): ", rsv.isStorage());
-		console.log("xxxxxx rsv.isUniform(): ", rsv.isUniform());
-
-		let ruv = new WGRUniformValue(new Float32Array(16));
-		console.log("xxxxxx ruv.isStorage(): ", ruv.isStorage());
-		console.log("xxxxxx ruv.isUniform(): ", ruv.isUniform());
 		
-		const shdSrc = {
-			vertShaderSrc: { code: vertWGSL, uuid: "vertShdCode" },
-			fragShaderSrc: { code: fragWGSL, uuid: "fragShdCode" }
+		const renderer = this.renderer;
+
+		const callDo = (type: string): void => {
+
+			const shdSrc = {
+				vertShaderSrc: { code: vertWGSL, uuid: "vertShdCode" },
+				fragShaderSrc: { code: fragWGSL, uuid: "fragShdCode" }
+			};
+			let material = this.createMaterial(shdSrc, [new WGImage2DTextureData("static/assets/box.jpg")], ["solid"], "back");
+			this.mEntity = this.createEntity([material]);
+	
+			this.mStage = new Stage3D(0, document);
+			this.mRACtx = new RAdapterContext();
+			this.mRACtx.initialize({stage: this.mStage, canvas: renderer.getCanvas(), div: renderer.getDiv()});
+
+			this.initEvent();
 		};
-		let material = this.createMaterial(shdSrc, [new WGImage2DTextureData("static/assets/box.jpg")], ["solid"], "back");
-		this.mEntity = this.createEntity([material]);
+		renderer.initialize({callback: callDo});
+
+	}
+	private initEvent(): void {
+		const stage = this.mStage;
+		stage.addEventListener(MouseEvent.MOUSE_DOWN, this, this.mouseDown);
 	}
 
+	private mouseDown(evt: MouseEvent): void {
+		console.log("mousedown evt call ...");
+	}
 	private createMaterial(shdSrc: WGRShderSrcType, texDatas?: WGImage2DTextureData[], blendModes: string[] = [], faceCullMode = "back"): WGMaterial {
 
 		let pipelineDefParam = {
@@ -85,11 +103,12 @@ export class RendererContext {
 	}
 	private mRotY = 0.0;
 	run(): void {
-
-		this.mRotY += 0.5;
-		this.mEntity.transform.setRotationXYZ(0, this.mRotY, this.mRotY + 0.5);
-		this.mEntity.update();
-		
-		this.renderer.run();
+		if(this.mEntity) {
+			this.mRotY += 0.5;
+			this.mEntity.transform.setRotationXYZ(0, this.mRotY, this.mRotY + 0.5);
+			this.mEntity.update();
+			
+			this.renderer.run();
+		}
 	}
 }

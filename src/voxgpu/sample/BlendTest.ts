@@ -7,7 +7,7 @@ import { WGMaterial } from "../material/WGMaterial";
 import { WGGeometry } from "../geometry/WGGeometry";
 import { Entity3D } from "../entity/Entity3D";
 import { WGRenderer } from "../rscene/WGRenderer";
-import { WGImage2DTextureData, WGTextureWrapper } from "../texture/WGTextureWrapper";
+import { WGImage2DTextureData } from "../texture/WGTextureWrapper";
 import { WGRShderSrcType } from "../material/WGMaterialDescripter";
 import Vector3 from "../math/Vector3";
 
@@ -29,7 +29,7 @@ export class BlendTest {
 			this.createMaterial(shdSrc, [new WGImage2DTextureData("static/assets/xulie_08_61.png")], ["alpha_add"]),
 			this.createMaterial(shdSrc, [new WGImage2DTextureData("static/assets/blueTransparent.png")], ["add"])
 		]
-		for(let i = 0; i < materials.length; ++i) {
+		for (let i = 0; i < materials.length; ++i) {
 			this.createEntity([materials[i]], new Vector3(0, 0, -50 + i * 50));
 		}
 	}
@@ -52,13 +52,8 @@ export class BlendTest {
 			shaderCodeSrc: shdSrc,
 			pipelineDefParam
 		});
-		if (texTotal > 0) {
-			const texWrappers: WGTextureWrapper[] = new Array(texTotal);
-			for (let i = 0; i < texTotal; ++i) {
-				texWrappers[i] = new WGTextureWrapper({ texture: { data: texDatas[i], shdVarName: "texture" + i } });
-			}
-			material.textures = texWrappers;
-		}
+
+		material.addTextureWithDatas(texDatas);
 		return material;
 	}
 	private createEntity(materials: WGMaterial[], pv: Vector3): Entity3D {

@@ -46,8 +46,8 @@ export default class Stage3D extends StageBase implements IRenderStage3D {
     enterFrame(): void {
         this.m_enterFrameEvt.type = EventBase.ENTER_FRAME;
         const ls = this.m_enterFrame_listener;
-        let len: number = ls.length;
-        for (var i: number = 0; i < len; ++i) {
+        let len = ls.length;
+        for (var i = 0; i < len; ++i) {
             ls[i].call(this.m_enterFrame_ers[i], this.m_enterFrameEvt);
         }
     }
@@ -104,8 +104,8 @@ export default class Stage3D extends StageBase implements IRenderStage3D {
         this.m_keyEvt.keyCode = evt.keyCode;
         this.m_keyEvt.location = evt.location;
 
-        let len: number = this.m_keyDown_listener.length;
-        for (var i: number = 0; i < len; ++i) {
+        let len = this.m_keyDown_listener.length;
+        for (var i = 0; i < len; ++i) {
             this.m_keyDown_listener[i].call(this.m_keyDown_ers[i], this.m_keyEvt);
         }
     }
@@ -122,19 +122,19 @@ export default class Stage3D extends StageBase implements IRenderStage3D {
         this.m_keyEvt.location = evt.location;
         this.m_keyEvt.target = this;
 
-        let len: number = this.m_keyUp_listener.length;
-        for (var i: number = 0; i < len; ++i) {
+        let len = this.m_keyUp_listener.length;
+        for (var i = 0; i < len; ++i) {
             this.m_keyUp_listener[i].call(this.m_keyUp_ers[i], this.m_keyEvt);
         }
     }
     private sendResizeEvt(evt: any): void {
-        let len: number = this.m_resize_listener.length;
+        let len = this.m_resize_listener.length;
         //console.log("Stage3D::sendResizeEvt(), m_resize_listener.length: ",this.m_resize_listener.length);
-        for (var i: number = 0; i < len; ++i) {
+        for (var i = 0; i < len; ++i) {
             this.m_resize_listener[i].call(this.m_resize_ers[i], evt);
         }
     }
-    addEventListener(type: number, target: any, func: (evt: any) => void, captureEnabled: boolean = true, bubbleEnabled: boolean = true): void {
+    addEventListener(type: number, target: any, func: (evt: any) => void, captureEnabled = true, bubbleEnabled = true): void {
 
         if (func != null && target != null) {
             switch (type) {

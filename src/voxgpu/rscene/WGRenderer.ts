@@ -14,13 +14,14 @@ interface WGRenderConfig {
 	gpuCanvasCfg?: GPUCanvasConfiguration,
 	ctx?: WebGPUContext,
 	canvas?: HTMLCanvasElement,
+	div?: HTMLDivElement,
 	callback?: (type?: string) => void
 }
 
 class WGRenderer {
 
 	private mInit = true;
-
+	private mDiv: HTMLDivElement;
 	private mRPBlocks: WGRenderPassBlock[] = [];
 	private mPassParams: WGRPassParams[] = [];
 	private mWGCtx: WebGPUContext;
@@ -43,7 +44,12 @@ class WGRenderer {
 		cam.lookAtRH(new Vector3(800.0, 800.0, 800.0), new Vector3(), camUpDirect);
 		cam.update();
 	}
-
+	getDiv(): HTMLDivElement {
+		return this.mDiv;
+	}
+	getCanvas(): HTMLCanvasElement {
+		return this.mWGCtx.canvas;
+	}
 	initialize(config?: WGRenderConfig): void {
 
 		if (this.mInit && !this.mWGCtx) {
@@ -55,24 +61,45 @@ class WGRenderer {
 
 				this.mWGCtx = wgCtx;
 				const canvas = wgCtx.canvas;
+				this.mDiv = config.div;
 				this.initCamera(canvas.width, canvas.height);
 			} else {
 				// console.log("WGRenderer::initialize(), b 01");
 				let canvasCFG: GPUCanvasConfiguration = { alphaMode: "premultiplied" };
 				let canvas: HTMLCanvasElement;
-				if(config) {
+				let div: HTMLDivElement;
+				if (config) {
 					canvas = config.canvas;
-					if(config.gpuCanvasCfg) {
+					div = config.div;
+					if (config.gpuCanvasCfg) {
 						canvasCFG = config.gpuCanvasCfg;
 					}
 				}
-				if(!canvas) {
+				let width = 512;
+				let height = 512;
+				if (!canvas) {
+					div = document.createElement("div");
+					document.body.appendChild(div);
+
+					const style = div.style;
+					style.display = "bolck";
+					style.position = "absolute";
+
+					if (style.left == "") {
+						style.left = "0px";
+						style.top = "0px";
+					}
+					div.style.width = width + "px";
+					div.style.height = height + "px";
+				}
+				if (!canvas) {
 					canvas = document.createElement("canvas");
-					canvas.width = 512;
-					canvas.height = 512;
-					document.body.appendChild(canvas);
+					canvas.width = width;
+					canvas.height = height;
+					div.appendChild(canvas);
 				}
 
+				this.mDiv = div;
 				this.mWGCtx = new WebGPUContext();
 				this.mWGCtx.initialize(canvas, canvasCFG).then(() => {
 

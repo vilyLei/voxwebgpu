@@ -104,7 +104,9 @@ class RViewElement {
 	}
 	setCanvas(canvas: HTMLCanvasElement): void {
 		if( canvas && this.m_canvas != canvas ) {
-			this.m_div.removeChild(this.m_canvas);
+			if(this.m_canvas) {
+				this.m_div.removeChild(this.m_canvas);
+			}
 			this.m_canvas = canvas;
 			this.m_div.appendChild(this.m_canvas);
 		}
