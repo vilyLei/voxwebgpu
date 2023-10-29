@@ -3,11 +3,13 @@ import IRenderStage3D from "../render/IRenderStage3D";
 import { IRenderCamera } from "../render/IRenderCamera";
 import { RAdapterContext } from "./context/RAdapterContext";
 import { IRendererScene } from "./IRendererScene";
+import { WGRenderer } from "./WGRenderer";
 
 class RendererScene implements IRendererScene {
 
 	enabled = true;
 
+	renderer: WGRenderer;
 	racontext: RAdapterContext;
 	camera: Camera;
 	constructor() {
@@ -44,6 +46,12 @@ class RendererScene implements IRendererScene {
 		st.removeEventListener(type, target, func);
 	}
 	run(): void {
+		if(this.renderer) {
+			this.camera.update();
+			const st = this.racontext.getStage();
+			st.enterFrame();
+			this.renderer.run();
+		}
 	}
 	destroy(): void {
 	}

@@ -18,7 +18,7 @@
 // import { MultiUniformTest as Demo } from "./voxgpu/sample/MultiUniformTest";
 // import { StorageTest as Demo } from "./voxgpu/sample/StorageTest";
 
-import { RendererContext as Demo } from "./voxgpu/sample/RendererContext";
+import { RendererContextTest as Demo } from "./voxgpu/sample/RendererContextTest";
 
 
 let demoIns = new Demo();

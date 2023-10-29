@@ -15,20 +15,22 @@ import { WGRUniformValue } from "../render/uniform/WGRUniformValue";
 import Stage3D from "../rscene/Stage3D";
 import MouseEvent from "../event/MouseEvent";
 import { RAdapterContext } from "../rscene/context/RAdapterContext";
+import { RendererScene } from "../rscene/RendererScene";
+import { MouseInteraction } from "../ui/MouseInteraction";
 
-export class RendererContext {
+export class RendererContextTest {
 
 	private mEntity: Entity3D;
 
 	private mStage: Stage3D;
 	private mRACtx: RAdapterContext;
-
+	private mRscene = new RendererScene();
 	geomData = new GeomDataBuilder();
 	renderer = new WGRenderer();
 
 	initialize(): void {
 
-		console.log("RendererContext::initialize() ...");
+		console.log("RendererContextTest::initialize() ...");
 		
 		const renderer = this.renderer;
 
@@ -45,14 +47,25 @@ export class RendererContext {
 			this.mRACtx = new RAdapterContext();
 			this.mRACtx.initialize({stage: this.mStage, canvas: renderer.getCanvas(), div: renderer.getDiv()});
 
+			const rc = this.mRscene;
+			rc.racontext = this.mRACtx;
+			rc.renderer = renderer;
+			rc.camera = renderer.camera;
 			this.initEvent();
 		};
 		renderer.initialize({callback: callDo});
 
 	}
 	private initEvent(): void {
-		const stage = this.mStage;
-		stage.addEventListener(MouseEvent.MOUSE_DOWN, this, this.mouseDown);
+
+		// const stage = this.mStage;
+		// stage.addEventListener(MouseEvent.MOUSE_DOWN, this, this.mouseDown);
+
+		const rc = this.mRscene;
+		rc.addEventListener(MouseEvent.MOUSE_DOWN, this, this.mouseDown);
+
+		// new MouseInteraction().initialize( rc, 0, true).setAutoRunning(true);
+		new MouseInteraction().initialize( rc, 0, false).setAutoRunning(true);
 	}
 
 	private mouseDown(evt: MouseEvent): void {
@@ -104,11 +117,12 @@ export class RendererContext {
 	private mRotY = 0.0;
 	run(): void {
 		if(this.mEntity) {
+
 			this.mRotY += 0.5;
 			this.mEntity.transform.setRotationXYZ(0, this.mRotY, this.mRotY + 0.5);
 			this.mEntity.update();
 			
-			this.renderer.run();
+			this.mRscene.run();
 		}
 	}
 }
