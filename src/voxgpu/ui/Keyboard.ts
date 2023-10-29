@@ -6,7 +6,7 @@
 /*                                                                         */
 /***************************************************************************/
 
-import KeyboardEvent from "../../vox/event/KeyboardEvent";
+import KeyboardEvent from "../event/KeyboardEvent";
 
 class Keyboard {
 
