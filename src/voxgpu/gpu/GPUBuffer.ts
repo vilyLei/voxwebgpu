@@ -11,10 +11,9 @@ interface GPUBuffer {
 	vectorOffsets?: number[];
 	vectorLengths?: number[];
 	vectorCount?: number;
-	// /**
-	//  * If the value is 3, it is a vec3
-	//  */
-	// vectorSize?: number;
+	/**
+	 * If the value is 3, it is a vec3 type data
+	 */
 	arrayStride?: number;
 
 	elementCount?: number;
@@ -30,6 +29,7 @@ interface GPUBuffer {
 	 * Bitwise flags value, come from GPUBufferUsage set.
 	 */
 	usage: number;
+	// usageType?: string;
 	unmap(): void;
 	/**
 	 * Returns an ArrayBuffer containing the mapped contents of the GPUBuffer in the specified range.

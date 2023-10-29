@@ -57,10 +57,11 @@ export class StorageTest {
 			pipelineDefParam
 		});
 		let ufv = new WGRUniformValue(new Float32Array([1,0,0,1]));
+		ufv.toStorage();
 		material.uniformValues = [ufv];
 
 		material.addTextureWithDatas( texDatas );
-		
+
 		return material;
 	}
 	private createEntity(materials: WGMaterial[], pv?: Vector3): Entity3D {

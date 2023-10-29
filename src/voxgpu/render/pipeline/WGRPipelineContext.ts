@@ -22,7 +22,7 @@ class WGRPipelineContext implements IWGRPipelineContext {
 
 	pipeline: GPURenderPipeline = new GPURenderPipelineEmpty();
 	queue: GPUQueue;
-	
+
 	uid = 0;
 	name = "PipelineContext";
 	readonly uniform = new WGRUniformContext();
@@ -72,12 +72,12 @@ class WGRPipelineContext implements IWGRPipelineContext {
 		const buf = this.mWGCtx.device.createBuffer(desc);
 		return buf;
 	}
-	createUniformsBuffer(params: { sizes: number[]; usage: number }, mappedAtCreation = false): GPUBuffer | null {
+	createUniformsBuffer(params: { sizes: number[], usage: number }, mappedAtCreation = false): GPUBuffer | null {
 		if (params && params.sizes.length > 0) {
 			let total = params.sizes.length;
 			let size = params.sizes[0];
 			let bufSize = size;
-			let segs: { index: number; size: number }[] = new Array(total);
+			let segs: { index: number, size: number }[] = new Array(total);
 			segs[0] = { index: 0, size: size };
 
 			for (let i = 1; i < total; ++i) {
@@ -96,6 +96,17 @@ class WGRPipelineContext implements IWGRPipelineContext {
 			};
 			const buf = this.mWGCtx.device.createBuffer(desc);
 			buf.segs = segs;
+			// switch (params.usage) {
+			// 	case GPUBufferUsage.STORAGE:
+			// 		buf.usageType = "storage";
+			// 		break;
+			// 	case GPUBufferUsage.UNIFORM:
+			// 		buf.usageType = "uniform";
+			// 		break;
+			// 	default:
+			// 		break;
+			// }
+			// console.log("createUniformsBuffer(), params.usage: ",  params.usage, GPUBufferUsage.STORAGE);
 			console.log("createUniformsBuffer(), segs: ", segs);
 			console.log("createUniformsBuffer(), bufSize: ", bufSize, ", usage: ", params.usage);
 			return buf;
@@ -162,7 +173,7 @@ class WGRPipelineContext implements IWGRPipelineContext {
 				}
 			}
 		}
-		if(desc.entries.length < 1) {
+		if (desc.entries.length < 1) {
 			throw Error("Illegal operation !!!");
 		}
 		return device.createBindGroup(desc);

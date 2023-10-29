@@ -23,7 +23,11 @@ class UCtxInstance {
 	initialize(pipelineCtx: IWGRPipelineContext | null): void {
 		this.mPipelineCtx = pipelineCtx;
 	}
+	isEnabled(): boolean {
+		return this.mBuffers !== null;
+	}
 	runBegin(): void {
+		console.log("XXX XXX runBegin(), this.isEnabled(): ", this.isEnabled());
 		if (!this.mBuffers) {
 			let ls = this.mList;
 			if (ls.length > 0) {
@@ -31,17 +35,21 @@ class UCtxInstance {
 				let wp = ls[0];
 
 				if (wp.bufDataParams) {
+					console.log("XXX XXX wp.bufDataParams: ", wp.bufDataParams);
+
 					for (let i = 0; i < wp.bufDataParams.length; ++i) {
-						let uniformParams = { sizes: new Array(ls.length), usage: wp.bufDataParams[i].usage };
+						const uniformParams = { sizes: new Array(ls.length), usage: wp.bufDataParams[i].usage };
 
 						for (let j = 0; j < ls.length; ++j) {
 							uniformParams.sizes[j] = ls[j].bufDataParams[i].size;
 						}
+						console.log("XXX XXX uniformParams.sizes: ", uniformParams.sizes);
 						const buffer = this.mPipelineCtx.createUniformsBuffer(uniformParams);
 						this.mBuffers.push(buffer);
 					}
 				}
-				// console.log("XXX this.mBuffers: ", this.mBuffers);
+				console.log("XXX XXX this.mBuffers: ", this.mBuffers);
+				console.log("XXX XXX ls: ", ls);
 				for (let i = 0; i < ls.length; ++i) {
 					const uf = this.mList[i].uniform;
 					if (uf) {
@@ -88,7 +96,6 @@ class UCtxInstance {
 			u.index = this.mList.length;
 			wrapper.uniform = u;
 			wrapper.bufDataParams = bufDataParams;
-			// wrapper.usage = bufDataParams.usage;
 			wrapper.texParams = texParams;
 			this.mList.push(wrapper);
 		}
@@ -131,7 +138,9 @@ class UCtxInstance {
 	}
 }
 class WGRUniformContext implements IWGRUniformContext {
+
 	private mMap: Map<string, UCtxInstance> = new Map();
+	private mInsList: UCtxInstance[] = [];
 	private mPipelineCtx: IWGRPipelineContext | null = null;
 	constructor() { }
 
@@ -155,14 +164,19 @@ class WGRUniformContext implements IWGRUniformContext {
 		}
 	}
 	runBegin(): void {
-		for (var [k, v] of this.mMap) {
-			v.runBegin();
+
+		const ls = this.mInsList;
+		// console.log("WGRUniformContext::runBegin(), ls.length: ", ls.length);
+		for(let i = 0; i < ls.length;) {
+			ls[i].runBegin();
+			if(ls[i].isEnabled()) {
+				ls.splice(i, 1);
+			}else {				
+				i++;
+			}
 		}
 	}
 	runEnd(): void {
-		for (var [k, v] of this.mMap) {
-			v.runEnd();
-		}
 	}
 
 	createUniformsWithValues(params: WGRUniformParam[]): WGRUniform[] {
@@ -176,6 +190,7 @@ class WGRUniformContext implements IWGRUniformContext {
 	createUniformWithValues(layoutName: string, groupIndex: number, values: WGRUniformValue[], texParams?: WGRUniformTexParam[]): WGRUniform | null {
 		if (this.mPipelineCtx) {
 			const uctx = this.getUCtx(layoutName);
+			this.mInsList.push(uctx);
 			const bufDataParams: { size: number, usage: number }[] = [];
 			for (let i = 0; i < values.length; ++i) {
 				bufDataParams.push({ size: values[i].arrayStride, usage: values[i].usage });
@@ -194,6 +209,7 @@ class WGRUniformContext implements IWGRUniformContext {
 	): WGRUniform | null {
 		if (this.mPipelineCtx) {
 			const uctx = this.getUCtx(layoutName);
+			this.mInsList.push(uctx);
 			return uctx.createUniform(groupIndex, bufDataParams, texParams);
 		}
 		return null;
