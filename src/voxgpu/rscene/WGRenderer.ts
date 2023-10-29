@@ -99,6 +99,7 @@ class WGRenderer {
 		return this.mWGCtx;
 	}
 	addEntity(entity: Entity3D, processIndex = 0, deferred = true): void {
+		
 		if (this.mInit) {
 			this.initialize();
 		}
@@ -113,7 +114,7 @@ class WGRenderer {
 					});
 				}
 				if (processIndex >= 0 && processIndex < this.mRPBlocks.length) {
-					entity.applyCamera(this.camera);
+					// entity.applyCamera(this.camera);
 					const rb = this.mRPBlocks[processIndex];
 					const runit = this.mROBuilder.createRUnit(entity, rb);
 				} else {
@@ -129,7 +130,7 @@ class WGRenderer {
 		return this.mRPBlocks[i];
 	}
 	createRenderBlock(param?: WGRPassParams): WGRenderPassBlock {
-		
+
 		if (this.mWGCtx) {
 			const rb = new WGRenderPassBlock(this.mWGCtx, param);
 			rb.camera = this.camera;

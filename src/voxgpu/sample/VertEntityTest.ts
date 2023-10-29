@@ -1,7 +1,7 @@
 import { GeomDataBuilder } from "../geometry/GeomDataBuilder";
 
-import vertWGSL from "./shaders/defaultEntity.vert.wgsl";
-import fragWGSL from "./shaders/defaultEntity.frag.wgsl";
+import vertWGSL from "./shaders/vertEntity.vert.wgsl";
+import fragWGSL from "./shaders/vertEntity.frag.wgsl";
 
 import { WGMaterial } from "../material/WGMaterial";
 import { WGGeometry } from "../geometry/WGGeometry";
@@ -10,9 +10,10 @@ import { WGRenderer } from "../rscene/WGRenderer";
 import { WGImage2DTextureData } from "../texture/WGTextureWrapper";
 import { WGRShderSrcType } from "../material/WGMaterialDescripter";
 import Vector3 from "../math/Vector3";
-// import { WGRStorageValue } from "../render/uniform/WGRStorageValue";
+import { WGRStorageValue } from "../render/uniform/WGRStorageValue";
+import { WGRUniformValue } from "../render/uniform/WGRUniformValue";
 
-export class DefaultEntityTest {
+export class VertEntityTest {
 
 	private mEntity: Entity3D;
 
@@ -21,14 +22,14 @@ export class DefaultEntityTest {
 
 	initialize(): void {
 
-		console.log("DefaultEntityTest::initialize() ...");
+		console.log("VertEntityTest::initialize() ...");
 		
 		const shdSrc = {
 			vertShaderSrc: { code: vertWGSL, uuid: "vtxShdCode" },
 			fragShaderSrc: { code: fragWGSL, uuid: "fragShdCode" }
 		};
-		let material = this.createMaterial(shdSrc, [new WGImage2DTextureData("static/assets/box.jpg")], ["solid"], "back");
-		// let material = this.createMaterial( shdSrc );
+		// let material = this.createMaterial(shdSrc, [new WGImage2DTextureData("static/assets/box.jpg")], ["solid"], "back");
+		let material = this.createMaterial( shdSrc );
 		this.mEntity = this.createEntity( [material] );
 	}
 
@@ -50,7 +51,7 @@ export class DefaultEntityTest {
 			pipelineDefParam
 		});
 
-		// let ufv = new WGRStorageValue(new Float32Array([1,0,0,1]));
+		let ufv = new WGRStorageValue(new Float32Array([1,0,0,1]));
 		// material.uniformValues = [ufv];
 		material.addTextureWithDatas( texDatas );
 

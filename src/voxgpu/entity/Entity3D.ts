@@ -1,15 +1,15 @@
 import ROTransform from "./ROTransform";
 import AABB from "../Cgeom/AABB";
-import Matrix4 from "../math/Matrix4";
-import { IRenderCamera } from "../render/IRenderCamera";
+// import Matrix4 from "../math/Matrix4";
+// import { IRenderCamera } from "../render/IRenderCamera";
 import { WGGeometry } from "../geometry/WGGeometry";
 import { WGMaterial } from "../material/WGMaterial";
-import { WGRUniformValue } from "../render/uniform/WGRUniformValue";
+// import { WGRUniformValue } from "../render/uniform/WGRUniformValue";
 
 class Entity3D {
 
-	private mMat = new Matrix4();
-	private mCamera: IRenderCamera;
+	// private mMat = new Matrix4();
+	// private mCamera: IRenderCamera;
 
 	uuid?: string;
 	materials: WGMaterial[];
@@ -17,10 +17,10 @@ class Entity3D {
 
 	bounds: AABB;
 	transform: ROTransform;
-	uniformTransform: WGRUniformValue;
+	// uniformTransform: WGRUniformValue;
 
 	cameraViewing = true;
-	
+
 	constructor(transformEnabled = true) {
 		this.init(transformEnabled);
 	}
@@ -28,7 +28,7 @@ class Entity3D {
 		if (transformEnabled) {
 			this.transform = ROTransform.Create();
 			this.transform.update();
-			this.uniformTransform = new WGRUniformValue(this.mMat.getLocalFS32());
+			// this.uniformTransform = new WGRUniformValue(this.mMat.getLocalFS32());
 		}
 		// console.log("this.uniformTransform: ", this.uniformTransform);
 	}
@@ -55,23 +55,27 @@ class Entity3D {
 		}
 		return true;
 	}
-	// for test
-	applyCamera(cam?: IRenderCamera): void {
+	
+	// // for test
+	// applyCamera(cam?: IRenderCamera): void {
 
-		this.mCamera = cam ? cam : this.mCamera;
+	// 	this.mCamera = cam ? cam : this.mCamera;
 
-		// const trans = this.transform;
-		// if (this.mCamera && trans) {
-		// 	const mat = this.mMat;
+	// 	// const trans = this.transform;
+	// 	// if (this.mCamera && trans) {
+	// 	// 	const mat = this.mMat;
 
-		// 	trans.update();
-		// 	mat.copyFrom(trans.getMatrix());
-		// 	mat.append((this.mCamera as any).getVPMatrix());
-		// 	this.uniformTransform.upate();
-		// }
-	}
+	// 	// 	trans.update();
+	// 	// 	mat.copyFrom(trans.getMatrix());
+	// 	// 	mat.append((this.mCamera as any).getVPMatrix());
+	// 	// 	this.uniformTransform.upate();
+	// 	// }
+	// }
 	update(): void {
-		this.applyCamera();
+		// this.applyCamera();
+		if(this.transform) {
+			this.transform.update();
+		}
 	}
 	destroy(): void {}
 }

@@ -15,6 +15,7 @@
 // import { MultiUniformTest as Demo } from "./voxgpu/sample/MultiUniformTest";
 // import { StorageTest as Demo } from "./voxgpu/sample/StorageTest";
 
+// import { VertEntityTest as Demo } from "./voxgpu/sample/VertEntityTest";
 import { DefaultEntityTest as Demo } from "./voxgpu/sample/DefaultEntityTest";
 
 let demoIns = new Demo();

@@ -37,7 +37,6 @@ export class VertColorTriangle {
 		const entity = new Entity3D(false);
 		entity.materials = [material];
 		entity.geometry = geometry;
-		entity.applyCamera(this.renderer.camera);
 
 		renderer.addEntity(entity);
 	}
