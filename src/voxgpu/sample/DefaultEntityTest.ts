@@ -13,7 +13,7 @@ import Vector3 from "../math/Vector3";
 import { WGRStorageValue } from "../render/uniform/WGRStorageValue";
 import { WGRUniformValue } from "../render/uniform/WGRUniformValue";
 
-export class StorageTest {
+export class DefaultEntityTest {
 
 	private mEntity: Entity3D;
 
@@ -22,15 +22,7 @@ export class StorageTest {
 
 	initialize(): void {
 
-		console.log("StorageTest::initialize() ...");
-
-		let rsv = new WGRStorageValue(new Float32Array(16));
-		console.log("xxxxxx rsv.isStorage(): ", rsv.isStorage());
-		console.log("xxxxxx rsv.isUniform(): ", rsv.isUniform());
-
-		let ruv = new WGRUniformValue(new Float32Array(16));
-		console.log("xxxxxx ruv.isStorage(): ", ruv.isStorage());
-		console.log("xxxxxx ruv.isUniform(): ", ruv.isUniform());
+		console.log("DefaultEntityTest::initialize() ...");
 		
 		const shdSrc = {
 			vertShaderSrc: { code: vertWGSL, uuid: "vtxShdCode" },

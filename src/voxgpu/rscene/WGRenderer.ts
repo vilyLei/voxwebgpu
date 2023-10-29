@@ -26,9 +26,7 @@ class WGRenderer {
 	private mWGCtx: WebGPUContext;
 	private mROBuilder = new WGRObjBuilder();
 	private mNodeMana = new WGEntityNodeMana();
-
 	readonly camera = new Camera();
-
 	enabled = true;
 
 	constructor(config?: WGRenderConfig) {

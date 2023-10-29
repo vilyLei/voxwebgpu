@@ -137,6 +137,7 @@ class WGRPipelineContext implements IWGRPipelineContext {
 		if (dataParams) {
 			const dps = dataParams;
 			for (let i = 0; i < dps.length; ++i) {
+				
 				const dp = dps[i];
 				if (dp.buffer && dp.bufferSize > 0) {
 					const ed = {
@@ -153,19 +154,22 @@ class WGRPipelineContext implements IWGRPipelineContext {
 		}
 
 		if (texParams && texParams.length > 0) {
-			let sampler = device.createSampler({
+
+			const sampler = device.createSampler({
 				magFilter: "linear",
 				minFilter: "linear",
 				mipmapFilter: "linear"
 			});
+
 			for (let i = 0; i < texParams.length; ++i) {
+
 				const t = texParams[i];
 				if (t.texView) {
-					let es = {
+					const es = {
 						binding: bindIndex++,
 						resource: t.sampler ? t.sampler : sampler
 					};
-					let et = {
+					const et = {
 						binding: bindIndex++,
 						resource: t.texView
 					};
@@ -179,6 +183,7 @@ class WGRPipelineContext implements IWGRPipelineContext {
 		return device.createBindGroup(desc);
 	}
 	createRenderPipeline(pipelineParams: WGRPipelineCtxParams, descParams: VtxDescParam[]): GPURenderPipeline {
+
 		const ctx = this.mWGCtx;
 		if (descParams) {
 			let location = 0;

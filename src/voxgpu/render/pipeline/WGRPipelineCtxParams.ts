@@ -20,8 +20,9 @@ interface WGRPipelineContextDefParam {
 	depthStencilEnabled?: boolean;
 }
 interface WGRShderSrcType {
-	vertShaderSrc: { code: string; uuid: string };
-	fragShaderSrc: { code: string; uuid: string };
+	vertShaderSrc?: { code: string, uuid?: string };
+	fragShaderSrc?: { code: string, uuid?: string };
+	compShaderSrc?: { code: string, uuid?: string };
 }
 interface IWGRShadeSrcParam {
 	uuid?: string;
@@ -32,7 +33,6 @@ interface IWGRShadeSrcParam {
 }
 interface WGRPipelineParamType {
 	sampleCount?: number;
-	// msaaEnabled?: boolean;
 	multisampleEnabled?: boolean;
 	depthStencilEnabled?: boolean;
 	fragmentEnabled?: boolean;

@@ -7,6 +7,7 @@ import { WGMaterial } from "../material/WGMaterial";
 import { WGRUniformValue } from "../render/uniform/WGRUniformValue";
 
 class Entity3D {
+	
 	private mMat = new Matrix4();
 	private mCamera: IRenderCamera;
 
