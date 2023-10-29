@@ -1,7 +1,7 @@
 import { GeomDataBuilder } from "../geometry/GeomDataBuilder";
 
 import vertWGSL from "./shaders/defaultEntity.vert.wgsl";
-import fragWGSL from "./shaders/defaultEntity.frag.wgsl";
+import fragWGSL from "./shaders/sampleTextureColorParam.frag.wgsl";
 
 import { WGMaterial } from "../material/WGMaterial";
 import { WGGeometry } from "../geometry/WGGeometry";
@@ -10,9 +10,10 @@ import { WGRenderer } from "../rscene/WGRenderer";
 import { WGImage2DTextureData } from "../texture/WGTextureWrapper";
 import { WGRShderSrcType } from "../material/WGMaterialDescripter";
 import Vector3 from "../math/Vector3";
-// import { WGRStorageValue } from "../render/uniform/WGRStorageValue";
+import { WGRStorageValue } from "../render/uniform/WGRStorageValue";
+import { WGRUniformValue } from "../render/uniform/WGRUniformValue";
 
-export class DefaultEntityTest {
+export class RendererContext {
 
 	private mEntity: Entity3D;
 
@@ -21,15 +22,22 @@ export class DefaultEntityTest {
 
 	initialize(): void {
 
-		console.log("DefaultEntityTest::initialize() ...");
+		console.log("RendererContext::initialize() ...");
+
+		let rsv = new WGRStorageValue(new Float32Array(16));
+		console.log("xxxxxx rsv.isStorage(): ", rsv.isStorage());
+		console.log("xxxxxx rsv.isUniform(): ", rsv.isUniform());
+
+		let ruv = new WGRUniformValue(new Float32Array(16));
+		console.log("xxxxxx ruv.isStorage(): ", ruv.isStorage());
+		console.log("xxxxxx ruv.isUniform(): ", ruv.isUniform());
 		
 		const shdSrc = {
 			vertShaderSrc: { code: vertWGSL, uuid: "vertShdCode" },
 			fragShaderSrc: { code: fragWGSL, uuid: "fragShdCode" }
 		};
 		let material = this.createMaterial(shdSrc, [new WGImage2DTextureData("static/assets/box.jpg")], ["solid"], "back");
-		// let material = this.createMaterial( shdSrc );
-		this.mEntity = this.createEntity( [material] );
+		this.mEntity = this.createEntity([material]);
 	}
 
 	private createMaterial(shdSrc: WGRShderSrcType, texDatas?: WGImage2DTextureData[], blendModes: string[] = [], faceCullMode = "back"): WGMaterial {
@@ -50,6 +58,8 @@ export class DefaultEntityTest {
 			pipelineDefParam
 		});
 
+		let ufv = new WGRStorageValue(new Float32Array([1,0,0,1]));
+		material.uniformValues = [ufv];
 		material.addTextureWithDatas( texDatas );
 
 		return material;

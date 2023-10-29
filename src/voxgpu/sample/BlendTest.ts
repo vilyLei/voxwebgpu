@@ -20,7 +20,7 @@ export class BlendTest {
 		console.log("BlendTest::initialize() ...");
 
 		const shdSrc = {
-			vertShaderSrc: { code: vertWGSL, uuid: "vtxShdCode" },
+			vertShaderSrc: { code: vertWGSL, uuid: "vertShdCode" },
 			fragShaderSrc: { code: fragWGSL, uuid: "fragShdCode" }
 		};
 		let materials = [

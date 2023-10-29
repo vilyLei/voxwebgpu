@@ -17,10 +17,10 @@ export class VertColorCube {
 		console.log("VertColorCube::initialize() ...");
 
 		const renderer = this.renderer;
-		const rgd = this.geomData.createCubeWithSize(200);
+		const rgd = this.geomData.createCube(200);
 
 		const shdSrc = {
-			vertShaderSrc: { code: vertWGSL, uuid: "vtxShdCode" },
+			vertShaderSrc: { code: vertWGSL, uuid: "vertShdCode" },
 			fragShaderSrc: { code: fragWGSL, uuid: "fragShdCode" }
 		};
 

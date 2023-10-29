@@ -31,7 +31,7 @@ export class ImgCubeMap {
 		let td = new WGImageCubeTextureData(urls);
 
 		const shdSrc = {
-			vertShaderSrc: { code: vertWGSL, uuid: "vtxShdCode" },
+			vertShaderSrc: { code: vertWGSL, uuid: "vertShdCode" },
 			fragShaderSrc: { code: fragWGSL, uuid: "fragShdCode" }
 		};
 		const material = this.createMaterial(shdSrc, [td]);
@@ -53,19 +53,13 @@ export class ImgCubeMap {
 			shaderCodeSrc: shdSrc,
 			pipelineDefParam
 		});
-		if (texTotal > 0) {
-			const texWrappers: WGTextureWrapper[] = new Array(texTotal);
-			for (let i = 0; i < texTotal; ++i) {
-				texWrappers[i] = new WGTextureWrapper({ texture: { data: texDataList[i], shdVarName: "texture" + i } });
-			}
-			material.textures = texWrappers;
-		}
+		material.addTextureWithDatas(texDataList);
 		return material;
 	}
 	private createEntity(materials: WGMaterial[]): Entity3D {
 		const renderer = this.renderer;
 
-		const rgd = this.geomData.createCubeWithSize(200);
+		const rgd = this.geomData.createCube(200);
 		const geometry = new WGGeometry()
 			.addAttribute({ shdVarName: "position", data: rgd.vs, strides: [3] })
 			.setIndexBuffer({ name: "geomIndex", data: rgd.ivs });

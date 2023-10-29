@@ -94,7 +94,7 @@ class GeomDataBuilder {
 		const vtxDescParam = { vertex: { buffers: vbufs, attributeIndicesArray: [[0], [0]] } };
 		return {ivs, vs, uvs, nvs, vbufs: vbufs, ibuf: ibuf, vtxDescParam: vtxDescParam, bounds: geom.bounds};
 	}
-	createCubeWithSize(size: number): GeomRDataType {
+	createCube(size: number): GeomRDataType {
 		size *= 0.5;
 		let minV = new Vector3(-size, -size, -size);
 		let maxV = minV.clone().scaleBy(-1);

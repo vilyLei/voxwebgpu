@@ -7,7 +7,7 @@ import { WGMaterial } from "../material/WGMaterial";
 import { WGGeometry } from "../geometry/WGGeometry";
 import { Entity3D } from "../entity/Entity3D";
 import { WGRenderer } from "../rscene/WGRenderer";
-import { WGImage2DTextureData, WGTextureWrapper } from "../texture/WGTextureWrapper";
+import { WGImage2DTextureData } from "../texture/WGTextureWrapper";
 import { WGRShderSrcType } from "../material/WGMaterialDescripter";
 
 export class MultiTexturedCube {
@@ -19,10 +19,11 @@ export class MultiTexturedCube {
 		console.log("MultiTexturedCube::initialize() ...");
 
 		const shdSrc = {
-			vertShaderSrc: { code: vertWGSL, uuid: "vtxShdCode" },
+			vertShaderSrc: { code: vertWGSL, uuid: "vertShdCode" },
 			fragShaderSrc: { code: fragWGSL, uuid: "fragShdCode" }
 		};
-		const material = this.createMaterial(shdSrc, [new WGImage2DTextureData("static/assets/box.jpg"), new WGImage2DTextureData("static/assets/default.jpg")]);
+		const texDataList = [new WGImage2DTextureData("static/assets/box.jpg"), new WGImage2DTextureData("static/assets/default.jpg")];
+		const material = this.createMaterial(shdSrc, texDataList);
 		this.createEntity([material]);
 	}
 
@@ -41,19 +42,13 @@ export class MultiTexturedCube {
 			shaderCodeSrc: shdSrc,
 			pipelineDefParam
 		});
-		if (texTotal > 0) {
-			const texWrappers: WGTextureWrapper[] = new Array(texTotal);
-			for (let i = 0; i < texTotal; ++i) {
-				texWrappers[i] = new WGTextureWrapper({ texture: { data: texDatas[i], shdVarName: "texture" + i } });
-			}
-			material.textures = texWrappers;
-		}
+		material.addTextureWithDatas(texDatas);
 		return material;
 	}
 	private createEntity(materials: WGMaterial[]): Entity3D {
 
 		const renderer = this.renderer;
-		const rgd = this.geomData.createCubeWithSize(200);
+		const rgd = this.geomData.createCube(200);
 
 		const geometry = new WGGeometry()
 			.addAttribute({ shdVarName: "position", data: rgd.vs, strides: [3] })

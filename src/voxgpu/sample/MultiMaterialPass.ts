@@ -22,7 +22,7 @@ export class MultiMaterialPass {
 		console.log("MultiMaterialPass::initialize() ...");
 
 		const shdSrc = {
-			vertShaderSrc: { code: vertWGSL, uuid: "vtxShdCode" },
+			vertShaderSrc: { code: vertWGSL, uuid: "vertShdCode" },
 			fragShaderSrc: { code: fragWGSL, uuid: "fragShdCode" }
 		};
 		let material0 = this.createMaterial(shdSrc, [new WGImage2DTextureData("static/assets/blueTransparent.png")], ["transparent"], "front");

@@ -1,4 +1,4 @@
-import { WGImage2DTextureData, WGTextureWrapperParam, WGTextureWrapper } from "../texture/WGTextureWrapper";
+import { WGImageTextureData, WGTextureWrapperParam, WGTextureWrapper } from "../texture/WGTextureWrapper";
 
 import { WGRPipelineContextDefParam, WGRShderSrcType } from "../render/pipeline/WGRPipelineCtxParams";
 import { VtxPipelinDescParam, IWGRPipelineContext } from "../render/pipeline/IWGRPipelineContext";
@@ -25,7 +25,7 @@ class WGMaterial implements WGMaterialDescripter {
 	constructor(descriptor?: WGMaterialDescripter) {
 		this.setDescriptor(descriptor);
 	}
-	addTextureWithDatas(datas: WGImage2DTextureData[], shdVarNames?: string[]): void {
+	addTextureWithDatas(datas: WGImageTextureData[], shdVarNames?: string[]): void {
 
 		if (datas) {
 			if (shdVarNames) {
@@ -39,7 +39,7 @@ class WGMaterial implements WGMaterialDescripter {
 			}
 		}
 	}
-	addTextureWithData(data: WGImage2DTextureData, shdVarName = ""): void {
+	addTextureWithData(data: WGImageTextureData, shdVarName = ""): void {
 		if (shdVarName === "") {
 			shdVarName = "texture" + (this.textures ? this.textures.length : 0);
 		}

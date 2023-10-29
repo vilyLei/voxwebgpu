@@ -19,7 +19,7 @@ export class VertColorTriangle {
 		const renderer = this.renderer;
 
 		const shdSrc = {
-			vertShaderSrc: { code: vertWGSL, uuid: "vtxShdCode" },
+			vertShaderSrc: { code: vertWGSL, uuid: "vertShdCode" },
 			fragShaderSrc: { code: fragWGSL, uuid: "fragShdCode" }
 		};
 		const material = new WGMaterial({
