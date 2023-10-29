@@ -101,7 +101,7 @@ export class MultiUniformTest {
 
 		this.mTime += 0.02;
 		this.mMixValue.setFactors(
-			Math.abs(Math.cos(this.mTime))
+			Math.abs(Math.cos(this.mTime * 0.2))
 			, Math.cos(this.mTime) * 0.5 + 0.5
 			, Math.sin(this.mTime + 2.0) * 0.5 + 0.5
 		);
