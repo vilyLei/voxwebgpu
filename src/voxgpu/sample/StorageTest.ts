@@ -56,8 +56,7 @@ export class StorageTest {
 			shaderCodeSrc: shdSrc,
 			pipelineDefParam
 		});
-		let ufv = new WGRUniformValue(new Float32Array([1,0,0,1]));
-		ufv.toStorage();
+		let ufv = new WGRStorageValue(new Float32Array([1,0,0,1]));
 		material.uniformValues = [ufv];
 
 		material.addTextureWithDatas( texDatas );
