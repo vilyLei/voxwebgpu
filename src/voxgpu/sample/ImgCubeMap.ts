@@ -1,6 +1,6 @@
 import { GeomDataBuilder } from "../geometry/GeomDataBuilder";
 
-import vertWGSL from "./shaders/vs3.vert.wgsl";
+import vertWGSL from "./shaders/vertEntityOnlyVtx.vert.wgsl";
 import fragWGSL from "./shaders/cubemap.frag.wgsl";
 
 import { WGMaterial } from "../material/WGMaterial";

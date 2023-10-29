@@ -1,6 +1,6 @@
 import { WGMaterial } from "../material/WGMaterial";
 import { WGGeometry } from "../geometry/WGGeometry";
-import { Entity3D } from "../entity/Entity3D";
+import { FixScreenEntity } from "../entity/FixScreenEntity";
 import { WGRenderer } from "../rscene/WGRenderer";
 
 import vertWGSL from "./shaders/colorTriangle.vert.wgsl";
@@ -15,9 +15,7 @@ export class VertColorTriangle {
 
 	initialize(): void {
 		console.log("VertColorTriangle::initialize() ...");
-		this.createEntity();
-	}
-	private createEntity(): void {
+		
 		const renderer = this.renderer;
 
 		const shdSrc = {
@@ -34,10 +32,9 @@ export class VertColorTriangle {
 			{ shdVarName: "color", data: colors, strides: [3] }
 		]);
 
-		const entity = new Entity3D(false);
+		const entity = new FixScreenEntity();
 		entity.materials = [material];
 		entity.geometry = geometry;
-
 		renderer.addEntity(entity);
 	}
 	run(): void {

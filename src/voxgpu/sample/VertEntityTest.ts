@@ -51,8 +51,6 @@ export class VertEntityTest {
 			pipelineDefParam
 		});
 
-		let ufv = new WGRStorageValue(new Float32Array([1,0,0,1]));
-		// material.uniformValues = [ufv];
 		material.addTextureWithDatas( texDatas );
 
 		return material;

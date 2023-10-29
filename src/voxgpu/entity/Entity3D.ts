@@ -32,7 +32,7 @@ class Entity3D {
 		}
 		// console.log("this.uniformTransform: ", this.uniformTransform);
 	}
-	initialize(): void {}
+	// initialize(): void {}
 
 	isREnabled(): boolean {
 		const ms = this.materials;
@@ -55,7 +55,7 @@ class Entity3D {
 		}
 		return true;
 	}
-	
+
 	// // for test
 	// applyCamera(cam?: IRenderCamera): void {
 

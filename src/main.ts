@@ -5,8 +5,9 @@
 
 // import { VertColorTriangle as Demo } from "./voxgpu/sample/VertColorTriangle";
 // import { VertColorCube as Demo } from "./voxgpu/sample/VertColorCube";
+// import { VertEntityTest as Demo } from "./voxgpu/sample/VertEntityTest";
 // import { ImgTexturedCube as Demo } from "./voxgpu/sample/ImgTexturedCube";
-// import { ImgCubeMap as Demo } from "./voxgpu/sample/ImgCubeMap";
+import { ImgCubeMap as Demo } from "./voxgpu/sample/ImgCubeMap";
 
 // import { MultiTexturedCube as Demo } from "./voxgpu/sample/MultiTexturedCube";
 // import { BlendTest as Demo } from "./voxgpu/sample/BlendTest";
@@ -15,8 +16,7 @@
 // import { MultiUniformTest as Demo } from "./voxgpu/sample/MultiUniformTest";
 // import { StorageTest as Demo } from "./voxgpu/sample/StorageTest";
 
-// import { VertEntityTest as Demo } from "./voxgpu/sample/VertEntityTest";
-import { DefaultEntityTest as Demo } from "./voxgpu/sample/DefaultEntityTest";
+// import { DefaultEntityTest as Demo } from "./voxgpu/sample/DefaultEntityTest";
 
 let demoIns = new Demo();
 function main(): void {

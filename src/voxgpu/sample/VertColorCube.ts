@@ -1,7 +1,7 @@
 import { GeomDataBuilder } from "../geometry/GeomDataBuilder";
 
-import vertWGSL from "./shaders/vertToColor.vert.wgsl";
-import fragWGSL from "./shaders/vertexPositionColor.frag.wgsl";
+import vertWGSL from "./shaders/vertEntityOnlyVtx.vert.wgsl";
+import fragWGSL from "./shaders/vertEntityOnlyVtx.frag.wgsl";
 
 import { WGMaterial } from "../material/WGMaterial";
 import { WGGeometry } from "../geometry/WGGeometry";
