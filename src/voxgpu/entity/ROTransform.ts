@@ -27,8 +27,9 @@ export default class ROTransform implements IROTransform {
 	static readonly TRANSFORM = 7;
 	static readonly PARENT_MAT = 8;
 
-	private mUid = 0;
-	private mFS32: Float32Array = null;
+	private mUid = ROTransform.sUid++;
+	private mFS32: Float32Array | null = null;
+	
 	// It is a flag that need inverted mat yes or no
 	private mInvMat = false;
 	private mRot = false;
@@ -41,12 +42,12 @@ export default class ROTransform implements IROTransform {
 	 * the default value is 0
 	 */
 	__$transUpdate = 0;
+
 	updatedStatus = ROTransform.POSITION;
 	updateStatus = ROTransform.TRANSFORM;
 
 	constructor(fs32?: Float32Array) {
 
-		this.mUid = ROTransform.sUid++;
 		this.mDt = fs32 ? 1 : 0;
 		this.mFS32 = fs32 ? fs32 : new Float32Array(16);
 	}
@@ -231,13 +232,13 @@ export default class ROTransform implements IROTransform {
 		pv.z = this.mFS32[10];
 	}
 	// local to world spcae matrix
-	private mOMat: Matrix4 = null;
-	private mLocalMat: Matrix4 = null;
-	private mParentMat: Matrix4 = null;
-	private mToParentMat: Matrix4 = null;
+	private mOMat: Matrix4 | null = null;
+	private mLocalMat: Matrix4 | null = null;
+	private mParentMat: Matrix4 | null = null;
+	private mToParentMat: Matrix4 | null = null;
 	private mToParentMatFlag = true;
 	// word to local matrix
-	private m_invOmat: Matrix4 = null;
+	private mInvOmat: Matrix4 | null = null;
 
 	localToGlobal(pv: IVector3): void {
 		this.getMatrix().transformVectorSelf(pv);
@@ -247,18 +248,18 @@ export default class ROTransform implements IROTransform {
 	}
 	// maybe need call update function
 	getInvMatrix(): Matrix4 {
-		if (this.m_invOmat != null) {
+		if (this.mInvOmat) {
 			if (this.mInvMat) {
-				this.m_invOmat.copyFrom(this.mOMat);
-				this.m_invOmat.invert();
+				this.mInvOmat.copyFrom(this.mOMat);
+				this.mInvOmat.invert();
 			}
 		} else {
-			this.m_invOmat = Matrix4Pool.GetMatrix();
-			this.m_invOmat.copyFrom(this.mOMat);
-			this.m_invOmat.invert();
+			this.mInvOmat = Matrix4Pool.GetMatrix();
+			this.mInvOmat.copyFrom(this.mOMat);
+			this.mInvOmat.invert();
 		}
 		this.mInvMat = false;
-		return this.m_invOmat;
+		return this.mInvOmat;
 	}
 	getLocalMatrix(): Matrix4 {
 		if (this.updateStatus > 0) {
@@ -330,14 +331,14 @@ export default class ROTransform implements IROTransform {
 	}
 	private destroy(): void {
 		// 当自身被完全移出RenderWorld之后才能执行自身的destroy
-		if (this.m_invOmat) Matrix4Pool.RetrieveMatrix(this.m_invOmat);
+		if (this.mInvOmat) Matrix4Pool.RetrieveMatrix(this.mInvOmat);
 		if (this.mLocalMat) {
 			Matrix4Pool.RetrieveMatrix(this.mLocalMat);
 		}
 		if (this.mOMat && this.mOMat != this.mLocalMat) {
 			Matrix4Pool.RetrieveMatrix(this.mOMat);
 		}
-		this.m_invOmat = null;
+		this.mInvOmat = null;
 		this.mLocalMat = null;
 		this.mOMat = null;
 		this.mParentMat = null;
@@ -406,27 +407,28 @@ export default class ROTransform implements IROTransform {
 
 	private static sFBUSY = 1;
 	private static sFFREE = 0;
-	private static m_unitFlagList: number[] = [];
-	private static m_unitList: ROTransform[] = [];
-	private static m_freeIdList: number[] = [];
+	private static sFlags: number[] = [];
+	private static sUList: ROTransform[] = [];
+	private static sFreeIds: number[] = [];
 
 	private static GetFreeId(): number {
-		if (ROTransform.m_freeIdList.length > 0) {
-			return ROTransform.m_freeIdList.pop();
+		if (ROTransform.sFreeIds.length > 0) {
+			return ROTransform.sFreeIds.pop();
 		}
 		return -1;
 	}
-	static Create(matrix: Matrix4 = null, fs32: Float32Array = null): ROTransform {
-		let unit: ROTransform = null;
-		let index = fs32 != null ? -1 : ROTransform.GetFreeId();
+	static Create(matrix?: Matrix4, fs32?: Float32Array): ROTransform {
+
+		let unit: ROTransform;
+		const index = fs32 ? -1 : ROTransform.GetFreeId();
 		if (index >= 0) {
-			unit = ROTransform.m_unitList[index];
-			ROTransform.m_unitFlagList[index] = ROTransform.sFBUSY;
+			unit = ROTransform.sUList[index];
+			ROTransform.sFlags[index] = ROTransform.sFBUSY;
 			unit.rebuildFS32Data();
 		} else {
 			unit = new ROTransform(fs32);
-			ROTransform.m_unitList.push(unit);
-			ROTransform.m_unitFlagList.push(ROTransform.sFBUSY);
+			ROTransform.sUList.push(unit);
+			ROTransform.sFlags.push(ROTransform.sFBUSY);
 		}
 		if (!matrix) {
 			unit.mOMat = Matrix4Pool.GetMatrix();
@@ -436,11 +438,11 @@ export default class ROTransform implements IROTransform {
 		unit.mLocalMat = unit.mOMat;
 
 		if (!fs32) {
-			let ida = ROTransform.sInitData;
-			if (unit.mFS32 == null) {
-				unit.mFS32 = ida.slice(0);
-			} else {
+			const ida = ROTransform.sInitData;
+			if (unit.mFS32) {
 				unit.mFS32.set(ida, 0);
+			} else {
+				unit.mFS32 = ida.slice(0);
 			}
 		}
 		unit.uniformv = new WGRUniformValue(unit.mOMat.getLocalFS32());
@@ -448,10 +450,13 @@ export default class ROTransform implements IROTransform {
 	}
 
 	static Restore(pt: ROTransform): void {
-		if (pt != null && ROTransform.m_unitFlagList[pt.getUid()] == ROTransform.sFBUSY) {
-			let uid = pt.getUid();
-			ROTransform.m_freeIdList.push(uid);
-			ROTransform.m_unitFlagList[uid] = ROTransform.sFFREE;
+
+		if (pt && ROTransform.sFlags[pt.getUid()] == ROTransform.sFBUSY) {
+
+			const uid = pt.getUid();
+			ROTransform.sFreeIds.push(uid);
+			ROTransform.sFlags[uid] = ROTransform.sFFREE;
+
 			pt.destroy();
 		}
 	}
