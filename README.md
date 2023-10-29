@@ -1,2 +1,2 @@
 # voxwebgpu
-A lightweight webgpu computing and 3d-rendering system 
+A lightweight webgpu computing and 2d/3d rendering system 
