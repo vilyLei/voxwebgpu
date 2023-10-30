@@ -45,7 +45,7 @@ class GeomDataBuilder {
 		let uvsBuf = this.mWGCtx ? this.mWGCtx.buffer.createVertexBuffer(uvs, 0, [uvs.length / vtTotal]) : null;
 		vbufs = [vsBuf, uvsBuf];
 
-		ibuf = this.mWGCtx.buffer.createIndexBuffer(ivs);
+		ibuf = this.mWGCtx ? this.mWGCtx.buffer.createIndexBuffer(ivs) : null;
 
 		const vtxDescParam = { vertex: { buffers: vbufs, attributeIndicesArray: [[0], [0]] } } as VtxPipelinDescParam;
 		return {ivs, vs, uvs, nvs, vbufs: vbufs, ibuf: ibuf, vtxDescParam: vtxDescParam, bounds: geom.bounds};
@@ -63,11 +63,11 @@ class GeomDataBuilder {
 		let ivs = geom.getIVS();
 
 		let vtTotal = vs.length / 3;
-		let vsBuf = this.mWGCtx.buffer.createVertexBuffer(vs, 0, [3]);
-		let uvsBuf = this.mWGCtx.buffer.createVertexBuffer(uvs, 0, [uvs.length / vtTotal]);
+		let vsBuf = this.mWGCtx ? this.mWGCtx.buffer.createVertexBuffer(vs, 0, [3]) : null;
+		let uvsBuf = this.mWGCtx ? this.mWGCtx.buffer.createVertexBuffer(uvs, 0, [uvs.length / vtTotal]) : null;
 		vbufs = [vsBuf, uvsBuf];
 
-		ibuf = this.mWGCtx.buffer.createIndexBuffer(ivs);
+		ibuf = this.mWGCtx ? this.mWGCtx.buffer.createIndexBuffer(ivs) : null;
 
 		const vtxDescParam = { vertex: { buffers: vbufs, attributeIndicesArray: [[0], [0]] } };
 		return {ivs, vs, uvs, nvs, vbufs: vbufs, ibuf: ibuf, vtxDescParam: vtxDescParam, bounds: geom.bounds};

@@ -7,6 +7,8 @@ import { WGRUniformValue } from "./WGRUniformValue";
 import { WGRUniformParam, WGRUniformTexParam, WGRUniformWrapper, IWGRUniformContext } from "./IWGRUniformContext";
 
 class UCtxInstance {
+	private static sUid = 0;
+	private mUid = UCtxInstance.sUid++;
 	private mList: WGRUniformWrapper[] = [];
 	private mPipelineCtx: IWGRPipelineContext | null = null;
 	private mBuffers: GPUBuffer[] | null = null;
@@ -27,9 +29,10 @@ class UCtxInstance {
 		return this.mBuffers !== null;
 	}
 	runBegin(): void {
-		console.log("XXX XXX runBegin(), this.isEnabled(): ", this.isEnabled());
+		console.log("UCtxInstance::runBegin(), XXX XXX runBegin(), this.isEnabled(): ", this.isEnabled());
 		if (!this.mBuffers) {
 			let ls = this.mList;
+			console.log("UCtxInstance::runBegin(), XXX XXX runBegin(), this.mList.length: ", this.mList.length);
 			if (ls.length > 0) {
 				this.mBuffers = [];
 				let wp = ls[0];
@@ -85,6 +88,8 @@ class UCtxInstance {
 			throw Error("Illegal operation !!!");
 		}
 		const index = this.getFreeIndex();
+		console.log("UCtxInstance::createUniform(), index: ", index, ", mUid: ",this.mUid);
+
 		const u = new WGRUniform(this.mPipelineCtx, this);
 		u.groupIndex = groupIndex;
 
@@ -99,6 +104,7 @@ class UCtxInstance {
 			wrapper.texParams = texParams;
 			this.mList.push(wrapper);
 		}
+		console.log("UCtxInstance::createUniform(), this.mList.length: ", this.mList.length);
 
 		return u;
 	}
@@ -171,7 +177,7 @@ class WGRUniformContext implements IWGRUniformContext {
 			ls[i].runBegin();
 			if(ls[i].isEnabled()) {
 				ls.splice(i, 1);
-			}else {				
+			}else {
 				i++;
 			}
 		}

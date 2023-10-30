@@ -8,6 +8,7 @@ import { IWGMaterial } from "./IWGMaterial";
 
 class WGMaterial implements IWGMaterial {
 	private mRCtx: IWGRPipelineContext;
+	private mREnabled = false;
 	/**
 	 * unique shading process uuid
 	 */
@@ -58,6 +59,9 @@ class WGMaterial implements IWGMaterial {
 		}
 	}
 	isREnabled(): boolean {
+		if(this.mREnabled) {
+			return this.mREnabled;
+		}
 		const texs = this.textures;
 		if (texs) {
 			for (let i = 0; i < texs.length; ++i) {
@@ -67,7 +71,8 @@ class WGMaterial implements IWGMaterial {
 				}
 			}
 		}
-		return true;
+		this.mREnabled = true;
+		return this.mREnabled;
 	}
 	getRCtx(): IWGRPipelineContext {
 		return this.mRCtx;

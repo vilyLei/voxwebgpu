@@ -16,6 +16,7 @@ class WGRenderPassBlock {
 	private mPipelineCtxs: WGRPipelineContext[] = [];
 	private mUnits: IWGRUnit[] = [];
 	private mRPass = new WGRendererPass();
+	private mpctxMap: Map<string, WGRPipelineContext> = new Map();
 
 	camera: Camera;
 	rcommands: GPUCommandBuffer[];
@@ -29,6 +30,7 @@ class WGRenderPassBlock {
 		return this.mWGCtx;
 	}
 	initialize(wgCtx: WebGPUContext, param?: WGRPassParams): void {
+
 		if (!this.mWGCtx && wgCtx) {
 			this.mWGCtx = wgCtx;
 			this.mRPass.initialize(wgCtx);
@@ -70,9 +72,22 @@ class WGRenderPassBlock {
 		}
 		return u;
 	}
-
 	createRenderPipelineCtxWithMaterial(material: WGMaterialDescripter): WGRPipelineContext {
-		return this.createRenderPipelineCtx(material.shaderCodeSrc, material.pipelineVtxParam, material.pipelineDefParam);
+
+		const flag = material.shadinguuid && material.shadinguuid !== "";
+		const map = this.mpctxMap;
+		if(flag) {
+			if(map.has(material.shadinguuid)) {
+				console.log("WGRenderPassBlock::createRenderPipelineCtxWithMaterial(), apply old ctx.");
+				return map.get(material.shadinguuid);
+			}
+		}
+		const ctx = this.createRenderPipelineCtx(material.shaderCodeSrc, material.pipelineVtxParam, material.pipelineDefParam);
+		if(flag) {
+			map.set(material.shadinguuid, ctx);
+		}
+		console.log("WGRenderPassBlock::createRenderPipelineCtxWithMaterial(), apply new ctx.");
+		return ctx;
 	}
 	// pipelineParam value likes {blendMode: "transparent", depthWriteEnabled: false, faceCullMode: "back"}
 	createRenderPipelineCtx(

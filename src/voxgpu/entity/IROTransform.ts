@@ -26,7 +26,9 @@ export default interface IROTransform {
     offsetPosition(pv: IVector3): void;
     setPosition(pv: IVector3): void;
     getPosition(pv: IVector3): void;
+
     copyPositionFrom(t: IROTransform): void;
+
     getRotationX(): number;
     getRotationY(): number;
     getRotationZ(): number;
@@ -34,6 +36,9 @@ export default interface IROTransform {
     setRotationY(degrees: number): void;
     setRotationZ(degrees: number): void;
     setRotationXYZ(rx: number, ry: number, rz: number): void;
+    setRotation(pv: IVector3): void;
+    getRotation(pv: IVector3): void;
+
     getScaleX(): number;
     getScaleY(): number;
     getScaleZ(): number;
@@ -41,16 +46,18 @@ export default interface IROTransform {
     setScaleY(p: number): void;
     setScaleZ(p: number): void;
     setScaleXYZ(sx: number, sy: number, sz: number): void;
-    setScale(s: number): void;
-    getRotationXYZ(pv: IVector3): void;
-    getScaleXYZ(pv: IVector3): void;
+    setScale(pv: IVector3): void;
+    getScale(pv: IVector3): void;
+    setScaleAll(s: number): void;
+
     localToGlobal(pv: IVector3): void;
     globalToLocal(pv: IVector3): void;
+
     // maybe need call update function
     getInvMatrix(): IMatrix4;
     getLocalMatrix(): IMatrix4;
     /**
-     * 
+     *
      * @param updateEnabled the default value is false
      */
     getMatrix(updateEnabled?: boolean): IMatrix4;
@@ -60,7 +67,7 @@ export default interface IROTransform {
     setParentMatrix(matrix: IMatrix4): void;
     getParentMatrix(): IMatrix4;
     updateMatrixData(matrix: IMatrix4): void;
-    
+
 
     copyFrom(src: IROTransform): void;
     forceUpdate(): void;

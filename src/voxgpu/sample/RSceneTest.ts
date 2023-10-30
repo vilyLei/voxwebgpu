@@ -1,4 +1,4 @@
-import { GeomDataBuilder } from "../geometry/GeomDataBuilder";
+import { GeomDataBuilder, GeomRDataType } from "../geometry/GeomDataBuilder";
 
 import vertWGSL from "./shaders/defaultEntity.vert.wgsl";
 import fragWGSL from "./shaders/sampleTextureColorParam.frag.wgsl";
@@ -15,18 +15,14 @@ import { RendererScene } from "../rscene/RendererScene";
 import { MouseInteraction } from "../ui/MouseInteraction";
 
 export class RSceneTest {
-
-	private mEntity: Entity3D;
 	private mRscene = new RendererScene();
 
 	geomData = new GeomDataBuilder();
 
 	initialize(): void {
-
 		console.log("RSceneTest::initialize() ...");
 
-		const rc = this.mRscene;
-		rc.initialize();
+		this.mRscene.initialize();
 
 		this.initEvent();
 
@@ -35,21 +31,18 @@ export class RSceneTest {
 			fragShaderSrc: { code: fragWGSL, uuid: "fragShdCode" }
 		};
 		let material = this.createMaterial(shdSrc, [new WGImage2DTextureData("static/assets/box.jpg")], ["solid"], "back");
-		this.mEntity = this.createEntity([material]);
+		this.createEntities([material], new Vector3(0,200,0));
 	}
-	private initEvent(): void {
 
+	private initEvent(): void {
 		const rc = this.mRscene;
 		rc.addEventListener(MouseEvent.MOUSE_DOWN, this, this.mouseDown);
-		
 		new MouseInteraction().initialize(rc, 0, false).setAutoRunning(true);
 	}
-
 	private mouseDown(evt: MouseEvent): void {
 		console.log("mousedown evt call ...");
 	}
 	private createMaterial(shdSrc: WGRShderSrcType, texDatas?: WGImage2DTextureData[], blendModes: string[] = [], faceCullMode = "back"): WGMaterial {
-
 		let pipelineDefParam = {
 			depthWriteEnabled: true,
 			faceCullMode,
@@ -66,39 +59,52 @@ export class RSceneTest {
 			pipelineDefParam
 		});
 
-		let ufv = new WGRStorageValue(new Float32Array([1, 0, 0, 1]));
+		let ufv = new WGRStorageValue(new Float32Array([1, 1, 1, 1]));
 		material.uniformValues = [ufv];
 		material.addTextureWithDatas(texDatas);
 
 		return material;
 	}
 
-	private createEntity(materials: WGMaterial[], pv?: Vector3): Entity3D {
-
-		const rc = this.mRscene;
-
-		const rgd = this.geomData.createSphere(150, 30, 30);
+	private createGeom(rgd: GeomRDataType): WGGeometry {
 		const geometry = new WGGeometry()
 			.addAttribute({ shdVarName: "position", data: rgd.vs, strides: [3] })
 			.addAttribute({ shdVarName: "uv", data: rgd.uvs, strides: [2] })
 			.setIndexBuffer({ name: "geomIndex", data: rgd.ivs });
-
-		const entity = new Entity3D();
-		entity.materials = materials;
-		entity.geometry = geometry;
-		entity.transform.setPosition(pv ? pv : new Vector3());
-
-		rc.addEntity(entity);
-		return entity;
+		return geometry;
 	}
-	
-	private mRotY = 0.0;
+	private createEntities(materials: WGMaterial[], pv?: Vector3): void {
+		const rc = this.mRscene;
+		pv = pv ? pv : new Vector3();
+
+		let sphGeom = this.createGeom(this.geomData.createSphere(30, 30, 30));
+		let boxGeom = this.createGeom(this.geomData.createCube(100));
+		let torusGeom = this.createGeom(this.geomData.createTorus(100));
+
+		const floor = new Entity3D();
+		floor.materials = materials;
+		floor.geometry = boxGeom;
+		floor.transform.setPosition(new Vector3(0, -150, 0).addBy(pv));
+		floor.transform.setScaleXYZ(8, 0.1, 8);
+		rc.addEntity(floor);
+
+		for (let i = 0; i < 6; ++i) {
+			const torus = new Entity3D();
+			torus.materials = materials;
+			torus.geometry = torusGeom;
+			torus.transform.setPosition(new Vector3(-200 + i * 80, 0, 0).addBy(pv));
+			rc.addEntity(torus);
+		}
+		for (let i = 0; i < 12; ++i) {
+			const sphere = new Entity3D();
+			sphere.materials = materials;
+			sphere.geometry = sphGeom;
+			sphere.transform.setPosition(new Vector3(-400 + i * 80, 0, 0).addBy(pv));
+			rc.addEntity(sphere);
+		}
+	}
+
 	run(): void {
-
-		this.mRotY += 0.5;
-		this.mEntity.transform.setRotationXYZ(0, this.mRotY, this.mRotY + 0.5);
-		this.mEntity.update();
-
 		this.mRscene.run();
 	}
 }

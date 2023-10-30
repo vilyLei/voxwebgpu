@@ -174,9 +174,15 @@ export default class ROTransform implements IROTransform {
 		this.mRot = true;
 		this.updateTo();
 	}
-	setRotationV3(v3: IVector3): void {
-		this.setRotationXYZ(v3.x, v3.y, v3.z);
+	setRotation(pv: IVector3): void {
+		this.setRotationXYZ(pv.x, pv.y, pv.z);
 	}
+	getRotation(pv: IVector3): void {
+		pv.x = this.mFS32[1];
+		pv.y = this.mFS32[6];
+		pv.z = this.mFS32[9];
+	}
+
 	getScaleX(): number {
 		return this.mFS32[0];
 	}
@@ -210,10 +216,16 @@ export default class ROTransform implements IROTransform {
 		this.updatedStatus |= ROTransform.SCALE;
 		this.updateTo();
 	}
-	setScaleV3(v3: IVector3): void {
+	setScale(v3: IVector3): void {
 		this.setScaleXYZ(v3.x, v3.y, v3.z);
 	}
-	setScale(s: number): void {
+	getScale(v3: IVector3): void {
+		v3.x = this.mFS32[0];
+		v3.y = this.mFS32[5];
+		v3.z = this.mFS32[10];
+	}
+
+	setScaleAll(s: number): void {
 		this.mFS32[0] = s;
 		this.mFS32[5] = s;
 		this.mFS32[10] = s;
@@ -221,17 +233,8 @@ export default class ROTransform implements IROTransform {
 		this.updatedStatus |= ROTransform.SCALE;
 		this.updateTo();
 	}
-	getRotationXYZ(pv: IVector3): void {
-		pv.x = this.mFS32[1];
-		pv.y = this.mFS32[6];
-		pv.z = this.mFS32[9];
-	}
-	getScaleXYZ(pv: IVector3): void {
-		pv.x = this.mFS32[0];
-		pv.y = this.mFS32[5];
-		pv.z = this.mFS32[10];
-	}
-	// local to world spcae matrix
+
+	// local to world space matrix
 	private mOMat: Matrix4 | null = null;
 	private mLocalMat: Matrix4 | null = null;
 	private mParentMat: Matrix4 | null = null;

@@ -18,9 +18,9 @@
 // import { MultiUniformTest as Demo } from "./voxgpu/sample/MultiUniformTest";
 // import { StorageTest as Demo } from "./voxgpu/sample/StorageTest";
 
-// import { RSceneTest as Demo } from "./voxgpu/sample/RSceneTest";
+import { RSceneTest as Demo } from "./voxgpu/sample/RSceneTest";
 // import { REntity3DTest as Demo } from "./voxgpu/sample/REntity3DTest";
-import { REntity3DContainerTest as Demo } from "./voxgpu/sample/REntity3DContainerTest";
+// import { REntity3DContainerTest as Demo } from "./voxgpu/sample/REntity3DContainerTest";
 
 
 let demoIns = new Demo();

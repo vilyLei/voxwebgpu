@@ -1,7 +1,7 @@
 import { GPUBlendComponent } from "../../gpu/GPUBlendComponent";
 import { GPUColorTargetState } from "../../gpu/GPUColorTargetState";
 import { GPUDepthStencilState } from "../../gpu/GPUDepthStencilState";
-import { GPUDevice } from "../../gpu/GPUDevice";
+// import { GPUDevice } from "../../gpu/GPUDevice";
 import { GPUFragmentState } from "../../gpu/GPUFragmentState";
 import { GPUMultisampleObject } from "../../gpu/GPUMultisampleObject";
 import { GPUPrimitiveState } from "../../gpu/GPUPrimitiveState";
@@ -270,42 +270,7 @@ class WGRPipelineCtxParams implements GPURenderPipelineDescriptor {
 			frag.targets[targetIndex] = colorState;
 		}
 	}
-	build(device: GPUDevice): void {
-		let shdModule = this.shaderSrc
-			? device.createShaderModule({
-					label: "shd",
-					code: this.shaderSrc.code
-			  })
-			: null;
-		let vertShdModule = this.vertShaderSrc
-			? device.createShaderModule({
-					label: "vertShd",
-					code: this.vertShaderSrc.code
-			  })
-			: shdModule;
-		let fragShdModule = this.fragShaderSrc
-			? device.createShaderModule({
-					label: "fragShd",
-					code: this.fragShaderSrc.code
-			  })
-			: shdModule;
-
-		const vert = this.vertex;
-		vert.module = vertShdModule;
-		if (this.vertShaderSrc.vertEntryPoint) {
-			vert.entryPoint = this.vertShaderSrc.vertEntryPoint;
-		}
-
-		const frag = this.fragment;
-		if (frag) {
-			frag.module = fragShdModule;
-			if (this.fragShaderSrc.fragEntryPoint) {
-				frag.entryPoint = this.fragShaderSrc.fragEntryPoint;
-			}
-		}
-	}
-
-	setVertexBufferArrayStrideAt(arrayStride: number, bufferIndex: number = 0): void {
+	setVertexBufferArrayStrideAt(arrayStride: number, bufferIndex = 0): void {
 		const vert = this.vertex;
 		if (vert.buffers.length < 1) {
 			this.addVertexBufferLayout({ arrayStride: 0, attributes: [], stepMode: "vertex" });
@@ -316,7 +281,7 @@ class WGRPipelineCtxParams implements GPURenderPipelineDescriptor {
 	 * @param attribute for example: { shaderLocation: 0, offset: 0, format: "float32x4" }
 	 * @param bufferIndex an index of vertex.buffers
 	 */
-	addVertexBufferAttribute(attribute: GPUVertexAttribute, bufferIndex: number = 0): void {
+	addVertexBufferAttribute(attribute: GPUVertexAttribute, bufferIndex = 0): void {
 		const vert = this.vertex;
 		// console.log("vert.buffers: ", vert.buffers);
 		if (vert.buffers.length < 1) {

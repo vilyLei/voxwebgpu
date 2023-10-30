@@ -7,5 +7,8 @@ fn main(
   @location(0) fragUV: vec2<f32>,
   @location(1) fragPosition: vec4<f32>
 ) -> @location(0) vec4<f32> {
-  return textureSample(myTexture, mySampler, fragUV) * fragPosition * param;
+
+  var color4 = textureSample(myTexture, mySampler, fragUV) * fragPosition * param;
+  color4 = vec4(color4.xyz, 1.0);
+  return color4;
 }

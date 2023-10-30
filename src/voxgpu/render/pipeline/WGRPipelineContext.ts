@@ -10,15 +10,16 @@ import { GPUTextureView } from "../../gpu/GPUTextureView";
 import { WebGPUContext } from "../../gpu/WebGPUContext";
 import { BufDataParamType, VtxDescParam, VtxPipelinDescParam, IWGRPipelineContext } from "./IWGRPipelineContext";
 import { WGRPipelineCtxParams } from "./WGRPipelineCtxParams";
+import { WGRPipelineShader } from "./WGRPipelineShader";
 import { WGRUniformParam, WGRUniformContext } from "../uniform/WGRUniformContext";
 import { GPUQueue } from "../../gpu/GPUQueue";
 
 class WGRPipelineContext implements IWGRPipelineContext {
-
 	private mInit = true;
 	private mWGCtx: WebGPUContext;
 	private mBGLayouts: GPUBindGroupLayout[] = new Array(8);
 	private mPipelineParams: WGRPipelineCtxParams;
+	private mShader = new WGRPipelineShader();
 
 	pipeline: GPURenderPipeline = new GPURenderPipelineEmpty();
 	queue: GPUQueue;
@@ -38,8 +39,9 @@ class WGRPipelineContext implements IWGRPipelineContext {
 			const ctx = this.mWGCtx;
 			const p = this.mPipelineParams;
 			if (p) {
-				p.build(ctx.device);
-				console.log("pipeline param:\n", p);
+				// p.build(ctx.device);
+				this.mShader.build(p);
+				console.log("WGRPipelineContext::init(), param:\n", p);
 				this.pipeline = ctx.device.createRenderPipeline(p);
 			}
 		}
@@ -52,8 +54,11 @@ class WGRPipelineContext implements IWGRPipelineContext {
 		this.uniform.runEnd();
 	}
 	initialize(wgCtx: WebGPUContext): void {
-		this.mWGCtx = wgCtx;
-		this.uniform.initialize(this);
+		if (wgCtx && !this.mWGCtx) {
+			this.mWGCtx = wgCtx;
+			this.uniform.initialize(this);
+			this.mShader.initialize(wgCtx);
+		}
 	}
 
 	getWGCtx(): WebGPUContext {
@@ -72,16 +77,15 @@ class WGRPipelineContext implements IWGRPipelineContext {
 		const buf = this.mWGCtx.device.createBuffer(desc);
 		return buf;
 	}
-	createUniformsBuffer(params: { sizes: number[], usage: number }, mappedAtCreation = false): GPUBuffer | null {
+	createUniformsBuffer(params: { sizes: number[]; usage: number }, mappedAtCreation = false): GPUBuffer | null {
 		if (params && params.sizes.length > 0) {
 			let total = params.sizes.length;
 			let size = params.sizes[0];
 			let bufSize = size;
-			let segs: { index: number, size: number }[] = new Array(total);
+			let segs: { index: number; size: number }[] = new Array(total);
 			segs[0] = { index: 0, size: size };
 
 			for (let i = 1; i < total; ++i) {
-
 				size = size <= 256 ? size : size % 256;
 				size = size > 0 ? 256 - size : 0;
 
@@ -137,7 +141,6 @@ class WGRPipelineContext implements IWGRPipelineContext {
 		if (dataParams) {
 			const dps = dataParams;
 			for (let i = 0; i < dps.length; ++i) {
-				
 				const dp = dps[i];
 				if (dp.buffer && dp.bufferSize > 0) {
 					const ed = {
@@ -154,7 +157,6 @@ class WGRPipelineContext implements IWGRPipelineContext {
 		}
 
 		if (texParams && texParams.length > 0) {
-
 			const sampler = device.createSampler({
 				magFilter: "linear",
 				minFilter: "linear",
@@ -162,7 +164,6 @@ class WGRPipelineContext implements IWGRPipelineContext {
 			});
 
 			for (let i = 0; i < texParams.length; ++i) {
-
 				const t = texParams[i];
 				if (t.texView) {
 					const es = {
@@ -183,7 +184,6 @@ class WGRPipelineContext implements IWGRPipelineContext {
 		return device.createBindGroup(desc);
 	}
 	createRenderPipeline(pipelineParams: WGRPipelineCtxParams, descParams: VtxDescParam[]): GPURenderPipeline {
-
 		const ctx = this.mWGCtx;
 		if (descParams) {
 			let location = 0;
@@ -205,7 +205,8 @@ class WGRPipelineContext implements IWGRPipelineContext {
 				if (pipelineParams.buildDeferred) {
 					this.mPipelineParams = pipelineParams;
 				} else {
-					pipelineParams.build(ctx.device);
+					// pipelineParams.build(ctx.device);
+					this.mShader.build( pipelineParams );
 				}
 			}
 		}
