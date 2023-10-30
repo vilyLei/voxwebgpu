@@ -1,4 +1,4 @@
-import { GeomDataBuilder } from "../geometry/GeomDataBuilder";
+import { GeomDataBuilder, GeomRDataType } from "../geometry/GeomDataBuilder";
 
 import vertWGSL from "./shaders/defaultEntityNormal.vert.wgsl";
 import fragWGSL from "./shaders/sampleTextureNormalParam.frag.wgsl";
@@ -17,7 +17,7 @@ import { MouseInteraction } from "../ui/MouseInteraction";
 import { TransObject } from "./base/TransObject";
 import Color4 from "../material/Color4";
 
-export class REntity3DTest {
+export class SimpleLightTest {
 	private mObjs: TransObject[] = [];
 
 	private mRscene = new RendererScene();
@@ -25,7 +25,7 @@ export class REntity3DTest {
 	geomData = new GeomDataBuilder();
 
 	initialize(): void {
-		console.log("REntity3DTest::initialize() ...");
+		console.log("SimpleLightTest::initialize() ...");
 
 		const rc = this.mRscene;
 		rc.initialize();
@@ -90,20 +90,19 @@ export class REntity3DTest {
 
 		return material;
 	}
+
+	private createGeom(rgd: GeomRDataType): WGGeometry {
+		const geometry = new WGGeometry()
+			.addAttribute({ shdVarName: "position", data: rgd.vs, strides: [3] })
+			.addAttribute({ shdVarName: "uv", data: rgd.uvs, strides: [2] })
+			.addAttribute({ shdVarName: "normal", data: rgd.nvs, strides: [3] })
+			.setIndexBuffer({ name: "geomIndex", data: rgd.ivs });
+		return geometry;
+	}
 	private createEntity(materials: WGMaterial[], pv?: Vector3): Entity3D {
 		const rc = this.mRscene;
-
-		// const rgd = this.geomData.createSphere(150, 30, 30);
-
 		let geometry = this.mObjs.length > 0 ? this.mObjs[0].entity.geometry : null;
-		if (!geometry) {
-			const rgd = this.geomData.createCube(200);
-			geometry = new WGGeometry()
-				.addAttribute({ shdVarName: "position", data: rgd.vs, strides: [3] })
-				.addAttribute({ shdVarName: "uv", data: rgd.uvs, strides: [2] })
-				.addAttribute({ shdVarName: "normal", data: rgd.nvs, strides: [3] })
-				.setIndexBuffer({ name: "geomIndex", data: rgd.ivs });
-		}
+		geometry = geometry ? geometry : this.createGeom(this.geomData.createCube(200));
 
 		const entity = new Entity3D();
 		entity.materials = materials;
@@ -119,7 +118,6 @@ export class REntity3DTest {
 		for (let i = 0; i < this.mObjs.length; ++i) {
 			this.mObjs[i].run();
 		}
-
 		this.mRscene.run();
 	}
 }

@@ -35,7 +35,7 @@ class WGEntityNodeMana {
 					}
 				}
 				if (entity.isREnabled()) {
-					console.log("WGEntityNodeMana::update(), ppp a 01");
+					// console.log("WGEntityNodeMana::update(), ppp a 01");
 					ls.splice(i, 1);
 					--i;
 					this.target.addEntity(entity, node.processIndex, node.deferred);
@@ -52,7 +52,7 @@ class WGEntityNodeMana {
 				const tex = texs[i];
 				if (tex.texture && tex.texture.data && !tex.texture.texture) {
 					tex.texture.texture = tex.texture.data.build(ctx);
-					console.log("WGEntityNodeMana::updateMaterial(), rrr a 01");
+					// console.log("WGEntityNodeMana::updateMaterial(), rrr a 01");
 				}
 			}
 		}

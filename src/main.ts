@@ -2,7 +2,6 @@
 ////////////////////////////           WEB-GPU               /////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////
 
-
 // import { VertColorTriangle as Demo } from "./voxgpu/sample/VertColorTriangle";
 // import { VertColorCube as Demo } from "./voxgpu/sample/VertColorCube";
 // import { VertEntityTest as Demo } from "./voxgpu/sample/VertEntityTest";
@@ -18,8 +17,8 @@
 // import { MultiUniformTest as Demo } from "./voxgpu/sample/MultiUniformTest";
 // import { StorageTest as Demo } from "./voxgpu/sample/StorageTest";
 
-import { RSceneTest as Demo } from "./voxgpu/sample/RSceneTest";
-// import { REntity3DTest as Demo } from "./voxgpu/sample/REntity3DTest";
+// import { RSceneTest as Demo } from "./voxgpu/sample/RSceneTest";
+import { SimpleLightTest as Demo } from "./voxgpu/sample/SimpleLightTest";
 // import { REntity3DContainerTest as Demo } from "./voxgpu/sample/REntity3DContainerTest";
 
 

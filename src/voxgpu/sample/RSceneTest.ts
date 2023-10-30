@@ -30,8 +30,13 @@ export class RSceneTest {
 			vertShaderSrc: { code: vertWGSL, uuid: "vertShdCode" },
 			fragShaderSrc: { code: fragWGSL, uuid: "fragShdCode" }
 		};
-		let material = this.createMaterial(shdSrc, [new WGImage2DTextureData("static/assets/box.jpg")], ["solid"], "back");
-		this.createEntities([material], new Vector3(0,200,0));
+		//metal_02
+		const materials = [
+			this.createMaterial(shdSrc, [new WGImage2DTextureData("static/assets/box.jpg")], ["solid"], "back"),
+			this.createMaterial(shdSrc, [new WGImage2DTextureData("static/assets/brickwall_big512.jpg")], ["solid"], "back"),
+			this.createMaterial(shdSrc, [new WGImage2DTextureData("static/assets/metal_02.jpg")], ["solid"], "back")
+		]
+		this.createEntities(materials, new Vector3(0,200,0));
 	}
 
 	private initEvent(): void {
@@ -82,7 +87,7 @@ export class RSceneTest {
 		let torusGeom = this.createGeom(this.geomData.createTorus(100));
 
 		const floor = new Entity3D();
-		floor.materials = materials;
+		floor.materials = [materials[0]];
 		floor.geometry = boxGeom;
 		floor.transform.setPosition(new Vector3(0, -150, 0).addBy(pv));
 		floor.transform.setScaleXYZ(8, 0.1, 8);
@@ -90,14 +95,14 @@ export class RSceneTest {
 
 		for (let i = 0; i < 6; ++i) {
 			const torus = new Entity3D();
-			torus.materials = materials;
+			torus.materials = [materials[1]];
 			torus.geometry = torusGeom;
 			torus.transform.setPosition(new Vector3(-200 + i * 80, 0, 0).addBy(pv));
 			rc.addEntity(torus);
 		}
 		for (let i = 0; i < 12; ++i) {
 			const sphere = new Entity3D();
-			sphere.materials = materials;
+			sphere.materials = [materials[2]];
 			sphere.geometry = sphGeom;
 			sphere.transform.setPosition(new Vector3(-400 + i * 80, 0, 0).addBy(pv));
 			rc.addEntity(sphere);
