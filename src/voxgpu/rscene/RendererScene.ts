@@ -6,12 +6,15 @@ import { IRendererScene } from "./IRendererScene";
 import Stage3D from "./Stage3D";
 import { WGRenderConfig, WGRenderer } from "./WGRenderer";
 import { Entity3D } from "../entity/Entity3D";
+import { Entity3DContainer } from "../entity/Entity3DContainer";
+import { IRenderableObject } from "../render/IRenderableObject";
+import { IRenderableEntityContainer } from "../render/IRenderableEntityContainer";
 
 class RendererScene implements IRendererScene {
-
-	private mInit = true;
 	private static sUid = 0;
+	private mInit = true;
 	private mUid = 0;
+	private mContainers: IRenderableEntityContainer[] = [];
 	private mStage: Stage3D;
 
 	enabled = true;
@@ -28,14 +31,12 @@ class RendererScene implements IRendererScene {
 	}
 
 	initialize(config?: WGRenderConfig): void {
-
 		if (this.mInit) {
-
 			this.mInit = false;
 			config = config ? config : { canvas: null };
 			const renderer = new WGRenderer();
 			renderer.checkConfig(config);
-			
+
 			this.mStage = new Stage3D(this.getUid(), document);
 			this.racontext = new RAdapterContext();
 			this.racontext.initialize({ stage: this.mStage, canvas: config.canvas, div: config.div });
@@ -51,11 +52,55 @@ class RendererScene implements IRendererScene {
 	getCamera(): IRenderCamera {
 		return this.camera;
 	}
-	enableMouseEvent(enabled = true): void {
-	}
+	enableMouseEvent(enabled = true): void {}
 
-	addEntity(entity: Entity3D, processIndex = 0, deferred = true): void {
-		this.renderer.addEntity(entity, processIndex, deferred);
+	private addContainer(container: IRenderableEntityContainer, processid: number = 0): void {
+
+		if(container.isContainer()) {
+			// container.__$wuid = this.mUid;
+			// container.__$wprocuid = processid;
+			// container.__$setRenderer(this);
+			// this.mContainers.push(container);
+
+			if (container.__$wuid < 0 && container.__$contId < 1) {
+				let i = 0;
+				for (; i < this.mContainers.length; ++i) {
+					if (this.mContainers[i] == container) {
+						break;
+					}
+				}
+				if (i >= this.mContainers.length) {
+
+					container.__$wuid = this.mUid;
+					container.__$wprocuid = processid;
+					container.__$setRenderer(this);
+					this.mContainers.push(container);
+					container.update();
+					// if(container.isSpaceEnabled()) {
+					// 	this.mRspace.addEntity(container);
+					// }
+					// if(container.getREType() >= 20) {
+					// 	this.m_renderer.addContainer(container, this.m_processids[processid]);
+					// }
+				}
+			}
+		}else {
+			throw Error("illegal operation !!!");
+		}
+	}
+	addEntity(entity: IRenderableObject, processIndex = 0, deferred = true): void {
+
+		if (entity.isContainer()) {
+			this.addContainer(entity as IRenderableEntityContainer, processIndex);
+		} else {
+			this.renderer.addEntity(entity as Entity3D, processIndex, deferred);
+		}
+	}
+	removeEntity(entity: IRenderableObject): void {
+		if (entity.isContainer()) {
+
+		} else {
+		}
 	}
 	/**
 	 * @param type event type
@@ -85,7 +130,6 @@ class RendererScene implements IRendererScene {
 			this.renderer.run();
 		}
 	}
-	destroy(): void {
-	}
+	destroy(): void {}
 }
 export { RendererScene };

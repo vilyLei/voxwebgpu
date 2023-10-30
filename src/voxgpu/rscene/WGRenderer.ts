@@ -6,8 +6,11 @@ import { WGRObjBuilder } from "../render/WGRObjBuilder";
 import { WGRPipelineContextDefParam, WGRPassParams, WGRenderPassBlock } from "../render/WGRenderPassBlock";
 import { WGEntityNodeMana } from "./WGEntityNodeMana";
 import Vector3 from "../math/Vector3";
+import IRenderStage3D from "../render/IRenderStage3D";
+import { IRenderCamera } from "../render/IRenderCamera";
 
 import { GPUCanvasConfiguration } from "../gpu/GPUCanvasConfiguration";
+import IRenderer from "./IRenderer";
 
 interface WGRenderConfig {
 
@@ -18,8 +21,8 @@ interface WGRenderConfig {
 	callback?: (type?: string) => void
 }
 
-class WGRenderer {
-
+class WGRenderer implements IRenderer {
+	private ___$$$$$$$Author = "VilyLei(vily313@126.com)";
 	private mInit = true;
 	private mDiv: HTMLDivElement;
 	private mRPBlocks: WGRenderPassBlock[] = [];
@@ -27,8 +30,10 @@ class WGRenderer {
 	private mWGCtx: WebGPUContext;
 	private mROBuilder = new WGRObjBuilder();
 	private mNodeMana = new WGEntityNodeMana();
+
 	readonly camera = new Camera();
 	enabled = true;
+	stage: IRenderStage3D;
 
 	constructor(config?: WGRenderConfig) {
 		this.mNodeMana.target = this;
@@ -44,6 +49,15 @@ class WGRenderer {
 		cam.lookAtRH(new Vector3(800.0, 800.0, 800.0), new Vector3(), camUpDirect);
 		cam.update();
 	}
+	getUid(): number {
+		return 0;
+	}
+	getStage3D(): IRenderStage3D {
+		return this.stage;
+	}
+	getCamera(): IRenderCamera {
+		return this.camera;
+	}
 	getDiv(): HTMLDivElement {
 		return this.mDiv;
 	}
@@ -55,7 +69,7 @@ class WGRenderer {
 		let canvasCFG: GPUCanvasConfiguration = { alphaMode: "premultiplied" };
 		let canvas: HTMLCanvasElement;
 		let div: HTMLDivElement;
-		
+
 		if (config) {
 			canvas = config.canvas;
 			div = config.div;
@@ -161,6 +175,10 @@ class WGRenderer {
 				this.mNodeMana.addEntity(entity, processIndex, deferred);
 			}
 		}
+	}
+
+	removeEntity(entity: Entity3D): void {
+
 	}
 	getRPBlockAt(i: number): WGRenderPassBlock {
 		return this.mRPBlocks[i];

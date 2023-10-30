@@ -4,8 +4,9 @@ import { WGRPipelineContextDefParam, WGRShderSrcType } from "../render/pipeline/
 import { VtxPipelinDescParam, IWGRPipelineContext } from "../render/pipeline/IWGRPipelineContext";
 import { WGMaterialDescripter } from "./WGMaterialDescripter";
 import { WGRUniformValue } from "../render/uniform/WGRUniformValue";
+import { IWGMaterial } from "./IWGMaterial";
 
-class WGMaterial implements WGMaterialDescripter {
+class WGMaterial implements IWGMaterial {
 	private mRCtx: IWGRPipelineContext;
 	/**
 	 * unique shading process uuid
@@ -26,7 +27,6 @@ class WGMaterial implements WGMaterialDescripter {
 		this.setDescriptor(descriptor);
 	}
 	addTextureWithDatas(datas: WGImageTextureData[], shdVarNames?: string[]): void {
-
 		if (datas) {
 			if (shdVarNames) {
 				for (let i = 0; i < datas.length; ++i) {
@@ -73,11 +73,12 @@ class WGMaterial implements WGMaterialDescripter {
 		return this.mRCtx;
 	}
 	setDescriptor(descriptor: WGMaterialDescripter): void {
-		if (descriptor) {
-			this.shadinguuid = descriptor.shadinguuid;
-			this.shaderCodeSrc = descriptor.shaderCodeSrc;
-			this.pipelineVtxParam = descriptor.pipelineVtxParam;
-			this.pipelineDefParam = descriptor.pipelineDefParam;
+		const d = descriptor;
+		if (d) {
+			if (d.shadinguuid) this.shadinguuid = d.shadinguuid;
+			if (d.shaderCodeSrc) this.shaderCodeSrc = d.shaderCodeSrc;
+			if (d.pipelineVtxParam) this.pipelineVtxParam = d.pipelineVtxParam;
+			if (d.pipelineDefParam) this.pipelineDefParam = d.pipelineDefParam;
 		}
 	}
 	initialize(pipelineCtx: IWGRPipelineContext): void {
@@ -91,6 +92,10 @@ class WGMaterial implements WGMaterialDescripter {
 	copyfrom(src: WGMaterial): WGMaterial {
 		return this;
 	}
-	destroy(): void { }
+	destroy(): void {
+		if (this.mRCtx) {
+			this.mRCtx = null;
+		}
+	}
 }
 export { WGMaterial };

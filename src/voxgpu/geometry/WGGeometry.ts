@@ -20,6 +20,7 @@ class WGGeomAttributeBlock {
 class WGGeomIndexBuffer {
 	name? = "";
 	data: IndexArrayViewType;
+	gpuibuf?: GPUBuffer;
 	constructor(param: { name?: string; data: IndexArrayViewType }) {
 		this.name = param.name;
 		this.data = param.data;
@@ -31,6 +32,7 @@ class WGGeometry {
 
 	readonly descParam: VtxPipelinDescParam = { vertex: { buffers: [] as GPUBuffer[], attributeIndicesArray: [] as number[][] } };
 	attributes: WGGeomAttributeBlock[];
+	gpuvbufs?: GPUBuffer[];
 	indexBuffer: WGGeomIndexBuffer;
 	bounds: AABB;
 	setIndexBuffer(param: { name?: string; data: IndexArrayViewType }): WGGeometry {

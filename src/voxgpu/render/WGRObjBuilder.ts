@@ -98,12 +98,25 @@ class WGRObjBuilder {
 		const geometry = entity.geometry;
 		const gts = geometry.attributes;
 
-		const vertexBuffers: GPUBuffer[] = new Array(gts.length);
-		for (let i = 0; i < gts.length; ++i) {
-			const gt = gts[i];
-			vertexBuffers[i] = wgctx.buffer.createVertexBuffer(gt.data, gt.bufferOffset, gt.strides);
+
+		console.log("########## geometry.gpuvbufs: ", geometry.gpuvbufs);
+		console.log("########## geometry.gpuibuf: ", geometry.indexBuffer.gpuibuf);
+
+		const gvbufs = geometry.gpuvbufs;
+
+		const vertexBuffers: GPUBuffer[] = gvbufs ? gvbufs : new Array(gts.length);
+		if(!gvbufs) {
+			for (let i = 0; i < gts.length; ++i) {
+				const gt = gts[i];
+				vertexBuffers[i] = wgctx.buffer.createVertexBuffer(gt.data, gt.bufferOffset, gt.strides);
+			}
+			geometry.gpuvbufs = vertexBuffers;
 		}
-		const indexBuffer = geometry.indexBuffer ? wgctx.buffer.createIndexBuffer(geometry.indexBuffer.data) : null;
+
+		const gibuf = geometry.indexBuffer;
+		const indexBuffer = gibuf ? (gibuf.gpuibuf ? gibuf.gpuibuf : wgctx.buffer.createIndexBuffer(gibuf.data)) : null;
+		if(indexBuffer) gibuf.gpuibuf = indexBuffer;
+
 		const indexCount = indexBuffer ? indexBuffer.elementCount : 0;
 		const vertexCount = vertexBuffers[0].vectorCount;
 		const primitive = this.createPrimitive({ vertexBuffers, indexBuffer, indexCount, vertexCount });
@@ -121,7 +134,7 @@ class WGRObjBuilder {
 		} else {
 			ru = this.createRPass(entity, block, primitive);
 		}
-		ru.bounds = geometry.bounds;
+		ru.bounds = entity.bounds;
 		block.addRUnit(ru);
 		return ru;
 	}

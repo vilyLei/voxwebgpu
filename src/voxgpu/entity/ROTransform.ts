@@ -29,7 +29,7 @@ export default class ROTransform implements IROTransform {
 
 	private mUid = ROTransform.sUid++;
 	private mFS32: Float32Array | null = null;
-	
+
 	// It is a flag that need inverted mat yes or no
 	private mInvMat = false;
 	private mRot = false;
