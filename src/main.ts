@@ -19,8 +19,8 @@
 
 // import { RSceneTest as Demo } from "./voxgpu/sample/RSceneTest";
 // import { SimpleLightTest as Demo } from "./voxgpu/sample/SimpleLightTest";
-// import { REntity3DContainerTest as Demo } from "./voxgpu/sample/REntity3DContainerTest";
-import { MultiGPUPassTest as Demo } from "./voxgpu/sample/MultiGPUPassTest";
+import { REntity3DContainerTest as Demo } from "./voxgpu/sample/REntity3DContainerTest";
+// import { MultiGPUPassTest as Demo } from "./voxgpu/sample/MultiGPUPassTest";
 
 
 let demoIns = new Demo();

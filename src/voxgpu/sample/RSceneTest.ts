@@ -30,13 +30,12 @@ export class RSceneTest {
 			vertShaderSrc: { code: vertWGSL, uuid: "vertShdCode" },
 			fragShaderSrc: { code: fragWGSL, uuid: "fragShdCode" }
 		};
-		//metal_02
 		const materials = [
 			this.createMaterial(shdSrc, [new WGImage2DTextureData("static/assets/box.jpg")], ["solid"], "back"),
 			this.createMaterial(shdSrc, [new WGImage2DTextureData("static/assets/brickwall_big512.jpg")], ["solid"], "back"),
 			this.createMaterial(shdSrc, [new WGImage2DTextureData("static/assets/metal_02.jpg")], ["solid"], "back")
 		]
-		this.createEntities(materials, new Vector3(0,200,0));
+		this.createEntities(materials, new Vector3(0, 200, 0));
 	}
 
 	private initEvent(): void {

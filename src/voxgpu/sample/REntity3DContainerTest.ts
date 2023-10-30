@@ -19,23 +19,17 @@ import Color4 from "../material/Color4";
 export class REntity3DContainerTest {
 
 	private mRscene = new RendererScene();
-
 	geomData = new GeomDataBuilder();
-
 	initialize(): void {
 		console.log("REntity3DContainerTest::initialize() ...");
 
-		const rc = this.mRscene;
-		rc.initialize();
-
+		this.mRscene.initialize();
 		this.initEvent();
-
 		this.initScene();
 	}
 	private initEvent(): void {
 		const rc = this.mRscene;
 		rc.addEventListener(MouseEvent.MOUSE_DOWN, this, this.mouseDown);
-
 		new MouseInteraction().initialize(rc, 0, false).setAutoRunning(true);
 	}
 
