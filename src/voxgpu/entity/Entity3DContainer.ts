@@ -301,7 +301,7 @@ class Entity3DContainer implements IRenderableEntityContainer {
 	getChildrenTotal(): number {
 		return this.m_childrenTotal;
 	}
-	addEntity(et: IRenderableObject): void {
+	private addEntity(et: IRenderableObject): void {
 		if (et != null) {
 			if (et.getREType() >= 12) {
 				this.addChild(et);
