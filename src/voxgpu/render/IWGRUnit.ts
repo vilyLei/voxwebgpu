@@ -1,5 +1,4 @@
 import { WGRUniform } from "./uniform/WGRUniform";
-import { GPURenderPassEncoder } from "../gpu/GPURenderPassEncoder";
 import { GPURenderPipeline } from "../gpu/GPURenderPipeline";
 import { WGRPrimitive } from "./WGRPrimitive";
 import { WGRUniformValue } from "./uniform/WGRUniformValue";
@@ -17,8 +16,8 @@ interface IWGRUnit {
 	enabled: boolean;
 	passes?: IWGRUnit[];
 	setUniformValues(values: WGRUniformValue[]): void;
-	runBegin(rc: GPURenderPassEncoder): void;
-	run(rc: GPURenderPassEncoder): void;
+	runBegin(): void;
+	run(): void;
 }
 
 export { IWGRUnit };

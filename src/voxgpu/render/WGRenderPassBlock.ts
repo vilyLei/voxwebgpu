@@ -1,23 +1,20 @@
-import { WGRPassParams, WGRendererPass } from "./pipeline/WGRendererPass";
+import { IWGRendererPass, WGRPassParams } from "./pipeline/WGRendererPass";
 import { WGRPipelineContextDefParam, WGRShderSrcType, WGRPipelineCtxParams } from "./pipeline/WGRPipelineCtxParams";
 import { VtxPipelinDescParam, WGRPipelineContext } from "./pipeline/WGRPipelineContext";
 import { WebGPUContext } from "../gpu/WebGPUContext";
 import { GPUCommandBuffer } from "../gpu/GPUCommandBuffer";
 import { IWGRUnit } from "./IWGRUnit";
-import { WGRUnit } from "./WGRUnit";
-import { GPUBuffer } from "../gpu/GPUBuffer";
-import { WGRPrimitive } from "./WGRPrimitive";
+
 import { WGMaterialDescripter } from "../material/WGMaterialDescripter";
 import Camera from "../view/Camera";
+import { WGRenderPassNode } from "./WGRenderPassNode";
 
 class WGRenderPassBlock {
-
 	private mWGCtx: WebGPUContext;
-	private mPipelineCtxs: WGRPipelineContext[] = [];
-	private mUnits: IWGRUnit[] = [];
-	private mRPass = new WGRendererPass();
-	private mpctxMap: Map<string, WGRPipelineContext> = new Map();
 
+	private mPassNodes: WGRenderPassNode[] = [];
+
+	private mUnits: IWGRUnit[] = [];
 	camera: Camera;
 	rcommands: GPUCommandBuffer[];
 
@@ -30,11 +27,12 @@ class WGRenderPassBlock {
 		return this.mWGCtx;
 	}
 	initialize(wgCtx: WebGPUContext, param?: WGRPassParams): void {
-
 		if (!this.mWGCtx && wgCtx) {
 			this.mWGCtx = wgCtx;
-			this.mRPass.initialize(wgCtx);
-			this.mRPass.build(param);
+
+			const passNode = new WGRenderPassNode();
+			passNode.initialize(wgCtx, param);
+			this.mPassNodes.push(passNode);
 		}
 	}
 	addRUnit(unit: IWGRUnit): void {
@@ -45,49 +43,10 @@ class WGRenderPassBlock {
 			this.mUnits.push(unit);
 		}
 	}
-	/**
-	 * for test
-	 */
-	createRUnit(
-		p?: WGRPrimitive,
-		geomParam?: { indexBuffer?: GPUBuffer; vertexBuffers: GPUBuffer[]; indexCount?: number; vertexCount?: number },
-		addIntoRendering = true
-	): WGRUnit {
-		const u = new WGRUnit();
-		u.geometry = p;
-		if (geomParam) {
-			u.geometry = new WGRPrimitive();
-			const g = u.geometry;
-			g.ibuf = geomParam.indexBuffer;
-			g.vbufs = geomParam.vertexBuffers;
-			if (geomParam.indexCount) {
-				g.indexCount = geomParam.indexCount;
-			}
-			if (geomParam.vertexCount) {
-				g.vertexCount = geomParam.vertexCount;
-			}
-		}
-		if (addIntoRendering) {
-			this.mUnits.push(u);
-		}
-		return u;
-	}
-	createRenderPipelineCtxWithMaterial(material: WGMaterialDescripter): WGRPipelineContext {
+	createRenderPipelineCtxWithMaterial(material: WGMaterialDescripter): { ctx: WGRPipelineContext; rpass: IWGRendererPass } {
 
-		const flag = material.shadinguuid && material.shadinguuid !== "";
-		const map = this.mpctxMap;
-		if(flag) {
-			if(map.has(material.shadinguuid)) {
-				console.log("WGRenderPassBlock::createRenderPipelineCtxWithMaterial(), apply old ctx.");
-				return map.get(material.shadinguuid);
-			}
-		}
-		const ctx = this.createRenderPipelineCtx(material.shaderCodeSrc, material.pipelineVtxParam, material.pipelineDefParam);
-		if(flag) {
-			map.set(material.shadinguuid, ctx);
-		}
-		console.log("WGRenderPassBlock::createRenderPipelineCtxWithMaterial(), apply new ctx.");
-		return ctx;
+		const node = this.mPassNodes[0];
+		return { ctx: node.createRenderPipelineCtxWithMaterial(material), rpass: node.rpass };
 	}
 	// pipelineParam value likes {blendMode: "transparent", depthWriteEnabled: false, faceCullMode: "back"}
 	createRenderPipelineCtx(
@@ -95,70 +54,36 @@ class WGRenderPassBlock {
 		pipelineVtxParam: VtxPipelinDescParam,
 		pipelineParam?: WGRPipelineContextDefParam
 	): WGRPipelineContext {
-		const plp = pipelineParam;
-		const pipeParams = new WGRPipelineCtxParams({
-			vertShaderSrc: shdSrc.vertShaderSrc,
-			fragShaderSrc: shdSrc.fragShaderSrc,
-			depthStencilEnabled: plp ? (plp.depthStencilEnabled === false ? false : true) : true
-		});
-		if (plp) {
-			if (plp.blendModes) {
-				pipeParams.setBlendModes(plp.blendModes);
-			} else if (plp.blendMode === "transparent") {
-				// for test
-				pipeParams.setTransparentBlendParam(0);
-			}
-			if (plp.depthStencil) {
-				pipeParams.setDepthStencil(plp.depthStencil);
-			} else {
-				pipeParams.setDepthWriteEnabled(plp.depthWriteEnabled === true);
-			}
-			pipeParams.setPrimitiveState(plp.primitiveState ? plp.primitiveState : { cullMode: plp.faceCullMode });
-		}
-
-		return this.createRenderPipeline(pipeParams, pipelineVtxParam);
+		const rpass = this.mPassNodes[0];
+		return rpass.createRenderPipelineCtx(shdSrc, pipelineVtxParam, pipelineParam);
 	}
 	createRenderPipeline(pipelineParams: WGRPipelineCtxParams, vtxDesc: VtxPipelinDescParam): WGRPipelineContext {
-		const pipelineCtx = new WGRPipelineContext(this.mWGCtx);
-		this.mPipelineCtxs.push(pipelineCtx);
-		pipelineParams.setDepthStencilFormat(this.mRPass.depthTexture.format);
-
-		const passParam = this.mRPass.getPassParams();
-		if (passParam.multisampleEnabled) {
-			if (pipelineParams.multisample) {
-				pipelineParams.multisample.count = passParam.sampleCount;
-			} else {
-				pipelineParams.multisample = {
-					count: passParam.sampleCount
-				};
-			}
-			pipelineParams.sampleCount = passParam.sampleCount;
-		}
-
-		pipelineCtx.createRenderPipelineWithBuf(pipelineParams, vtxDesc);
-		return pipelineCtx;
+		const rpass = this.mPassNodes[0];
+		return rpass.createRenderPipeline(pipelineParams, vtxDesc);
 	}
 
 	runBegin(): void {
 		this.rcommands = [];
 		if (this.enabled) {
-			this.mRPass.runBegin();
-			for (let i = 0; i < this.mPipelineCtxs.length; ++i) {
-				this.mPipelineCtxs[i].runBegin();
+			const nodes = this.mPassNodes;
+			for (let i = 0; i < nodes.length; ++i) {
+				nodes[i].runBegin();
 			}
 		}
 	}
 	runEnd(): void {
 		if (this.enabled) {
-			for (let i = 0; i < this.mPipelineCtxs.length; ++i) {
-				this.mPipelineCtxs[i].runEnd();
+			const nodes = this.mPassNodes;
+			for (let i = 0; i < nodes.length; ++i) {
+				nodes[i].runEnd();
+				this.rcommands = this.rcommands.concat(nodes[i].rcommands);
 			}
-			this.rcommands = [this.mRPass.runEnd()];
 		}
 	}
 	run(): void {
 		if (this.enabled) {
-			const rc = this.mRPass.passEncoder;
+			const nodes = this.mPassNodes;
+			const rc = nodes[0].rpass.passEncoder;
 			const uts = this.mUnits;
 			const utsLen = uts.length;
 			for (let i = 0; i < utsLen; ++i) {
@@ -168,13 +93,13 @@ class WGRenderPassBlock {
 						const ls = ru.passes;
 						// console.log("multi passes total", ls.length);
 						for (let i = 0, ln = ls.length; i < ln; ++i) {
-							ls[i].runBegin(rc);
-							ls[i].run(rc);
+							ls[i].runBegin();
+							ls[i].run();
 						}
 					} else {
 						// console.log("single passes ...");
-						ru.runBegin(rc);
-						ru.run(rc);
+						ru.runBegin();
+						ru.run();
 					}
 				}
 			}

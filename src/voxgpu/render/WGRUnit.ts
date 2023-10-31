@@ -7,6 +7,7 @@ import { WGRUniformValue } from "./uniform/WGRUniformValue";
 import { IWGRPipelineContext } from "./pipeline/IWGRPipelineContext";
 import { IWGRUnit } from "./IWGRUnit";
 import IAABB from "../cgeom/IAABB";
+import { IWGRendererPass } from "../render/pipeline/IWGRendererPass";
 
 class WGRUnitRunSt {
 	pipeline: GPURenderPipeline;
@@ -14,6 +15,7 @@ class WGRUnitRunSt {
 	gt: WGRPrimitive;
 	ibuf: GPUBuffer;
 }
+
 const __$urst = new WGRUnitRunSt();
 class WGRUnit implements IWGRUnit {
 
@@ -29,6 +31,7 @@ class WGRUnit implements IWGRUnit {
 
 	enabled = true;
 	passes: WGRUnit[];
+	rp: IWGRendererPass;
 
 	clone(): WGRUnit {
 
@@ -38,12 +41,15 @@ class WGRUnit implements IWGRUnit {
 		r.pipeline = this.pipeline;
 		r.pipelinectx = this.pipelinectx;
 		r.geometry = this.geometry;
+		r.rp = this.rp;
 		return r;
 	}
 	setUniformValues(values: WGRUniformValue[]): void {
 		this.mUniformValues = values;
 	}
-	runBegin(rc: GPURenderPassEncoder): void {
+	runBegin(): void {
+
+		const rc = this.rp.passEncoder;
 
 		this.mFlag = this.enabled;
 		if (this.mFlag) {
@@ -97,8 +103,9 @@ class WGRUnit implements IWGRUnit {
 			}
 		}
 	}
-	run(rc: GPURenderPassEncoder): void {
+	run(): void {
 		if (this.mFlag) {
+			const rc = this.rp.passEncoder;
 			const gt = this.geometry;
 			const st = __$urst;
 			if (gt.ibuf) {
@@ -112,6 +119,13 @@ class WGRUnit implements IWGRUnit {
 				rc.draw(gt.vertexCount, gt.instanceCount);
 			}
 		}
+	}
+	destroy(): void {
+
+		this.mUniformValues = null;
+		this.pipeline = null;
+		this.pipelinectx = null;
+		this.rp = null;
 	}
 }
 

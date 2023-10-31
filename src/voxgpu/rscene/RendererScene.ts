@@ -33,9 +33,9 @@ class RendererScene implements IRendererScene {
 	initialize(config?: WGRenderConfig): void {
 		if (this.mInit) {
 			this.mInit = false;
-			config = config ? config : { canvas: null };
+
 			const renderer = new WGRenderer();
-			renderer.checkConfig(config);
+			config = renderer.checkConfig(config);
 
 			this.mStage = new Stage3D(this.getUid(), document);
 			this.racontext = new RAdapterContext();

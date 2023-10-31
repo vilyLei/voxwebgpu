@@ -12,8 +12,6 @@ import IAABB from "../cgeom/IAABB";
  */
 class WGRUnitEmpty implements IWGRUnit {
 
-	// private mUniformValues: WGRUniformValue[];
-
 	uniforms?: WGRUniform[];
 	pipeline: GPURenderPipeline;
 	pipelinectx: IWGRPipelineContext;
@@ -22,13 +20,10 @@ class WGRUnitEmpty implements IWGRUnit {
 	bounds: IAABB;
 	enabled = true;
 	setUniformValues(values: WGRUniformValue[]): void {
-		// this.mUniformValues = values;
 	}
-	runBegin(rc: GPURenderPassEncoder): void {
-
+	runBegin(): void {
 	}
-	run(rc: GPURenderPassEncoder): void {
-
+	run(): void {
 	}
 }
 

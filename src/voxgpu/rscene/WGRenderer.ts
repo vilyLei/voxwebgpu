@@ -64,7 +64,7 @@ class WGRenderer implements IRenderer {
 	getCanvas(): HTMLCanvasElement {
 		return this.mWGCtx.canvas;
 	}
-	checkConfig(config?: WGRenderConfig): void {
+	checkConfig(config?: WGRenderConfig): WGRenderConfig {
 
 		let canvasCFG: GPUCanvasConfiguration = { alphaMode: "premultiplied" };
 		let canvas: HTMLCanvasElement;
@@ -105,6 +105,7 @@ class WGRenderer implements IRenderer {
 		config.canvas = canvas;
 		config.div = div;
 		config.gpuCanvasCfg = canvasCFG;
+		return config;
 	}
 	initialize(config?: WGRenderConfig): void {
 
@@ -120,8 +121,7 @@ class WGRenderer implements IRenderer {
 				const canvas = wgCtx.canvas;
 				this.initCamera(canvas.width, canvas.height);
 			} else {
-
-				this.checkConfig(config);
+				config = this.checkConfig(config);
 				this.mDiv = config.div;
 				this.mWGCtx = new WebGPUContext();
 				this.mWGCtx.initialize(config.canvas, config.gpuCanvasCfg).then(() => {
@@ -198,7 +198,7 @@ class WGRenderer implements IRenderer {
 	bindMaterial(material: WGMaterial, block: WGRenderPassBlock): WGMaterial {
 		if (this.mWGCtx) {
 			const p = block.createRenderPipelineCtxWithMaterial(material);
-			material.initialize(p);
+			material.initialize(p.ctx);
 		}
 		return material;
 	}

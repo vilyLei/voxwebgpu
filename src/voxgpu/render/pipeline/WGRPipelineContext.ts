@@ -39,7 +39,6 @@ class WGRPipelineContext implements IWGRPipelineContext {
 			const ctx = this.mWGCtx;
 			const p = this.mPipelineParams;
 			if (p) {
-				// p.build(ctx.device);
 				this.mShader.build(p);
 				console.log("WGRPipelineContext::init(), param:\n", p);
 				this.pipeline = ctx.device.createRenderPipeline(p);
@@ -100,17 +99,6 @@ class WGRPipelineContext implements IWGRPipelineContext {
 			};
 			const buf = this.mWGCtx.device.createBuffer(desc);
 			buf.segs = segs;
-			// switch (params.usage) {
-			// 	case GPUBufferUsage.STORAGE:
-			// 		buf.usageType = "storage";
-			// 		break;
-			// 	case GPUBufferUsage.UNIFORM:
-			// 		buf.usageType = "uniform";
-			// 		break;
-			// 	default:
-			// 		break;
-			// }
-			// console.log("createUniformsBuffer(), params.usage: ",  params.usage, GPUBufferUsage.STORAGE);
 			console.log("createUniformsBuffer(), segs: ", segs);
 			console.log("createUniformsBuffer(), bufSize: ", bufSize, ", usage: ", params.usage);
 			return buf;
@@ -205,7 +193,6 @@ class WGRPipelineContext implements IWGRPipelineContext {
 				if (pipelineParams.buildDeferred) {
 					this.mPipelineParams = pipelineParams;
 				} else {
-					// pipelineParams.build(ctx.device);
 					this.mShader.build( pipelineParams );
 				}
 			}

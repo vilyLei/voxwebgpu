@@ -36,8 +36,9 @@ class WGRObjBuilder {
 				ls.push([0]);
 			}
 		}
-		const pctx = block.createRenderPipelineCtxWithMaterial(material);
-		material.initialize(pctx);
+		const rpparam = block.createRenderPipelineCtxWithMaterial(material);
+		const pctx = rpparam.ctx;
+		material.initialize(rpparam.ctx);
 
 		let texList = material.textures;
 		let utexes: { texView: GPUTextureView }[];
@@ -89,7 +90,7 @@ class WGRObjBuilder {
 				}
 			]);
 		}
-
+		ru.rp = rpparam.rpass;
 		return ru;
 	}
 	createRUnit(entity: Entity3D, block: WGRenderPassBlock): IWGRUnit {

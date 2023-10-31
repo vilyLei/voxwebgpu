@@ -48,7 +48,7 @@ export class BlendTest {
 		const texTotal = texDatas ? texDatas.length : 0;
 
 		const material = new WGMaterial({
-			shadinguuid: "base-material-tex" + texTotal,
+			shadinguuid: "base-material-tex" + texTotal + blendModes.toString(),
 			shaderCodeSrc: shdSrc,
 			pipelineDefParam
 		});

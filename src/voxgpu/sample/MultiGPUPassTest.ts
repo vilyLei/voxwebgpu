@@ -3,7 +3,7 @@ import { GeomDataBuilder, GeomRDataType } from "../geometry/GeomDataBuilder";
 import vertWGSL from "./shaders/defaultEntity.vert.wgsl";
 import fragWGSL from "./shaders/sampleTextureColorParam.frag.wgsl";
 
-import { WGMaterial } from "../material/WGMaterial";
+import { WGTextureDataDescriptor, WGMaterial } from "../material/WGMaterial";
 import { WGGeometry } from "../geometry/WGGeometry";
 import { Entity3D } from "../entity/Entity3D";
 import { WGImage2DTextureData } from "../texture/WGTextureWrapper";
@@ -42,7 +42,7 @@ export class MultiGPUPassTest {
 	private mouseDown(evt: MouseEvent): void {
 		console.log("mousedown evt call ...");
 	}
-	private createMaterial(shdSrc: WGRShderSrcType, texDatas?: WGImage2DTextureData[], color?: Color4, blendModes: string[] = ["solid"], faceCullMode = "back"): WGMaterial {
+	private createMaterial(shdSrc: WGRShderSrcType, texs?: WGTextureDataDescriptor[], color?: Color4, blendModes: string[] = ["solid"], faceCullMode = "back"): WGMaterial {
 
 		color = color ? color : new Color4();
 
@@ -55,7 +55,7 @@ export class MultiGPUPassTest {
 
 		pipelineDefParam.blendModes = blendModes;
 
-		const texTotal = texDatas ? texDatas.length : 0;
+		const texTotal = texs ? texs.length : 0;
 
 		const material = new WGMaterial({
 			shadinguuid: "base-material-tex" + texTotal,
@@ -65,7 +65,7 @@ export class MultiGPUPassTest {
 
 		let ufv = new WGRStorageValue(new Float32Array([color.r, color.g, color.b, 1]));
 		material.uniformValues = [ufv];
-		material.addTextureWithDatas(texDatas);
+		material.addTextures(texs);
 
 		return material;
 	}
@@ -114,9 +114,10 @@ export class MultiGPUPassTest {
 			vertShaderSrc: { code: vertWGSL, uuid: "vertShdCode" },
 			fragShaderSrc: { code: fragWGSL, uuid: "fragShdCode" }
 		};
-		let materials0 = [this.createMaterial(shdSrc, [new WGImage2DTextureData("static/assets/box.jpg")], new Color4(1.0, 0.0, 0.0))];
-		let materials1 = [this.createMaterial(shdSrc, [new WGImage2DTextureData("static/assets/box.jpg")], new Color4(0.0, 1.0, 0.0))];
-		let materials2 = [this.createMaterial(shdSrc, [new WGImage2DTextureData("static/assets/box.jpg")], new Color4(1.0, 0.0, 1.0))];
+		// let materials0 = [this.createMaterial(shdSrc, [new WGImage2DTextureData("static/assets/box.jpg")], new Color4(1.0, 0.0, 0.0))];
+		let materials0 = [this.createMaterial(shdSrc, [{url:"static/assets/box.jpg"}], new Color4(1.0, 0.0, 0.0))];
+		let materials1 = [this.createMaterial(shdSrc, [{url:"static/assets/box.jpg"}], new Color4(0.0, 1.0, 0.0))];
+		let materials2 = [this.createMaterial(shdSrc, [{url:"static/assets/box.jpg"}], new Color4(1.0, 0.0, 1.0))];
 
 		// const container0 = this.createCircle(100, 10, 0.5, materials0, geometry);
 		// const container1 = this.createCircle(180, 15, 0.5, materials1, geometry);

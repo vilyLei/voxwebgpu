@@ -298,4 +298,4 @@ class WGRPipelineCtxParams implements GPURenderPipelineDescriptor {
 		vert.buffers.push(vtxBufLayout);
 	}
 }
-export { WGRPipelineContextDefParam, WGRShderSrcType, WGRPipelineParamType, WGRPipelineCtxParams };
+export { IWGRShadeSrcParam, WGRPipelineContextDefParam, WGRShderSrcType, WGRPipelineParamType, WGRPipelineCtxParams };

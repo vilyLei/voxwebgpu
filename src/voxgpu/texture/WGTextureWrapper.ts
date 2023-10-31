@@ -11,6 +11,17 @@ interface WGTextureDataType {
 	build(ctx: WebGPUContext): GPUTexture;
 	destroy(): void;
 }
+interface WGTextureDataDescriptor {
+	generateMipmaps?: boolean;
+	flipY?: boolean;
+	format?: string;
+	dimension?: string;
+	url?: string;
+	urls?: string[];
+	image?: WebImageType;
+	images?: WebImageType[];
+	shdVarName?: string;
+}
 class WGImageTextureData implements WGTextureDataType {
 	protected mImgs: WebImageType[];
 	protected mTex: GPUTexture;
@@ -20,10 +31,16 @@ class WGImageTextureData implements WGTextureDataType {
 	flipY = false;
 	format = "rgba8unorm";
 	dimension = "2d";
-	constructor() { }
+	constructor() {}
 
+	setDescripter(descriptor: WGTextureDataDescriptor): WGImageTextureData {
+		if (descriptor.generateMipmaps) this.generateMipmaps = descriptor.generateMipmaps;
+		if (descriptor.flipY) this.flipY = descriptor.flipY;
+		if (descriptor.format) this.format = descriptor.format;
+		if (descriptor.dimension) this.dimension = descriptor.dimension;
+		return this;
+	}
 	build(ctx: WebGPUContext): GPUTexture {
-
 		if (this.mImgs && !this.mTex) {
 			// console.log("this.mImgs: ", this.mImgs, this.dimension);
 			switch (this.dimension) {
@@ -41,20 +58,38 @@ class WGImageTextureData implements WGTextureDataType {
 		}
 		return this.mTex;
 	}
-	destroy(): void { }
+	destroy(): void {}
 }
 class WGImage2DTextureData extends WGImageTextureData {
-	constructor(url: string) {
+	constructor(url?: string) {
 		super();
-		this.initByURL(url);
+		if (url && url !== "") {
+			this.initByURL(url);
+		}
 	}
 	setImage(image: WebImageType): WGImageTextureData {
 		this.mImgs = [image];
 		return this;
 	}
 
+	setDescripter(descriptor: WGTextureDataDescriptor): WGImage2DTextureData {
+		super.setDescripter(descriptor);
+		if (this.dimension !== "2d") {
+			throw Error("Illegal Operation !!!");
+		}
+		if (descriptor.url) {
+			this.initByURL(descriptor.url);
+		} else if (descriptor.urls) {
+			this.initByURL(descriptor.urls[0]);
+		}
+		if (descriptor.images) {
+			this.setImage(descriptor.images[0]);
+		} else if (descriptor.image) {
+			this.setImage(descriptor.image);
+		}
+		return this;
+	}
 	private initByURL(url: string): WGImageTextureData {
-
 		this.mUrl = url;
 		fetch(url).then((response: Response): void => {
 			try {
@@ -72,11 +107,30 @@ class WGImage2DTextureData extends WGImageTextureData {
 	}
 }
 class WGImageCubeTextureData extends WGImageTextureData {
-	constructor(urls: string[]) {
+	constructor(urls?: string[]) {
 		super();
-		this.initCubeMapURLs(urls);
+		if (urls && urls.length >= 6 && urls[0] !== "") {
+			this.initCubeMapURLs(urls);
+		}
+	}
+	setImages(images: WebImageType[]): WGImageTextureData {
+		this.mImgs = images;
+		return this;
 	}
 
+	setDescripter(descriptor: WGTextureDataDescriptor): WGImageCubeTextureData {
+		super.setDescripter(descriptor);
+		if (this.dimension !== "cube") {
+			throw Error("Illegal Operation !!!");
+		}
+		if (descriptor.urls) {
+			this.initCubeMapURLs(descriptor.urls);
+		}
+		if (descriptor.images) {
+			this.setImages(descriptor.images);
+		}
+		return this;
+	}
 	async createCubeMapImgsByUrls(urls: string[]) {
 		const promises = urls.map(async (src: string) => {
 			const response = await fetch(src);
@@ -86,8 +140,7 @@ class WGImageCubeTextureData extends WGImageTextureData {
 		return images;
 	}
 	private initCubeMapURLs(urls: string[]): WGImageTextureData {
-
-		this.dimension = 'cube';
+		this.dimension = "cube";
 		this.mUrl = urls[0];
 		this.createCubeMapImgsByUrls(urls).then((imgs: ImageBitmap[]): void => {
 			this.mImgs = imgs;
@@ -140,7 +193,6 @@ class WGTextureWrapper {
 	sampler?: WGTexSampler;
 
 	constructor(param: WGTextureWrapperParam) {
-
 		const tp = param.texture;
 		this.texture = new WGTexture();
 		const tex = this.texture as any;
@@ -164,8 +216,33 @@ class WGTextureWrapper {
 			}
 		}
 	}
-	destroy(): void {
-
-	}
+	destroy(): void {}
 }
-export { WGImageTextureData, WGImage2DTextureData, WGImageCubeTextureData, WGTextureDataType, WGTextureType, WGTexSamplerType, WGTexture, WGTextureWrapperParam, WGTextureWrapper };
+function createDataWithDescriptor(descriptor: WGTextureDataDescriptor): WGImageTextureData {
+	let dimension = descriptor.dimension ? descriptor.dimension : "2d";
+	switch (dimension) {
+		case "2d":
+			return new WGImage2DTextureData().setDescripter(descriptor);
+			break;
+		case "cube":
+			return new WGImageCubeTextureData().setDescripter(descriptor);
+			break;
+		default:
+			throw Error("Illegal Operation !!!");
+			break;
+	}
+	return null;
+}
+export {
+	createDataWithDescriptor,
+	WGTextureDataDescriptor,
+	WGImageTextureData,
+	WGImage2DTextureData,
+	WGImageCubeTextureData,
+	WGTextureDataType,
+	WGTextureType,
+	WGTexSamplerType,
+	WGTexture,
+	WGTextureWrapperParam,
+	WGTextureWrapper
+};
