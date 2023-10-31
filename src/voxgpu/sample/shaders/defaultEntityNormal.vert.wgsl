@@ -60,7 +60,6 @@ fn inverseM44(m: mat4x4<f32>)-> mat4x4<f32> {
 		a31 * b01 - a30 * b03 - a32 * b00,
 		a20 * b03 - a21 * b01 + a22 * b00) / det);
 }
-const factor: f32 = 1.0;
 @vertex
 fn main(
   @location(0) position : vec3<f32>,

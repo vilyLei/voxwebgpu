@@ -83,8 +83,6 @@ export class MultiGPUPassTest {
 	private mContainers: Entity3DContainer[] = [];
 	private createCircle(radius: number, total: number, scale: number, materials: WGMaterial[], geometry: WGGeometry, pv?: Vector3): Entity3DContainer {
 
-		const rc = this.mRscene;
-
 		pv = pv ? pv : new Vector3();
 
 		let mContainer = new Entity3DContainer();
@@ -120,17 +118,22 @@ export class MultiGPUPassTest {
 		let materials1 = [this.createMaterial(shdSrc, [new WGImage2DTextureData("static/assets/box.jpg")], new Color4(0.0, 1.0, 0.0))];
 		let materials2 = [this.createMaterial(shdSrc, [new WGImage2DTextureData("static/assets/box.jpg")], new Color4(1.0, 0.0, 1.0))];
 
-		const container0 = this.createCircle(100, 10, 0.5, materials0, geometry);
-		const container1 = this.createCircle(180, 15, 0.5, materials1, geometry);
-		const container2 = this.createCircle(260, 25, 0.5, materials2, geometry);
+		// const container0 = this.createCircle(100, 10, 0.5, materials0, geometry);
+		// const container1 = this.createCircle(180, 15, 0.5, materials1, geometry);
+		// const container2 = this.createCircle(260, 25, 0.5, materials2, geometry);
 
-		let container = new Entity3DContainer();
-		container.addChild(container0);
-		container.addChild(container1);
-		container.addChild(container2);
-		rc.addEntity(container);
+		// let container = new Entity3DContainer();
+		// container.addChild(container0);
+		// container.addChild(container1);
+		// container.addChild(container2);
+		// rc.addEntity(container);
 
-		this.mContainers.push(container0, container1, container2, container);
+		// this.mContainers.push(container0, container1, container2, container);
+
+		let entity = new Entity3D();
+		entity.materials = materials0;
+		entity.geometry = geometry;
+		rc.addEntity(entity);
 	}
 
 	private mRotValue = 0.0;
@@ -138,12 +141,12 @@ export class MultiGPUPassTest {
 
 		this.mRotValue += 0.5;
 
-		const ls = this.mContainers;
-		ls[0].setRotationZ(this.mRotValue * 1.2);
-		ls[1].setRotationZ(this.mRotValue * 0.4 + 15.0);
-		ls[2].setRotationZ(this.mRotValue * 0.2 + 30.0);
-		ls[3].setRotationY(this.mRotValue * 0.2);
-		ls[3].update();
+		// const ls = this.mContainers;
+		// ls[0].setRotationZ(this.mRotValue * 1.2);
+		// ls[1].setRotationZ(this.mRotValue * 0.4 + 15.0);
+		// ls[2].setRotationZ(this.mRotValue * 0.2 + 30.0);
+		// ls[3].setRotationY(this.mRotValue * 0.2);
+		// ls[3].update();
 
 		this.mRscene.run();
 	}
