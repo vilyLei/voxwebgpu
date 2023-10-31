@@ -90,13 +90,12 @@ interface IRenderStage3D {
     mouseMultiMove(posArray: any[]): void;
     /**
      * @param type event type
-     * @param target event listerner
      * @param func event listerner callback function
      * @param captureEnabled the default value is true
      * @param bubbleEnabled the default value is false
      */
-    addEventListener(type: number, target: any, func: (evt: any) => void, captureEnabled?: boolean, bubbleEnabled?: boolean): void;
-    removeEventListener(type: number, target: any, func: (evt: any) => void): void;
+    addEventListener(type: number, func: (evt: any) => void, captureEnabled?: boolean, bubbleEnabled?: boolean): void;
+    removeEventListener(type: number, func: (evt: any) => void): void;
 }
 
 export default IRenderStage3D;

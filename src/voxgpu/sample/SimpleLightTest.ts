@@ -37,26 +37,36 @@ export class SimpleLightTest {
 			fragShaderSrc: { code: fragWGSL, uuid: "fragShdCode" }
 		};
 
-		for (let i = 0; i < 10; ++i) {
-			let material = this.createMaterial(shdSrc, [new WGImage2DTextureData("static/assets/white.jpg")], new Color4().randomRGB(1.0, 0.2));
-			let scale = Math.random() * 0.5 + 0.5;
-			const entity = this.createEntity([material]);
-			const obj = new TransObject();
-			obj.entity = entity;
-			obj.scale.setXYZ(scale, scale, scale);
-			obj.rotationSpdv.setXYZ(Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5);
-			obj.initialize(800);
-			this.mObjs.push(obj);
+		let geom = this.createGeom(this.geomData.createCube(100), true);
+
+		let texList = [new WGImage2DTextureData("static/assets/white.jpg")];
+		let tot = 4;
+		const size = new Vector3(150, 150, 150);
+		const pos = new Vector3().copyFrom(size).scaleBy(-0.5 * (tot - 1));
+
+		for (let i = 0; i < tot; ++i) {
+			for (let j = 0; j < tot; ++j) {
+				for (let k = 0; k < tot; ++k) {
+					let material = this.createMaterial(shdSrc, texList, new Color4().randomRGB(1.0, 0.2));
+					let scale = Math.random() * 0.2 + 0.3;
+					const entity = this.createEntity(geom, [material]);
+					const obj = new TransObject();
+					obj.entity = entity;
+					obj.scale.setXYZ(scale, scale, scale);
+					obj.rotationSpdv.setXYZ(Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5);
+					obj.position.setXYZ(i * size.x, j * size.y, k * size.z).addBy(pos);
+					this.mObjs.push(obj);
+				}
+			}
 		}
 	}
 	private initEvent(): void {
 		const rc = this.mRscene;
-		rc.addEventListener(MouseEvent.MOUSE_DOWN, this, this.mouseDown);
+		rc.addEventListener(MouseEvent.MOUSE_DOWN, this.mouseDown);
 
 		new MouseInteraction().initialize(rc, 0, false).setAutoRunning(true);
 	}
-
-	private mouseDown(evt: MouseEvent): void {
+	private mouseDown = (evt: MouseEvent): void => {
 		console.log("mousedown evt call ...");
 	}
 	private createMaterial(
@@ -91,24 +101,23 @@ export class SimpleLightTest {
 		return material;
 	}
 
-	private createGeom(rgd: GeomRDataType): WGGeometry {
+	private createGeom(rgd: GeomRDataType, normalEnabled = false): WGGeometry {
 		const geometry = new WGGeometry()
-			.addAttribute({ shdVarName: "position", data: rgd.vs, strides: [3] })
-			.addAttribute({ shdVarName: "uv", data: rgd.uvs, strides: [2] })
-			.addAttribute({ shdVarName: "normal", data: rgd.nvs, strides: [3] })
-			.setIndexBuffer({ name: "geomIndex", data: rgd.ivs });
+			.addAttribute({ position: rgd.vs })
+			.addAttribute({ uv: rgd.uvs })
+			.setIndices(rgd.ivs);
+		if (normalEnabled) {
+			geometry.addAttribute({ normal: rgd.nvs });
+		}
 		return geometry;
 	}
-	private createEntity(materials: WGMaterial[], pv?: Vector3): Entity3D {
-		const rc = this.mRscene;
-		let geometry = this.mObjs.length > 0 ? this.mObjs[0].entity.geometry : null;
-		geometry = geometry ? geometry : this.createGeom(this.geomData.createCube(200));
+	private createEntity(geometry: WGGeometry, materials: WGMaterial[], pv?: Vector3): Entity3D {
 
+		const rc = this.mRscene;
 		const entity = new Entity3D();
 		entity.materials = materials;
 		entity.geometry = geometry;
-		entity.transform.setPosition(pv ? pv : new Vector3());
-
+		if (pv) entity.transform.setPosition(pv);
 
 		rc.addEntity(entity);
 		return entity;

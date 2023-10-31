@@ -100,8 +100,8 @@ class WGRObjBuilder {
 		const gts = geometry.attributes;
 
 
-		console.log("########## geometry.gpuvbufs: ", geometry.gpuvbufs);
-		console.log("########## geometry.gpuibuf: ", geometry.indexBuffer.gpuibuf);
+		// console.log("########## geometry.gpuvbufs: ", geometry.gpuvbufs);
+		// console.log("########## geometry.gpuibuf: ", geometry.indexBuffer.gpuibuf);
 
 		const gvbufs = geometry.gpuvbufs;
 
@@ -136,6 +136,7 @@ class WGRObjBuilder {
 			ru = this.createRPass(entity, block, primitive);
 		}
 		ru.bounds = entity.bounds;
+		ru.st = entity.rstate;
 		block.addRUnit(ru);
 		return ru;
 	}

@@ -73,9 +73,9 @@ class MouseInteraction {
 		const type = EventBase.ENTER_FRAME;
 		if (enabled) {
 			this.setSyncLookAtEnabled( true );
-			this.m_rscene.addEventListener(type, this, this.autoRun);
+			this.m_rscene.addEventListener(type, this.autoRun.bind(this));
 		} else {
-			this.m_rscene.removeEventListener(type, this, this.autoRun);
+			this.m_rscene.removeEventListener(type, this.autoRun.bind(this));
 		}
 		return this;
 	}

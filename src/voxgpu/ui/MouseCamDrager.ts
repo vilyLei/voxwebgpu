@@ -57,8 +57,8 @@ export default class MouseCamDrager {
                     e.preventDefault();
                 }
             }
-            stage3D.addEventListener(downType, this, this.mouseDownListener, true, false);
-            stage3D.addEventListener(upType, this, this.mouseUpListener, true, true);
+            stage3D.addEventListener(downType, this.mouseDownListener.bind(this), true, false);
+            stage3D.addEventListener(upType, this.mouseUpListener.bind(this), true, true);
         }
     }
     setSlideSpeed(slideSpeed: number): void {

@@ -8,6 +8,7 @@ import { IWGRPipelineContext } from "./pipeline/IWGRPipelineContext";
 import { IWGRUnit } from "./IWGRUnit";
 import IAABB from "../cgeom/IAABB";
 import { IWGRendererPass } from "../render/pipeline/IWGRendererPass";
+import { WGRUnitState } from "./WGRUnitState";
 
 class WGRUnitRunSt {
 	pipeline: GPURenderPipeline;
@@ -17,10 +18,10 @@ class WGRUnitRunSt {
 }
 
 const __$urst = new WGRUnitRunSt();
+const __$rurst = new WGRUnitState();
 class WGRUnit implements IWGRUnit {
-
 	private mUniformValues: WGRUniformValue[];
-	private mFlag = true;
+	private rf = true;
 
 	uniforms?: WGRUniform[];
 	pipeline: GPURenderPipeline;
@@ -29,12 +30,13 @@ class WGRUnit implements IWGRUnit {
 
 	bounds: IAABB;
 
+	st = __$rurst;
+
 	enabled = true;
 	passes: WGRUnit[];
 	rp: IWGRendererPass;
 
 	clone(): WGRUnit {
-
 		const r = new WGRUnit();
 		r.mUniformValues = this.mUniformValues;
 		r.uniforms = this.uniforms;
@@ -44,15 +46,17 @@ class WGRUnit implements IWGRUnit {
 		r.rp = this.rp;
 		return r;
 	}
+	getRF(): boolean {
+		return this.enabled && this.st.isTrue();
+	}
 	setUniformValues(values: WGRUniformValue[]): void {
 		this.mUniformValues = values;
 	}
 	runBegin(): void {
-
 		const rc = this.rp.passEncoder;
 
-		this.mFlag = this.enabled;
-		if (this.mFlag) {
+		this.rf = this.enabled && this.rp.enabled && this.st.isTrue();
+		if (this.rf) {
 			const gt = this.geometry;
 			if (this.pipelinectx) {
 				this.pipeline = this.pipelinectx.pipeline;
@@ -85,10 +89,10 @@ class WGRUnit implements IWGRUnit {
 							// console.log("uf.groupIndex: ", uf.groupIndex, uf.bindGroup);
 							rc.setBindGroup(uf.groupIndex, uf.bindGroup);
 						} else {
-							this.mFlag = false;
+							this.rf = false;
 						}
 					}
-					if (this.mFlag) {
+					if (this.rf) {
 						const ufvs = this.mUniformValues;
 						if (ufvs) {
 							// console.log("ufvs.length: ", ufvs.length);
@@ -99,12 +103,12 @@ class WGRUnit implements IWGRUnit {
 					}
 				}
 			} else {
-				this.mFlag = false;
+				this.rf = false;
 			}
 		}
 	}
 	run(): void {
-		if (this.mFlag) {
+		if (this.rf) {
 			const rc = this.rp.passEncoder;
 			const gt = this.geometry;
 			const st = __$urst;
@@ -121,11 +125,11 @@ class WGRUnit implements IWGRUnit {
 		}
 	}
 	destroy(): void {
-
 		this.mUniformValues = null;
 		this.pipeline = null;
 		this.pipelinectx = null;
 		this.rp = null;
+		this.st = null;
 	}
 }
 

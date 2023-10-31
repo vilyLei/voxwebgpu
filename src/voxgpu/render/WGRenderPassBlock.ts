@@ -4,6 +4,7 @@ import { VtxPipelinDescParam, WGRPipelineContext } from "./pipeline/WGRPipelineC
 import { WebGPUContext } from "../gpu/WebGPUContext";
 import { GPUCommandBuffer } from "../gpu/GPUCommandBuffer";
 import { IWGRUnit } from "./IWGRUnit";
+import { IWGRPassRef } from "./pipeline/IWGRPassRef";
 
 import { WGMaterialDescripter } from "../material/WGMaterialDescripter";
 import Camera from "../view/Camera";
@@ -43,23 +44,43 @@ class WGRenderPassBlock {
 			this.mUnits.push(unit);
 		}
 	}
+	appendRendererPass(param?: WGRPassParams): IWGRPassRef {
+		let node = this.mPassNodes[this.mPassNodes.length - 1];
+		const passNode = new WGRenderPassNode();
+		passNode.rpass.prevPass = node.rpass;
+		passNode.initialize(this.mWGCtx, param ? param : node.param);
+		const rpass = passNode.rpass;
+		rpass.colorAttachment.loadOp = "load";
+		rpass.depStcAttachment.depthLoadOp = "load";
+		this.mPassNodes.push(passNode);
+		return {index: this.mPassNodes.length - 1, node: passNode};
+	}
+	private getPassNode(ref: IWGRPassRef): WGRenderPassNode {
+		let node = this.mPassNodes[this.mPassNodes.length - 1];
+		if (ref && ref.index !== undefined) {
+			if (ref.index >= 0 && ref.index < this.mPassNodes.length) {
+				node = this.mPassNodes[ref.index];
+			}
+		}
+		return node;
+	}
 	createRenderPipelineCtxWithMaterial(material: WGMaterialDescripter): { ctx: WGRPipelineContext; rpass: IWGRendererPass } {
-
-		const node = this.mPassNodes[0];
+		const node = this.getPassNode(material.rpass);
 		return { ctx: node.createRenderPipelineCtxWithMaterial(material), rpass: node.rpass };
 	}
 	// pipelineParam value likes {blendMode: "transparent", depthWriteEnabled: false, faceCullMode: "back"}
 	createRenderPipelineCtx(
 		shdSrc: WGRShderSrcType,
 		pipelineVtxParam: VtxPipelinDescParam,
-		pipelineParam?: WGRPipelineContextDefParam
+		pipelineParam?: WGRPipelineContextDefParam,
+		renderPassConfig?: IWGRPassRef
 	): WGRPipelineContext {
-		const rpass = this.mPassNodes[0];
-		return rpass.createRenderPipelineCtx(shdSrc, pipelineVtxParam, pipelineParam);
+		const node = this.getPassNode(renderPassConfig);
+		return node.createRenderPipelineCtx(shdSrc, pipelineVtxParam, pipelineParam);
 	}
-	createRenderPipeline(pipelineParams: WGRPipelineCtxParams, vtxDesc: VtxPipelinDescParam): WGRPipelineContext {
-		const rpass = this.mPassNodes[0];
-		return rpass.createRenderPipeline(pipelineParams, vtxDesc);
+	createRenderPipeline(pipelineParams: WGRPipelineCtxParams, vtxDesc: VtxPipelinDescParam, renderPassConfig?: IWGRPassRef): WGRPipelineContext {
+		const node = this.getPassNode(renderPassConfig);
+		return node.createRenderPipeline(pipelineParams, vtxDesc);
 	}
 
 	runBegin(): void {
@@ -74,21 +95,21 @@ class WGRenderPassBlock {
 	runEnd(): void {
 		if (this.enabled) {
 			const nodes = this.mPassNodes;
+			// console.log("this.mPassNodes: ", this.mPassNodes);
 			for (let i = 0; i < nodes.length; ++i) {
 				nodes[i].runEnd();
 				this.rcommands = this.rcommands.concat(nodes[i].rcommands);
 			}
+			// console.log("this.rcommands: ", this.rcommands);
 		}
 	}
 	run(): void {
 		if (this.enabled) {
-			const nodes = this.mPassNodes;
-			const rc = nodes[0].rpass.passEncoder;
 			const uts = this.mUnits;
 			const utsLen = uts.length;
 			for (let i = 0; i < utsLen; ++i) {
 				const ru = uts[i];
-				if (ru.enabled) {
+				if (ru.getRF()) {
 					if (ru.passes) {
 						const ls = ru.passes;
 						// console.log("multi passes total", ls.length);

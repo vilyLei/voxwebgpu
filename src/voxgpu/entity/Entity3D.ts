@@ -9,6 +9,7 @@ import { WGMaterial } from "../material/WGMaterial";
 import { IRenderableEntity } from "../render/IRenderableEntity";
 import { IRenderableEntityContainer } from "../render/IRenderableEntityContainer";
 import AABB from "../cgeom/AABB";
+import { WGRUnitState } from "../render/WGRUnitState";
 
 class Entity3D implements IRenderableEntity {
 
@@ -39,6 +40,7 @@ class Entity3D implements IRenderableEntity {
 
 	cameraViewing = true;
 
+	readonly rstate = new WGRUnitState();
 	readonly rers = new Uint16Array([0, 0, 0, 0]);
 
 	/**

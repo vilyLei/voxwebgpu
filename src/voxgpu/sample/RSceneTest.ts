@@ -40,10 +40,10 @@ export class RSceneTest {
 
 	private initEvent(): void {
 		const rc = this.mRscene;
-		rc.addEventListener(MouseEvent.MOUSE_DOWN, this, this.mouseDown);
+		rc.addEventListener(MouseEvent.MOUSE_DOWN, this.mouseDown);
 		new MouseInteraction().initialize(rc, 0, false).setAutoRunning(true);
 	}
-	private mouseDown(evt: MouseEvent): void {
+	private mouseDown = (evt: MouseEvent): void => {
 		console.log("mousedown evt call ...");
 	}
 	private createMaterial(shdSrc: WGRShderSrcType, texDatas?: WGImage2DTextureData[], blendModes: string[] = [], faceCullMode = "back"): WGMaterial {

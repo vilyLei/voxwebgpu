@@ -14,6 +14,7 @@ interface WGRPassParams {
 }
 interface IWGRendererPass {
 
+	enabled: boolean;
     colorView: GPUTextureView;
     passEncoder: GPURenderPassEncoder;
     commandEncoder: GPUCommandEncoder;

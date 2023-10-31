@@ -17,8 +17,8 @@ interface IEvtDispatcher {
     passTestEvt(evt: any): number;
     // @return if the evt phase is in this node,it returns 1,otherwise it returns 0
     passTestPhase(phase: number): number;
-    addEventListener(type: number, listener: any, func: (evt: any) => void, captureEnabled?: boolean, bubbleEnabled?: boolean): void
-    removeEventListener(type: number, listener: any, func: (evt: any) => void): void;
+    addEventListener(type: number, func: (evt: any) => void, captureEnabled?: boolean, bubbleEnabled?: boolean): void
+    removeEventListener(type: number, func: (evt: any) => void): void;
 }
 
 export default IEvtDispatcher;

@@ -15,7 +15,6 @@ class TransObject {
 
 	initialize(range = 1000): void {
 
-		// let range = 1000.0;
 		let rangeHalf = 0.5 * range;
 
 		const pos = this.position;
@@ -34,7 +33,9 @@ class TransObject {
 			trans.setPosition( this.position );
 			trans.setScale( this.scale );
 			trans.setRotation( this.rotation );
-			this.rotation.addBy( this.rotationSpdv );
+			if(this.rotationSpdv) {
+				this.rotation.addBy( this.rotationSpdv );
+			}
 			et.update();
 		}
 	}

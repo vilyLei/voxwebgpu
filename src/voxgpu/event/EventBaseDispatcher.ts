@@ -67,9 +67,9 @@ export default class EventBaseDispatcher implements IEvtDispatcher {
         });
         return 0;
     }
-    addEventListener(type: number, target: any, func: (evt: any) => void, captureEnabled: boolean = true, bubbleEnabled: boolean = false): void {
-        if (func != null && target != null) {
-            let t: number = type;// - EventBase.GetMouseEvtTypeValueBase();
+    addEventListener(type: number, func: (evt: any) => void, captureEnabled: boolean = true, bubbleEnabled: boolean = false): void {
+        if (func) {
+            let t = type;// - EventBase.GetMouseEvtTypeValueBase();
             if (t > 1) {
                 //(capture phase),2(bubble phase)
                 let phase: number = 0;
@@ -82,12 +82,12 @@ export default class EventBaseDispatcher implements IEvtDispatcher {
                     }
                 }
                 if (this.m_evtNodeMap.has(type)) {
-                    this.m_evtNodeMap.get(t).addListener(target, func, phase);
+                    this.m_evtNodeMap.get(t).addListener(func, phase);
                 }
                 else {
                     let node = new EvtNode();
                     node.type = 33;
-                    node.addListener(target, func, phase);
+                    node.addListener(func, phase);
                     this.m_evtNodeMap.set(t, node);
                 }
             }
@@ -96,12 +96,11 @@ export default class EventBaseDispatcher implements IEvtDispatcher {
             }
         }
     }
-    removeEventListener(type: number, target: any, func: (evt: any) => void): void {
-        if (func != null && target != null) {
-            let t: number = type;
-            if (t > 1) {
+    removeEventListener(type: number, func: (evt: any) => void): void {
+        if (func) {
+            if (type > 1) {
                 if (this.m_evtNodeMap.has(type)) {
-                    this.m_evtNodeMap.get(t).removeListener(target, func);
+                    this.m_evtNodeMap.get(type).removeListener(func);
                 }
             }
             //  else

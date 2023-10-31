@@ -4,20 +4,29 @@ import { VtxPipelinDescParam, WGRPipelineContext } from "./pipeline/WGRPipelineC
 import { WebGPUContext } from "../gpu/WebGPUContext";
 import { GPUCommandBuffer } from "../gpu/GPUCommandBuffer";
 import { WGMaterialDescripter } from "../material/WGMaterialDescripter";
-class WGRenderPassNode {
+import { IWGRenderPassNodeRef } from "./IWGRenderPassNodeRef";
+class WGRenderPassNode implements IWGRenderPassNodeRef {
+
+	private static sUid = 0;
+	private mUid = WGRenderPassNode.sUid++;
 
 	private mWGCtx: WebGPUContext;
 	pipelineCtxs: WGRPipelineContext[] = [];
 	rpass = new WGRendererPass();
 	pctxMap: Map<string, WGRPipelineContext> = new Map();
 	rcommands: GPUCommandBuffer[];
+	param?: WGRPassParams;
 
 	enabled = true;
+	getUid(): number {
+		return this.mUid;
+	}
 	initialize(wgCtx: WebGPUContext, param?: WGRPassParams): void {
 		if (!this.mWGCtx && wgCtx) {
 			this.mWGCtx = wgCtx;
 			this.rpass.initialize(wgCtx);
 			this.rpass.build(param);
+			this.param = param;
 		}
 	}
 
@@ -89,6 +98,7 @@ class WGRenderPassNode {
 	}
 
 	runBegin(): void {
+		this.rpass.enabled = this.enabled;
 		this.rcommands = [];
 		if (this.enabled) {
 			this.rpass.runBegin();

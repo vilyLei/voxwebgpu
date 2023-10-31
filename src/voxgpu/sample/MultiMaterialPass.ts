@@ -42,7 +42,7 @@ export class MultiMaterialPass {
 		const texTotal = texDatas ? texDatas.length : 0;
 
 		const material = new WGMaterial({
-			shadinguuid: "base-material-tex" + texTotal,
+			shadinguuid: "base-material-tex" + texTotal + faceCullMode,
 			shaderCodeSrc: shdSrc,
 			pipelineDefParam
 		});
@@ -72,7 +72,7 @@ export class MultiMaterialPass {
 		this.mRotY += 0.5;
 		this.mEntity.transform.setRotationXYZ(0, this.mRotY, this.mRotY + 0.5);
 		this.mEntity.update();
-		
+
 		this.renderer.run();
 	}
 }

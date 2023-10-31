@@ -24,7 +24,7 @@ export default class MouseEvt3DDispatcher implements IEvtDispatcher {
         return MouseEvent.EventClassType;
     }
     destroy(): void {
-        console.log("VVVVVVVVVV this.m_evtNodesLen: ", this.m_evtNodesLen);
+        // console.log("VVVVVVVVVV this.m_evtNodesLen: ", this.m_evtNodesLen);
         for (let i: number = 0; i < this.m_evtNodesLen; ++i) {
             if (this.m_evtNodes[i] != null) {
                 this.m_evtNodes[i].destroy();
@@ -72,8 +72,8 @@ export default class MouseEvt3DDispatcher implements IEvtDispatcher {
         return 0;
     }
     // 注意: 一个 target 只能有一个回调函授对应一个类型的事件
-    addEventListener(type: number, target: any, func: (evt: any) => void, captureEnabled: boolean = true, bubbleEnabled: boolean = false): void {
-        if (func != null && target != null) {
+    addEventListener(type: number, func: (evt: any) => void, captureEnabled: boolean = true, bubbleEnabled: boolean = false): void {
+        if (func) {
             let t: number = type - MouseEvent.GetMouseEvtTypeValueBase();
             if (t >= 0 && t < MouseEvent.GetMouseEvtTypeValuesTotal()) {
                 //(capture phase),2(bubble phase)
@@ -87,11 +87,11 @@ export default class MouseEvt3DDispatcher implements IEvtDispatcher {
                     }
                 }
                 if (this.m_evtNodes[t] != null) {
-                    this.m_evtNodes[t].addListener(target, func, phase);
+                    this.m_evtNodes[t].addListener(func, phase);
                 }
                 else {
                     this.m_evtNodes[t] = new EvtNode();
-                    this.m_evtNodes[t].addListener(target, func, phase);
+                    this.m_evtNodes[t].addListener(func, phase);
                 }
             }
             else {
@@ -99,12 +99,12 @@ export default class MouseEvt3DDispatcher implements IEvtDispatcher {
             }
         }
     }
-    removeEventListener(type: number, target: any, func: (evt: any) => void): void {
-        if (func != null && target != null) {
+    removeEventListener(type: number, func: (evt: any) => void): void {
+        if (func) {
             let t: number = type - MouseEvent.GetMouseEvtTypeValueBase();
             if (t >= 0 && t < MouseEvent.GetMouseEvtTypeValuesTotal()) {
                 if (this.m_evtNodes[t] != null) {
-                    this.m_evtNodes[t].removeListener(target, func);
+                    this.m_evtNodes[t].removeListener(func);
                 }
             }
             //  else

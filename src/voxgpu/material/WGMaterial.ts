@@ -2,6 +2,7 @@ import { WGTextureDataDescriptor, createDataWithDescriptor, WGImageTextureData, 
 
 import { WGRPipelineContextDefParam, WGRShderSrcType } from "../render/pipeline/WGRPipelineCtxParams";
 import { VtxPipelinDescParam, IWGRPipelineContext } from "../render/pipeline/IWGRPipelineContext";
+import { IWGRPassRef } from "../render/pipeline/IWGRPassRef";
 import { WGMaterialDescripter } from "./WGMaterialDescripter";
 import { WGRUniformValue } from "../render/uniform/WGRUniformValue";
 import { IWGMaterial } from "./IWGMaterial";
@@ -17,6 +18,7 @@ class WGMaterial implements IWGMaterial {
 	shaderCodeSrc?: WGRShderSrcType;
 	pipelineVtxParam?: VtxPipelinDescParam;
 	pipelineDefParam?: WGRPipelineContextDefParam;
+	rpass?: IWGRPassRef;
 
 	uniformValues: WGRUniformValue[];
 
@@ -94,6 +96,7 @@ class WGMaterial implements IWGMaterial {
 			if (d.shaderCodeSrc) this.shaderCodeSrc = d.shaderCodeSrc;
 			if (d.pipelineVtxParam) this.pipelineVtxParam = d.pipelineVtxParam;
 			if (d.pipelineDefParam) this.pipelineDefParam = d.pipelineDefParam;
+			if (d.rpass) this.rpass = d.rpass;
 		}
 	}
 	initialize(pipelineCtx: IWGRPipelineContext): void {

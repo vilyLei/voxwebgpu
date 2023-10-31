@@ -17,7 +17,6 @@ import { Entity3DContainer } from "../entity/Entity3DContainer";
 import Color4 from "../material/Color4";
 
 export class REntity3DContainerTest {
-
 	private mRscene = new RendererScene();
 	geomData = new GeomDataBuilder();
 	initialize(): void {
@@ -29,15 +28,20 @@ export class REntity3DContainerTest {
 	}
 	private initEvent(): void {
 		const rc = this.mRscene;
-		rc.addEventListener(MouseEvent.MOUSE_DOWN, this, this.mouseDown);
+		rc.addEventListener(MouseEvent.MOUSE_DOWN, this.mouseDown);
 		new MouseInteraction().initialize(rc, 0, false).setAutoRunning(true);
 	}
 
-	private mouseDown(evt: MouseEvent): void {
+	private mouseDown = (evt: MouseEvent): void => {
 		console.log("mousedown evt call ...");
 	}
-	private createMaterial(shdSrc: WGRShderSrcType, texDatas?: WGImage2DTextureData[], color?: Color4, blendModes: string[] = ["solid"], faceCullMode = "back"): WGMaterial {
-
+	private createMaterial(
+		shdSrc: WGRShderSrcType,
+		texDatas?: WGImage2DTextureData[],
+		color?: Color4,
+		blendModes: string[] = ["solid"],
+		faceCullMode = "back"
+	): WGMaterial {
 		color = color ? color : new Color4();
 
 		let pipelineDefParam = {
@@ -45,7 +49,6 @@ export class REntity3DContainerTest {
 			faceCullMode,
 			blendModes: [] as string[]
 		};
-
 
 		pipelineDefParam.blendModes = blendModes;
 
@@ -66,17 +69,23 @@ export class REntity3DContainerTest {
 
 	private createGeom(rgd: GeomRDataType, normalEnabled = false): WGGeometry {
 		const geometry = new WGGeometry()
-			.addAttribute({ shdVarName: "position", data: rgd.vs, strides: [3] })
-			.addAttribute({ shdVarName: "uv", data: rgd.uvs, strides: [2] })
-			.setIndexBuffer({ name: "geomIndex", data: rgd.ivs });
+			.addAttribute({ position: rgd.vs })
+			.addAttribute({ uv: rgd.uvs })
+			.setIndices(rgd.ivs);
 		if (normalEnabled) {
-			geometry.addAttribute({ shdVarName: "normal", data: rgd.nvs, strides: [3] });
+			geometry.addAttribute({ normal: rgd.nvs });
 		}
 		return geometry;
 	}
 	private mContainers: Entity3DContainer[] = [];
-	private createCircle(radius: number, total: number, scale: number, materials: WGMaterial[], geometry: WGGeometry, pv?: Vector3): Entity3DContainer {
-
+	private createCircle(
+		radius: number,
+		total: number,
+		scale: number,
+		materials: WGMaterial[],
+		geometry: WGGeometry,
+		pv?: Vector3
+	): Entity3DContainer {
 		const rc = this.mRscene;
 
 		pv = pv ? pv : new Vector3();
@@ -101,7 +110,6 @@ export class REntity3DContainerTest {
 		return mContainer;
 	}
 	private initScene(): void {
-
 		const rc = this.mRscene;
 
 		const geometry = this.createGeom(this.geomData.createCube(80));
@@ -129,7 +137,6 @@ export class REntity3DContainerTest {
 
 	private mRotValue = 0.0;
 	run(): void {
-
 		this.mRotValue += 0.5;
 
 		const ls = this.mContainers;

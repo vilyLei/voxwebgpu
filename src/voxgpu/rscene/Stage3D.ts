@@ -14,15 +14,15 @@ import StageBase from "./StageBase";
 export default class Stage3D extends StageBase implements IRenderStage3D {
     private static s_document: any = null;
     private m_resize_listener: ((evt: any) => void)[] = [];
-    private m_resize_ers: any[] = [];
+    // private m_resize_ers: any[] = [];
     private m_enterFrame_listener: ((evt: any) => void)[] = [];
-    private m_enterFrame_ers: any[] = [];
+    // private m_enterFrame_ers: any[] = [];
 
     private m_keyEvt = new KeyboardEvent();
     private m_keyDown_listener: ((evt: any) => void)[] = [];
-    private m_keyDown_ers: any[] = [];
+    // private m_keyDown_ers: any[] = [];
     private m_keyUp_listener: ((evt: any) => void)[] = [];
-    private m_keyUp_ers: any[] = [];
+    // private m_keyUp_ers: any[] = [];
     private m_enterFrameEvt: EventBase = new EventBase();
 
     constructor(rcuid: number, pdocument: any) {
@@ -42,13 +42,13 @@ export default class Stage3D extends StageBase implements IRenderStage3D {
         Keyboard.AddEventListener(KeyboardEvent.KEY_DOWN, this, this.keyDown);
         Keyboard.AddEventListener(KeyboardEvent.KEY_UP, this, this.keyUp);
     }
-    
+
     enterFrame(): void {
         this.m_enterFrameEvt.type = EventBase.ENTER_FRAME;
         const ls = this.m_enterFrame_listener;
         let len = ls.length;
         for (var i = 0; i < len; ++i) {
-            ls[i].call(this.m_enterFrame_ers[i], this.m_enterFrameEvt);
+            ls[i](this.m_enterFrameEvt);
         }
     }
     setViewPort(px: number, py: number, pw: number, ph: number): void {
@@ -106,7 +106,7 @@ export default class Stage3D extends StageBase implements IRenderStage3D {
 
         let len = this.m_keyDown_listener.length;
         for (var i = 0; i < len; ++i) {
-            this.m_keyDown_listener[i].call(this.m_keyDown_ers[i], this.m_keyEvt);
+            this.m_keyDown_listener[i](this.m_keyEvt);
         }
     }
     private keyUp(evt: any): void {
@@ -124,57 +124,57 @@ export default class Stage3D extends StageBase implements IRenderStage3D {
 
         let len = this.m_keyUp_listener.length;
         for (var i = 0; i < len; ++i) {
-            this.m_keyUp_listener[i].call(this.m_keyUp_ers[i], this.m_keyEvt);
+            this.m_keyUp_listener[i](this.m_keyEvt);
         }
     }
     private sendResizeEvt(evt: any): void {
         let len = this.m_resize_listener.length;
         //console.log("Stage3D::sendResizeEvt(), m_resize_listener.length: ",this.m_resize_listener.length);
         for (var i = 0; i < len; ++i) {
-            this.m_resize_listener[i].call(this.m_resize_ers[i], evt);
+            this.m_resize_listener[i](evt);
         }
     }
-    addEventListener(type: number, target: any, func: (evt: any) => void, captureEnabled = true, bubbleEnabled = true): void {
+    addEventListener(type: number, func: (evt: any) => void, captureEnabled = true, bubbleEnabled = true): void {
 
-        if (func != null && target != null) {
+        if (func) {
             switch (type) {
                 case EventBase.RESIZE:
-                    this.addTarget(this.m_resize_listener, this.m_resize_ers, target, func);
+                    this.addTarget(this.m_resize_listener, func);
                     break;
                 case EventBase.ENTER_FRAME:
-                    this.addTarget(this.m_enterFrame_listener, this.m_enterFrame_ers, target, func);
+                    this.addTarget(this.m_enterFrame_listener, func);
                     break;
 
                 case KeyboardEvent.KEY_DOWN:
-                    this.addTarget(this.m_keyDown_listener, this.m_keyDown_ers, target, func);
+                    this.addTarget(this.m_keyDown_listener, func);
                     break;
                 case KeyboardEvent.KEY_UP:
-                    this.addTarget(this.m_keyUp_listener, this.m_keyUp_ers, target, func);
+                    this.addTarget(this.m_keyUp_listener, func);
                     break;
                 default:
-                    this.m_dp.addEventListener(type, target, func, captureEnabled, bubbleEnabled);
+                    this.m_dp.addEventListener(type, func, captureEnabled, bubbleEnabled);
                     break;
             }
         }
     }
-    removeEventListener(type: number, target: any, func: (evt: any) => void): void {
+    removeEventListener(type: number, func: (evt: any) => void): void {
 
-        if (func != null && target != null) {
+        if (func) {
             switch (type) {
                 case EventBase.RESIZE:
-                    this.removeTarget(this.m_resize_listener, this.m_resize_ers, target);
+                    this.removeTarget(this.m_resize_listener, func);
                     break;
                 case EventBase.ENTER_FRAME:
-                    this.removeTarget(this.m_enterFrame_listener, this.m_enterFrame_ers, target);
+                    this.removeTarget(this.m_enterFrame_listener, func);
                     break;
                 case KeyboardEvent.KEY_DOWN:
-                    this.removeTarget(this.m_keyDown_listener, this.m_keyDown_ers, target);
+                    this.removeTarget(this.m_keyDown_listener, func);
                     break;
                 case KeyboardEvent.KEY_UP:
-                    this.removeTarget(this.m_keyUp_listener, this.m_keyUp_ers, target);
+                    this.removeTarget(this.m_keyUp_listener, func);
                     break;
                 default:
-                    this.m_dp.removeEventListener(type, target, func);
+                    this.m_dp.removeEventListener(type, func);
                     break;
             }
         }

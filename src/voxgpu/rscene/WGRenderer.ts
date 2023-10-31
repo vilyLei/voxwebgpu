@@ -11,14 +11,19 @@ import { IRenderCamera } from "../render/IRenderCamera";
 
 import { GPUCanvasConfiguration } from "../gpu/GPUCanvasConfiguration";
 import IRenderer from "./IRenderer";
+import { IWGRPassRef } from "../render/pipeline/IWGRPassRef";
 
 interface WGRenderConfig {
-
-	gpuCanvasCfg?: GPUCanvasConfiguration,
-	ctx?: WebGPUContext,
-	canvas?: HTMLCanvasElement,
-	div?: HTMLDivElement,
-	callback?: (type?: string) => void
+	gpuCanvasCfg?: GPUCanvasConfiguration;
+	ctx?: WebGPUContext;
+	canvas?: HTMLCanvasElement;
+	div?: HTMLDivElement;
+	callback?: (type?: string) => void;
+}
+class RPassInfoParam {
+	blockIndex = 0;
+	rparam: WGRPassParams;
+	ref: IWGRPassRef;
 }
 
 class WGRenderer implements IRenderer {
@@ -26,7 +31,8 @@ class WGRenderer implements IRenderer {
 	private mInit = true;
 	private mDiv: HTMLDivElement;
 	private mRPBlocks: WGRenderPassBlock[] = [];
-	private mPassParams: WGRPassParams[] = [];
+	private mBlockRPassParams: WGRPassParams[] = [];
+	private mRPassInfos: RPassInfoParam[] = [];
 	private mWGCtx: WebGPUContext;
 	private mROBuilder = new WGRObjBuilder();
 	private mNodeMana = new WGEntityNodeMana();
@@ -42,7 +48,6 @@ class WGRenderer implements IRenderer {
 		}
 	}
 	private initCamera(width: number, height: number): void {
-
 		const cam = this.camera;
 		const camUpDirect = new Vector3(0, 1, 0);
 		cam.perspectiveRH((Math.PI * 45) / 180.0, width / height, 0.1, 5000);
@@ -65,7 +70,6 @@ class WGRenderer implements IRenderer {
 		return this.mWGCtx.canvas;
 	}
 	checkConfig(config?: WGRenderConfig): WGRenderConfig {
-
 		let canvasCFG: GPUCanvasConfiguration = { alphaMode: "premultiplied" };
 		let canvas: HTMLCanvasElement;
 		let div: HTMLDivElement;
@@ -108,7 +112,6 @@ class WGRenderer implements IRenderer {
 		return config;
 	}
 	initialize(config?: WGRenderConfig): void {
-
 		if (this.mInit && !this.mWGCtx) {
 			this.mInit = false;
 			const wgCtx = config ? config.ctx : null;
@@ -125,10 +128,7 @@ class WGRenderer implements IRenderer {
 				this.mDiv = config.div;
 				this.mWGCtx = new WebGPUContext();
 				this.mWGCtx.initialize(config.canvas, config.gpuCanvasCfg).then(() => {
-
 					this.init();
-
-					console.log("WGRenderer::initialize(), webgpu initialization success ...");
 					if (config && config.callback) {
 						config.callback("renderer-init");
 					}
@@ -140,21 +140,36 @@ class WGRenderer implements IRenderer {
 	private init(): void {
 		const canvas = this.mWGCtx.canvas;
 		this.initCamera(canvas.width, canvas.height);
-		for (let i = 0; i < this.mPassParams.length; ++i) {
-			this.createRenderBlock(this.mPassParams[i]);
+		for (let i = 0; i < this.mBlockRPassParams.length; ++i) {
+			this.createRenderBlock(this.mBlockRPassParams[i]);
 		}
-		this.mPassParams = [];
+		this.mBlockRPassParams = [];
+		this.buildRPasses();
+	}
+	private buildRPasses(): void {
+		for (let i = 0; i < this.mRPassInfos.length; ) {
+			const rinfo = this.mRPassInfos[i];
+
+			if (rinfo.blockIndex >= 0 && rinfo.blockIndex < this.mRPBlocks.length) {
+				const ref = this.mRPBlocks[rinfo.blockIndex].appendRendererPass(rinfo.rparam);
+				rinfo.ref.index = ref.index;
+				rinfo.ref.node = ref.node;
+				this.mRPassInfos.splice(i, 1);
+			} else {
+				++i;
+			}
+		}
 	}
 	getWGCtx(): WebGPUContext {
 		return this.mWGCtx;
 	}
 	addEntity(entity: Entity3D, processIndex = 0, deferred = true): void {
-
 		if (this.mInit) {
 			this.initialize();
 		}
 		if (entity) {
-			if (this.mWGCtx && this.mWGCtx.enabled && entity.isREnabled()) {
+			let flag = true;
+			if (this.mWGCtx && this.mWGCtx.enabled) {
 				// console.log("WGRenderer::addEntity(), a 03");
 				if (processIndex == 0 && this.mRPBlocks.length < 1) {
 					this.createRenderBlock({
@@ -162,36 +177,52 @@ class WGRenderer implements IRenderer {
 						multisampleEnabled: true,
 						depthFormat: "depth24plus"
 					});
+					this.buildRPasses();
 				}
-				if (processIndex >= 0 && processIndex < this.mRPBlocks.length) {
-					entity.update();
-					const rb = this.mRPBlocks[processIndex];
-					const runit = this.mROBuilder.createRUnit(entity, rb);
-				} else {
-					throw Error("Illegal operation !!!");
+				if (entity.isREnabled()) {
+					if (processIndex >= 0 && processIndex < this.mRPBlocks.length) {
+						entity.update();
+						flag = false;
+						const rb = this.mRPBlocks[processIndex];
+						const runit = this.mROBuilder.createRUnit(entity, rb);
+					} else {
+						throw Error("Illegal operation !!!");
+					}
 				}
-			} else {
-				// console.log("WGRenderer::addEntity(), b 03");
+			}
+			if (flag) {
 				this.mNodeMana.addEntity(entity, processIndex, deferred);
 			}
 		}
 	}
 
-	removeEntity(entity: Entity3D): void {
-
+	removeEntity(entity: Entity3D): void {}
+	appendRendererPassAt(processIndex = 0, param?: WGRPassParams): IWGRPassRef {
+		const len = this.mRPBlocks.length;
+		if (len > 0) {
+			if (processIndex >= 0 && processIndex < len) {
+				return this.mRPBlocks[processIndex].appendRendererPass(param);
+			}
+			return { index: -1 };
+		}
+		let info = new RPassInfoParam();
+		info.blockIndex = processIndex;
+		info.rparam = param;
+		info.ref = { index: -1 };
+		this.mRPassInfos.push(info);
+		return info.ref;
 	}
 	getRPBlockAt(i: number): WGRenderPassBlock {
 		return this.mRPBlocks[i];
 	}
 	createRenderBlock(param?: WGRPassParams): WGRenderPassBlock {
-
 		if (this.mWGCtx) {
 			const rb = new WGRenderPassBlock(this.mWGCtx, param);
 			rb.camera = this.camera;
 			this.mRPBlocks.push(rb);
 			return rb;
 		} else {
-			this.mPassParams.push(param);
+			this.mBlockRPassParams.push(param);
 		}
 		return null;
 	}

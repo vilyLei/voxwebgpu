@@ -3,9 +3,15 @@ import { GPUBuffer } from "../gpu/GPUBuffer";
 import { VtxPipelinDescParam } from "../render/pipeline/IWGRPipelineContext";
 interface WGGeomAttributeParam {
 	shdVarName?: string;
-	data: NumberArrayViewType;
+	data?: NumberArrayViewType;
 	strides?: number[];
 	offset?: number;
+
+	position?: NumberArrayViewType;
+	uv?: NumberArrayViewType;
+	uv2?: NumberArrayViewType;
+	normal?: NumberArrayViewType;
+	color?: NumberArrayViewType;
 }
 class WGGeomAttributeBlock {
 	shdVarName = "";
@@ -35,15 +41,38 @@ class WGGeometry {
 	gpuvbufs?: GPUBuffer[];
 	indexBuffer: WGGeomIndexBuffer;
 	bounds: AABB;
-	setIndexBuffer(param: { name?: string; data: IndexArrayViewType }): WGGeometry {
+	setIndexBuffer(param: { name?: string, data: IndexArrayViewType }): WGGeometry {
 		this.indexBuffer = new WGGeomIndexBuffer(param);
 		return this;
+	}
+	setIndices(indicesData: IndexArrayViewType): WGGeometry {
+		this.indexBuffer = new WGGeomIndexBuffer( {data: indicesData } );
+		return this;
+	}
+	private filterParam(param: any, key: string, strides: number[]): void {
+		if(param[key]) {
+			param.data = param[key];
+			if(!param.shdVarName) {
+				param.shdVarName = key;
+			}
+			if(!param.strides) {
+				param.strides = strides;
+			}
+			param[key] = undefined;
+		}
 	}
 	/**
 	 * 每次添加，实际上是添加一个 attribute 组合
 	 */
 	addAttribute(param: WGGeomAttributeParam): WGGeometry {
+
 		if (param) {
+
+			this.filterParam(param, 'position', [3]);
+			this.filterParam(param, 'uv', [2]);
+			this.filterParam(param, 'uv2', [2]);
+			this.filterParam(param, 'normal', [3]);
+
 			const p = new WGGeomAttributeBlock();
 			const ab = p as any;
 			for (var k in param) {

@@ -7,19 +7,19 @@
 
 export default class BitConst {
 
-    static readonly BIT_ZERO = 0;
-    static readonly BIT_ONE_0 = 1;          // 0b1
-    static readonly BIT_ONE_1 = 1 << 1;     // 0b10
-    static readonly BIT_ONE_2 = 1 << 2;     // 0b100
-    static readonly BIT_ONE_3 = 1 << 3;     // 0b1000
-    static readonly BIT_ONE_4 = 1 << 4;     // 0b10000
-    static readonly BIT_ONE_5 = 1 << 5;     // 0b100000
-    static readonly BIT_ONE_6 = 1 << 6;     // 0b1000000
-    static readonly BIT_ONE_7 = 1 << 7;     // 0b10000000
-    static readonly BIT_ONE_8 = 1 << 8;     // 0b100000000
-    static readonly BIT_ONE_9 = 1 << 9;     // 0b1000000000
-    static readonly BIT_ONE_10 = 1 << 10;   // 0b10000000000
-    static readonly BIT_ONE_11 = 1 << 11;   // 0b100000000000
+    static readonly ZERO = 0;
+    static readonly ONE_0 = 1;          // 0b1
+    static readonly ONE_1 = 1 << 1;     // 0b10
+    static readonly ONE_2 = 1 << 2;     // 0b100
+    static readonly ONE_3 = 1 << 3;     // 0b1000
+    static readonly ONE_4 = 1 << 4;     // 0b10000
+    static readonly ONE_5 = 1 << 5;     // 0b100000
+    static readonly ONE_6 = 1 << 6;     // 0b1000000
+    static readonly ONE_7 = 1 << 7;     // 0b10000000
+    static readonly ONE_8 = 1 << 8;     // 0b100000000
+    static readonly ONE_9 = 1 << 9;     // 0b1000000000
+    static readonly ONE_10 = 1 << 10;   // 0b10000000000
+    static readonly ONE_11 = 1 << 11;   // 0b100000000000
 
     static value = 0;
     static pushThreeBitValueToInt(target: number, value: number): number {

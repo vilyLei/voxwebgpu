@@ -100,23 +100,21 @@ class RendererScene implements IRendererScene {
 	}
 	/**
 	 * @param type event type
-	 * @param target event listerner
 	 * @param func event listerner callback function
 	 * @param captureEnabled the default value is true
 	 * @param bubbleEnabled the default value is false
 	 */
-	addEventListener(type: number, target: any, func: (evt: any) => void, captureEnabled: boolean = true, bubbleEnabled: boolean = true): void {
+	addEventListener(type: number, func: (evt: any) => void, captureEnabled: boolean = true, bubbleEnabled: boolean = true): void {
 		const st = this.racontext.getStage();
-		st.addEventListener(type, target, func, captureEnabled, bubbleEnabled);
+		st.addEventListener(type, func, captureEnabled, bubbleEnabled);
 	}
 	/**
 	 * @param type event type
-	 * @param target event listerner
 	 * @param func event listerner callback function
 	 */
-	removeEventListener(type: number, target: any, func: (evt: any) => void): void {
+	removeEventListener(type: number, func: (evt: any) => void): void {
 		const st = this.racontext.getStage();
-		st.removeEventListener(type, target, func);
+		st.removeEventListener(type, func);
 	}
 	run(): void {
 		if (this.enabled && this.renderer && this.renderer.isEnabled()) {

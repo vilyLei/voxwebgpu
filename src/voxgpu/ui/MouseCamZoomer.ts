@@ -80,9 +80,9 @@ export default class MouseCamZoomer {
             this.m_lookAt = this.createVec3();
             this.m_lookAtPos = this.createVec3();
 
-            stage3D.addEventListener(MouseEvent.MOUSE_WHEEL, this, this.mouseWheelListener, true, true);
-            stage3D.addEventListener(MouseEvent.MOUSE_MULTI_MOVE, this, this.mouseMultiMoveListener, true, true);
-            stage3D.addEventListener(MouseEvent.MOUSE_MULTI_UP, this, this.mouseMultiUpListener, true, true);
+            stage3D.addEventListener(MouseEvent.MOUSE_WHEEL, this.mouseWheelListener.bind(this), true, true);
+            stage3D.addEventListener(MouseEvent.MOUSE_MULTI_MOVE, this.mouseMultiMoveListener.bind(this), true, true);
+            stage3D.addEventListener(MouseEvent.MOUSE_MULTI_UP, this.mouseMultiUpListener.bind(this), true, true);
         }
     }
     setLookAtCtrlEnabled(enabled: boolean): void {
@@ -174,9 +174,9 @@ export default class MouseCamZoomer {
     run(minDis: number): void {
 
         let lookAtEnabled = this.m_lookAtCtrlEnabled;
-        
+
         if (this.m_camera != null) {
-            
+
             if (this.m_flagType == 2) {
                 // camera foward update
                 if (Math.abs(this.m_fowardDis) > 0.001) {

@@ -187,23 +187,21 @@ export default class StageBase {
     mouseWindowRightUp(phase: number = 1): void {
     }
 
-    protected addTarget(funcs: ((evt: any) => void)[], listeners: any[], target: any, func: (evt: any) => void): void {
+    protected addTarget(funcs: ((evt: any) => void)[], func: (evt: any) => void): void {
         let i = 0;
         for (i = funcs.length - 1; i >= 0; --i) {
-            if (target === listeners[i]) {
+            if (func === funcs[i]) {
                 break;
             }
         }
         if (i < 0) {
-            listeners.push(target);
             funcs.push(func);
         }
     }
 
-    protected removeTarget(funcs: ((evt: any) => void)[], listeners: any[], target: any): void {
+    protected removeTarget(funcs: ((evt: any) => void)[], func: (evt: any) => void): void {
         for (let i = funcs.length - 1; i >= 0; --i) {
-            if (target === listeners[i]) {
-                listeners.splice(i, 1);
+            if (func === funcs[i]) {
                 funcs.splice(i, 1);
                 break;
             }
