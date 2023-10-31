@@ -96,10 +96,11 @@ export class Entity3DVisibilityTest {
 			fragShaderSrc: { code: fragWGSL, uuid: "fragShdCode" }
 		};
 
+		let materials0 = [this.createMaterial(shdSrc, [{diffuse: {url:"static/assets/box.jpg"}}], new Color4(1.0))];
+		let materials1 = [this.createMaterial(shdSrc, [{diffuse: {url:"static/assets/default.jpg"}}], new Color4(0.0, 1.0))];
+
 		this.mRPass = rc.renderer.appendRendererPassAt();
-		let materials0 = [this.createMaterial(shdSrc, [{url:"static/assets/box.jpg"}], new Color4(1.0, 0.0, 0.0))];
 		materials0[0].rpass = {index: 0};
-		let materials1 = [this.createMaterial(shdSrc, [{url:"static/assets/box.jpg"}], new Color4(0.0, 1.0, 0.0))];
 		materials1[0].rpass = this.mRPass;
 
 		let entity = new Entity3D();

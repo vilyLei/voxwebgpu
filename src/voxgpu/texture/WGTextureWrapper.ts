@@ -2,6 +2,7 @@ import { WebGPUContext } from "../gpu/WebGPUContext";
 import { GPUSampler } from "../gpu/GPUSampler";
 import { GPUTexture } from "../gpu/GPUTexture";
 import { GPUTextureView } from "../gpu/GPUTextureView";
+import { TextureDataDescriptor, WGTextureDataDescriptor } from "./WGTextureDataDescriptor";
 
 interface WGTextureDataType {
 	generateMipmaps?: boolean;
@@ -11,17 +12,7 @@ interface WGTextureDataType {
 	build(ctx: WebGPUContext): GPUTexture;
 	destroy(): void;
 }
-interface WGTextureDataDescriptor {
-	generateMipmaps?: boolean;
-	flipY?: boolean;
-	format?: string;
-	dimension?: string;
-	url?: string;
-	urls?: string[];
-	image?: WebImageType;
-	images?: WebImageType[];
-	shdVarName?: string;
-}
+
 class WGImageTextureData implements WGTextureDataType {
 	protected mImgs: WebImageType[];
 	protected mTex: GPUTexture;
@@ -33,7 +24,7 @@ class WGImageTextureData implements WGTextureDataType {
 	dimension = "2d";
 	constructor() {}
 
-	setDescripter(descriptor: WGTextureDataDescriptor): WGImageTextureData {
+	setDescripter(descriptor: TextureDataDescriptor): WGImageTextureData {
 		if (descriptor.generateMipmaps) this.generateMipmaps = descriptor.generateMipmaps;
 		if (descriptor.flipY) this.flipY = descriptor.flipY;
 		if (descriptor.format) this.format = descriptor.format;
@@ -72,7 +63,7 @@ class WGImage2DTextureData extends WGImageTextureData {
 		return this;
 	}
 
-	setDescripter(descriptor: WGTextureDataDescriptor): WGImage2DTextureData {
+	setDescripter(descriptor: TextureDataDescriptor): WGImage2DTextureData {
 		super.setDescripter(descriptor);
 		if (this.dimension !== "2d") {
 			throw Error("Illegal Operation !!!");
@@ -118,7 +109,7 @@ class WGImageCubeTextureData extends WGImageTextureData {
 		return this;
 	}
 
-	setDescripter(descriptor: WGTextureDataDescriptor): WGImageCubeTextureData {
+	setDescripter(descriptor: TextureDataDescriptor): WGImageCubeTextureData {
 		super.setDescripter(descriptor);
 		if (this.dimension !== "cube") {
 			throw Error("Illegal Operation !!!");
@@ -218,14 +209,38 @@ class WGTextureWrapper {
 	}
 	destroy(): void {}
 }
+
+function textDescriptorFilter(d: WGTextureDataDescriptor): TextureDataDescriptor {
+
+	let rd = d;
+	if(d.diffuse){rd = d.diffuse; rd.shdVarName = "diffuse";}
+	if(d.color){rd = d.color; rd.shdVarName = "color";}
+	if(d.albedo){rd = d.albedo; rd.shdVarName = "albedo";}
+
+	if(d.normal){rd = d.normal; rd.shdVarName = "normal";}
+	if(d.ao){rd = d.ao; rd.shdVarName = "ao";}
+	if(d.metallic){rd = d.metallic; rd.shdVarName = "metallic";}
+
+	if(d.roughness){rd = d.roughness; rd.shdVarName = "roughness";}
+	if(d.specularEnv){rd = d.specularEnv; rd.shdVarName = "specularEnv";}
+	if(d.arm){rd = d.arm; rd.shdVarName = "arm";}
+
+	if(d.parallax){rd = d.parallax; rd.shdVarName = "parallax";}
+	if(d.height){rd = d.height; rd.shdVarName = "height";}
+	if(d.displacement){rd = d.displacement; rd.shdVarName = "displacement";}
+
+	if(d.specular){rd = d.specular; rd.shdVarName = "specular";}
+
+	return rd;
+}
 function createDataWithDescriptor(descriptor: WGTextureDataDescriptor): WGImageTextureData {
 	let dimension = descriptor.dimension ? descriptor.dimension : "2d";
 	switch (dimension) {
 		case "2d":
-			return new WGImage2DTextureData().setDescripter(descriptor);
+			return new WGImage2DTextureData().setDescripter(textDescriptorFilter(descriptor));
 			break;
 		case "cube":
-			return new WGImageCubeTextureData().setDescripter(descriptor);
+			return new WGImageCubeTextureData().setDescripter(textDescriptorFilter(descriptor));
 			break;
 		default:
 			throw Error("Illegal Operation !!!");
