@@ -753,7 +753,7 @@ class Entity3DContainer implements IRenderableEntityContainer {
 			this.mGboundsStatus = -1;
 		}
 	}
-	update(): void {
+	update(): Entity3DContainer {
 		const lmt = this.m_localMat;
 		if (lmt) {
 			if (this.mTransformStatus > 0) {
@@ -825,6 +825,7 @@ class Entity3DContainer implements IRenderableEntityContainer {
 			this.updateBounds();
 			this.__$updateBoundsDo();
 		}
+		return this;
 	}
 	//// local to world matrix, 使用的时候注意数据安全->防止多个显示对象拥有而出现多次修改的问题,因此此函数尽量不要用
 	destroy(): void {

@@ -109,13 +109,14 @@ class Entity3D implements IRenderableEntity {
 
 		}
 	}
-	update(): void {
+	update(): Entity3D {
 		if (this.transform) {
 			this.transform.update();
 		}
 		if(this.geometry && !this.mLBs) {
 			this.mLBs = this.geometry.bounds;
 		}
+		return this;
 	}
 	destroy(): void {}
 

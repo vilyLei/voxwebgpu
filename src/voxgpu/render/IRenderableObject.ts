@@ -51,7 +51,7 @@ interface IRenderableObject {
 	setVisible(boo: boolean): IRenderableObject;
 	isVisible(): boolean;
 	getTransform(): IROTransform;
-	update(): void;
+	update(): IRenderableObject;
 	destroy(): void;
 
 	getInvMatrix(): IMatrix4;

@@ -43,11 +43,6 @@ interface ITransformEntity extends IRenderableEntity{
 	localToGlobal(pv: IVector3): ITransformEntity;
 	globalToLocal(pv: IVector3): ITransformEntity;
 
-    // getGlobalBounds(): IAABB;
-    // getLocalBounds(): IAABB;
-
-    update(): void;
-    destroy(): void;
 }
 
 export default ITransformEntity;
