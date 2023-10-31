@@ -57,10 +57,6 @@ class RendererScene implements IRendererScene {
 	private addContainer(container: IRenderableEntityContainer, processid: number = 0): void {
 
 		if(container.isContainer()) {
-			// container.__$wuid = this.mUid;
-			// container.__$wprocuid = processid;
-			// container.__$setRenderer(this);
-			// this.mContainers.push(container);
 
 			if (container.__$wuid < 0 && container.__$contId < 1) {
 				let i = 0;
@@ -80,7 +76,7 @@ class RendererScene implements IRendererScene {
 					// 	this.mRspace.addEntity(container);
 					// }
 					// if(container.getREType() >= 20) {
-					// 	this.m_renderer.addContainer(container, this.m_processids[processid]);
+					// 	this.renderer.addContainer(container, this.m_processids[processid]);
 					// }
 				}
 			}
