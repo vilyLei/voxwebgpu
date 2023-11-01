@@ -15,7 +15,6 @@ fn approximationLinearToSRCB(linearColor: vec3<f32>) -> vec3<f32> {
     return pow(linearColor, vec3(1.0/2.2));
 }
 
-
 fn accurateSRGBToLinear(srgbColor: vec3<f32>) -> vec3<f32> {
     let linearRGBLo = srgbColor / 12.92;
     let linearRGBHi = pow((srgbColor + vec3(0.055)) / vec3(1.055), vec3(2.4));

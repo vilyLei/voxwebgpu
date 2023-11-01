@@ -78,8 +78,6 @@ fn main(
   let invMat33 = inverseM33( m44ToM33( objMat ) );
   output.normal = normalize( normal * invMat33 );
   output.camPos = (inverseM44(viewMat) * vec4<f32>(0.0,0.0,0.0, 1.0)).xyz;
-//   var pv: vec4<f32>;
-//   pv = vec4<f32>(position, 1.0);
   output.pos = wpos;
   return output;
 }
