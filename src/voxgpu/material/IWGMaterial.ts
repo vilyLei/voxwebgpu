@@ -4,6 +4,7 @@ import { WGRPipelineContextDefParam, WGRShderSrcType } from "../render/pipeline/
 import { VtxPipelinDescParam, IWGRPipelineContext } from "../render/pipeline/IWGRPipelineContext";
 import { WGMaterialDescripter } from "./WGMaterialDescripter";
 import { WGRUniformValue } from "../render/uniform/WGRUniformValue";
+import { IWGRPassRef } from "../render/pipeline/IWGRPassRef";
 
 interface IWGMaterial extends WGMaterialDescripter {
 
@@ -16,6 +17,7 @@ interface IWGMaterial extends WGMaterialDescripter {
 	pipelineVtxParam?: VtxPipelinDescParam;
 	pipelineDefParam?: WGRPipelineContextDefParam;
 
+	rpass: IWGRPassRef;
 	uniformValues: WGRUniformValue[];
 
 	// textures: { [key: string]: WGTextureWrapper } = {};

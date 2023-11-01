@@ -17,12 +17,15 @@ interface IWGRUnit {
 	enabled: boolean;
 	passes?: IWGRUnit[];
 
+	__$rever: number;
+
 	st: WGRUnitState;
 
 	getRF(): boolean;
 	setUniformValues(values: WGRUniformValue[]): void;
 	runBegin(): void;
 	run(): void;
+	destroy(): void;
 }
 
 export { IWGRUnit };

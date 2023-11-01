@@ -18,7 +18,7 @@ class WGRUnitRunSt {
 }
 
 const __$urst = new WGRUnitRunSt();
-const __$rurst = new WGRUnitState();
+const __$reust = new WGRUnitState();
 class WGRUnit implements IWGRUnit {
 	private mUniformValues: WGRUniformValue[];
 	private rf = true;
@@ -30,7 +30,9 @@ class WGRUnit implements IWGRUnit {
 
 	bounds: IAABB;
 
-	st = __$rurst;
+	st = __$reust;
+
+	__$rever = 0;
 
 	enabled = true;
 	passes: WGRUnit[];
@@ -43,11 +45,12 @@ class WGRUnit implements IWGRUnit {
 		r.pipeline = this.pipeline;
 		r.pipelinectx = this.pipelinectx;
 		r.geometry = this.geometry;
+		r.passes = this.passes;
 		r.rp = this.rp;
 		return r;
 	}
 	getRF(): boolean {
-		return this.enabled && this.st.isTrue();
+		return this.enabled && this.st.isDrawable();
 	}
 	setUniformValues(values: WGRUniformValue[]): void {
 		this.mUniformValues = values;
@@ -55,7 +58,7 @@ class WGRUnit implements IWGRUnit {
 	runBegin(): void {
 		const rc = this.rp.passEncoder;
 
-		this.rf = this.enabled && this.rp.enabled && this.st.isTrue();
+		this.rf = this.enabled && this.rp.enabled && this.st.isDrawable();
 		if (this.rf) {
 			const gt = this.geometry;
 			if (this.pipelinectx) {
@@ -125,11 +128,16 @@ class WGRUnit implements IWGRUnit {
 		}
 	}
 	destroy(): void {
-		this.mUniformValues = null;
-		this.pipeline = null;
-		this.pipelinectx = null;
-		this.rp = null;
-		this.st = null;
+		if (this.pipelinectx) {
+			const ufctx = this.pipelinectx.uniformCtx;
+			ufctx.removeUniforms(this.uniforms);
+
+			this.mUniformValues = null;
+			this.pipeline = null;
+			this.pipelinectx = null;
+			this.rp = null;
+			this.st = null;
+		}
 	}
 }
 

@@ -5,6 +5,7 @@ import { WebGPUContext } from "../gpu/WebGPUContext";
 import { GPUCommandBuffer } from "../gpu/GPUCommandBuffer";
 import { WGMaterialDescripter } from "../material/WGMaterialDescripter";
 import { IWGRenderPassNodeRef } from "./IWGRenderPassNodeRef";
+// import { WGRUniformContext } from "./uniform/WGRUniformContext";
 class WGRenderPassNode implements IWGRenderPassNodeRef {
 
 	private static sUid = 0;
@@ -16,17 +17,28 @@ class WGRenderPassNode implements IWGRenderPassNodeRef {
 	pctxMap: Map<string, WGRPipelineContext> = new Map();
 	rcommands: GPUCommandBuffer[];
 	param?: WGRPassParams;
+	// uniformCtx: WGRUniformContext;
 
 	enabled = true;
+	prevNode: WGRenderPassNode;
+
+	destroy(): void {
+		this.prevNode = null;
+		// this.uniformCtx = null;
+	}
 	getUid(): number {
 		return this.mUid;
 	}
 	initialize(wgCtx: WebGPUContext, param?: WGRPassParams): void {
-		if (!this.mWGCtx && wgCtx) {
+		this.param = param ? param : this.param;
+		if (!this.mWGCtx && wgCtx && wgCtx.enabled) {
 			this.mWGCtx = wgCtx;
+
+			if(this.prevNode) {
+				this.rpass.prevPass = this.prevNode.rpass;
+			}
 			this.rpass.initialize(wgCtx);
-			this.rpass.build(param);
-			this.param = param;
+			this.rpass.build(this.param);
 		}
 	}
 

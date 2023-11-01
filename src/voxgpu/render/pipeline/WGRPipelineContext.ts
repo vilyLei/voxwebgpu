@@ -26,9 +26,10 @@ class WGRPipelineContext implements IWGRPipelineContext {
 
 	uid = 0;
 	name = "PipelineContext";
-	readonly uniform = new WGRUniformContext();
+	readonly uniformCtx = new WGRUniformContext();
 
 	constructor(wgCtx?: WebGPUContext) {
+		console.log("XXX XXX create a WGRPipelineContext instance.");
 		if (wgCtx) {
 			this.initialize(wgCtx);
 		}
@@ -47,15 +48,15 @@ class WGRPipelineContext implements IWGRPipelineContext {
 	}
 	runBegin(): void {
 		this.init();
-		this.uniform.runBegin();
+		this.uniformCtx.runBegin();
 	}
 	runEnd(): void {
-		this.uniform.runEnd();
+		this.uniformCtx.runEnd();
 	}
 	initialize(wgCtx: WebGPUContext): void {
 		if (wgCtx && !this.mWGCtx) {
 			this.mWGCtx = wgCtx;
-			this.uniform.initialize(this);
+			this.uniformCtx.initialize(this);
 			this.mShader.initialize(wgCtx);
 		}
 	}
@@ -166,6 +167,7 @@ class WGRPipelineContext implements IWGRPipelineContext {
 				}
 			}
 		}
+		console.log("createUniformBindGroup(), desc: ", desc);
 		if (desc.entries.length < 1) {
 			throw Error("Illegal operation !!!");
 		}

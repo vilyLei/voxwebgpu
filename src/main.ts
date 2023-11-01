@@ -20,8 +20,12 @@
 // import { RSceneTest as Demo } from "./voxgpu/sample/RSceneTest";
 // import { SimpleLightTest as Demo } from "./voxgpu/sample/SimpleLightTest";
 // import { REntity3DContainerTest as Demo } from "./voxgpu/sample/REntity3DContainerTest";
-import { MultiGPUPassTest as Demo } from "./voxgpu/sample/MultiGPUPassTest";
+// import { MultiGPUPassTest as Demo } from "./voxgpu/sample/MultiGPUPassTest";
+
 // import { Entity3DVisibilityTest as Demo } from "./voxgpu/sample/Entity3DVisibilityTest";
+import { RSceneEntityManagement as Demo } from "./voxgpu/sample/RSceneEntityManagement";
+
+// import { SimplePBRTest as Demo } from "./voxgpu/sample/SimplePBRTest";
 
 
 let demoIns = new Demo();

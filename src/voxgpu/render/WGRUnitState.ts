@@ -3,7 +3,34 @@ import Bit from "../utils/BitConst";
 class WGRUnitState {
 
 	private flag = 0;
-	isTrue(): boolean {
+	private rf = 0;
+	__$rever = 0;
+	set __$rendering(v: boolean) {
+		if (v) {
+			this.rf = Bit.addBit(this.rf, Bit.ONE_0);
+		} else {
+			this.rf = Bit.removeBit(this.rf, Bit.ONE_0);
+		}
+	}
+	get __$rendering(): boolean {
+		return Bit.containsBit(this.rf, Bit.ONE_0);
+	}
+	set __$inRenderer(v: boolean) {
+		if (v) {
+			this.rf = Bit.addBit(this.rf, Bit.ONE_1);
+		} else {
+			this.rf = Bit.removeBit(this.rf, Bit.ONE_1);
+		}
+		// console.log("CCCC 0 this.rf: ", this.rf);
+		// console.log("CCCC 0 Bit.containsBit(this.rf, Bit.ONE_1): ", Bit.containsBit(this.rf, Bit.ONE_1));
+	}
+	get __$inRenderer(): boolean {
+		// console.log("CCCC 1 this.rf: ", this.rf);
+		// console.log("CCCC 1 Bit.containsBit(this.rf, Bit.ONE_1): ", Bit.containsBit(this.rf, Bit.ONE_1));
+		return Bit.containsBit(this.rf, Bit.ONE_1);
+	}
+
+	isDrawable(): boolean {
 		return this.flag < 1;
 	}
 	set renderable(v: boolean) {
@@ -36,6 +63,7 @@ class WGRUnitState {
 	get visible(): boolean {
 		return Bit.containsBit(this.flag, Bit.ONE_0);
 	}
+
 }
 
 export { WGRUnitState };

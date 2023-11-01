@@ -57,7 +57,7 @@ class WGRObjBuilder {
 
 		let groupIndex = 0;
 
-		const uniformCtx = pctx.uniform;
+		const uniformCtx = pctx.uniformCtx;
 		let ru = new WGRUnit();
 
 		ru.geometry = primitive;
@@ -137,6 +137,8 @@ class WGRObjBuilder {
 		}
 		ru.bounds = entity.bounds;
 		ru.st = entity.rstate;
+		ru.st.__$rendering = true;
+		ru.__$rever = ru.st.__$rever;
 		block.addRUnit(ru);
 		return ru;
 	}

@@ -29,6 +29,7 @@ class Entity3D implements IRenderableEntity {
 		 * 第30位位存放是否渲染运行时排序
 		 */
 	__$rseFlag = REF.DEFAULT;
+	// __$rrver = 0;
 
 	uuid?: string;
 
@@ -41,7 +42,7 @@ class Entity3D implements IRenderableEntity {
 	cameraViewing = true;
 
 	readonly rstate = new WGRUnitState();
-	readonly rers = new Uint16Array([0, 0, 0, 0]);
+	// readonly rers = new Uint16Array([0, 0, 0, 0]);
 
 	/**
 	 * mouse interaction enabled
@@ -120,11 +121,23 @@ class Entity3D implements IRenderableEntity {
 	}
 	destroy(): void {}
 
-	isRendering(): boolean {
-		return false;
+	/**
+	 * 表示没有加入任何渲染场景或者渲染器
+	 */
+	isRenderFree(): boolean {
+		return !this.rstate.__$inRenderer;
 	}
+	/**
+	 * @returns 是否已经加入渲染器中(但是可能还没有进入真正的渲染运行时)
+	 */
 	isInRenderer(): boolean {
-		return false;
+		return this.rstate.__$inRenderer;
+	}
+	/**
+	 * @returns 是否在渲染器实际的渲染工作流中, 返回true并不表示当前帧一定会绘制
+	 */
+	isRendering(): boolean {
+		return this.rstate.__$rendering;
 	}
 
 	getGlobalBounds(): IAABB {

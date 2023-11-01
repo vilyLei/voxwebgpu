@@ -4,6 +4,7 @@ interface WGWaitEntityNode {
 	entity: Entity3D;
 	processIndex: number;// = 0;
 	deferred: boolean;// = true;
+	rever: number;
 
 }
 export { WGWaitEntityNode };

@@ -13,12 +13,12 @@ class WGMaterial implements IWGMaterial {
 	/**
 	 * unique shading process uuid
 	 */
-	shadinguuid = "base-material";
+	shadinguuid = "default-material";
 
 	shaderCodeSrc?: WGRShderSrcType;
 	pipelineVtxParam?: VtxPipelinDescParam;
 	pipelineDefParam?: WGRPipelineContextDefParam;
-	rpass?: IWGRPassRef;
+	rpass: IWGRPassRef = {index: 0};
 
 	uniformValues: WGRUniformValue[];
 

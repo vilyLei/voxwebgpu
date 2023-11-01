@@ -13,7 +13,8 @@ type VtxPipelinDescParam = { vertex: { buffers?: GPUBuffer[], attributeIndicesAr
 interface IWGRPipelineContext {
 
 	pipeline: GPURenderPipeline;
-	uniform: IWGRUniformContext;
+	readonly uniformCtx: IWGRUniformContext;
+
 	getWGCtx(): WebGPUContext;
 	updateUniformBufferAt(buffer: GPUBuffer, td: NumberArrayDataType, index: number, byteOffset?: number): void;
 	createUniformBindGroup(

@@ -53,7 +53,6 @@ export class MultiGPUPassTest {
 			blendModes: [] as string[]
 		};
 
-
 		pipelineDefParam.blendModes = blendModes;
 
 		const texTotal = texs ? texs.length : 0;
@@ -94,11 +93,12 @@ export class MultiGPUPassTest {
 			fragShaderSrc: { code: fragWGSL, uuid: "fragShdCode" }
 		};
 
-		let materials0 = [this.createMaterial(shdSrc, [{url:"static/assets/box.jpg"}], new Color4(1.0, 0.0, 0.0))];
-		let materials1 = [this.createMaterial(shdSrc, [{url:"static/assets/box.jpg"}], new Color4(0.0, 1.0, 0.0))];
+		const diffuseTex = {diffuse: {url:"static/assets/box.jpg"}};
 
-		this.mRPass = rc.renderer.appendRendererPassAt();
-		materials0[0].rpass = {index: 0};
+		let materials0 = [this.createMaterial(shdSrc, [diffuseTex], new Color4(1.0, 0.0, 0.0))];
+		let materials1 = [this.createMaterial(shdSrc, [diffuseTex], new Color4(0.0, 1.0, 0.0))];
+
+		this.mRPass = rc.renderer.appendRendererPass();
 		materials1[0].rpass = this.mRPass;
 
 		let entity = new Entity3D();
@@ -113,10 +113,8 @@ export class MultiGPUPassTest {
 		rc.addEntity(entity);
 	}
 
-	private mRotValue = 0.0;
 	run(): void {
 
-		this.mRotValue += 0.5;
 		this.mRscene.run();
 	}
 }

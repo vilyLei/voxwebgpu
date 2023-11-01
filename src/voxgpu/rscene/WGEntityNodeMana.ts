@@ -13,9 +13,9 @@ class WGEntityNodeMana {
 	private mEnabled = false;
 	target: NodeManaTarget;
 
-	addEntity(entity: Entity3D, processIndex = 0, deferred = true): void {
+	addEntity(node: WGWaitEntityNode): void {
 		// console.log("WGEntityNodeMana::addEntity(), this.mNodes.length: ", this.mNodes.length);
-		this.mNodes.push({ entity: entity, processIndex: processIndex, deferred: deferred });
+		this.mNodes.push(node);
 	}
 	update(): void {
 		if (this.mEnabled) {
@@ -24,21 +24,29 @@ class WGEntityNodeMana {
 			for (let i = 0; i < ls.length; ++i) {
 				const node = ls[i];
 				const entity = node.entity;
-				// console.log("ppp 01");
-				if (!entity.isREnabled()) {
-					const ms = entity.materials;
-					if (ms) {
-						// console.log("ppp b 03");
-						for (let j = 0; j < ms.length; ++j) {
-							this.updateMaterial(ms[j]);
+				if (node.rever == entity.rstate.__$rever) {
+					// console.log("ppp 01");
+					if (!entity.isREnabled()) {
+						const ms = entity.materials;
+						if (ms) {
+							// console.log("ppp b 03");
+							for (let j = 0; j < ms.length; ++j) {
+								this.updateMaterial(ms[j]);
+							}
 						}
 					}
-				}
-				if (entity.isREnabled()) {
-					// console.log("WGEntityNodeMana::update(), ppp a 01");
+					if (entity.isREnabled()) {
+						// console.log("WGEntityNodeMana::update(), ppp a 01");
+						ls.splice(i, 1);
+						--i;
+						entity.rstate.__$inRenderer = false;
+						this.target.addEntity(entity, node.processIndex, node.deferred);
+						// entity.rstate.__$inRenderer = true;
+					}
+				} else {
 					ls.splice(i, 1);
 					--i;
-					this.target.addEntity(entity, node.processIndex, node.deferred);
+					console.log("WGEntityNodeMana::update(), remove a waiting entity.");
 				}
 			}
 		}

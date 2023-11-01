@@ -12,16 +12,15 @@ import MouseEvent from "../event/MouseEvent";
 import { RendererScene } from "../rscene/RendererScene";
 import { MouseInteraction } from "../ui/MouseInteraction";
 import Color4 from "../material/Color4";
-import { IWGRPassRef } from "../render/pipeline/IWGRPassRef";
 
-export class Entity3DVisibilityTest {
+export class SimplePBRTest {
 
 	private mRscene = new RendererScene();
-	private mEntities: Entity3D[] = [];
+
 	geomData = new GeomDataBuilder();
 
 	initialize(): void {
-		console.log("Entity3DVisibilityTest::initialize() ...");
+		console.log("SimplePBRTest::initialize() ...");
 
 		const rc = this.mRscene;
 		rc.initialize();
@@ -36,9 +35,10 @@ export class Entity3DVisibilityTest {
 	}
 
 	private mouseDown = (evt: MouseEvent): void => {
-
-		let et = this.mEntities[0];
-		et.rstate.visible = !et.rstate.visible;
+		// let node = this.mRPass.node;
+		// console.log("mousedown evt call this.mRPass: ", this.mRPass);
+		// console.log("mousedown evt call node.enabled: ", node.enabled);
+		// node.enabled = !node.enabled;
 	}
 	private createMaterial(shdSrc: WGRShderSrcType, texs?: WGTextureDataDescriptor[], color?: Color4, blendModes: string[] = ["solid"], faceCullMode = "back"): WGMaterial {
 
@@ -90,27 +90,19 @@ export class Entity3DVisibilityTest {
 			fragShaderSrc: { code: fragWGSL, uuid: "fragShdCode" }
 		};
 
-		let materials0 = [this.createMaterial(shdSrc, [{diffuse: {url:"static/assets/box.jpg"}}], new Color4(1.0))];
-		let materials1 = [this.createMaterial(shdSrc, [{diffuse: {url:"static/assets/default.jpg"}}], new Color4(0.0, 1.0))];
+		const diffuseTex = {diffuse: {url:"static/assets/box.jpg"}};
+
+		let materials0 = [this.createMaterial(shdSrc, [diffuseTex], new Color4(1.0, 0.0, 0.0))];
+		let materials1 = [this.createMaterial(shdSrc, [diffuseTex], new Color4(0.0, 1.0, 0.0))];
 
 		let entity = new Entity3D();
 		entity.materials = materials0;
 		entity.geometry = geometry;
 		rc.addEntity(entity);
-		this.mEntities.push( entity );
-
-		entity = new Entity3D();
-		entity.materials = materials1;
-		entity.geometry = geometry;
-		entity.transform.setXYZ(200, 0, 0);
-		rc.addEntity(entity);
-		this.mEntities.push( entity );
 	}
 
-	private mRotValue = 0.0;
 	run(): void {
 
-		this.mRotValue += 0.5;
 		this.mRscene.run();
 	}
 }

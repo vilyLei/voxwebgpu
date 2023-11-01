@@ -23,9 +23,10 @@ interface IRenderableObject {
      * 第30位位存放是否渲染运行时排序
      */
     __$rseFlag: number;
+	// __$rrver?: number;
 
 	uuid?: string;
-	readonly rers?:Uint16Array;
+	// readonly rers?:Uint16Array;
 	/**
 	 * mouse interaction enabled, the default value is false
 	 */

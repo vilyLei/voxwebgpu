@@ -12,16 +12,16 @@ import MouseEvent from "../event/MouseEvent";
 import { RendererScene } from "../rscene/RendererScene";
 import { MouseInteraction } from "../ui/MouseInteraction";
 import Color4 from "../material/Color4";
-import { IWGRPassRef } from "../render/pipeline/IWGRPassRef";
+import Vector3 from "../math/Vector3";
 
-export class Entity3DVisibilityTest {
-
+export class RSceneEntityManagement {
+	private mEntitices: Entity3D[] = [];
 	private mRscene = new RendererScene();
-	private mEntities: Entity3D[] = [];
+
 	geomData = new GeomDataBuilder();
 
 	initialize(): void {
-		console.log("Entity3DVisibilityTest::initialize() ...");
+		console.log("RSceneEntityManagement::initialize() ...");
 
 		const rc = this.mRscene;
 		rc.initialize();
@@ -31,14 +31,18 @@ export class Entity3DVisibilityTest {
 	private initEvent(): void {
 		const rc = this.mRscene;
 		rc.addEventListener(MouseEvent.MOUSE_DOWN, this.mouseDown);
-
 		new MouseInteraction().initialize(rc, 0, false).setAutoRunning(true);
 	}
 
 	private mouseDown = (evt: MouseEvent): void => {
 
-		let et = this.mEntities[0];
-		et.rstate.visible = !et.rstate.visible;
+		const rc = this.mRscene;
+		const et = this.mEntitices[0];
+		if(et.isInRenderer()) {
+			rc.removeEntity( et );
+		}else {
+			rc.addEntity( et );
+		}
 	}
 	private createMaterial(shdSrc: WGRShderSrcType, texs?: WGTextureDataDescriptor[], color?: Color4, blendModes: string[] = ["solid"], faceCullMode = "back"): WGMaterial {
 
@@ -49,8 +53,6 @@ export class Entity3DVisibilityTest {
 			faceCullMode,
 			blendModes: [] as string[]
 		};
-
-
 		pipelineDefParam.blendModes = blendModes;
 
 		const texTotal = texs ? texs.length : 0;
@@ -90,27 +92,26 @@ export class Entity3DVisibilityTest {
 			fragShaderSrc: { code: fragWGSL, uuid: "fragShdCode" }
 		};
 
-		let materials0 = [this.createMaterial(shdSrc, [{diffuse: {url:"static/assets/box.jpg"}}], new Color4(1.0))];
-		let materials1 = [this.createMaterial(shdSrc, [{diffuse: {url:"static/assets/default.jpg"}}], new Color4(0.0, 1.0))];
+		const diffuseTex = {diffuse: {url:"static/assets/box.jpg"}};
+
+		let mt0 = [this.createMaterial(shdSrc, [diffuseTex], new Color4(1.0, 0.0, 0.0))];
+		let mt1 = [this.createMaterial(shdSrc, [diffuseTex], new Color4(0.0, 1.0, 0.0))];
 
 		let entity = new Entity3D();
-		entity.materials = materials0;
+		entity.materials = mt0;
 		entity.geometry = geometry;
+		this.mEntitices.push( entity );
 		rc.addEntity(entity);
-		this.mEntities.push( entity );
 
-		entity = new Entity3D();
-		entity.materials = materials1;
-		entity.geometry = geometry;
-		entity.transform.setXYZ(200, 0, 0);
-		rc.addEntity(entity);
-		this.mEntities.push( entity );
+		// entity = new Entity3D();
+		// entity.materials = mt1;
+		// entity.geometry = geometry;
+		// entity.transform.setPosition(new Vector3(200,0,0));
+		// this.mEntitices.push( entity );
+		// rc.addEntity(entity);
 	}
 
-	private mRotValue = 0.0;
 	run(): void {
-
-		this.mRotValue += 0.5;
 		this.mRscene.run();
 	}
 }

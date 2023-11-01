@@ -12,8 +12,9 @@ import { IRenderableEntityContainer } from "../render/IRenderableEntityContainer
 
 class RendererScene implements IRendererScene {
 	private static sUid = 0;
-	private mInit = true;
 	private mUid = 0;
+
+	private mInit = true;
 	private mContainers: IRenderableEntityContainer[] = [];
 	private mStage: Stage3D;
 
@@ -96,6 +97,7 @@ class RendererScene implements IRendererScene {
 		if (entity.isContainer()) {
 
 		} else {
+			this.renderer.removeEntity( entity as Entity3D );
 		}
 	}
 	/**
@@ -117,11 +119,15 @@ class RendererScene implements IRendererScene {
 		st.removeEventListener(type, func);
 	}
 	run(): void {
-		if (this.enabled && this.renderer && this.renderer.isEnabled()) {
+
+		const r = this.renderer;
+		if (this.enabled && r && r.isEnabled()) {
+
 			this.camera.update();
 			const st = this.racontext.getStage();
 			st.enterFrame();
-			this.renderer.run();
+
+			r.run();
 		}
 	}
 	destroy(): void {}

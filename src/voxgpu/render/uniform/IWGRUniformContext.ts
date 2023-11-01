@@ -14,6 +14,7 @@ class WGRUniformWrapper {
 	texParams?: { texView: GPUTextureView; sampler?: GPUSampler }[];
 	usage = 0;
 	groupIndex = 0;
+	enabled = true;
 }
 
 interface IWGRUniformContext {
@@ -27,6 +28,7 @@ interface IWGRUniformContext {
 		texParams?: { texView: GPUTextureView, sampler?: GPUSampler }[]
 	): WGRUniform | null;
 
+	removeUniforms(us: WGRUniform[]): void;
 	removeUniform(u: WGRUniform): void;
 }
 export { WGRUniformTexParam, WGRUniformWrapper, WGRUniformParam, BufDataParamType, IWGRUniformContext };
