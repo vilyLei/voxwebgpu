@@ -13,6 +13,7 @@ import { WGRPipelineCtxParams } from "./WGRPipelineCtxParams";
 import { WGRPipelineShader } from "./WGRPipelineShader";
 import { WGRUniformParam, WGRUniformContext } from "../uniform/WGRUniformContext";
 import { GPUQueue } from "../../gpu/GPUQueue";
+import { IWGRendererPass } from "./IWGRendererPass";
 
 class WGRPipelineContext implements IWGRPipelineContext {
 	private mInit = true;
@@ -21,6 +22,7 @@ class WGRPipelineContext implements IWGRPipelineContext {
 	private mPipelineParams: WGRPipelineCtxParams;
 	private mShader = new WGRPipelineShader();
 
+	rpass: IWGRendererPass;
 	pipeline: GPURenderPipeline = new GPURenderPipelineEmpty();
 	queue: GPUQueue;
 
@@ -145,6 +147,7 @@ class WGRPipelineContext implements IWGRPipelineContext {
 			}
 		}
 
+		// console.log("createUniformBindGroup(), texParams: ", texParams);
 		if (texParams && texParams.length > 0) {
 			const sampler = device.createSampler({
 				magFilter: "linear",
@@ -167,7 +170,7 @@ class WGRPipelineContext implements IWGRPipelineContext {
 				}
 			}
 		}
-		console.log("createUniformBindGroup(), desc: ", desc);
+		// console.log("createUniformBindGroup(), desc: ", desc);
 		if (desc.entries.length < 1) {
 			throw Error("Illegal operation !!!");
 		}

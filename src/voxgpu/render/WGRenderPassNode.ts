@@ -5,7 +5,6 @@ import { WebGPUContext } from "../gpu/WebGPUContext";
 import { GPUCommandBuffer } from "../gpu/GPUCommandBuffer";
 import { WGMaterialDescripter } from "../material/WGMaterialDescripter";
 import { IWGRenderPassNodeRef } from "./IWGRenderPassNodeRef";
-// import { WGRUniformContext } from "./uniform/WGRUniformContext";
 class WGRenderPassNode implements IWGRenderPassNodeRef {
 
 	private static sUid = 0;
@@ -17,14 +16,12 @@ class WGRenderPassNode implements IWGRenderPassNodeRef {
 	pctxMap: Map<string, WGRPipelineContext> = new Map();
 	rcommands: GPUCommandBuffer[];
 	param?: WGRPassParams;
-	// uniformCtx: WGRUniformContext;
 
 	enabled = true;
 	prevNode: WGRenderPassNode;
 
 	destroy(): void {
 		this.prevNode = null;
-		// this.uniformCtx = null;
 	}
 	getUid(): number {
 		return this.mUid;
@@ -106,6 +103,7 @@ class WGRenderPassNode implements IWGRenderPassNodeRef {
 		}
 
 		pipelineCtx.createRenderPipelineWithBuf(pipelineParams, vtxDesc);
+		pipelineCtx.rpass = this.rpass;
 		return pipelineCtx;
 	}
 
@@ -114,15 +112,15 @@ class WGRenderPassNode implements IWGRenderPassNodeRef {
 		this.rcommands = [];
 		if (this.enabled) {
 			this.rpass.runBegin();
-			for (let i = 0; i < this.pipelineCtxs.length; ++i) {
-				this.pipelineCtxs[i].runBegin();
+			for (let i = 0; i < this.pipelineCtxs.length;) {
+				this.pipelineCtxs[i++].runBegin();
 			}
 		}
 	}
 	runEnd(): void {
 		if (this.enabled) {
-			for (let i = 0; i < this.pipelineCtxs.length; ++i) {
-				this.pipelineCtxs[i].runEnd();
+			for (let i = 0; i < this.pipelineCtxs.length;) {
+				this.pipelineCtxs[i++].runEnd();
 			}
 			this.rcommands = [this.rpass.runEnd()];
 		}

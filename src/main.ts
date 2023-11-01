@@ -23,9 +23,9 @@
 // import { MultiGPUPassTest as Demo } from "./voxgpu/sample/MultiGPUPassTest";
 
 // import { Entity3DVisibilityTest as Demo } from "./voxgpu/sample/Entity3DVisibilityTest";
-import { RSceneEntityManagement as Demo } from "./voxgpu/sample/RSceneEntityManagement";
+// import { RSceneEntityManagement as Demo } from "./voxgpu/sample/RSceneEntityManagement";
 
-// import { SimplePBRTest as Demo } from "./voxgpu/sample/SimplePBRTest";
+import { SimplePBRTest as Demo } from "./voxgpu/sample/SimplePBRTest";
 
 
 let demoIns = new Demo();

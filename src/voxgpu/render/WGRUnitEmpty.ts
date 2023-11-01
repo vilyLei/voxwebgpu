@@ -17,6 +17,8 @@ class WGRUnitEmpty implements IWGRUnit {
 	pipelinectx: IWGRPipelineContext;
 	geometry: WGRPrimitive;
 
+
+	unfsuuid = "";
 	__$rever = 0;
 	bounds: IAABB;
 	// st = new WGRUnitState();

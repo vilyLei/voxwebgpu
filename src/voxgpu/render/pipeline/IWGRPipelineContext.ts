@@ -5,6 +5,7 @@ import { GPURenderPipeline } from "../../gpu/GPURenderPipeline";
 import { GPUSampler } from "../../gpu/GPUSampler";
 import { GPUTextureView } from "../../gpu/GPUTextureView";
 import { IWGRUniformContext } from "../uniform/IWGRUniformContext";
+import { IWGRendererPass } from "./IWGRendererPass";
 
 type BufDataParamType = { size: number; usage: number; defaultData?: Float32Array | Int32Array | Uint32Array | Uint16Array | Int16Array };
 type VtxDescParam = { vertex: { arrayStride: number; params: { offset: number; format: string }[] } };
@@ -12,6 +13,7 @@ type VtxPipelinDescParam = { vertex: { buffers?: GPUBuffer[], attributeIndicesAr
 
 interface IWGRPipelineContext {
 
+	rpass: IWGRendererPass;
 	pipeline: GPURenderPipeline;
 	readonly uniformCtx: IWGRUniformContext;
 

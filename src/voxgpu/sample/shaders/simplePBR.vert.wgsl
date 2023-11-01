@@ -7,7 +7,8 @@ struct VertexOutput {
   @builtin(position) Position : vec4<f32>,
   @location(0) pos: vec4<f32>,
   @location(1) uv : vec2<f32>,
-  @location(2) normal : vec3<f32>
+  @location(2) normal : vec3<f32>,
+  @location(3) camPos : vec3<f32>
 }
 
 fn inverseM33(m: mat3x3<f32>)-> mat3x3<f32> {
@@ -69,15 +70,16 @@ fn main(
   @location(1) uv : vec2<f32>,
   @location(2) normal : vec3<f32>
 ) -> VertexOutput {
+  let wpos = objMat * vec4(position.xyz, 1.0);
   var output : VertexOutput;
-  output.Position = projMat * viewMat * objMat * vec4(position.xyz, 1.0);
+  output.Position = projMat * viewMat * wpos;
   output.uv = uv;
 
   let invMat33 = inverseM33( m44ToM33( objMat ) );
   output.normal = normalize( normal * invMat33 );
-
-  var pv: vec4<f32>;
-  pv = vec4<f32>(position, 1.0);
-  output.pos = pv;
+  output.camPos = (inverseM44(viewMat) * vec4<f32>(0.0,0.0,0.0, 1.0)).xyz;
+//   var pv: vec4<f32>;
+//   pv = vec4<f32>(position, 1.0);
+  output.pos = wpos;
   return output;
 }

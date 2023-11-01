@@ -15,6 +15,7 @@ class WGRUnitRunSt {
 	rc: GPURenderPassEncoder;
 	gt: WGRPrimitive;
 	ibuf: GPUBuffer;
+	unfsuuid: string;
 }
 
 const __$urst = new WGRUnitRunSt();
@@ -24,6 +25,9 @@ class WGRUnit implements IWGRUnit {
 	private rf = true;
 
 	uniforms?: WGRUniform[];
+
+	// unfsuuid = "";
+
 	pipeline: GPURenderPipeline;
 	pipelinectx: IWGRPipelineContext;
 	geometry: WGRPrimitive;
@@ -73,6 +77,7 @@ class WGRUnit implements IWGRUnit {
 					st.ibuf = null;
 					st.gt = null;
 					st.rc = rc;
+					st.unfsuuid = "";
 				}
 
 				if (st.gt != gt) {

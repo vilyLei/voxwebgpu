@@ -5,11 +5,13 @@ import { VtxPipelinDescParam, IWGRPipelineContext } from "../render/pipeline/IWG
 import { IWGRPassRef } from "../render/pipeline/IWGRPassRef";
 import { WGMaterialDescripter } from "./WGMaterialDescripter";
 import { WGRUniformValue } from "../render/uniform/WGRUniformValue";
+import { WGRUniform } from "../render/uniform/WGRUniform";
 import { IWGMaterial } from "./IWGMaterial";
 
 class WGMaterial implements IWGMaterial {
 	private mRCtx: IWGRPipelineContext;
 	private mREnabled = false;
+	name?: string;
 	/**
 	 * unique shading process uuid
 	 */
@@ -25,6 +27,8 @@ class WGMaterial implements IWGMaterial {
 	// textures: { [key: string]: WGTextureWrapper } = {};
 
 	textures: WGTextureWrapper[];
+
+	__$ufs?: WGRUniform[];
 
 	constructor(descriptor?: WGMaterialDescripter) {
 		this.setDescriptor(descriptor);

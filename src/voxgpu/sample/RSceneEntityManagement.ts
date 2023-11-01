@@ -35,17 +35,24 @@ export class RSceneEntityManagement {
 	}
 
 	private mouseDown = (evt: MouseEvent): void => {
-
 		const rc = this.mRscene;
-		const et = this.mEntitices[0];
-		if(et.isInRenderer()) {
-			rc.removeEntity( et );
-		}else {
-			rc.addEntity( et );
+		let et = this.mEntitices[Math.round(Math.random() * (this.mEntitices.length - 1))];
+		et = this.mEntitices[0];
+		if (et.isInRenderer()) {
+			rc.removeEntity(et);
+		} else {
+			let vs = et.materials[0].uniformValues[0].data as Float32Array;
+			vs.set([Math.random() + 0.2, Math.random() + 0.2, Math.random() + 0.2, 1.0]);
+			rc.addEntity(et);
 		}
-	}
-	private createMaterial(shdSrc: WGRShderSrcType, texs?: WGTextureDataDescriptor[], color?: Color4, blendModes: string[] = ["solid"], faceCullMode = "back"): WGMaterial {
-
+	};
+	private createMaterial(
+		shdSrc: WGRShderSrcType,
+		texs?: WGTextureDataDescriptor[],
+		color?: Color4,
+		blendModes: string[] = ["solid"],
+		faceCullMode = "back"
+	): WGMaterial {
 		color = color ? color : new Color4();
 
 		let pipelineDefParam = {
@@ -71,7 +78,6 @@ export class RSceneEntityManagement {
 	}
 
 	private createGeom(rgd: GeomRDataType, normalEnabled = false): WGGeometry {
-
 		const geometry = new WGGeometry()
 			.addAttribute({ position: rgd.vs })
 			.addAttribute({ uv: rgd.uvs })
@@ -82,7 +88,6 @@ export class RSceneEntityManagement {
 		return geometry;
 	}
 	private initScene(): void {
-
 		const rc = this.mRscene;
 
 		const geometry = this.createGeom(this.geomData.createCube(80));
@@ -92,19 +97,21 @@ export class RSceneEntityManagement {
 			fragShaderSrc: { code: fragWGSL, uuid: "fragShdCode" }
 		};
 
-		const diffuseTex = {diffuse: {url:"static/assets/box.jpg"}};
+		const diffuseTex = { diffuse: { url: "static/assets/box.jpg" } };
 
 		let mt0 = [this.createMaterial(shdSrc, [diffuseTex], new Color4(1.0, 0.0, 0.0))];
 		let mt1 = [this.createMaterial(shdSrc, [diffuseTex], new Color4(0.0, 1.0, 0.0))];
-
-		let entity = new Entity3D();
-		entity.materials = mt0;
-		entity.geometry = geometry;
-		this.mEntitices.push( entity );
-		rc.addEntity(entity);
+		for (let i = 0; i < 4; ++i) {
+			let entity = new Entity3D();
+			entity.materials = mt0;
+			entity.geometry = geometry;
+			entity.transform.setPosition(new Vector3(-200 + i * 130, 0, 0));
+			this.mEntitices.push(entity);
+			rc.addEntity(entity);
+		}
 
 		// entity = new Entity3D();
-		// entity.materials = mt1;
+		// entity.materials = mt0;
 		// entity.geometry = geometry;
 		// entity.transform.setPosition(new Vector3(200,0,0));
 		// this.mEntitices.push( entity );

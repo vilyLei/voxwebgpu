@@ -73,7 +73,7 @@ class WGRenderPassBlock {
 		}
 		return node;
 	}
-	createRenderPipelineCtxWithMaterial(material: WGMaterialDescripter): { ctx: WGRPipelineContext; rpass: IWGRendererPass } {
+	createRenderPipelineCtxWithMaterial(material: WGMaterialDescripter): { ctx: WGRPipelineContext, rpass: IWGRendererPass } {
 		const node = this.getPassNode(material.rpass);
 		return { ctx: node.createRenderPipelineCtxWithMaterial(material), rpass: node.rpass };
 	}
@@ -93,6 +93,7 @@ class WGRenderPassBlock {
 	}
 
 	runBegin(): void {
+
 		this.rcommands = [];
 		if (this.enabled) {
 			const nodes = this.mPassNodes;
@@ -114,6 +115,7 @@ class WGRenderPassBlock {
 	}
 	run(): void {
 		if (this.enabled) {
+			// console.log('>');
 			const uts = this.mUnits;
 			let utsLen = uts.length;
 			for (let i = 0; i < utsLen; ) {

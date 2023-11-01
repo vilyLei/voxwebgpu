@@ -14,6 +14,7 @@ interface IWGRUnit {
 
 	bounds: IAABB;
 
+	// unfsuuid: string;
 	enabled: boolean;
 	passes?: IWGRUnit[];
 

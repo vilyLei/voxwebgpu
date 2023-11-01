@@ -7,12 +7,11 @@ import { WGRenderPassBlock } from "../render/WGRenderPassBlock";
 import { WGRUniformValue } from "./uniform/WGRUniformValue";
 import { GPUTextureView } from "../gpu/GPUTextureView";
 
-type GeomType = { indexBuffer?: GPUBuffer, vertexBuffers: GPUBuffer[], indexCount?: number; vertexCount?: number };
+type GeomType = { indexBuffer?: GPUBuffer; vertexBuffers: GPUBuffer[]; indexCount?: number; vertexCount?: number };
 
 class WGRObjBuilder {
 	constructor() {}
 	createPrimitive(geomParam?: GeomType): WGRPrimitive {
-
 		const g = new WGRPrimitive();
 		g.ibuf = geomParam.indexBuffer;
 		g.vbufs = geomParam.vertexBuffers;
@@ -25,21 +24,54 @@ class WGRObjBuilder {
 		return g;
 	}
 	createRPass(entity: Entity3D, block: WGRenderPassBlock, primitive: WGRPrimitive, materialIndex = 0): IWGRUnit {
-
 		const material = entity.materials[materialIndex];
-		if(material.pipelineVtxParam) {
-			material.pipelineVtxParam.vertex.buffers = primitive.vbufs;
-		}else{
-			material.pipelineVtxParam = { vertex: { buffers: primitive.vbufs, attributeIndicesArray: [] } };
-			const ls = material.pipelineVtxParam.vertex.attributeIndicesArray;
-			for(let i = 0; i < primitive.vbufs.length; ++i) {
-				ls.push([0]);
-			}
-		}
-		const rpparam = block.createRenderPipelineCtxWithMaterial(material);
-		const pctx = rpparam.ctx;
-		material.initialize(rpparam.ctx);
+		// if(!material.__$ufs) {
 
+		let pctx = material.getRCtx();
+		if (!pctx) {
+			if (material.pipelineVtxParam) {
+				material.pipelineVtxParam.vertex.buffers = primitive.vbufs;
+			} else {
+				material.pipelineVtxParam = { vertex: { buffers: primitive.vbufs, attributeIndicesArray: [] } };
+				const ls = material.pipelineVtxParam.vertex.attributeIndicesArray;
+				for (let i = 0; i < primitive.vbufs.length; ++i) {
+					ls.push([0]);
+				}
+			}
+			const rpparam = block.createRenderPipelineCtxWithMaterial(material);
+			pctx = rpparam.ctx;
+			material.initialize(rpparam.ctx);
+		}
+
+		// console.log("createRUnit(), utexes: ", utexes);
+
+		let ru = new WGRUnit();
+
+		ru.geometry = primitive;
+		ru.pipelinectx = pctx;
+
+		const uniformCtx = pctx.uniformCtx;
+		let uvalues: WGRUniformValue[] = [];
+
+		const cam = block.camera;
+		if (entity.transform) {
+			uvalues.push(entity.transform.uniformv);
+		}
+		if (entity.cameraViewing) {
+			uvalues.push(cam.viewUniformV);
+			uvalues.push(cam.projUniformV);
+		}
+
+		if (material.uniformValues) {
+			uvalues = uvalues.concat(material.uniformValues);
+		}
+		if (uvalues.length > 0) {
+			ru.setUniformValues(uvalues);
+		}
+		// transform 与 其他材质uniform数据构造和使用应该分开,
+		// 哪些uniform是依据material变化的，哪些是共享的，哪些是transform等变换的数据
+
+		let groupIndex = 0;
 		let texList = material.textures;
 		let utexes: { texView: GPUTextureView }[];
 		// console.log("createRUnit(), texList: ", texList);
@@ -48,39 +80,12 @@ class WGRObjBuilder {
 			for (let i = 0; i < texList.length; i++) {
 				const tex = texList[i].texture;
 				if (!tex.view) {
-					tex.view = tex.texture.createView({dimension:tex.dimension});
+					tex.view = tex.texture.createView({ dimension: tex.dimension });
 				}
 				utexes[i] = { texView: tex.view };
 			}
 		}
-		// console.log("createRUnit(), utexes: ", utexes);
-
-		let groupIndex = 0;
-
-		const uniformCtx = pctx.uniformCtx;
-		let ru = new WGRUnit();
-
-		ru.geometry = primitive;
-		ru.pipelinectx = pctx;
-
-		let uvalues: WGRUniformValue[] = [];
-
-		const cam = block.camera;
-		if(entity.transform) {
-			uvalues.push(entity.transform.uniformv);
-		}
-		if(entity.cameraViewing) {
-			uvalues.push(cam.viewUniformV);
-			uvalues.push(cam.projUniformV);
-		}
-
-		if(material.uniformValues) {
-			uvalues = uvalues.concat( material.uniformValues );
-		}
-		if(uvalues.length > 0) {
-			ru.setUniformValues(uvalues);
-		}
-		if((uvalues && uvalues.length > 0) || (utexes && utexes.length > 0)) {
+		if ((uvalues && uvalues.length > 0) || (utexes && utexes.length > 0)) {
 			ru.uniforms = uniformCtx.createUniformsWithValues([
 				{
 					layoutName: material.shadinguuid,
@@ -90,7 +95,8 @@ class WGRObjBuilder {
 				}
 			]);
 		}
-		ru.rp = rpparam.rpass;
+		// ru.unfsuuid = material.shadinguuid + material.name;
+		ru.rp = pctx.rpass;
 		return ru;
 	}
 	createRUnit(entity: Entity3D, block: WGRenderPassBlock): IWGRUnit {
@@ -99,14 +105,13 @@ class WGRObjBuilder {
 		const geometry = entity.geometry;
 		const gts = geometry.attributes;
 
-
 		// console.log("########## geometry.gpuvbufs: ", geometry.gpuvbufs);
 		// console.log("########## geometry.gpuibuf: ", geometry.indexBuffer.gpuibuf);
 
 		const gvbufs = geometry.gpuvbufs;
 
 		const vertexBuffers: GPUBuffer[] = gvbufs ? gvbufs : new Array(gts.length);
-		if(!gvbufs) {
+		if (!gvbufs) {
 			for (let i = 0; i < gts.length; ++i) {
 				const gt = gts[i];
 				vertexBuffers[i] = wgctx.buffer.createVertexBuffer(gt.data, gt.bufferOffset, gt.strides);
@@ -116,7 +121,7 @@ class WGRObjBuilder {
 
 		const gibuf = geometry.indexBuffer;
 		const indexBuffer = gibuf ? (gibuf.gpuibuf ? gibuf.gpuibuf : wgctx.buffer.createIndexBuffer(gibuf.data)) : null;
-		if(indexBuffer) gibuf.gpuibuf = indexBuffer;
+		if (indexBuffer) gibuf.gpuibuf = indexBuffer;
 
 		const indexCount = indexBuffer ? indexBuffer.elementCount : 0;
 		const vertexCount = vertexBuffers[0].vectorCount;
@@ -125,7 +130,6 @@ class WGRObjBuilder {
 		let ru: IWGRUnit;
 		const mts = entity.materials;
 		if (mts.length > 1) {
-
 			const passes: IWGRUnit[] = new Array(mts.length);
 			for (let i = 0; i < mts.length; ++i) {
 				passes[i] = this.createRPass(entity, block, primitive, i);

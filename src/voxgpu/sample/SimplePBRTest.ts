@@ -1,7 +1,7 @@
 import { GeomDataBuilder, GeomRDataType } from "../geometry/GeomDataBuilder";
 
-import vertWGSL from "./shaders/defaultEntity.vert.wgsl";
-import fragWGSL from "./shaders/sampleTextureColorParam.frag.wgsl";
+import vertWGSL from "./shaders/simplePBR.vert.wgsl";
+import fragWGSL from "./shaders/simplePBR.frag.wgsl";
 
 import { WGTextureDataDescriptor, WGMaterial } from "../material/WGMaterial";
 import { WGGeometry } from "../geometry/WGGeometry";
@@ -30,15 +30,11 @@ export class SimplePBRTest {
 	private initEvent(): void {
 		const rc = this.mRscene;
 		rc.addEventListener(MouseEvent.MOUSE_DOWN, this.mouseDown);
-
 		new MouseInteraction().initialize(rc, 0, false).setAutoRunning(true);
 	}
 
 	private mouseDown = (evt: MouseEvent): void => {
-		// let node = this.mRPass.node;
-		// console.log("mousedown evt call this.mRPass: ", this.mRPass);
-		// console.log("mousedown evt call node.enabled: ", node.enabled);
-		// node.enabled = !node.enabled;
+
 	}
 	private createMaterial(shdSrc: WGRShderSrcType, texs?: WGTextureDataDescriptor[], color?: Color4, blendModes: string[] = ["solid"], faceCullMode = "back"): WGMaterial {
 
@@ -49,7 +45,6 @@ export class SimplePBRTest {
 			faceCullMode,
 			blendModes: [] as string[]
 		};
-
 
 		pipelineDefParam.blendModes = blendModes;
 
@@ -83,7 +78,8 @@ export class SimplePBRTest {
 
 		const rc = this.mRscene;
 
-		const geometry = this.createGeom(this.geomData.createCube(80));
+		// const geometry = this.createGeom(this.geomData.createCube(80), true);
+		const geometry = this.createGeom(this.geomData.createSphere(80), true);
 
 		const shdSrc = {
 			vertShaderSrc: { code: vertWGSL, uuid: "vertShdCode" },
@@ -93,7 +89,8 @@ export class SimplePBRTest {
 		const diffuseTex = {diffuse: {url:"static/assets/box.jpg"}};
 
 		let materials0 = [this.createMaterial(shdSrc, [diffuseTex], new Color4(1.0, 0.0, 0.0))];
-		let materials1 = [this.createMaterial(shdSrc, [diffuseTex], new Color4(0.0, 1.0, 0.0))];
+		let ufv = new WGRStorageValue(new Float32Array([1.0,1.0,1.0, 0.9]));
+		materials0[0].uniformValues = [ufv];
 
 		let entity = new Entity3D();
 		entity.materials = materials0;

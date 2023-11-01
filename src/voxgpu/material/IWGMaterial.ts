@@ -4,10 +4,12 @@ import { WGRPipelineContextDefParam, WGRShderSrcType } from "../render/pipeline/
 import { VtxPipelinDescParam, IWGRPipelineContext } from "../render/pipeline/IWGRPipelineContext";
 import { WGMaterialDescripter } from "./WGMaterialDescripter";
 import { WGRUniformValue } from "../render/uniform/WGRUniformValue";
+import { WGRUniform } from "../render/uniform/WGRUniform";
 import { IWGRPassRef } from "../render/pipeline/IWGRPassRef";
 
 interface IWGMaterial extends WGMaterialDescripter {
 
+	name?: string;
 	/**
 	 * unique shading process uuid
 	 */
@@ -23,6 +25,7 @@ interface IWGMaterial extends WGMaterialDescripter {
 	// textures: { [key: string]: WGTextureWrapper } = {};
 
 	textures: WGTextureWrapper[];
+	__$ufs?: WGRUniform[];
 
 	addTextureWithDatas(datas: WGImageTextureData[], shdVarNames?: string[]): void;
 

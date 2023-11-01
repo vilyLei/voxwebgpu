@@ -16,6 +16,7 @@ class WGRUniformValue {
 	arrayStride = 1;
 	usage = GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST;
 
+	shdVarName?: string;
 	constructor(data: NumberArrayDataType, bufferIndex = 0, uniformIndexInRUnit = 0) {
 		this.data = data;
 		this.bufferIndex = bufferIndex;
@@ -38,7 +39,7 @@ class WGRUniformValue {
 	upate(): void {
 		this.version ++;
 	}
-	
+
 	clone(data: NumberArrayDataType): WGRUniformValue {
 
 		const u = new WGRUniformValue(data, this.bufferIndex, this.index);
