@@ -15,6 +15,7 @@ class WGRUniformValue {
 	byteOffset = 0;
 	arrayStride = 1;
 	usage = GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST;
+	shared = false;
 
 	shdVarName?: string;
 	constructor(data: NumberArrayDataType, bufferIndex = 0, uniformIndexInRUnit = 0) {
@@ -23,6 +24,9 @@ class WGRUniformValue {
 		this.index = uniformIndexInRUnit;
 		if(data.byteLength <= 64)this.arrayStride = data.byteLength;
 		this.upate();
+	}
+	toShared(): void {
+		this.shared = true;
 	}
 	toUniform(): void {
 		this.usage = GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST;
