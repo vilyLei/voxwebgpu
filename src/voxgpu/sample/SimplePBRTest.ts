@@ -3,7 +3,7 @@ import { GeomDataBuilder, GeomRDataType } from "../geometry/GeomDataBuilder";
 import vertWGSL from "./shaders/simplePBR.vert.wgsl";
 import fragWGSL from "./shaders/simplePBR.frag.wgsl";
 
-import { WGTextureDataDescriptor, WGMaterial } from "../material/WGMaterial";
+import { WGMaterial } from "../material/WGMaterial";
 import { WGGeometry } from "../geometry/WGGeometry";
 import { Entity3D } from "../entity/Entity3D";
 import { WGRShderSrcType } from "../material/WGMaterialDescripter";

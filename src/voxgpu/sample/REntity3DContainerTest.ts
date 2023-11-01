@@ -3,10 +3,10 @@ import { GeomDataBuilder, GeomRDataType } from "../geometry/GeomDataBuilder";
 import vertWGSL from "./shaders/defaultEntity.vert.wgsl";
 import fragWGSL from "./shaders/sampleTextureColorParam.frag.wgsl";
 
-import { WGMaterial } from "../material/WGMaterial";
+import { WGTextureDataDescriptor, WGMaterial } from "../material/WGMaterial";
 import { WGGeometry } from "../geometry/WGGeometry";
 import { Entity3D } from "../entity/Entity3D";
-import { WGImage2DTextureData } from "../texture/WGTextureWrapper";
+// import { WGImage2DTextureData } from "../texture/WGTextureWrapper";
 import { WGRShderSrcType } from "../material/WGMaterialDescripter";
 import Vector3 from "../math/Vector3";
 import { WGRStorageValue } from "../render/uniform/WGRStorageValue";
@@ -37,7 +37,7 @@ export class REntity3DContainerTest {
 	}
 	private createMaterial(
 		shdSrc: WGRShderSrcType,
-		texDatas?: WGImage2DTextureData[],
+		texDatas?: WGTextureDataDescriptor[],
 		color?: Color4,
 		blendModes: string[] = ["solid"],
 		faceCullMode = "back"
@@ -62,7 +62,7 @@ export class REntity3DContainerTest {
 
 		let ufv = new WGRStorageValue(new Float32Array([color.r, color.g, color.b, 1]));
 		material.uniformValues = [ufv];
-		material.addTextureWithDatas(texDatas);
+		material.addTextures(texDatas);
 
 		return material;
 	}
@@ -118,9 +118,10 @@ export class REntity3DContainerTest {
 			vertShaderSrc: { code: vertWGSL, uuid: "vertShdCode" },
 			fragShaderSrc: { code: fragWGSL, uuid: "fragShdCode" }
 		};
-		let materials0 = [this.createMaterial(shdSrc, [new WGImage2DTextureData("static/assets/box.jpg")], new Color4(1.0, 0.0, 0.0))];
-		let materials1 = [this.createMaterial(shdSrc, [new WGImage2DTextureData("static/assets/box.jpg")], new Color4(0.0, 1.0, 0.0))];
-		let materials2 = [this.createMaterial(shdSrc, [new WGImage2DTextureData("static/assets/box.jpg")], new Color4(1.0, 0.0, 1.0))];
+		const diffuseMap = { diffuse: { url: "static/assets/box.jpg" } };
+		let materials0 = [this.createMaterial(shdSrc, [diffuseMap], new Color4(1.0, 0.0, 0.0))];
+		let materials1 = [this.createMaterial(shdSrc, [diffuseMap], new Color4(0.0, 1.0, 0.0))];
+		let materials2 = [this.createMaterial(shdSrc, [diffuseMap], new Color4(1.0, 0.0, 1.0))];
 
 		const container0 = this.createCircle(100, 10, 0.5, materials0, geometry);
 		const container1 = this.createCircle(180, 15, 0.5, materials1, geometry);

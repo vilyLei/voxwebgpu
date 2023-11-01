@@ -114,7 +114,6 @@ export class MultiGPUPassTest {
 	}
 
 	run(): void {
-
 		this.mRscene.run();
 	}
 }
