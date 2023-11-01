@@ -12,19 +12,20 @@ import { IRenderCamera } from "../render/IRenderCamera";
 import { GPUCanvasConfiguration } from "../gpu/GPUCanvasConfiguration";
 import IRenderer from "./IRenderer";
 import { IWGRPassRef } from "../render/pipeline/IWGRPassRef";
+import { WGRendererConfig, RPassInfoParam, checkConfig } from "./WGRendererParam";
 
-interface WGRenderConfig {
-	gpuCanvasCfg?: GPUCanvasConfiguration;
-	ctx?: WebGPUContext;
-	canvas?: HTMLCanvasElement;
-	div?: HTMLDivElement;
-	callback?: (type?: string) => void;
-}
-class RPassInfoParam {
-	blockIndex = 0;
-	rparam: WGRPassParams;
-	ref: IWGRPassRef;
-}
+// interface WGRendererConfig {
+// 	gpuCanvasCfg?: GPUCanvasConfiguration;
+// 	ctx?: WebGPUContext;
+// 	canvas?: HTMLCanvasElement;
+// 	div?: HTMLDivElement;
+// 	callback?: (type?: string) => void;
+// }
+// class RPassInfoParam {
+// 	blockIndex = 0;
+// 	rparam: WGRPassParams;
+// 	ref: IWGRPassRef;
+// }
 
 class WGRenderer implements IRenderer {
 	private ___$$$$$$$Author = "VilyLei(vily313@126.com)";
@@ -41,7 +42,7 @@ class WGRenderer implements IRenderer {
 	enabled = true;
 	stage: IRenderStage3D;
 
-	constructor(config?: WGRenderConfig) {
+	constructor(config?: WGRendererConfig) {
 		this.mNodeMana.target = this;
 		if (config) {
 			this.initialize(config);
@@ -69,49 +70,49 @@ class WGRenderer implements IRenderer {
 	getCanvas(): HTMLCanvasElement {
 		return this.mWGCtx.canvas;
 	}
-	checkConfig(config?: WGRenderConfig): WGRenderConfig {
-		let canvasCFG: GPUCanvasConfiguration = { alphaMode: "premultiplied" };
-		let canvas: HTMLCanvasElement;
-		let div: HTMLDivElement;
+	// checkConfig(config?: WGRendererConfig): WGRendererConfig {
+	// 	let canvasCFG: GPUCanvasConfiguration = { alphaMode: "premultiplied" };
+	// 	let canvas: HTMLCanvasElement;
+	// 	let div: HTMLDivElement;
 
-		if (config) {
-			canvas = config.canvas;
-			div = config.div;
-			if (config.gpuCanvasCfg) {
-				canvasCFG = config.gpuCanvasCfg;
-			}
-		} else {
-			config = { canvas: null };
-		}
-		let width = 512;
-		let height = 512;
-		if (!div) {
-			div = document.createElement("div");
-			document.body.appendChild(div);
+	// 	if (config) {
+	// 		canvas = config.canvas;
+	// 		div = config.div;
+	// 		if (config.gpuCanvasCfg) {
+	// 			canvasCFG = config.gpuCanvasCfg;
+	// 		}
+	// 	} else {
+	// 		config = { canvas: null };
+	// 	}
+	// 	let width = 512;
+	// 	let height = 512;
+	// 	if (!div) {
+	// 		div = document.createElement("div");
+	// 		document.body.appendChild(div);
 
-			const style = div.style;
-			style.display = "bolck";
-			style.position = "absolute";
+	// 		const style = div.style;
+	// 		style.display = "bolck";
+	// 		style.position = "absolute";
 
-			if (style.left == "") {
-				style.left = "0px";
-				style.top = "0px";
-			}
-			div.style.width = width + "px";
-			div.style.height = height + "px";
-		}
-		if (!canvas) {
-			canvas = document.createElement("canvas");
-			canvas.width = width;
-			canvas.height = height;
-			div.appendChild(canvas);
-		}
-		config.canvas = canvas;
-		config.div = div;
-		config.gpuCanvasCfg = canvasCFG;
-		return config;
-	}
-	initialize(config?: WGRenderConfig): void {
+	// 		if (style.left == "") {
+	// 			style.left = "0px";
+	// 			style.top = "0px";
+	// 		}
+	// 		div.style.width = width + "px";
+	// 		div.style.height = height + "px";
+	// 	}
+	// 	if (!canvas) {
+	// 		canvas = document.createElement("canvas");
+	// 		canvas.width = width;
+	// 		canvas.height = height;
+	// 		div.appendChild(canvas);
+	// 	}
+	// 	config.canvas = canvas;
+	// 	config.div = div;
+	// 	config.gpuCanvasCfg = canvasCFG;
+	// 	return config;
+	// }
+	initialize(config?: WGRendererConfig): void {
 		if (this.mInit && !this.mWGCtx) {
 			this.mInit = false;
 			const wgCtx = config ? config.ctx : null;
@@ -124,7 +125,7 @@ class WGRenderer implements IRenderer {
 				const canvas = wgCtx.canvas;
 				this.initCamera(canvas.width, canvas.height);
 			} else {
-				config = this.checkConfig(config);
+				config = checkConfig(config);
 				this.mDiv = config.div;
 				this.mWGCtx = new WebGPUContext();
 				this.mWGCtx.initialize(config.canvas, config.gpuCanvasCfg).then(() => {
@@ -261,4 +262,4 @@ class WGRenderer implements IRenderer {
 		}
 	}
 }
-export { WGRenderConfig, WGRPipelineContextDefParam, WGRenderer };
+export { WGRendererConfig, WGRPipelineContextDefParam, WGRenderer };

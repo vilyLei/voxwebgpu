@@ -4,9 +4,9 @@ import { IRenderCamera } from "../render/IRenderCamera";
 import { RAdapterContext } from "./context/RAdapterContext";
 import { IRendererScene } from "./IRendererScene";
 import Stage3D from "./Stage3D";
-import { WGRenderConfig, WGRenderer } from "./WGRenderer";
+import { WGRendererConfig, checkConfig } from "./WGRendererParam";
+import { WGRenderer } from "./WGRenderer";
 import { Entity3D } from "../entity/Entity3D";
-import { Entity3DContainer } from "../entity/Entity3DContainer";
 import { IRenderableObject } from "../render/IRenderableObject";
 import { IRenderableEntityContainer } from "../render/IRenderableEntityContainer";
 
@@ -30,12 +30,12 @@ class RendererScene implements IRendererScene {
 		return this.mUid;
 	}
 
-	initialize(config?: WGRenderConfig): void {
+	initialize(config?: WGRendererConfig): void {
 		if (this.mInit) {
 			this.mInit = false;
 
 			const renderer = new WGRenderer();
-			config = renderer.checkConfig(config);
+			config = checkConfig(config);
 
 			this.mStage = new Stage3D(this.getUid(), document);
 			this.racontext = new RAdapterContext();
