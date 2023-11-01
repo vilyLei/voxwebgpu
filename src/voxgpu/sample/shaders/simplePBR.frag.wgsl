@@ -1,8 +1,7 @@
-@group(0) @binding(3) var<storage> param: vec4f;
-@group(0) @binding(4) var sampler0: sampler;
-@group(0) @binding(5) var texture0: texture_2d<f32>;
+@group(0) @binding(3) var<storage> albedo: vec4f;
+@group(0) @binding(4) var<storage> param: vec4f;
 
-const lightDirec = vec3<f32>(0.3,0.6,0.9);
+// const lightDirec = vec3<f32>(0.3,0.6,0.9);
 
 const PI = 3.141592653589793;
 const PI2 = 6.283185307179586;
@@ -121,14 +120,14 @@ fn ACESToneMapping(color: vec3<f32>, adapted_lum: f32) -> vec3<f32> {
 
 //color = color / (color + vec3(1.0));
 fn reinhard(v: vec3<f32>) -> vec3<f32> {
-    return v / (vec3(1.0) + v);
+    return v / (vec3<f32>(1.0) + v);
 }
 fn reinhard_extended(v: vec3<f32>, max_white: f32) -> vec3<f32> {
     let numerator = v * (1.0f + (v / vec3(max_white * max_white)));
     return numerator / (1.0f + v);
 }
 fn luminance(v: vec3<f32>) -> f32 {
-    return dot(v, vec3(0.2126f, 0.7152f, 0.0722f));
+    return dot(v, vec3<f32>(0.2126f, 0.7152f, 0.0722f));
 }
 
 fn change_luminance(c_in: vec3<f32>, l_out: f32) -> vec3<f32> {
@@ -172,9 +171,6 @@ fn dithering( color: vec3<f32>, fragCoord: vec2<f32> ) -> vec3<f32> {
     return color + dither_shift_RGB;
 }
 
-const u_albedo = vec3<f32>(0.3);
-const u_F0 = vec3<f32>(0.45);
-
 const dis = 700.0;
 const disZ = 400.0;
 const u_lightPositions = array<vec3<f32>, 4>(
@@ -192,20 +188,21 @@ const u_lightColors = array<vec3<f32>, 4>(
 );
 
 fn calcPBRColor3(Normal: vec3<f32>, WorldPos: vec3<f32>, camPos: vec3<f32>) -> vec3<f32> {
+
 	var color = vec3<f32>(0.0);
 
-    var metallic = 0.5;
-    var roughness = 0.5;
-    var ao = 1.0;
+    var ao = param.x;
+    var roughness = param.y;
+    var metallic = param.z;
 
 
 	var N = normalize(Normal);
     var V = normalize(camPos.xyz - WorldPos);
     var dotNV = clamp(dot(N, V), 0.0, 1.0);
-    var albedo = u_albedo.xyz;
+
     // calculate reflectance at normal incidence; if dia-electric (like plastic) use F0
     // of 0.04 and if it's a metal, use the albedo color as F0 (metallic workflow)
-    var F0 = vec3(0.04) + u_F0.xyz;
+    var F0 = vec3(0.04);
     F0 = mix(F0, albedo.xyz, metallic);// * vec3(0.0,0.9,0.0);
 
     // reflectance equation
@@ -250,7 +247,8 @@ fn calcPBRColor3(Normal: vec3<f32>, WorldPos: vec3<f32>, camPos: vec3<f32>) -> v
         let NdotL = max(dot(N, L), 0.0);
 
         // add to outgoing radiance Lo
-        Lo += (kD * albedo.xyz / PI + specular) * radiance * NdotL;  // note that we already multiplied the BRDF by the Fresnel (kS) so we won't multiply by kS again
+        // note that we already multiplied the BRDF by the Fresnel (kS) so we won't multiply by kS again
+        Lo += (kD * albedo.xyz / PI + specular) * radiance * NdotL;
 	}
 	// ambient lighting (note that the next IBL tutorial will replace
     // this ambient lighting with environment lighting).
@@ -275,9 +273,9 @@ fn main(
   @location(3) camPos: vec3<f32>
 ) -> @location(0) vec4<f32> {
 
-  let nDotL = max(dot(normal, lightDirec), 0.0);
-  var color4 = textureSample(texture0, sampler0, uv) * param;
-  color4 = vec4(color4.xyz * (vec3<f32>(1.0 - param.w) + vec3<f32>((param.w) * nDotL) * param.xyz), color4.w);
-  color4 = vec4(color4.xyz * vec3<f32>(0.1) + color4.xyz * calcPBRColor3(normal, pos.xyz, camPos), 1.0);
+  // let nDotL = max(dot(normal, lightDirec), 0.0);
+  // var color4 = u_albedo;
+  // color4 = vec4(color4.xyz * (vec3<f32>(1.0 - param.w) + vec3<f32>((param.w) * nDotL) * param.xyz), color4.w);
+  var color4 = vec4(calcPBRColor3(normal, pos.xyz, camPos), 1.0);
   return color4;
 }
