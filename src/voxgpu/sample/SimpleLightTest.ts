@@ -29,9 +29,8 @@ export class SimpleLightTest {
 
 		const rc = this.mRscene;
 		rc.initialize();
-
 		this.initEvent();
-
+		
 		const shdSrc = {
 			vertShaderSrc: { code: vertWGSL, uuid: "vertShdCode" },
 			fragShaderSrc: { code: fragWGSL, uuid: "fragShdCode" }

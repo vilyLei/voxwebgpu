@@ -1,8 +1,6 @@
 @group(0) @binding(3) var<storage> albedo: vec4f;
 @group(0) @binding(4) var<storage> param: vec4f;
 
-// const lightDirec = vec3<f32>(0.3,0.6,0.9);
-
 const PI = 3.141592653589793;
 const PI2 = 6.283185307179586;
 const PI_HALF = 1.5707963267948966;
@@ -195,7 +193,6 @@ fn calcPBRColor3(Normal: vec3<f32>, WorldPos: vec3<f32>, camPos: vec3<f32>) -> v
     var roughness = param.y;
     var metallic = param.z;
 
-
 	var N = normalize(Normal);
     var V = normalize(camPos.xyz - WorldPos);
     var dotNV = clamp(dot(N, V), 0.0, 1.0);
@@ -203,20 +200,16 @@ fn calcPBRColor3(Normal: vec3<f32>, WorldPos: vec3<f32>, camPos: vec3<f32>) -> v
     // calculate reflectance at normal incidence; if dia-electric (like plastic) use F0
     // of 0.04 and if it's a metal, use the albedo color as F0 (metallic workflow)
     var F0 = vec3(0.04);
-    F0 = mix(F0, albedo.xyz, metallic);// * vec3(0.0,0.9,0.0);
+    F0 = mix(F0, albedo.xyz, metallic);
 
     // reflectance equation
     var Lo = vec3(0.0);
-	// var i: i32 = 0;
-    // loop {
-    //   if i >= 4 { break; }
-    // }
+    
 	for (var i: i32 = 0; i < 4; i++) {
 		// calculate per-light radiance
         let L = normalize(u_lightPositions[i].xyz - WorldPos);
         let H = normalize(V + L);
         let distance = length(u_lightPositions[i].xyz - WorldPos);
-        //float attenuation = 1.0 / (1.0 + (distance * distance));
 
         let attenuation = 1.0 / (1.0 + 0.001 * distance + 0.0003 * distance * distance);
         let radiance = u_lightColors[i].xyz * attenuation;
@@ -257,9 +250,6 @@ fn calcPBRColor3(Normal: vec3<f32>, WorldPos: vec3<f32>, camPos: vec3<f32>) -> v
     color = ambient + Lo;
     // HDR tonemapping
     color = reinhard( color );
-    // color = reinhard_extended( color, 3.0 );
-    // color = reinhard_extended_luminance( color, 5.0 );
-    // color = ACESToneMapping(color, 1.0);
     // gamma correct
     color = pow(color, vec3<f32>(1.0/2.2));
 	return color;
@@ -272,10 +262,6 @@ fn main(
   @location(2) normal: vec3<f32>,
   @location(3) camPos: vec3<f32>
 ) -> @location(0) vec4<f32> {
-
-  // let nDotL = max(dot(normal, lightDirec), 0.0);
-  // var color4 = u_albedo;
-  // color4 = vec4(color4.xyz * (vec3<f32>(1.0 - param.w) + vec3<f32>((param.w) * nDotL) * param.xyz), color4.w);
   var color4 = vec4(calcPBRColor3(normal, pos.xyz, camPos), 1.0);
   return color4;
 }
