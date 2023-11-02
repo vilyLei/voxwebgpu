@@ -30,8 +30,9 @@ class WGRUniformValue {
 	getUid(): number {
 		return this.mUid;
 	}
-	toShared(): void {
+	toShared(): WGRUniformValue {
 		this.shared = true;
+		return this;
 	}
 	toUniform(): void {
 		this.usage = GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST;

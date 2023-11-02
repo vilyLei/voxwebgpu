@@ -69,11 +69,9 @@ class CameraBase implements IRenderCamera {
     private m_unlock = true;
 	inversePerspectiveZ = false;
     constructor() {
-		this.viewUniformV = new WGRUniformValue(this.m_viewMat.getLocalFS32());
-		this.viewUniformV.toShared();
+		this.viewUniformV = new WGRUniformValue(this.m_viewMat.getLocalFS32()).toShared();
 		this.viewUniformV.shdVarName = "viewMat";
-		this.projUniformV = new WGRUniformValue(this.m_projMat.getLocalFS32());
-		this.projUniformV.toShared();
+		this.projUniformV = new WGRUniformValue(this.m_projMat.getLocalFS32()).toShared();
 		this.projUniformV.shdVarName = "projMat";
     }
     // 不允许外界修改camera数据
