@@ -16,7 +16,6 @@ class Entity3D implements IRenderableEntity {
 	private static sUid = 0;
 	private mUid = Entity3D.sUid++;
 
-	private mVisible = true;
 	protected mParent: IRenderableEntityContainer;
 	protected mLBs: IAABB;
 	protected mGBs: IAABB;
@@ -175,11 +174,11 @@ class Entity3D implements IRenderableEntity {
 		return this.__$rseFlag == REF.DEFAULT;
 	}
 	setVisible(v: boolean): Entity3D {
-		this.mVisible = v;
+		this.rstate.visible = v;
 		return this;
 	}
 	isVisible(): boolean {
-		return this.mVisible;
+		return this.rstate.visible;
 	}
 	getTransform(): IROTransform {
 		return this.transform;
