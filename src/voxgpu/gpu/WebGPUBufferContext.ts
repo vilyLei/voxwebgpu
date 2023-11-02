@@ -10,7 +10,7 @@ class WebGPUBufferContext {
 		}
 	}
 	initialize(wgCtx: WebGPUContextImpl): void {
-		if(!this.mWGCtx && wgCtx) {
+		if (!this.mWGCtx && wgCtx) {
 			this.mWGCtx = wgCtx;
 		}
 	}
@@ -42,7 +42,7 @@ class WebGPUBufferContext {
 		mappedAtCreation = true,
 		vectorLengths?: number[]
 	): GPUBuffer {
-		let size = data.byteLength%4;
+		let size = data.byteLength % 4;
 		// 如果不是4的倍数会报错
 		size = data.byteLength + (size > 0 ? (4 - size) : 0);
 		const buf = this.mWGCtx.device.createBuffer({

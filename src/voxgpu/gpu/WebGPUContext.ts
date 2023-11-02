@@ -14,20 +14,26 @@ import { WebGPUBufferContext } from "./WebGPUBufferContext";
 
 class WebGPUContext implements WebGPUContextImpl {
 
-	readonly canvas: HTMLCanvasElement = null;
-	readonly context: GPUCanvasContext = null;
-	readonly device: GPUDevice = null;
-	readonly queue: GPUQueue = null;
-	readonly canvasFormat: string = null;
+	private static sUid = 0;
+	private mUid = WebGPUContext.sUid++;
+
+	readonly canvas: HTMLCanvasElement;
+	readonly context: GPUCanvasContext;
+	readonly device: GPUDevice;
+	readonly queue: GPUQueue;
+	readonly canvasFormat: string;
 	readonly presentationFormat = "bgra8unorm";
-	readonly gpu: GPU = null;
-	readonly gpuAdapter: GPUAdapter = null;
+	readonly gpu: GPU;
+	readonly gpuAdapter: GPUAdapter;
 	readonly enabled = false;
 
 	readonly mipmapGenerator = new GPUMipmapGenerator();
 	readonly texture = new WebGPUTextureContext();
 	readonly buffer = new WebGPUBufferContext();
 	constructor(){}
+	getUid(): number {
+		return this.mUid;
+	}
 	/**
 	 * @param format GPU texture format string.
 	 * @param error The default value is true.

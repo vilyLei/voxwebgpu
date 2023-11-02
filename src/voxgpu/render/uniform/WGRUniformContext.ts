@@ -5,19 +5,20 @@ import { UniformVerType, WGRUniform } from "./WGRUniform";
 import { BindGroupDataParamType, BufDataParamType, IWGRPipelineContext } from "../pipeline/IWGRPipelineContext";
 import { WGRUniformValue } from "./WGRUniformValue";
 import { WGRUniformParam, WGRUniformTexParam, WGRUniformWrapper, IWGRUniformContext } from "./IWGRUniformContext";
-// import { GPUBindGroup } from "../../gpu/GPUBindGroup";
-import { GPUBindGroupDescriptorEntityResource, GPUBindGroupDescriptor } from "../../gpu/GPUBindGroupDescriptor";
+import { GPUBindGroupDescriptor } from "../../gpu/GPUBindGroupDescriptor";
+import { WGHBufferStore } from "../buffer/WGHBufferStore";
 class SharedUniformObj {
 	vers: UniformVerType[];
 }
 class UCtxInstance {
-	private static sUid = 0;
-	private mUid = UCtxInstance.sUid++;
+	// private static sUid = 0;
+	// private mUid = UCtxInstance.sUid++;
 
 	private mList: WGRUniformWrapper[] = [];
 	private mPipelineCtx: IWGRPipelineContext | null = null;
 	private mBuffers: GPUBuffer[] = [];
-	private mFreeIds: number[] = [];
+	private mFreeIds: number[] = [];	
+	shdUniform: SharedUniformObj;
 	constructor() {}
 
 	private getFreeIndex(): number {
@@ -51,26 +52,38 @@ class UCtxInstance {
 					// 		}
 					// 	}
 					// }
-
 					// console.log("XXX XXX wp.bufDataParams: ", wp.bufDataParams);
+					const wgctx = this.mPipelineCtx.getWGCtx();
+					const store = WGHBufferStore.getStore(wgctx);
+
 					const dps = wp.bufDataParams;
 					for (let i = 0; i < dps.length; ++i) {
 
 						const dp = dps[i];
 
 						const uniformParam = { sizes: new Array(dp.shared ? 1 : ls.length), usage: dp.usage };
+						let buf: GPUBuffer;
 						if (dp.shared) {
-							uniformParam.sizes[0] = ls[0].bufDataParams[i].size;
 							// console.log("BBBBBBBBBB uniformParam.sizes: ", uniformParam.sizes);
+							if(store.hasWithUid(dp.vuid)) {
+								buf = store.getWithUid(dp.vuid);
+								console.log("apply old shared uniform gpu buffer...");
+							}else {								
+								console.log("create new shared uniform gpu buffer...");
+								uniformParam.sizes[0] = ls[0].bufDataParams[i].size;
+								buf = this.mPipelineCtx.createUniformsBuffer(uniformParam);
+								store.addWithUid(dp.vuid, buf);
+							}
 						} else {
 							for (let j = 0; j < ls.length; ++j) {
 								uniformParam.sizes[j] = ls[j].bufDataParams[i].size;
 							}
+							buf = this.mPipelineCtx.createUniformsBuffer(uniformParam);
 						}
 						// console.log("XXX XXX dps[",i,"].shared: ", dp.shared);
 						// console.log("XXX XXX uniformParam.sizes: ", uniformParam.sizes);
-						const buffer = this.mPipelineCtx.createUniformsBuffer(uniformParam);
-						this.mBuffers.push(buffer);
+						// const buffer = this.mPipelineCtx.createUniformsBuffer(uniformParam);
+						this.mBuffers.push(buf);
 						// console.log("PPP PPP PPP ,i: ",i," buffer.size: ", buffer.size);
 					}
 				}
@@ -85,8 +98,6 @@ class UCtxInstance {
 	}
 	private static sBindGroupIndex = 0;
 	private mBindGroupDesc: GPUBindGroupDescriptor;
-	// private mSharedVers: { ver: number, shared: boolean }[];
-	shdUniform: SharedUniformObj;
 
 	private mBufDataDescs: BindGroupDataParamType[];
 	private createVers(wp: WGRUniformWrapper): { ver: number; shared: boolean }[] {
@@ -183,7 +194,6 @@ class UCtxInstance {
 			this.createUniformWithWP(wp, index);
 		}
 		// console.log("UCtxInstance::createUniform(), this.mList.length: ", this.mList.length);
-
 		return u;
 	}
 	updateUniformTextureView(u: WGRUniform, texParams: { texView: GPUTextureView; sampler?: GPUSampler }[]): void {
@@ -237,7 +247,7 @@ class WGRUniformContext implements IWGRUniformContext {
 		console.log("WGRUniformContext::constructor() ...");
 	}
 
-	private getUCtx(layoutName: string, creation: boolean = true): UCtxInstance | null {
+	private getUCtx(layoutName: string, creation = true): UCtxInstance | null {
 		let uctx: UCtxInstance = null;
 		const m = this.mMap;
 		if (m.has(layoutName)) {
@@ -288,7 +298,9 @@ class WGRUniformContext implements IWGRUniformContext {
 			for (let i = 0; i < values.length; ++i) {
 				const v = values[i];
 				v.bufferIndex = i;
-				bufDataParams.push({ size: v.arrayStride, usage: v.usage, shared: v.shared, usageType: v.isStorage() ? 1 : 0 });
+				const usageType = v.isStorage() ? 1 : 0;
+				const vuid = v.getUid();
+				bufDataParams.push({ size: v.arrayStride, usage: v.usage, shared: v.shared, usageType, vuid });
 			}
 			return uctx.createUniform(layoutName, groupIndex, bufDataParams, texParams);
 		}

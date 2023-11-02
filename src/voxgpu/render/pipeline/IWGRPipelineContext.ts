@@ -8,7 +8,7 @@ import { GPUBindGroupDescriptor } from "../../gpu/GPUBindGroupDescriptor";
 import { IWGRUniformContext } from "../uniform/IWGRUniformContext";
 import { IWGRendererPass } from "./IWGRendererPass";
 
-type BufDataParamType = { size: number, usage: number, defaultData?: NumberArrayDataType, shared: boolean, usageType?: number };
+type BufDataParamType = { size: number, usage: number, defaultData?: NumberArrayDataType, shared: boolean, vuid?: number, usageType?: number };
 type VtxDescParam = { vertex: { arrayStride: number, params: { offset: number, format: string }[] } };
 type BindGroupDataParamType = { index: number, buffer: GPUBuffer, bufferSize: number, shared: boolean, usageType?: number };
 type VtxPipelinDescParam = { vertex: { buffers?: GPUBuffer[], attributeIndicesArray: number[][] } };
