@@ -11,7 +11,7 @@
 // import { ImgCubeMap as Demo } from "./voxgpu/sample/ImgCubeMap";
 
 // import { MultiTexturedCube as Demo } from "./voxgpu/sample/MultiTexturedCube";
-import { BlendTest as Demo } from "./voxgpu/sample/BlendTest";
+// import { BlendTest as Demo } from "./voxgpu/sample/BlendTest";
 // import { MultiMaterialPass as Demo } from "./voxgpu/sample/MultiMaterialPass";
 
 // import { MultiUniformTest as Demo } from "./voxgpu/sample/MultiUniformTest";
@@ -25,7 +25,7 @@ import { BlendTest as Demo } from "./voxgpu/sample/BlendTest";
 // import { Entity3DVisibilityTest as Demo } from "./voxgpu/sample/Entity3DVisibilityTest";
 // import { RSceneEntityManagement as Demo } from "./voxgpu/sample/RSceneEntityManagement";
 
-// import { SimplePBRTest as Demo } from "./voxgpu/sample/SimplePBRTest";
+import { SimplePBRTest as Demo } from "./voxgpu/sample/SimplePBRTest";
 
 
 let demoIns = new Demo();

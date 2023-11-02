@@ -8,7 +8,8 @@ import { WGRUniformParam, WGRUniformTexParam, WGRUniformWrapper, IWGRUniformCont
 import { GPUBindGroupDescriptor } from "../../gpu/GPUBindGroupDescriptor";
 import { WGHBufferStore } from "../buffer/WGHBufferStore";
 class SharedUniformObj {
-	vers: UniformVerType[];
+	// vers: UniformVerType[];
+	map: Map<number, UniformVerType> = new Map();
 }
 class UCtxInstance {
 	// private static sUid = 0;
@@ -67,9 +68,9 @@ class UCtxInstance {
 							// console.log("BBBBBBBBBB uniformParam.sizes: ", uniformParam.sizes);
 							if(store.hasWithUid(dp.vuid)) {
 								buf = store.getWithUid(dp.vuid);
-								console.log("apply old shared uniform gpu buffer...");
+								// console.log("apply old shared uniform gpu buffer...");
 							}else {								
-								console.log("create new shared uniform gpu buffer...");
+								// console.log("create new shared uniform gpu buffer...");
 								uniformParam.sizes[0] = ls[0].bufDataParams[i].size;
 								buf = this.mPipelineCtx.createUniformsBuffer(uniformParam);
 								store.addWithUid(dp.vuid, buf);
@@ -102,19 +103,34 @@ class UCtxInstance {
 	private mBufDataDescs: BindGroupDataParamType[];
 	private createVers(wp: WGRUniformWrapper): { ver: number; shared: boolean }[] {
 		const dps = wp.bufDataParams;
-		let versions = new Array(dps.length);
 
 		const su = this.shdUniform;
-		if (!su.vers) {
-			for (let i = 0; i < dps.length; ++i) {
-				versions[i] = { ver: -1, shared: true };
-			}
-			su.vers = versions;
-		}
+		// if(!su.vers) su.vers = [];
+		// for (let i = su.vers.length; i < dps.length; ++i) {
+		// 	su.vers.push({ ver: -1, shared: true } );
+		// 	console.log(">>>>>>>>>>>>>> KKKKKKKKKKKKK, su.vers.length: ",su.vers.length);
+		// }
+		const map = su.map;
+		// if (su.vers) {			
+		// 	for (let i = su.vers.length; i < dps.length; ++i) {
+		// 		su.vers.push({ ver: -1, shared: true } );
+		// 	}
+		// }else {
+		// 	su.vers = new Array(dps.length);
+		// 	for (let i = 0; i < dps.length; ++i) {
+		// 		su.vers[i] = { ver: -1, shared: true };
+		// 	}
+		// }
+		
+		let versions = new Array(dps.length);
 		for (let i = 0; i < dps.length; ++i) {
 			// console.log("*** *** *** createVers(), dps[",i,"].shared: ", dps[i].shared);
 			if (dps[i].shared) {
-				versions[i] = su.vers[i];
+				const vid = dps[i].vuid;
+				if(!map.has(vid)) {
+					map.set(vid, { ver: -1, shared: true });
+				}
+				versions[i] = map.get(vid);
 			} else {
 				versions[i] = { ver: -1, shared: false };
 			}
@@ -242,7 +258,7 @@ class WGRUniformContext implements IWGRUniformContext {
 	private mMap: Map<string, UCtxInstance> = new Map();
 	private mInsList: UCtxInstance[] = [];
 	private mPipelineCtx: IWGRPipelineContext | null = null;
-	private shdUniform = new SharedUniformObj();
+	private static shdUniform = new SharedUniformObj();
 	constructor() {
 		console.log("WGRUniformContext::constructor() ...");
 	}
@@ -255,7 +271,7 @@ class WGRUniformContext implements IWGRUniformContext {
 		} else {
 			if (creation) {
 				uctx = new UCtxInstance();
-				uctx.shdUniform = this.shdUniform;
+				uctx.shdUniform = WGRUniformContext.shdUniform;
 				uctx.initialize(this.mPipelineCtx);
 				m.set(layoutName, uctx);
 			}

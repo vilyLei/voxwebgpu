@@ -120,10 +120,10 @@ export class RSceneEntityManagement {
 			for (let j = 0; j < tot; ++j) {
 				for (let k = 0; k < tot; ++k) {
 					let entity = new Entity3D();
-					entity.materials = mts0;
-					// entity.materials = [
-					// 	this.createMaterial(shdSrc, [diffuseTex], new Color4(Math.random() * 1.5, Math.random() * 1.5, Math.random() * 1.5))
-					// ];
+					// entity.materials = mts0;
+					entity.materials = [
+						this.createMaterial(shdSrc, [diffuseTex], new Color4(Math.random() * 1.5, Math.random() * 1.5, Math.random() * 1.5))
+					];
 					entity.geometry = geometry;
 					entity.transform.setPosition(new Vector3(i * size.x, j * size.y, k * size.z).addBy(pos));
 					this.mEntitices.push(entity);
