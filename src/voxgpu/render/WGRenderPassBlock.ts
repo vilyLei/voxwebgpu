@@ -8,7 +8,6 @@ import { IWGRPassRef } from "./pipeline/IWGRPassRef";
 
 import { WGMaterialDescripter } from "../material/WGMaterialDescripter";
 import Camera from "../view/Camera";
-import { WGRUniformContext } from "./uniform/WGRUniformContext";
 import { WGRenderPassNode } from "./WGRenderPassNode";
 
 class WGRenderPassBlock {
@@ -22,7 +21,6 @@ class WGRenderPassBlock {
 	rcommands: GPUCommandBuffer[];
 
 	enabled = true;
-	// uniformCtx = new WGRUniformContext();
 
 	constructor(rendererUid: number, wgCtx?: WebGPUContext, param?: WGRPassParams) {
 		this.mRendererUid = rendererUid;

@@ -72,6 +72,7 @@ class WGGeometry {
 			this.filterParam(param, 'uv', [2]);
 			this.filterParam(param, 'uv2', [2]);
 			this.filterParam(param, 'normal', [3]);
+			this.filterParam(param, 'color', [3]);
 
 			const p = new WGGeomAttributeBlock();
 			const ab = p as any;

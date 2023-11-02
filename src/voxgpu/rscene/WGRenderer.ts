@@ -128,25 +128,15 @@ class WGRenderer implements IRenderer {
 		return this.mWGCtx;
 	}
 	addEntity(entity: Entity3D, processIndex = 0, deferred = true): void {
-		// if(entity.isPolyhedral()) {
-		// }
+
 		if (this.mInit) {
 			this.initialize();
 		}
-		console.log("Renderer::addEntity(), entity.isInRenderer(): ", entity.isInRenderer());
+		// console.log("Renderer::addEntity(), entity.isInRenderer(): ", entity.isInRenderer());
 		if (entity && !entity.isInRenderer()) {
 			entity.rstate.__$inRenderer = true;
 			let flag = true;
 			if (this.mWGCtx && this.mWGCtx.enabled) {
-				// console.log("WGRenderer::addEntity(), a 03");
-				// if (processIndex == 0 && this.mRPBlocks.length < 1) {
-				// 	this.createRenderBlock({
-				// 		sampleCount: 4,
-				// 		multisampleEnabled: true,
-				// 		depthFormat: "depth24plus"
-				// 	});
-				// 	this.buildRPasses();
-				// }
 				this.intDefaultBlock();
 				if (entity.isREnabled()) {
 					if (processIndex >= 0 && processIndex < this.mRPBlocks.length) {

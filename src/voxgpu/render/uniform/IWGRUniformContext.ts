@@ -2,7 +2,7 @@ import { GPUBuffer } from "../../gpu/GPUBuffer";
 import { GPUSampler } from "../../gpu/GPUSampler";
 import { GPUTextureView } from "../../gpu/GPUTextureView";
 import { WGRUniform } from "./WGRUniform";
-import { BufDataParamType} from "../pipeline/IWGRPipelineContext";
+import { BindGroupDataParamType,BufDataParamType} from "../pipeline/IWGRPipelineContext";
 import { WGRUniformValue } from "./WGRUniformValue";
 
 type WGRUniformTexParam = { texView: GPUTextureView, sampler?: GPUSampler };
@@ -10,7 +10,7 @@ type WGRUniformParam = { layoutName: string, groupIndex: number, values: WGRUnif
 class WGRUniformWrapper {
 	uniform: WGRUniform | null = null;
 	bufDataParams?: BufDataParamType[];
-	bufDataDescs?: { index: number; buffer: GPUBuffer; bufferSize: number }[];
+	bufDataDescs?: BindGroupDataParamType[];
 	texParams?: { texView: GPUTextureView; sampler?: GPUSampler }[];
 	usage = 0;
 	groupIndex = 0;

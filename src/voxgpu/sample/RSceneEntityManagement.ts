@@ -33,18 +33,19 @@ export class RSceneEntityManagement {
 		rc.addEventListener(MouseEvent.MOUSE_DOWN, this.mouseDown);
 		new MouseInteraction().initialize(rc, 0, false).setAutoRunning(true);
 	}
-
+	private mRenderingFlag = 6;
 	private mouseDown = (evt: MouseEvent): void => {
 		const rc = this.mRscene;
-		let et = this.mEntitices[Math.round(Math.random() * (this.mEntitices.length - 1))];
-		et = this.mEntitices[0];
-		if (et.isInRenderer()) {
-			rc.removeEntity(et);
-		} else {
-			let vs = et.materials[0].uniformValues[0].data as Float32Array;
-			vs.set([Math.random() + 0.2, Math.random() + 0.2, Math.random() + 0.2, 1.0]);
-			rc.addEntity(et);
-		}
+		// let et = this.mEntitices[Math.round(Math.random() * (this.mEntitices.length - 1))];
+		// et = this.mEntitices[0];
+		// if (et.isInRenderer()) {
+		// 	rc.removeEntity(et);
+		// } else {
+		// 	let vs = et.materials[0].uniformValues[0].data as Float32Array;
+		// 	vs.set([Math.random() + 0.2, Math.random() + 0.2, Math.random() + 0.2, 1.0]);
+		// 	rc.addEntity(et);
+		// }
+		this.mRenderingFlag = 1;
 	};
 	private createMaterial(
 		shdSrc: WGRShderSrcType,
@@ -99,26 +100,45 @@ export class RSceneEntityManagement {
 
 		const diffuseTex = { diffuse: { url: "static/assets/box.jpg" } };
 
-		let mt0 = [this.createMaterial(shdSrc, [diffuseTex], new Color4(1.0, 0.0, 0.0))];
-		let mt1 = [this.createMaterial(shdSrc, [diffuseTex], new Color4(0.0, 1.0, 0.0))];
-		for (let i = 0; i < 4; ++i) {
-			let entity = new Entity3D();
-			entity.materials = mt0;
-			entity.geometry = geometry;
-			entity.transform.setPosition(new Vector3(-200 + i * 130, 0, 0));
-			this.mEntitices.push(entity);
-			rc.addEntity(entity);
-		}
+		let mts0 = [this.createMaterial(shdSrc, [diffuseTex], new Color4(1.0, 0.0, 0.0))];
+		let mts1 = [this.createMaterial(shdSrc, [diffuseTex], new Color4(0.0, 1.0, 0.0))];
 
-		// entity = new Entity3D();
-		// entity.materials = mt0;
-		// entity.geometry = geometry;
-		// entity.transform.setPosition(new Vector3(200,0,0));
-		// this.mEntitices.push( entity );
-		// rc.addEntity(entity);
+		// for (let i = 0; i < 1; ++i) {
+		// 	let entity = new Entity3D();
+		// 	// entity.materials = mts0;
+		// 	entity.materials =  [this.createMaterial(shdSrc, [diffuseTex], new Color4(Math.random() * 1.5, Math.random() * 1.5, Math.random() * 1.5))];
+		// 	entity.geometry = geometry;
+		// 	entity.transform.setPosition(new Vector3(-500 + i * 130, 0, 0));
+		// 	this.mEntitices.push(entity);
+		// 	rc.addEntity(entity);
+		// }
+
+		let tot = 3;
+		const size = new Vector3(150, 150, 150);
+		const pos = new Vector3().copyFrom(size).scaleBy(-0.5 * (tot - 1));
+		for (let i = 0; i < tot; ++i) {
+			for (let j = 0; j < tot; ++j) {
+				for (let k = 0; k < tot; ++k) {
+					let entity = new Entity3D();
+					entity.materials = mts0;
+					// entity.materials = [
+					// 	this.createMaterial(shdSrc, [diffuseTex], new Color4(Math.random() * 1.5, Math.random() * 1.5, Math.random() * 1.5))
+					// ];
+					entity.geometry = geometry;
+					entity.transform.setPosition(new Vector3(i * size.x, j * size.y, k * size.z).addBy(pos));
+					this.mEntitices.push(entity);
+					rc.addEntity(entity);
+				}
+			}
+		}
 	}
 
 	run(): void {
+		// if (this.mRenderingFlag < 1) {
+		// 	return;
+		// }
+		// this.mRenderingFlag--;
+
 		this.mRscene.run();
 	}
 }

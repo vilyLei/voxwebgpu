@@ -3,6 +3,7 @@ import { GPUBuffer } from "../../gpu/GPUBuffer";
 import { WGRUniformValue } from "./WGRUniformValue";
 import { IWGRPipelineContext } from "../pipeline/IWGRPipelineContext";
 
+type UniformVerType = { ver: number, shared: boolean };
 interface WGRUniformCtx {
 	removeUniform(u: WGRUniform): void;
 }
@@ -19,7 +20,7 @@ class WGRUniform {
 	layoutName = "";
 
 	buffers: GPUBuffer[] | null = null;
-	versions: number[];
+	versions: UniformVerType[];
 	bindGroup: GPUBindGroup | null = null;
 
 	/**
@@ -34,13 +35,11 @@ class WGRUniform {
 
 	setValue(value: WGRUniformValue): void {
 		const i = value.bufferIndex;
-		// if(this.mCloned) {
-		// 	console.log("dfdfdf, this.uid: ", this.uid, value.uid, ",v: ",this.versions[i],value.version);
-		// }
-		if(this.versions[i] != value.version) {
-			this.versions[i] = value.version;
-			// console.log("WRORUniform::setValue(), call ...");
-			this.mPipelineCtx.updateUniformBufferAt(this.buffers[i], value.data, this.index, value.byteOffset);
+		const v = this.versions[i];
+		if(v.ver != value.version) {
+			v.ver = value.version;
+			// console.log("WRORUniform::setValue(), call ...shared: ", value.shared, value.shdVarName);
+			this.mPipelineCtx.updateUniformBufferAt(this.buffers[i], value.data, v.shared ? 0 : this.index, value.byteOffset);
 		}
 	}
 	isEnabled(): boolean {
@@ -111,4 +110,4 @@ class WGRUniform {
 		this.buffers = null;
 	}
 }
-export { WGRUniform }
+export { UniformVerType, WGRUniform }

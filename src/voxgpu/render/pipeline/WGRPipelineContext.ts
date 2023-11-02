@@ -1,5 +1,5 @@
 import { GPUBindGroup } from "../../gpu/GPUBindGroup";
-import { GPUBindGroupDescriptor } from "../../gpu/GPUBindGroupDescriptor";
+import { GPUBindGroupDescriptor, GPUBindGroupDescriptorEntity, GPUBindGroupDescriptorEntityResource } from "../../gpu/GPUBindGroupDescriptor";
 import { GPUBindGroupLayout } from "../../gpu/GPUBindGroupLayout";
 import { GPUBuffer } from "../../gpu/GPUBuffer";
 import { GPUBufferDescriptor } from "../../gpu/GPUBufferDescriptor";
@@ -8,7 +8,7 @@ import { GPURenderPipelineEmpty } from "../../gpu/GPURenderPipelineEmpty";
 import { GPUSampler } from "../../gpu/GPUSampler";
 import { GPUTextureView } from "../../gpu/GPUTextureView";
 import { WebGPUContext } from "../../gpu/WebGPUContext";
-import { BufDataParamType, VtxDescParam, VtxPipelinDescParam, IWGRPipelineContext } from "./IWGRPipelineContext";
+import { BindGroupDataParamType, BufDataParamType, VtxDescParam, VtxPipelinDescParam, IWGRPipelineContext } from "./IWGRPipelineContext";
 import { WGRPipelineCtxParams } from "./WGRPipelineCtxParams";
 import { WGRPipelineShader } from "./WGRPipelineShader";
 import { WGRUniformParam, WGRUniformContext } from "../uniform/WGRUniformContext";
@@ -16,6 +16,8 @@ import { GPUQueue } from "../../gpu/GPUQueue";
 import { IWGRendererPass } from "./IWGRendererPass";
 
 class WGRPipelineContext implements IWGRPipelineContext {
+	private static sUid = 0;
+	private mUid = WGRPipelineContext.sUid++;
 	private mInit = true;
 	private mWGCtx: WebGPUContext;
 	private mBGLayouts: GPUBindGroupLayout[] = new Array(8);
@@ -26,7 +28,7 @@ class WGRPipelineContext implements IWGRPipelineContext {
 	pipeline: GPURenderPipeline = new GPURenderPipelineEmpty();
 	queue: GPUQueue;
 
-	uid = 0;
+	shadinguuid = "";
 	name = "PipelineContext";
 	readonly uniformCtx = new WGRUniformContext();
 
@@ -43,11 +45,13 @@ class WGRPipelineContext implements IWGRPipelineContext {
 			const p = this.mPipelineParams;
 			if (p) {
 				this.mShader.build(p);
+				p.label = this.shadinguuid + "-pl-" + this.mUid;
 				console.log("WGRPipelineContext::init(), param:\n", p);
 				this.pipeline = ctx.device.createRenderPipeline(p);
 			}
 		}
 	}
+	updateSharedUniforms(): void {}
 	runBegin(): void {
 		this.init();
 		this.uniformCtx.runBegin();
@@ -79,7 +83,8 @@ class WGRPipelineContext implements IWGRPipelineContext {
 		const buf = this.mWGCtx.device.createBuffer(desc);
 		return buf;
 	}
-	createUniformsBuffer(params: { sizes: number[]; usage: number }, mappedAtCreation = false): GPUBuffer | null {
+	/*
+	createUniformsBufferInit(params: { sizes: number[]; usage: number }, mappedAtCreation = false): GPUBuffer | null {
 		if (params && params.sizes.length > 0) {
 			let total = params.sizes.length;
 			let size = params.sizes[0];
@@ -108,15 +113,174 @@ class WGRPipelineContext implements IWGRPipelineContext {
 		}
 		return null;
 	}
+	//*/
+	createUniformsBuffer(
+		params: { sizes: number[]; usage: number },
+		initSize = 0,
+		force256: boolean = true,
+		mappedAtCreation = false
+	): GPUBuffer | null {
+		if (params && params.sizes.length > 0) {
+			let total = params.sizes.length;
+			let size = initSize;
+			let bufSize = size;
+			let segs: { index: number; size: number }[] = new Array(total);
+			if (force256) {
+				for (let i = 0; i < total; ++i) {
+					size = size <= 256 ? size : size % 256;
+					size = size > 0 ? 256 - size : 0;
+
+					bufSize += size;
+					size = params.sizes[i];
+					segs[i] = { index: bufSize, size: size };
+					bufSize += size;
+				}
+			} else {
+				for (let i = 0; i < total; ++i) {
+					size = params.sizes[i];
+					segs[i] = { index: bufSize, size: size };
+					bufSize += size;
+				}
+			}
+
+			const desc = {
+				size: bufSize,
+				usage: params.usage
+			};
+			const buf = this.mWGCtx.device.createBuffer(desc);
+			buf.segs = segs;
+			// console.log("createUniformsBuffer(), segs: ", segs);
+			// console.log("createUniformsBuffer(), bufSize: ", bufSize, ", usage: ", params.usage);
+			return buf;
+		}
+		return null;
+	}
 	updateUniformBufferAt(buffer: GPUBuffer, td: NumberArrayDataType, index: number, offset = 0): void {
-		// console.log("buffer.segs[index].index + offset: ", buffer.segs[index].index + offset);
-		// console.log("	td: ", td);
+		// console.log("updateUniformBufferAt() index: ", index,",segs: ", buffer.segs);
+		// console.log("updateUniformBufferAt() buffer.size: ", buffer.size);
+		// console.log("updateUniformBufferAt() buffer.segs[index].index + offset: ", buffer.segs[index].index + offset);
+		// console.log("updateUniformBufferAt() td: ", td);
 		this.mWGCtx.device.queue.writeBuffer(buffer, buffer.segs[index].index + offset, td.buffer, td.byteOffset, td.byteLength);
+	}
+	uniformBindGroupDescUpdate(
+		desc: GPUBindGroupDescriptor,
+		dataParams?: BindGroupDataParamType[],
+		texParams?: { texView?: GPUTextureView; sampler?: GPUSampler }[],
+		index = 0
+	): void {
+		let ei = 0;
+		let es = desc.entries;
+		if (dataParams) {
+			const dps = dataParams;
+			for (let i = 0; i < dps.length; ++i) {
+				const dp = dps[i];
+				if (dp.buffer && dp.bufferSize > 0) {
+					const res = es[i].resource as GPUBindGroupDescriptorEntityResource;
+					if (res.offset !== undefined) {
+						// the minimum BufferBindingType::ReadOnlyStorage alignment (256)
+						res.offset = res.shared ? 0 : index * 256;
+					}
+					ei++;
+				}
+			}
+		}
+		if (texParams && texParams.length > 0) {
+			for (let i = 0; i < texParams.length; ++i) {
+				const t = texParams[i];
+				if (t.texView) {
+					let et = es[ei++] as GPUBindGroupDescriptorEntity;
+					if (t.sampler && et.resource !== t.sampler) {
+						et.resource = t.sampler;
+					}
+					et = es[ei++] as GPUBindGroupDescriptorEntity;
+					if (et.resource !== t.texView) {
+						et.resource = t.texView;
+					}
+				}
+			}
+		}
+	}
+	createUniformBindGroupDesc(
+		groupIndex: number,
+		dataParams?: BindGroupDataParamType[],
+		texParams?: { texView?: GPUTextureView; sampler?: GPUSampler }[],
+		bindIndex = 0
+	): GPUBindGroupDescriptor {
+		const device = this.mWGCtx.device;
+
+		if (!this.mBGLayouts[groupIndex]) {
+			this.mBGLayouts[groupIndex] = this.pipeline.getBindGroupLayout(groupIndex);
+		}
+		let desc = {
+			layout: this.mBGLayouts[groupIndex],
+			entries: []
+		} as GPUBindGroupDescriptor;
+
+		let bindI = 0;
+		if (dataParams) {
+			const dps = dataParams;
+			for (let i = 0; i < dps.length; ++i) {
+				const dp = dps[i];
+				if (dp.buffer && dp.bufferSize > 0) {
+					// console.log("ooooooooo bindI: ", bindI, ", i: ", i);
+					// console.log("		dp.shared: ", dp.shared, dp.bufferSize);
+					// console.log("		", dp.buffer);
+					const ed = {
+						binding: bindIndex + bindI++,
+						resource: {
+							offset: dp.shared ? 0 : 256 * dp.index, // 实际应用中的计算不在这里
+							buffer: dp.buffer,
+							size: dp.bufferSize,
+							shared: dp.shared,
+							usageType: dp.usageType
+						}
+					};
+					desc.entries.push(ed);
+				}
+			}
+		}
+
+		// console.log("createUniformBindGroup(), texParams: ", texParams);
+		if (texParams && texParams.length > 0) {
+			const sampler = device.createSampler({
+				magFilter: "linear",
+				minFilter: "linear",
+				mipmapFilter: "linear"
+			});
+
+			for (let i = 0; i < texParams.length; ++i) {
+				const t = texParams[i];
+				if (t.texView) {
+					const es = {
+						binding: bindIndex + bindI++,
+						resource: t.sampler ? t.sampler : sampler
+					};
+					const et = {
+						binding: bindIndex + bindI++,
+						resource: t.texView
+					};
+					desc.entries.push(es, et);
+				}
+			}
+		}
+		// console.log("createUniformBindGroup(), desc: ", desc);
+		if (desc.entries.length < 1) {
+			throw Error("Illegal operation !!!");
+		}
+		return desc;
+	}
+	createUniformBindGroupWithDesc(desc: GPUBindGroupDescriptor): GPUBindGroup {
+		const device = this.mWGCtx.device;
+		if (desc.entries.length < 1) {
+			throw Error("Illegal operation !!!");
+		}
+		return device.createBindGroup(desc);
 	}
 	createUniformBindGroup(
 		groupIndex: number,
-		dataParams?: { index: number; buffer: GPUBuffer; bufferSize: number }[],
-		texParams?: { texView?: GPUTextureView; sampler?: GPUSampler }[]
+		dataParams?: BindGroupDataParamType[],
+		texParams?: { texView?: GPUTextureView; sampler?: GPUSampler }[],
+		bindIndex = 0
 	): GPUBindGroup {
 		const device = this.mWGCtx.device;
 
@@ -128,7 +292,6 @@ class WGRPipelineContext implements IWGRPipelineContext {
 			entries: []
 		} as GPUBindGroupDescriptor;
 
-		let bindIndex = 0;
 		if (dataParams) {
 			const dps = dataParams;
 			for (let i = 0; i < dps.length; ++i) {
@@ -139,7 +302,9 @@ class WGRPipelineContext implements IWGRPipelineContext {
 						resource: {
 							offset: 256 * dp.index,
 							buffer: dp.buffer,
-							size: dp.bufferSize
+							size: dp.bufferSize,
+							shared: dp.shared,
+							usageType: dp.usageType
 						}
 					};
 					desc.entries.push(ed);
@@ -198,7 +363,7 @@ class WGRPipelineContext implements IWGRPipelineContext {
 				if (pipelineParams.buildDeferred) {
 					this.mPipelineParams = pipelineParams;
 				} else {
-					this.mShader.build( pipelineParams );
+					this.mShader.build(pipelineParams);
 				}
 			}
 		}

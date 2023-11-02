@@ -21,12 +21,12 @@ class WGRUnitRunSt {
 const __$urst = new WGRUnitRunSt();
 const __$reust = new WGRUnitState();
 class WGRUnit implements IWGRUnit {
-	private mUniformValues: WGRUniformValue[];
+	private mUfValues: WGRUniformValue[];
 	private rf = true;
 
 	uniforms?: WGRUniform[];
 
-	// unfsuuid = "";
+	etuuid?: string;
 
 	pipeline: GPURenderPipeline;
 	pipelinectx: IWGRPipelineContext;
@@ -43,21 +43,24 @@ class WGRUnit implements IWGRUnit {
 	rp: IWGRendererPass;
 
 	clone(): WGRUnit {
+
 		const r = new WGRUnit();
-		r.mUniformValues = this.mUniformValues;
-		r.uniforms = this.uniforms;
-		r.pipeline = this.pipeline;
-		r.pipelinectx = this.pipelinectx;
-		r.geometry = this.geometry;
-		r.passes = this.passes;
-		r.rp = this.rp;
+
+		r.mUfValues			= this.mUfValues;
+		r.uniforms			= this.uniforms;
+		r.pipeline			= this.pipeline;
+		r.pipelinectx		= this.pipelinectx;
+		r.geometry			= this.geometry;
+		r.passes			= this.passes;
+		r.rp				= this.rp;
+
 		return r;
 	}
 	getRF(): boolean {
 		return this.enabled && this.st.isDrawable();
 	}
 	setUniformValues(values: WGRUniformValue[]): void {
-		this.mUniformValues = values;
+		this.mUfValues = values;
 	}
 	runBegin(): void {
 		const rc = this.rp.passEncoder;
@@ -86,6 +89,7 @@ class WGRUnit implements IWGRUnit {
 				}
 				if (st.pipeline != this.pipeline) {
 					st.pipeline = this.pipeline;
+					// console.log("ruint setPipeline(), this.pipeline: ", this.pipeline);
 					rc.setPipeline(st.pipeline);
 				}
 
@@ -94,17 +98,20 @@ class WGRUnit implements IWGRUnit {
 					for (let i = 0, ln = ufs.length; i < ln; i++) {
 						const uf = ufs[i];
 						if (uf.isEnabled()) {
-							// console.log("uf.groupIndex: ", uf.groupIndex, uf.bindGroup);
+							// console.log("ruint setBindGroup(), uf.groupIndex: ", uf.groupIndex);
+							// console.log("ruint setBindGroup(), uf.groupIndex: ", uf.groupIndex,",", uf.bindGroup);
 							rc.setBindGroup(uf.groupIndex, uf.bindGroup);
 						} else {
 							this.rf = false;
 						}
 					}
 					if (this.rf) {
-						const ufvs = this.mUniformValues;
+						// first, apply shared uniform
+						const ufvs = this.mUfValues;
 						if (ufvs) {
 							// console.log("ufvs.length: ", ufvs.length);
 							for (let i = 0, ln = ufvs.length; i < ln; i++) {
+								// console.log("ruint ufs setValue(), i: ", i);
 								ufs[ufvs[i].index].setValue(ufvs[i]);
 							}
 						}
@@ -125,6 +132,7 @@ class WGRUnit implements IWGRUnit {
 					st.ibuf = gt.ibuf;
 					rc.setIndexBuffer(gt.ibuf, gt.ibuf.dataFormat);
 				}
+				// console.log("runit draw this.etuuid: ", this.etuuid);
 				// console.log(gt.indexCount, ", gt.instanceCount: ", gt.instanceCount);
 				rc.drawIndexed(gt.indexCount, gt.instanceCount);
 			} else {
@@ -137,7 +145,7 @@ class WGRUnit implements IWGRUnit {
 			const ufctx = this.pipelinectx.uniformCtx;
 			ufctx.removeUniforms(this.uniforms);
 
-			this.mUniformValues = null;
+			this.mUfValues = null;
 			this.pipeline = null;
 			this.pipelinectx = null;
 			this.rp = null;

@@ -82,7 +82,7 @@ export class SimplePBRTest {
 			fragShaderSrc: { code: fragWGSL, uuid: "fragShdCode" }
 		};
 
-		let tot = 5;
+		let tot = 7;
 		const size = new Vector3(150, 150, 150);
 		const pos = new Vector3().copyFrom(size).scaleBy(-0.5 * (tot - 1));
 		let pv = new Vector3();

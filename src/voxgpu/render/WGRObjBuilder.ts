@@ -54,6 +54,7 @@ class WGRObjBuilder {
 		let uvalues: WGRUniformValue[] = [];
 
 		const cam = block.camera;
+
 		if (entity.transform) {
 			uvalues.push(entity.transform.uniformv);
 		}
@@ -143,6 +144,7 @@ class WGRObjBuilder {
 		ru.st = entity.rstate;
 		ru.st.__$rendering = true;
 		ru.__$rever = ru.st.__$rever;
+		ru.etuuid = entity.uuid;
 		block.addRUnit(ru);
 		return ru;
 	}

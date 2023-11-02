@@ -6,6 +6,8 @@ interface GPUBindGroupDescriptorEntityResource {
 	buffer?: GPUBuffer;
 	offset?: number;
 	size?: number;
+	shared?: boolean;
+	usageType?: number;
 }
 interface GPUBindGroupDescriptorEntity {
 	binding: number;
@@ -16,4 +18,4 @@ interface GPUBindGroupDescriptor {
 	layout: GPUBindGroupLayout;
 	entries: GPUBindGroupDescriptorEntity[];
 }
-export { GPUBindGroupDescriptorEntity, GPUBindGroupDescriptor };
+export { GPUBindGroupDescriptorEntityResource, GPUBindGroupDescriptorEntity, GPUBindGroupDescriptor };

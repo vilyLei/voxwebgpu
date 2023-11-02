@@ -3,6 +3,7 @@ import { GPUSampler } from "../gpu/GPUSampler";
 import { GPUTexture } from "../gpu/GPUTexture";
 import { GPUTextureView } from "../gpu/GPUTextureView";
 import { TextureDataDescriptor, WGTextureDataDescriptor } from "./WGTextureDataDescriptor";
+import { map } from "jquery";
 
 interface WGTextureDataType {
 	generateMipmaps?: boolean;
@@ -211,42 +212,101 @@ class WGTextureWrapper {
 }
 
 function textDescriptorFilter(d: WGTextureDataDescriptor): TextureDataDescriptor {
-
 	let rd = d;
-	if(d.diffuse){rd = d.diffuse; rd.shdVarName = "diffuse";}
-	if(d.color){rd = d.color; rd.shdVarName = "color";}
-	if(d.albedo){rd = d.albedo; rd.shdVarName = "albedo";}
+	if (d.diffuse) {
+		rd = d.diffuse;
+		rd.shdVarName = "diffuse";
+	}
+	if (d.color) {
+		rd = d.color;
+		rd.shdVarName = "color";
+	}
+	if (d.albedo) {
+		rd = d.albedo;
+		rd.shdVarName = "albedo";
+	}
 
-	if(d.normal){rd = d.normal; rd.shdVarName = "normal";}
-	if(d.ao){rd = d.ao; rd.shdVarName = "ao";}
-	if(d.metallic){rd = d.metallic; rd.shdVarName = "metallic";}
+	if (d.normal) {
+		rd = d.normal;
+		rd.shdVarName = "normal";
+	}
+	if (d.ao) {
+		rd = d.ao;
+		rd.shdVarName = "ao";
+	}
+	if (d.metallic) {
+		rd = d.metallic;
+		rd.shdVarName = "metallic";
+	}
 
-	if(d.roughness){rd = d.roughness; rd.shdVarName = "roughness";}
-	if(d.specularEnv){rd = d.specularEnv; rd.shdVarName = "specularEnv";}
-	if(d.arm){rd = d.arm; rd.shdVarName = "arm";}
+	if (d.roughness) {
+		rd = d.roughness;
+		rd.shdVarName = "roughness";
+	}
+	if (d.specularEnv) {
+		rd = d.specularEnv;
+		rd.shdVarName = "specularEnv";
+	}
+	if (d.arm) {
+		rd = d.arm;
+		rd.shdVarName = "arm";
+	}
 
-	if(d.parallax){rd = d.parallax; rd.shdVarName = "parallax";}
-	if(d.height){rd = d.height; rd.shdVarName = "height";}
-	if(d.displacement){rd = d.displacement; rd.shdVarName = "displacement";}
+	if (d.parallax) {
+		rd = d.parallax;
+		rd.shdVarName = "parallax";
+	}
+	if (d.height) {
+		rd = d.height;
+		rd.shdVarName = "height";
+	}
+	if (d.displacement) {
+		rd = d.displacement;
+		rd.shdVarName = "displacement";
+	}
 
-	if(d.specular){rd = d.specular; rd.shdVarName = "specular";}
+	if (d.specular) {
+		rd = d.specular;
+		rd.shdVarName = "specular";
+	}
 
 	return rd;
 }
+const __$texDataMap: Map<string, WGImageTextureData> = new Map();
 function createDataWithDescriptor(descriptor: WGTextureDataDescriptor): WGImageTextureData {
 	let dimension = descriptor.dimension ? descriptor.dimension : "2d";
+	let td: WGImageTextureData;
+	const dpt = textDescriptorFilter(descriptor);
+	const map = __$texDataMap;
+	let key = "";
+	if (dpt.url !== undefined) {
+		key = dpt.url;
+	} else if (dpt.urls !== undefined) {
+		key = dpt.urls[0];
+	}
+	if (key !== "") {
+		if (map.has(key)) {
+			return map.get(key);
+		}
+	}
+
 	switch (dimension) {
 		case "2d":
-			return new WGImage2DTextureData().setDescripter(textDescriptorFilter(descriptor));
+			td = new WGImage2DTextureData().setDescripter(dpt);
 			break;
 		case "cube":
-			return new WGImageCubeTextureData().setDescripter(textDescriptorFilter(descriptor));
+			td = new WGImageCubeTextureData().setDescripter(dpt);
 			break;
 		default:
 			throw Error("Illegal Operation !!!");
 			break;
 	}
-	return null;
+	if (td) {
+		if (key !== "") {
+			map.set(key, td);
+		}
+	}
+	return td;
 }
 export {
 	createDataWithDescriptor,

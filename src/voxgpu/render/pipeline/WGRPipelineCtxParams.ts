@@ -1,7 +1,6 @@
 import { GPUBlendComponent } from "../../gpu/GPUBlendComponent";
 import { GPUColorTargetState } from "../../gpu/GPUColorTargetState";
 import { GPUDepthStencilState } from "../../gpu/GPUDepthStencilState";
-// import { GPUDevice } from "../../gpu/GPUDevice";
 import { GPUFragmentState } from "../../gpu/GPUFragmentState";
 import { GPUMultisampleObject } from "../../gpu/GPUMultisampleObject";
 import { GPUPrimitiveState } from "../../gpu/GPUPrimitiveState";
@@ -43,6 +42,7 @@ interface WGRPipelineParamType {
 	depthStencil?: GPUDepthStencilState;
 }
 class WGRPipelineCtxParams implements GPURenderPipelineDescriptor {
+	label?:string;
 	buildDeferred = true;
 	sampleCount = 1;
 	multisampleEnabled = false;

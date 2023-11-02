@@ -12,10 +12,9 @@ import { WGRShderSrcType } from "../material/WGMaterialDescripter";
 import Vector3 from "../math/Vector3";
 
 export class BlendTest {
-
 	geomData = new GeomDataBuilder();
 	renderer = new WGRenderer();
-
+	// flag = 6;
 	initialize(): void {
 		console.log("BlendTest::initialize() ...");
 
@@ -28,18 +27,16 @@ export class BlendTest {
 			this.createMaterial(shdSrc, [new WGImage2DTextureData("static/assets/default.jpg")], ["add"]),
 			this.createMaterial(shdSrc, [new WGImage2DTextureData("static/assets/xulie_08_61.png")], ["alpha_add"]),
 			this.createMaterial(shdSrc, [new WGImage2DTextureData("static/assets/blueTransparent.png")], ["add"])
-		]
+		];
 		for (let i = 0; i < materials.length; ++i) {
-			this.createEntity([materials[i]], new Vector3(0, 0, -50 + i * 50));
+			this.createEntity([materials[i]], new Vector3(0, 0, -50 + i * 50), "et-" + i);
 		}
+		// document.onmousedown = evt => {
+		// 	this.flag = 1;
+		// };
 	}
 
-	private createMaterial(
-		shdSrc: WGRShderSrcType,
-		texDatas?: WGImage2DTextureData[],
-		blendModes: string[] = []
-	): WGMaterial {
-
+	private createMaterial(shdSrc: WGRShderSrcType, texDatas?: WGImage2DTextureData[], blendModes: string[] = ["solid"]): WGMaterial {
 		let pipelineDefParam = {
 			faceCullMode: "back",
 			blendModes: [] as string[]
@@ -56,8 +53,7 @@ export class BlendTest {
 		material.addTextureWithDatas(texDatas);
 		return material;
 	}
-	private createEntity(materials: WGMaterial[], pv: Vector3): Entity3D {
-
+	private createEntity(materials: WGMaterial[], pv: Vector3, uuid?: string): Entity3D {
 		const renderer = this.renderer;
 		const rgd = this.geomData.createSquare(600);
 
@@ -67,6 +63,7 @@ export class BlendTest {
 			.setIndexBuffer({ name: "geomIndex", data: rgd.ivs });
 
 		const entity = new Entity3D();
+		entity.uuid = uuid;
 		entity.materials = materials;
 		entity.geometry = geometry;
 		entity.transform.setPosition(pv);
@@ -75,6 +72,11 @@ export class BlendTest {
 	}
 
 	run(): void {
+		// if (this.flag < 1) {
+		// 	return;
+		// }
+		// this.flag--;
+
 		this.renderer.run();
 	}
 }

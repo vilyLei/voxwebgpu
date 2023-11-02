@@ -51,6 +51,7 @@ class WGRenderPassNode implements IWGRenderPassNodeRef {
 		}
 		const ctx = this.createRenderPipelineCtx(material.shaderCodeSrc, material.pipelineVtxParam, material.pipelineDefParam);
 		if(flag) {
+			ctx.shadinguuid = material.shadinguuid;
 			map.set(material.shadinguuid, ctx);
 		}
 		console.log("WGRenderPassBlock::createRenderPipelineCtxWithMaterial(), apply new ctx.");
