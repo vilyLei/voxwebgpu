@@ -19,7 +19,7 @@ interface IWGRPipelineContext {
 	pipeline: GPURenderPipeline;
 	readonly uniformCtx: IWGRUniformContext;
 
-	updateSharedUniforms(): void;
+	destroy(): void;
 	getWGCtx(): WebGPUContext;
 	updateUniformBufferAt(buffer: GPUBuffer, td: NumberArrayDataType, index: number, byteOffset?: number): void;
 	createUniformBindGroupDesc(

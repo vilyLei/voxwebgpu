@@ -18,6 +18,7 @@ import { IWGRendererPass } from "./IWGRendererPass";
 class WGRPipelineContext implements IWGRPipelineContext {
 	private static sUid = 0;
 	private mUid = WGRPipelineContext.sUid++;
+	
 	private mInit = true;
 	private mWGCtx: WebGPUContext;
 	private mBGLayouts: GPUBindGroupLayout[] = new Array(8);
@@ -51,7 +52,7 @@ class WGRPipelineContext implements IWGRPipelineContext {
 			}
 		}
 	}
-	updateSharedUniforms(): void {}
+	destroy(): void {}
 	runBegin(): void {
 		this.init();
 		this.uniformCtx.runBegin();
@@ -67,7 +68,6 @@ class WGRPipelineContext implements IWGRPipelineContext {
 			this.mShader.initialize(wgCtx);
 		}
 	}
-
 	getWGCtx(): WebGPUContext {
 		return this.mWGCtx;
 	}
@@ -112,7 +112,6 @@ class WGRPipelineContext implements IWGRPipelineContext {
 					bufSize += size;
 				}
 			}
-
 			const desc = {
 				size: bufSize,
 				usage: params.usage
@@ -151,6 +150,8 @@ class WGRPipelineContext implements IWGRPipelineContext {
 						res.offset = res.shared ? 0 : index * 256;
 					}
 					ei++;
+				} else {
+					throw Error("Illegal operaiton !!!");
 				}
 			}
 		}
@@ -252,63 +253,9 @@ class WGRPipelineContext implements IWGRPipelineContext {
 		texParams?: { texView?: GPUTextureView; sampler?: GPUSampler }[],
 		bindIndex = 0
 	): GPUBindGroup {
+
 		const device = this.mWGCtx.device;
-
-		if (!this.mBGLayouts[groupIndex]) {
-			this.mBGLayouts[groupIndex] = this.pipeline.getBindGroupLayout(groupIndex);
-		}
-		let desc = {
-			layout: this.mBGLayouts[groupIndex],
-			entries: []
-		} as GPUBindGroupDescriptor;
-
-		if (dataParams) {
-			const dps = dataParams;
-			for (let i = 0; i < dps.length; ++i) {
-				const dp = dps[i];
-				if (dp.buffer && dp.bufferSize > 0) {
-					const ed = {
-						binding: bindIndex++,
-						resource: {
-							offset: 256 * dp.index,
-							buffer: dp.buffer,
-							size: dp.bufferSize,
-							shared: dp.shared,
-							usageType: dp.usageType
-						}
-					};
-					desc.entries.push(ed);
-				}
-			}
-		}
-
-		// console.log("createUniformBindGroup(), texParams: ", texParams);
-		if (texParams && texParams.length > 0) {
-			const sampler = device.createSampler({
-				magFilter: "linear",
-				minFilter: "linear",
-				mipmapFilter: "linear"
-			});
-
-			for (let i = 0; i < texParams.length; ++i) {
-				const t = texParams[i];
-				if (t.texView) {
-					const es = {
-						binding: bindIndex++,
-						resource: t.sampler ? t.sampler : sampler
-					};
-					const et = {
-						binding: bindIndex++,
-						resource: t.texView
-					};
-					desc.entries.push(es, et);
-				}
-			}
-		}
-		// console.log("createUniformBindGroup(), desc: ", desc);
-		if (desc.entries.length < 1) {
-			throw Error("Illegal operation !!!");
-		}
+		const desc = this.createUniformBindGroupDesc(groupIndex, dataParams, texParams, bindIndex);
 		return device.createBindGroup(desc);
 	}
 	createRenderPipeline(pipelineParams: WGRPipelineCtxParams, descParams: VtxDescParam[]): GPURenderPipeline {
