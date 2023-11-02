@@ -420,27 +420,27 @@ export default class ROTransform implements IROTransform {
 		}
 		return -1;
 	}
-	static Create(matrix?: Matrix4, fs32?: Float32Array): ROTransform {
-
+	static Create(param?: {matrix?: Matrix4, fs32?: Float32Array}): ROTransform {
+		param = param ? param : {matrix: null, fs32: null};
 		let unit: ROTransform;
-		const index = fs32 ? -1 : ROTransform.GetFreeId();
+		const index = param.fs32 ? -1 : ROTransform.GetFreeId();
 		if (index >= 0) {
 			unit = ROTransform.sUList[index];
 			ROTransform.sFlags[index] = ROTransform.sFBUSY;
 			unit.rebuildFS32Data();
 		} else {
-			unit = new ROTransform(fs32);
+			unit = new ROTransform(param.fs32);
 			ROTransform.sUList.push(unit);
 			ROTransform.sFlags.push(ROTransform.sFBUSY);
 		}
-		if (!matrix) {
+		if (!param.matrix) {
 			unit.mOMat = Matrix4Pool.GetMatrix();
 		} else {
-			unit.mOMat = matrix;
+			unit.mOMat = param.matrix;
 		}
 		unit.mLocalMat = unit.mOMat;
 
-		if (!fs32) {
+		if (!param.fs32) {
 			const ida = ROTransform.sInitData;
 			if (unit.mFS32) {
 				unit.mFS32.set(ida, 0);
