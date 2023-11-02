@@ -47,18 +47,18 @@ export class RSceneEntityManagement {
 		// }
 		// this.mRenderingFlag = 1;
 
-		// const geometry = this.createGeom(this.geomData.createSphere(50));
-		// const shdSrc = {
-		// 	vertShaderSrc: { code: vertWGSL, uuid: "vertShdCode" },
-		// 	fragShaderSrc: { code: fragWGSL, uuid: "fragShdCode" }
-		// };
-		// const diffuseTex = { diffuse: { url: "static/assets/default.jpg" } };
-		// let entity = new Entity3D();
-		// entity.materials =  [this.createMaterial(shdSrc, [diffuseTex], new Color4(Math.random() * 1.5, Math.random() * 1.5, Math.random() * 1.5))];
-		// entity.geometry = geometry;
-		// entity.transform.setPosition(new Vector3(-500 + this.mEntitices.length * 130, 0, 0));
-		// this.mEntitices.push(entity);
-		// rc.addEntity(entity);
+		const geometry = this.createGeom(this.geomData.createSphere(50));
+		const shdSrc = {
+			vertShaderSrc: { code: vertWGSL, uuid: "vertShdCode" },
+			fragShaderSrc: { code: fragWGSL, uuid: "fragShdCode" }
+		};
+		const diffuseTex = { diffuse: { url: "static/assets/default.jpg" } };
+		let entity = new Entity3D();
+		entity.materials =  [this.createMaterial(shdSrc, [diffuseTex], new Color4(Math.random() * 1.5, Math.random() * 1.5, Math.random() * 1.5))];
+		entity.geometry = geometry;
+		entity.transform.setPosition(new Vector3(-500 + this.mEntitices.length * 130, 0, 0));
+		this.mEntitices.push(entity);
+		rc.addEntity(entity);
 	};
 	private createMaterial(
 		shdSrc: WGRShderSrcType,
@@ -116,16 +116,16 @@ export class RSceneEntityManagement {
 		let mts0 = [this.createMaterial(shdSrc, [diffuseTex], new Color4(1.0, 0.0, 0.0))];
 		let mts1 = [this.createMaterial(shdSrc, [diffuseTex], new Color4(0.0, 1.0, 0.0))];
 
-		// for (let i = 0; i < 2; ++i) {
-		// 	let entity = new Entity3D();
-		// 	entity.materials = mts0;
-		// 	// entity.materials =  [this.createMaterial(shdSrc, [diffuseTex], new Color4(Math.random() * 1.5, Math.random() * 1.5, Math.random() * 1.5))];
-		// 	entity.geometry = geometry;
-		// 	entity.transform.setPosition(new Vector3(-500 + i * 130, 0, 0));
-		// 	this.mEntitices.push(entity);
-		// 	rc.addEntity(entity);
-		// }
-		// return;
+		for (let i = 0; i < 1; ++i) {
+			let entity = new Entity3D();
+			entity.materials = mts0;
+			// entity.materials =  [this.createMaterial(shdSrc, [diffuseTex], new Color4(Math.random() * 1.5, Math.random() * 1.5, Math.random() * 1.5))];
+			entity.geometry = geometry;
+			entity.transform.setPosition(new Vector3(-500 + i * 130, 0, 0));
+			this.mEntitices.push(entity);
+			rc.addEntity(entity);
+		}
+		return;
 		let urls = [
 			"static/assets/box.jpg",
 			"static/assets/default.jpg",

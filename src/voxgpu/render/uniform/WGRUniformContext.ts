@@ -21,6 +21,7 @@ class UCtxInstance {
 	private mFreeIds: number[] = [];	
 	private mBindGroupDesc: GPUBindGroupDescriptor;
 	private mBufDataDescs: BindGroupDataParamType[];
+	private mOldBufs: GPUBuffer[] = [];
 
 	ready = false;
 	shdUniform: SharedUniformObj;
@@ -43,6 +44,12 @@ class UCtxInstance {
 			this.mBuildTotal = ls.length;
 			console.log("UCtxInstance::runBegin(), XXX XXX XXX runBegin(), this.mList.length: ", this.mList.length);
 			if (ls.length > 0) {
+				// for (let i = 0; i < this.mOldBufs.length; ++i) {
+				// 	this.mOldBufs[i].destroy();
+				// 	console.log("destroy a gpu buffer...");
+				// }
+				this.mOldBufs = this.mBuffers;
+				
 				this.mBuffers = [];
 				this.mBindGroupDesc = null;
 				this.mBufDataDescs = null;
@@ -161,7 +168,15 @@ class UCtxInstance {
 			uf.__$$updateSubUniforms();
 		}
 	}
-	runEnd(): void {}
+	runEnd(): void {
+		// if(this.mOldBufs) {
+		// 	for (let i = 0; i < this.mOldBufs.length; ++i) {
+		// 		this.mOldBufs[i].destroy();
+		// 		console.log("destroy a gpu buffer...");
+		// 	}
+		// 	this.mOldBufs = [];
+		// }
+	}
 	createUniform(
 		layoutName: string,
 		groupIndex: number,
