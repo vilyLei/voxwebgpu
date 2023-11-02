@@ -21,7 +21,6 @@ class CameraBase implements IRenderCamera {
     viewUniformV: WGRUniformValue;
     projUniformV: WGRUniformValue;
 
-    uniformEnabled = false;
     name = "Camera";
 
     private m_tempV = new Vector3()

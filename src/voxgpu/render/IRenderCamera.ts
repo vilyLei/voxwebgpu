@@ -8,16 +8,11 @@
 import IVector3 from "../math/IVector3";
 import IAABB from "../cgeom/IAABB";
 
-// import {IShaderUniformProbe} from "../../vox/material/IShaderUniformProbe";
 import IMatrix4 from "../math/IMatrix4";
 
 interface IRenderCamera {
 
     version: number;
-    // matUProbe: IShaderUniformProbe;
-    // ufrustumProbe: IShaderUniformProbe;
-    // ucameraPosProbe: IShaderUniformProbe;
-    uniformEnabled: boolean;
     // 不允许外界修改camera数据
     lock(): void;
     // 允许外界修改camera数据
