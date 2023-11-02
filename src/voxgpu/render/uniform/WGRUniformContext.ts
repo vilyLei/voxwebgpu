@@ -116,20 +116,8 @@ class UCtxInstance {
 		if (uf && !uf.bindGroup) {
 			uf.buffers = this.mBuffers;
 			uf.versions = this.createVers(wp);
-			// uf.versions = new Array(uf.buffers.length);
-			// uf.versions.fill(-1);
 			const dps = wp.bufDataParams;
 			if (dps) {
-
-				// if (!wp.bufDataDescs) {
-				// 	const dataParams = [];
-				// 	for (let j = 0; j < wp.bufDataParams.length; ++j) {
-				// 		dataParams.push({ index: index, buffer: uf.buffers[j], bufferSize: wp.bufDataParams[j].size });
-				// 	}
-				// 	wp.bufDataDescs = dataParams;
-				// }
-				// console.log(">>>>>> >>> kkkkkkkkk, index: ",index,", wp.bufDataDescs: ", wp.bufDataDescs);
-				// uf.bindGroup = this.mPipelineCtx.createUniformBindGroup(wp.groupIndex, wp.bufDataDescs, wp.texParams);
 
 				let desc = this.mBindGroupDesc;
 				let ps = this.mBufDataDescs;

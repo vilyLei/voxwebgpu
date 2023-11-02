@@ -1,8 +1,10 @@
 import BitConst from "../../utils/BitConst";
 class WGRUniformValue {
-	name?: string;
 
-	uid = 0;
+	private static sUid = 0;
+	private mUid = WGRUniformValue.sUid++;
+
+	name?: string;
 	/**
 	 * Uniform index of RUnit instance uniforms array
 	 */
@@ -22,8 +24,11 @@ class WGRUniformValue {
 		this.data = data;
 		this.bufferIndex = bufferIndex;
 		this.index = uniformIndexInRUnit;
-		if(data.byteLength <= 64)this.arrayStride = data.byteLength;
+		if (data.byteLength <= 64) this.arrayStride = data.byteLength;
 		this.upate();
+	}
+	getUid(): number {
+		return this.mUid;
 	}
 	toShared(): void {
 		this.shared = true;
@@ -41,7 +46,7 @@ class WGRUniformValue {
 		return BitConst.containsBit(this.usage, GPUBufferUsage.STORAGE);
 	}
 	upate(): void {
-		this.version ++;
+		this.version++;
 	}
 
 	clone(data: NumberArrayDataType): WGRUniformValue {

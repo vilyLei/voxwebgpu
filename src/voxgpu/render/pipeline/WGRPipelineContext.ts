@@ -62,6 +62,7 @@ class WGRPipelineContext implements IWGRPipelineContext {
 	initialize(wgCtx: WebGPUContext): void {
 		if (wgCtx && !this.mWGCtx) {
 			this.mWGCtx = wgCtx;
+			this.queue = wgCtx.queue;
 			this.uniformCtx.initialize(this);
 			this.mShader.initialize(wgCtx);
 		}
@@ -83,37 +84,6 @@ class WGRPipelineContext implements IWGRPipelineContext {
 		const buf = this.mWGCtx.device.createBuffer(desc);
 		return buf;
 	}
-	/*
-	createUniformsBufferInit(params: { sizes: number[]; usage: number }, mappedAtCreation = false): GPUBuffer | null {
-		if (params && params.sizes.length > 0) {
-			let total = params.sizes.length;
-			let size = params.sizes[0];
-			let bufSize = size;
-			let segs: { index: number; size: number }[] = new Array(total);
-			segs[0] = { index: 0, size: size };
-
-			for (let i = 1; i < total; ++i) {
-				size = size <= 256 ? size : size % 256;
-				size = size > 0 ? 256 - size : 0;
-
-				bufSize += size;
-				size = params.sizes[i];
-				segs[i] = { index: bufSize, size: size };
-				bufSize += size;
-			}
-			const desc = {
-				size: bufSize,
-				usage: params.usage
-			};
-			const buf = this.mWGCtx.device.createBuffer(desc);
-			buf.segs = segs;
-			console.log("createUniformsBuffer(), segs: ", segs);
-			console.log("createUniformsBuffer(), bufSize: ", bufSize, ", usage: ", params.usage);
-			return buf;
-		}
-		return null;
-	}
-	//*/
 	createUniformsBuffer(
 		params: { sizes: number[]; usage: number },
 		initSize = 0,
@@ -160,7 +130,7 @@ class WGRPipelineContext implements IWGRPipelineContext {
 		// console.log("updateUniformBufferAt() buffer.size: ", buffer.size);
 		// console.log("updateUniformBufferAt() buffer.segs[index].index + offset: ", buffer.segs[index].index + offset);
 		// console.log("updateUniformBufferAt() td: ", td);
-		this.mWGCtx.device.queue.writeBuffer(buffer, buffer.segs[index].index + offset, td.buffer, td.byteOffset, td.byteLength);
+		this.queue.writeBuffer(buffer, buffer.segs[index].index + offset, td.buffer, td.byteOffset, td.byteLength);
 	}
 	uniformBindGroupDescUpdate(
 		desc: GPUBindGroupDescriptor,
