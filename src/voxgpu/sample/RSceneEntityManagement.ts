@@ -37,7 +37,7 @@ export class RSceneEntityManagement {
 	private mouseDown = (evt: MouseEvent): void => {
 		const rc = this.mRscene;
 		// let et = this.mEntitices[Math.round(Math.random() * (this.mEntitices.length - 1))];
-		// et = this.mEntitices[0];
+		// // et = this.mEntitices[0];
 		// if (et.isInRenderer()) {
 		// 	rc.removeEntity(et);
 		// } else {
@@ -45,7 +45,20 @@ export class RSceneEntityManagement {
 		// 	vs.set([Math.random() + 0.2, Math.random() + 0.2, Math.random() + 0.2, 1.0]);
 		// 	rc.addEntity(et);
 		// }
-		this.mRenderingFlag = 1;
+		// this.mRenderingFlag = 1;
+
+		// const geometry = this.createGeom(this.geomData.createSphere(50));
+		// const shdSrc = {
+		// 	vertShaderSrc: { code: vertWGSL, uuid: "vertShdCode" },
+		// 	fragShaderSrc: { code: fragWGSL, uuid: "fragShdCode" }
+		// };
+		// const diffuseTex = { diffuse: { url: "static/assets/default.jpg" } };
+		// let entity = new Entity3D();
+		// entity.materials =  [this.createMaterial(shdSrc, [diffuseTex], new Color4(Math.random() * 1.5, Math.random() * 1.5, Math.random() * 1.5))];
+		// entity.geometry = geometry;
+		// entity.transform.setPosition(new Vector3(-500 + this.mEntitices.length * 130, 0, 0));
+		// this.mEntitices.push(entity);
+		// rc.addEntity(entity);
 	};
 	private createMaterial(
 		shdSrc: WGRShderSrcType,
@@ -103,16 +116,23 @@ export class RSceneEntityManagement {
 		let mts0 = [this.createMaterial(shdSrc, [diffuseTex], new Color4(1.0, 0.0, 0.0))];
 		let mts1 = [this.createMaterial(shdSrc, [diffuseTex], new Color4(0.0, 1.0, 0.0))];
 
-		// for (let i = 0; i < 1; ++i) {
+		// for (let i = 0; i < 2; ++i) {
 		// 	let entity = new Entity3D();
-		// 	// entity.materials = mts0;
-		// 	entity.materials =  [this.createMaterial(shdSrc, [diffuseTex], new Color4(Math.random() * 1.5, Math.random() * 1.5, Math.random() * 1.5))];
+		// 	entity.materials = mts0;
+		// 	// entity.materials =  [this.createMaterial(shdSrc, [diffuseTex], new Color4(Math.random() * 1.5, Math.random() * 1.5, Math.random() * 1.5))];
 		// 	entity.geometry = geometry;
 		// 	entity.transform.setPosition(new Vector3(-500 + i * 130, 0, 0));
 		// 	this.mEntitices.push(entity);
 		// 	rc.addEntity(entity);
 		// }
-
+		// return;
+		let urls = [
+			"static/assets/box.jpg",
+			"static/assets/default.jpg",
+			"static/assets/metal_02.jpg",
+			"static/assets/displacement_01.jpg",
+			"static/assets/brickwall_big512.jpg",
+		];
 		let tot = 3;
 		const size = new Vector3(150, 150, 150);
 		const pos = new Vector3().copyFrom(size).scaleBy(-0.5 * (tot - 1));
@@ -121,8 +141,9 @@ export class RSceneEntityManagement {
 				for (let k = 0; k < tot; ++k) {
 					let entity = new Entity3D();
 					// entity.materials = mts0;
+					const tex = { diffuse: { url: urls[Math.round(Math.random() * (urls.length - 1))]} };
 					entity.materials = [
-						this.createMaterial(shdSrc, [diffuseTex], new Color4(Math.random() * 1.5, Math.random() * 1.5, Math.random() * 1.5))
+						this.createMaterial(shdSrc, [tex], new Color4(Math.random() * 1.5, Math.random() * 1.5, Math.random() * 1.5))
 					];
 					entity.geometry = geometry;
 					entity.transform.setPosition(new Vector3(i * size.x, j * size.y, k * size.z).addBy(pos));

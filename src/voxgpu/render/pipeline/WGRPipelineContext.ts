@@ -14,11 +14,13 @@ import { WGRPipelineShader } from "./WGRPipelineShader";
 import { WGRUniformParam, WGRUniformContext } from "../uniform/WGRUniformContext";
 import { GPUQueue } from "../../gpu/GPUQueue";
 import { IWGRendererPass } from "./IWGRendererPass";
-
+/**
+ * one type shading shader, one WGRPipelineContext instance
+ */
 class WGRPipelineContext implements IWGRPipelineContext {
 	private static sUid = 0;
 	private mUid = WGRPipelineContext.sUid++;
-	
+
 	private mInit = true;
 	private mWGCtx: WebGPUContext;
 	private mBGLayouts: GPUBindGroupLayout[] = new Array(8);
@@ -34,7 +36,7 @@ class WGRPipelineContext implements IWGRPipelineContext {
 	readonly uniformCtx = new WGRUniformContext();
 
 	constructor(wgCtx?: WebGPUContext) {
-		console.log("XXX XXX create a WGRPipelineContext instance.");
+		// console.log("XXX XXX create a WGRPipelineContext instance.");
 		if (wgCtx) {
 			this.initialize(wgCtx);
 		}
@@ -148,6 +150,9 @@ class WGRPipelineContext implements IWGRPipelineContext {
 					if (res.offset !== undefined) {
 						// the minimum BufferBindingType::ReadOnlyStorage alignment (256)
 						res.offset = res.shared ? 0 : index * 256;
+						res.buffer = dp.buffer;
+						res.size = dp.bufferSize;
+						// console.log(">>>>>>>>> res.shared: ", res.shared, ", offset: ", res.offset, ", index: ", index, ", size:",dp.buffer.size);
 					}
 					ei++;
 				} else {
