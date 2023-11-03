@@ -23,12 +23,12 @@ export default class RectPlaneGeometry extends GeometryBase {
 
     flipVerticalUV = false;
     /**
-     * axisFlag = 0 is XOY plane,
-     * axisFlag = 1 is XOZ plane,
-     * axisFlag = 2 is YOZ plane
+     * axisType = 0 is XOY plane,
+     * axisType = 1 is XOZ plane,
+     * axisType = 2 is YOZ plane
      */
-    axisFlag: number = 0;
-    
+    axisType: number = 0;
+
     private m_polyhedralBoo = true;
     private m_vs: Float32Array = null
     private m_uvs: Float32Array = null;
@@ -46,8 +46,8 @@ export default class RectPlaneGeometry extends GeometryBase {
             }
         }
     }
-    
-    getNVS(): Float32Array { return this.m_nvs; }    
+
+    getNVS(): Float32Array { return this.m_nvs; }
     initialize(startX: number, startY: number, pwidth: number, pheight: number): void {
 
         if (this.m_vs) {
@@ -63,7 +63,7 @@ export default class RectPlaneGeometry extends GeometryBase {
         // ccw is positive, left-bottom pos(minX,minY) -> right-bottom pos(maxX,minY) -> right-top pos(maxX,maxY)  -> right-top pos(minX,maxY)
         this.m_ivs = new Uint16Array([0, 1, 2, 0, 2, 3]);
         //this.m_ivs = new Uint32Array([0,1,2,0,2,3]);
-        switch (this.axisFlag) {
+        switch (this.axisType) {
             case 0:
                 // XOY plane
                 this.m_vs = new Float32Array([
@@ -118,7 +118,7 @@ export default class RectPlaneGeometry extends GeometryBase {
         }
 
         if (true) {
-            switch (this.axisFlag) {
+            switch (this.axisType) {
                 case 0:
                     this.m_nvs = new Float32Array([
                         0.0, 0.0, 1.0,

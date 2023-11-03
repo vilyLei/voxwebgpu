@@ -45,8 +45,8 @@ function getHexStr(v: number): string {
 }
 
 export default class Color4 implements IColor4 {
-	private static s_c0 = new Color4();
-	private static s_c1 = new Color4();
+	private static sC0 = new Color4();
+	private static aC1 = new Color4();
 
 	r: number;
 	g: number;
@@ -291,8 +291,8 @@ export default class Color4 implements IColor4 {
 		return this;
 	}
 	lerpHSL(color: Color4, factor: number): Color4 {
-		const c0 = Color4.s_c0;
-		const c1 = Color4.s_c1;
+		const c0 = Color4.sC0;
+		const c1 = Color4.aC1;
 		this.getHSL(c0);
 		color.getHSL(c1);
 

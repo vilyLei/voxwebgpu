@@ -100,7 +100,7 @@ class UCtxInstance {
 						// console.log("XXX XXX uniformParam.sizes: ", uniformParam.sizes);
 						// const buffer = this.mPipelineCtx.createUniformsBuffer(uniformParam);
 						this.mBuffers.push(buf);
-						// console.log("PPP PPP PPP ,i: ",i," buf.size: ", buf.size);
+						console.log("PPP PPP PPP ,i: ",i," buf.size: ", buf.size);
 					}
 				}
 				// console.log("XXX XXX this.mBuffers: ", this.mBuffers);
@@ -324,7 +324,8 @@ class WGRUniformContext implements IWGRUniformContext {
 				v.bufferIndex = i;
 				const usageType = v.isStorage() ? 1 : 0;
 				const vuid = v.getUid();
-				bufDataParams.push({ size: v.arrayStride, usage: v.usage, shared: v.shared, usageType, vuid });
+				// bufDataParams.push({ size: v.arrayStride, usage: v.usage, shared: v.shared, usageType, vuid });
+				bufDataParams.push({ size: v.data.byteLength, usage: v.usage, shared: v.shared, usageType, vuid });
 			}
 			return uctx.createUniform(layoutName, groupIndex, bufDataParams, texParams);
 		}

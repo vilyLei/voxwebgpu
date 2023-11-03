@@ -125,10 +125,10 @@ class GeomDataBuilder {
 	createSquare(size: number, axisFlag = 0): GeomRDataType {
 		return this.createRect(-0.5 * size, -0.5 * size, size, size, axisFlag);
 	}
-	createRect(px: number, py: number, pw: number, ph: number, axisFlag = 0): GeomRDataType {
+	createRect(px: number, py: number, pw: number, ph: number, axisType = 0): GeomRDataType {
 
 		let geom = new RectPlaneGeometry();
-		geom.axisFlag = axisFlag
+		geom.axisType = axisType;
 		geom.setBufSortFormat(0xfffffff);
 		geom.initialize(px, py, pw, ph);
 

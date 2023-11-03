@@ -5,17 +5,36 @@ import IVector3 from "../math/IVector3";
 import IMatrix4 from "../math/IMatrix4";
 import IAABB from "../cgeom/IAABB";
 import { WGGeometry } from "../geometry/WGGeometry";
-import { WGMaterial } from "../material/WGMaterial";
+import { WGTextureDataDescriptor, WGMaterial } from "../material/WGMaterial";
 import { IRenderableEntity } from "../render/IRenderableEntity";
 import { IRenderableEntityContainer } from "../render/IRenderableEntityContainer";
 import AABB from "../cgeom/AABB";
 import { WGRUnitState } from "../render/WGRUnitState";
+import { WGRShderSrcType } from "../material/WGMaterialDescripter";
+import { WGRUniformValue } from "../render/uniform/WGRUniformValue";
 
 interface Entity3DParam {
 	transformEnabled?: boolean;
 	transform?: ROTransform | IMatrix4 | Float32Array;
 	materials?: WGMaterial[];
 	geometry?: WGGeometry;
+	textures?: WGTextureDataDescriptor[];
+	blendModes?: string[];
+	faceCullMode?: string;
+	depthWriteEnabled?: boolean;
+	shaderSrc?: WGRShderSrcType;
+	uniformValues?: WGRUniformValue[];
+	uniformValueMap?: { [key: string]: WGRUniformValue }
+	shadinguuid?: string;
+}
+function getUniformValueFromParam(key: string, param: Entity3DParam, defaultV?: WGRUniformValue ): WGRUniformValue {
+	if(param.uniformValueMap) {
+		const v = param.uniformValueMap[key];
+		if(v) {
+			return v;
+		}
+	}
+	return defaultV;
 }
 class Entity3D implements IRenderableEntity {
 	private static sUid = 0;
@@ -256,4 +275,4 @@ class Entity3D implements IRenderableEntity {
 		return true;
 	}
 }
-export { Entity3DParam, Entity3D };
+export { Entity3DParam, getUniformValueFromParam, Entity3D };

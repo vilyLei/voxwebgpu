@@ -4,10 +4,29 @@
 
 struct VertexOutput {
   @builtin(position) Position : vec4<f32>,
-  @location(0) pos: vec4<f32>,
+  @location(0) wordPos: vec4<f32>,
   @location(1) uv : vec2<f32>,
   @location(2) normal : vec3<f32>,
   @location(3) camPos : vec3<f32>
+}
+
+@vertex
+fn main(
+  @location(0) position : vec3<f32>,
+  @location(1) uv : vec2<f32>,
+  @location(2) normal : vec3<f32>
+) -> VertexOutput {
+
+  let wpos = objMat * vec4(position.xyz, 1.0);
+  var output : VertexOutput;
+  output.Position = projMat * viewMat * wpos;
+  output.uv = uv;
+
+  let invMat33 = inverseM33( m44ToM33( objMat ) );
+  output.normal = normalize( normal * invMat33 );
+  output.camPos = (inverseM44(viewMat) * vec4<f32>(0.0,0.0,0.0, 1.0)).xyz;
+  output.wordPos = wpos;
+  return output;
 }
 
 fn inverseM33(m: mat3x3<f32>)-> mat3x3<f32> {
@@ -62,21 +81,4 @@ fn inverseM44(m: mat4x4<f32>)-> mat4x4<f32> {
 		a00 * b09 - a01 * b07 + a02 * b06,
 		a31 * b01 - a30 * b03 - a32 * b00,
 		a20 * b03 - a21 * b01 + a22 * b00) / det);
-}
-@vertex
-fn main(
-  @location(0) position : vec3<f32>,
-  @location(1) uv : vec2<f32>,
-  @location(2) normal : vec3<f32>
-) -> VertexOutput {
-  let wpos = objMat * vec4(position.xyz, 1.0);
-  var output : VertexOutput;
-  output.Position = projMat * viewMat * wpos;
-  output.uv = uv;
-
-  let invMat33 = inverseM33( m44ToM33( objMat ) );
-  output.normal = normalize( normal * invMat33 );
-  output.camPos = (inverseM44(viewMat) * vec4<f32>(0.0,0.0,0.0, 1.0)).xyz;
-  output.pos = wpos;
-  return output;
 }

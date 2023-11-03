@@ -15,7 +15,6 @@ import Color4 from "../material/Color4";
 import Vector3 from "../math/Vector3";
 
 export class SimplePBRTest {
-
 	private mRscene = new RendererScene();
 
 	geomData = new GeomDataBuilder();
@@ -34,11 +33,8 @@ export class SimplePBRTest {
 		new MouseInteraction().initialize(rc, 0, false).setAutoRunning(true);
 	}
 
-	private mouseDown = (evt: MouseEvent): void => {
-
-	}
+	private mouseDown = (evt: MouseEvent): void => {};
 	private createMaterial(shdSrc: WGRShderSrcType, color?: Color4, arm?: number[]): WGMaterial {
-
 		color = color ? color : new Color4();
 
 		let pipelineDefParam = {
@@ -52,17 +48,16 @@ export class SimplePBRTest {
 			pipelineDefParam
 		});
 
-		let albedoV = new WGRStorageValue({data: new Float32Array([color.r, color.g, color.b, 1])});
+		let albedoV = new WGRStorageValue({ data: new Float32Array([color.r, color.g, color.b, 1]) });
 
-		// arm[0]: ao, arm[1]: roughness, arm[2]: metallic
-		let armV = new WGRStorageValue({data: new Float32Array([arm[0], arm[1], arm[2], 1])});
+		// arm: ao, roughness, metallic
+		let armV = new WGRStorageValue({ data: new Float32Array([arm[0], arm[1], arm[2], 1]) });
 		material.uniformValues = [albedoV, armV];
 
 		return material;
 	}
 
 	private createGeom(rgd: GeomRDataType, normalEnabled = false): WGGeometry {
-
 		const geometry = new WGGeometry()
 			.addAttribute({ position: rgd.vs })
 			.addAttribute({ uv: rgd.uvs })
@@ -73,7 +68,6 @@ export class SimplePBRTest {
 		return geometry;
 	}
 	private initScene(): void {
-
 		const rc = this.mRscene;
 		const geometry = this.createGeom(this.geomData.createSphere(50), true);
 
@@ -85,17 +79,13 @@ export class SimplePBRTest {
 		let tot = 7;
 		const size = new Vector3(150, 150, 150);
 		const pos = new Vector3().copyFrom(size).scaleBy(-0.5 * (tot - 1));
-		let pv = new Vector3();
 		for (let i = 0; i < tot; ++i) {
 			for (let j = 0; j < tot; ++j) {
-				// params[0]: ao, params[1]: roughness, params[2]: metallic
-				let params = [1.5, (i / tot) * 0.95 + 0.05, (j / tot) * 0.95 + 0.05];
-				let material = this.createMaterial(shdSrc, new Color4(0.5, 0.0, 0.0), params);
-				let entity = new Entity3D();
-				entity.materials = [material];
-				entity.geometry = geometry;
-				pv.setXYZ(i * size.x, j * size.y, size.z).addBy(pos);
-				entity.transform.setPosition(pv);
+				// arm: ao, roughness, metallic
+				let arm = [1.5, (i / tot) * 0.95 + 0.05, (j / tot) * 0.95 + 0.05];
+				let material = this.createMaterial(shdSrc, new Color4(0.5, 0.0, 0.0), arm);
+				let entity = new Entity3D({ materials: [material], geometry });
+				entity.transform.setPosition(new Vector3().setXYZ(i * size.x, j * size.y, size.z).addBy(pos));
 				rc.addEntity(entity);
 			}
 		}
