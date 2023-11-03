@@ -13,6 +13,7 @@ import { RendererScene } from "../rscene/RendererScene";
 import { MouseInteraction } from "../ui/MouseInteraction";
 import Color4 from "../material/Color4";
 import Vector3 from "../math/Vector3";
+import { FixScreenPlaneEntity } from "../entity/FixScreenPlaneEntity";
 
 export class FixScreenPlaneTest {
 	private mRscene = new RendererScene();
@@ -86,15 +87,18 @@ export class FixScreenPlaneTest {
 			fragShaderSrc: { code: fragWGSL, uuid: "fragShdCode" }
 		};
 
-		const diffuseTex = { diffuse: { url: "static/assets/box.jpg" } };
+		// const diffuseTex = { diffuse: { url: "static/assets/box.jpg" } };
 
-		let materials = [this.createMaterial(shdSrc, [diffuseTex], new Color4(Math.random() * 1.5, Math.random() * 1.5, Math.random() * 1.5))];
+		// let materials = [this.createMaterial(shdSrc, [diffuseTex], new Color4(Math.random() * 1.5, Math.random() * 1.5, Math.random() * 1.5))];
 
-		for (let i = 0; i < 1; ++i) {
-			let entity = new Entity3D({ materials, geometry });
-			entity.transform.setPosition(new Vector3(-500 + i * 130, 0, 0));
-			rc.addEntity(entity);
-		}
+		// for (let i = 0; i < 1; ++i) {
+		// 	let entity = new Entity3D({ materials, geometry });
+		// 	entity.transform.setPosition(new Vector3(-500 + i * 130, 0, 0));
+		// 	rc.addEntity(entity);
+		// }
+		let entity = new FixScreenPlaneEntity();
+		entity.setColor(new Color4(1.0,0.5,0.3));
+		rc.addEntity(entity);
 	}
 
 	run(): void {

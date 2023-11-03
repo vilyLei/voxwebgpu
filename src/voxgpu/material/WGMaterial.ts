@@ -72,8 +72,10 @@ class WGMaterial implements IWGMaterial {
 		this.addTextureWithData(td, descriptor.shdVarName);
 	}
 	addTextures(descriptors: WGTextureDataDescriptor[]): void {
-		for (let i = 0; i < descriptors.length; ++i) {
-			this.addTexture(descriptors[i]);
+		if(descriptors) {
+			for (let i = 0; i < descriptors.length; ++i) {
+				this.addTexture(descriptors[i]);
+			}
 		}
 	}
 	isREnabled(): boolean {

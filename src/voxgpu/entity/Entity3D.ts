@@ -256,4 +256,4 @@ class Entity3D implements IRenderableEntity {
 		return true;
 	}
 }
-export { Entity3D };
+export { Entity3DParam, Entity3D };

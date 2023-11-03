@@ -1,4 +1,4 @@
-import { FixScreenEntity } from "./FixScreenEntity";
+import { Entity3DParam, FixScreenEntity } from "./FixScreenEntity";
 import RectPlaneGeometry from "../geometry/primitive/RectPlaneGeometry";
 import { WGGeometry } from "../geometry/WGGeometry";
 import { WGTextureDataDescriptor, WGMaterial } from "../material/WGMaterial";
@@ -8,7 +8,7 @@ import fragWGSL from "../material/shader/wgsl/fixScreenPlane.frag.wgsl";
 import { WGRUniformValue } from "../render/uniform/WGRUniformValue";
 import Color4 from "../material/Color4";
 
-interface FixScreenPlaneEntityParam {
+interface FixScreenPlaneEntityParam extends Entity3DParam {
 	x: number;
 	y: number;
 	width: number;
@@ -20,7 +20,7 @@ interface FixScreenPlaneEntityParam {
 class FixScreenPlaneEntity extends FixScreenEntity {
 	private mColor = new WGRUniformValue({data: new Float32Array([1,1,1, 1])});
 	constructor(param?: FixScreenPlaneEntityParam) {
-		super();
+		super(param);
 		if(!param) {
 			param = {x: -1, y: -1, width: 2, height: 2};
 		}
@@ -64,6 +64,7 @@ class FixScreenPlaneEntity extends FixScreenEntity {
 		});
 		material.addTextures(texs);
 		material.uniformValues = [this.mColor];
+		this.materials = [material];
 	}
 }
 export { FixScreenPlaneEntity };
