@@ -52,10 +52,10 @@ export class SimplePBRTest {
 			pipelineDefParam
 		});
 
-		let albedoV = new WGRStorageValue(new Float32Array([color.r, color.g, color.b, 1]));
+		let albedoV = new WGRStorageValue({data: new Float32Array([color.r, color.g, color.b, 1])});
 
 		// arm[0]: ao, arm[1]: roughness, arm[2]: metallic
-		let armV = new WGRStorageValue(new Float32Array([arm[0], arm[1], arm[2], 1]));
+		let armV = new WGRStorageValue({data: new Float32Array([arm[0], arm[1], arm[2], 1])});
 		material.uniformValues = [albedoV, armV];
 
 		return material;

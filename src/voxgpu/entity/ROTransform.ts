@@ -7,6 +7,7 @@
 
 import MathConst from "../math/MathConst";
 import IVector3 from "../math/IVector3";
+import IMatrix4 from "../math/IMatrix4";
 import Matrix4 from "../math/Matrix4";
 import Matrix4Pool from "../math/Matrix4Pool";
 import IROTransform from "./IROTransform";
@@ -235,13 +236,13 @@ export default class ROTransform implements IROTransform {
 	}
 
 	// local to world space matrix
-	private mOMat: Matrix4 | null = null;
-	private mLocalMat: Matrix4 | null = null;
-	private mParentMat: Matrix4 | null = null;
-	private mToParentMat: Matrix4 | null = null;
+	private mOMat: Matrix4;
+	private mLocalMat: Matrix4;
+	private mParentMat: Matrix4;
+	private mToParentMat: Matrix4;
 	private mToParentMatFlag = true;
 	// word to local matrix
-	private mInvOmat: Matrix4 | null = null;
+	private mInvOmat: Matrix4;
 
 	localToGlobal(pv: IVector3): void {
 		this.getMatrix().transformVectorSelf(pv);
@@ -420,8 +421,8 @@ export default class ROTransform implements IROTransform {
 		}
 		return -1;
 	}
-	static Create(param?: {matrix?: Matrix4, fs32?: Float32Array}): ROTransform {
-		param = param ? param : {matrix: null, fs32: null};
+	static Create(param?: {matrix?: IMatrix4, fs32?: Float32Array}): ROTransform {
+		param = param ? param : {};
 		let unit: ROTransform;
 		const index = param.fs32 ? -1 : ROTransform.GetFreeId();
 		if (index >= 0) {
@@ -433,10 +434,10 @@ export default class ROTransform implements IROTransform {
 			ROTransform.sUList.push(unit);
 			ROTransform.sFlags.push(ROTransform.sFBUSY);
 		}
-		if (!param.matrix) {
-			unit.mOMat = Matrix4Pool.GetMatrix();
+		if (param.matrix) {
+			unit.mOMat = param.matrix as Matrix4;
 		} else {
-			unit.mOMat = param.matrix;
+			unit.mOMat = Matrix4Pool.GetMatrix();
 		}
 		unit.mLocalMat = unit.mOMat;
 
@@ -448,7 +449,7 @@ export default class ROTransform implements IROTransform {
 				unit.mFS32 = ida.slice(0);
 			}
 		}
-		unit.uniformv = new WGRUniformValue(unit.mOMat.getLocalFS32());
+		unit.uniformv = new WGRUniformValue({data: unit.mOMat.getLocalFS32(), shdVarName:"objMat"});
 		return unit;
 	}
 

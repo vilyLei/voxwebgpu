@@ -23,6 +23,7 @@ class WGMaterial implements IWGMaterial {
 	rpass: IWGRPassRef = {index: 0};
 
 	uniformValues: WGRUniformValue[];
+	visible = true;
 
 	// textures: { [key: string]: WGTextureWrapper } = {};
 
@@ -33,6 +34,7 @@ class WGMaterial implements IWGMaterial {
 	constructor(descriptor?: WGMaterialDescripter) {
 		this.setDescriptor(descriptor);
 	}
+
 	addTextureWithDatas(datas: WGImageTextureData[], shdVarNames?: string[]): void {
 		if (datas) {
 			if (shdVarNames) {

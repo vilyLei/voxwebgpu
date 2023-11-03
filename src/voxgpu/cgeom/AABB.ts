@@ -179,6 +179,7 @@ class AABB implements IAABB {
 		//this.getOCenter().copyFrom(ab.getOCenter());
 		this.center.copyFrom(ab.center);
 		this.updateVolume();
+		this.version = ab.version;
 		return this;
 	}
 	expand(bias: Vector3): AABB {
@@ -322,9 +323,9 @@ class AABB implements IAABB {
 	//*/
 	/*
 	static IntersectionRL3(vecs:Vector3[],rsigns:Uint8Array,ltInvtv:Vector3, ltv:Vector3, lpv:Vector3,outV:Vector3):boolean
-	{ 
-		let tmin:number, tmax:number, tymin:number, tymax:number;//, tzmin:number, tzmax:number; 
-		
+	{
+		let tmin:number, tmax:number, tymin:number, tymax:number;//, tzmin:number, tzmax:number;
+
 		tmin = (vecs[rsigns[0]].x - lpv.x) * ltInvtv.x;
 		tmax = (vecs[1-rsigns[0]].x - lpv.x) * ltInvtv.x;
 		tymin = (vecs[rsigns[1]].y - lpv.y) * ltInvtv.y;
@@ -335,21 +336,21 @@ class AABB implements IAABB {
 			tmin = tymin;
 		if (tymax < tmax)
 			tmax = tymax;
-		
+
 		tymin = (vecs[rsigns[2]].z - lpv.z) * ltInvtv.z;
-		tymax = (vecs[1-rsigns[2]].z - lpv.z) * ltInvtv.z;			
+		tymax = (vecs[1-rsigns[2]].z - lpv.z) * ltInvtv.z;
 		if ((tmin > tymax) || (tymin > tmax))
-			return false;		
+			return false;
 		if (tymin > tmin)
 			tmin = tymin;
 		if (tymax < tmax)
 			tmax = tymax;
-			
+
 		outV.copyFrom(ltv);
 		outV.scaleBy(tmin);
 		outV.addBy(lpv);
 		console.log("T Hit outV: "+outV.toString());
-		return true; 
+		return true;
 	}
 	//*/
 

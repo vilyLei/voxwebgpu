@@ -97,6 +97,7 @@ class WGRObjBuilder {
 			]);
 		}
 		// ru.unfsuuid = material.shadinguuid + material.name;
+		ru.material = material;
 		ru.rp = pctx.rpass;
 		return ru;
 	}
@@ -140,7 +141,7 @@ class WGRObjBuilder {
 		} else {
 			ru = this.createRPass(entity, block, primitive);
 		}
-		ru.bounds = entity.bounds;
+		ru.bounds = entity.getGlobalBounds();
 		ru.st = entity.rstate;
 		ru.st.__$rendering = true;
 		ru.__$rever = ru.st.__$rever;

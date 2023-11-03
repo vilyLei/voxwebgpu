@@ -27,6 +27,8 @@ interface IWGMaterial extends WGMaterialDescripter {
 	textures: WGTextureWrapper[];
 	__$ufs?: WGRUniform[];
 
+	visible: boolean;
+
 	addTextureWithDatas(datas: WGImageTextureData[], shdVarNames?: string[]): void;
 
 	isREnabled(): boolean;

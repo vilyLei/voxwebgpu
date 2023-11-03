@@ -9,6 +9,7 @@ import { IWGRUnit } from "./IWGRUnit";
 import IAABB from "../cgeom/IAABB";
 import { IWGRendererPass } from "../render/pipeline/IWGRendererPass";
 import { WGRUnitState } from "./WGRUnitState";
+import { IWGMaterial } from "../material/IWGMaterial";
 
 class WGRUnitRunSt {
 	pipeline: GPURenderPipeline;
@@ -42,6 +43,7 @@ class WGRUnit implements IWGRUnit {
 	passes: WGRUnit[];
 	rp: IWGRendererPass;
 
+	material: IWGMaterial;
 	clone(): WGRUnit {
 
 		const r = new WGRUnit();
@@ -66,6 +68,8 @@ class WGRUnit implements IWGRUnit {
 		const rc = this.rp.passEncoder;
 
 		this.rf = this.enabled && this.rp.enabled && this.st.isDrawable();
+		this.rf = this.rf && this.material.visible;
+
 		if (this.rf) {
 			const gt = this.geometry;
 			if (this.pipelinectx) {
@@ -140,14 +144,18 @@ class WGRUnit implements IWGRUnit {
 			}
 		}
 	}
+
 	destroy(): void {
+
 		if (this.pipelinectx) {
+
 			const ufctx = this.pipelinectx.uniformCtx;
 			ufctx.removeUniforms(this.uniforms);
 
 			this.mUfValues = null;
 			this.pipeline = null;
 			this.pipelinectx = null;
+			this.material = null;
 			this.rp = null;
 			this.st = null;
 		}

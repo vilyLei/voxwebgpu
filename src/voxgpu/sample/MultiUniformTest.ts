@@ -15,7 +15,7 @@ import { WGRUniformValue } from "../render/uniform/WGRUniformValue";
 
 class MixValue extends WGRUniformValue {
 	constructor() {
-		super(new Float32Array([1, 1, 1, 1]));
+		super({data: new Float32Array([1, 1, 1, 1])});
 	}
 	setFactors(f0: number, f1: number, f2: number): void {
 		const factors = this.data as Float32Array;
@@ -38,11 +38,11 @@ export class MultiUniformTest {
 
 		console.log("MultiUniformTest::initialize() ...");
 
-		let rsv = new WGRStorageValue(new Float32Array(16));
+		let rsv = new WGRStorageValue({data: new Float32Array(16)});
 		console.log("xxxxxx rsv.isStorage(): ", rsv.isStorage());
 		console.log("xxxxxx rsv.isUniform(): ", rsv.isUniform());
 
-		let ruv = new WGRUniformValue(new Float32Array(16));
+		let ruv = new WGRUniformValue({data: new Float32Array(16)});
 		console.log("xxxxxx ruv.isStorage(): ", ruv.isStorage());
 		console.log("xxxxxx ruv.isUniform(): ", ruv.isUniform());
 

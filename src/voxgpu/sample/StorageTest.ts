@@ -24,14 +24,14 @@ export class StorageTest {
 
 		console.log("StorageTest::initialize() ...");
 
-		let rsv = new WGRStorageValue(new Float32Array(16));
+		let rsv = new WGRStorageValue({data: new Float32Array(16)});
 		console.log("xxxxxx rsv.isStorage(): ", rsv.isStorage());
 		console.log("xxxxxx rsv.isUniform(): ", rsv.isUniform());
 
-		let ruv = new WGRUniformValue(new Float32Array(16));
+		let ruv = new WGRUniformValue({data: new Float32Array(16)});
 		console.log("xxxxxx ruv.isStorage(): ", ruv.isStorage());
 		console.log("xxxxxx ruv.isUniform(): ", ruv.isUniform());
-		
+
 		const shdSrc = {
 			vertShaderSrc: { code: vertWGSL, uuid: "vertShdCode" },
 			fragShaderSrc: { code: fragWGSL, uuid: "fragShdCode" }
@@ -58,7 +58,7 @@ export class StorageTest {
 			pipelineDefParam
 		});
 
-		let ufv = new WGRStorageValue(new Float32Array([1,0,0,1]));
+		let ufv = new WGRStorageValue({data: new Float32Array([1,0,0,1])});
 		material.uniformValues = [ufv];
 		material.addTextureWithDatas( texDatas );
 
@@ -89,7 +89,7 @@ export class StorageTest {
 		this.mRotY += 0.5;
 		this.mEntity.transform.setRotationXYZ(0, this.mRotY, this.mRotY + 0.5);
 		this.mEntity.update();
-		
+
 		this.renderer.run();
 	}
 }

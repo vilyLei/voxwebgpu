@@ -5,12 +5,13 @@ import { WGRUniformValue } from "./uniform/WGRUniformValue";
 import { IWGRPipelineContext } from "./pipeline/IWGRPipelineContext";
 import IAABB from "../cgeom/IAABB";
 import { WGRUnitState } from "./WGRUnitState";
+import { IWGMaterial } from "../material/IWGMaterial";
 
 interface IWGRUnit {
 	uniforms?: WGRUniform[];
 	pipeline: GPURenderPipeline;
 	pipelinectx: IWGRPipelineContext;
-	geometry: WGRPrimitive;
+	geometry?: WGRPrimitive;
 
 	bounds: IAABB;
 
@@ -18,10 +19,11 @@ interface IWGRUnit {
 
 	enabled: boolean;
 	passes?: IWGRUnit[];
+	st: WGRUnitState;
 
 	__$rever: number;
 
-	st: WGRUnitState;
+	material: IWGMaterial;
 
 	getRF(): boolean;
 	setUniformValues(values: WGRUniformValue[]): void;

@@ -30,7 +30,7 @@ export class SimpleLightTest {
 		const rc = this.mRscene;
 		rc.initialize();
 		this.initEvent();
-		
+
 		const shdSrc = {
 			vertShaderSrc: { code: vertWGSL, uuid: "vertShdCode" },
 			fragShaderSrc: { code: fragWGSL, uuid: "fragShdCode" }
@@ -93,7 +93,7 @@ export class SimpleLightTest {
 			pipelineDefParam
 		});
 
-		let ufv = new WGRStorageValue(new Float32Array([color.r, color.g, color.b, 0.9]));
+		let ufv = new WGRStorageValue({data: new Float32Array([color.r, color.g, color.b, 0.9])});
 		material.uniformValues = [ufv];
 		material.addTextureWithDatas(texDatas);
 

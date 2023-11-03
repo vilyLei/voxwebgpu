@@ -12,16 +12,15 @@ import MouseEvent from "../event/MouseEvent";
 import { RendererScene } from "../rscene/RendererScene";
 import { MouseInteraction } from "../ui/MouseInteraction";
 import Color4 from "../material/Color4";
-import { IWGRPassRef } from "../render/pipeline/IWGRPassRef";
+import Vector3 from "../math/Vector3";
 
-export class Entity3DVisibilityTest {
-
+export class FixScreenPlaneTest {
 	private mRscene = new RendererScene();
-	private mEntities: Entity3D[] = [];
+
 	geomData = new GeomDataBuilder();
 
 	initialize(): void {
-		console.log("Entity3DVisibilityTest::initialize() ...");
+		console.log("FixScreenPlaneTest::initialize() ...");
 
 		const rc = this.mRscene;
 		rc.initialize();
@@ -31,17 +30,19 @@ export class Entity3DVisibilityTest {
 	private initEvent(): void {
 		const rc = this.mRscene;
 		rc.addEventListener(MouseEvent.MOUSE_DOWN, this.mouseDown);
-
 		new MouseInteraction().initialize(rc, 0, false).setAutoRunning(true);
 	}
-
+	private mRenderingFlag = 6;
 	private mouseDown = (evt: MouseEvent): void => {
-
-		let et = this.mEntities[0];
-		et.rstate.visible = !et.rstate.visible;
-	}
-	private createMaterial(shdSrc: WGRShderSrcType, texs?: WGTextureDataDescriptor[], color?: Color4, blendModes: string[] = ["solid"], faceCullMode = "back"): WGMaterial {
-
+		const rc = this.mRscene;
+	};
+	private createMaterial(
+		shdSrc: WGRShderSrcType,
+		texs?: WGTextureDataDescriptor[],
+		color?: Color4,
+		blendModes: string[] = ["solid"],
+		faceCullMode = "back"
+	): WGMaterial {
 		color = color ? color : new Color4();
 
 		let pipelineDefParam = {
@@ -49,12 +50,9 @@ export class Entity3DVisibilityTest {
 			faceCullMode,
 			blendModes: [] as string[]
 		};
-
-
 		pipelineDefParam.blendModes = blendModes;
 
 		const texTotal = texs ? texs.length : 0;
-
 		const material = new WGMaterial({
 			shadinguuid: "base-material-tex" + texTotal,
 			shaderCodeSrc: shdSrc,
@@ -69,7 +67,6 @@ export class Entity3DVisibilityTest {
 	}
 
 	private createGeom(rgd: GeomRDataType, normalEnabled = false): WGGeometry {
-
 		const geometry = new WGGeometry()
 			.addAttribute({ position: rgd.vs })
 			.addAttribute({ uv: rgd.uvs })
@@ -80,7 +77,6 @@ export class Entity3DVisibilityTest {
 		return geometry;
 	}
 	private initScene(): void {
-
 		const rc = this.mRscene;
 
 		const geometry = this.createGeom(this.geomData.createCube(80));
@@ -90,27 +86,23 @@ export class Entity3DVisibilityTest {
 			fragShaderSrc: { code: fragWGSL, uuid: "fragShdCode" }
 		};
 
-		let materials0 = [this.createMaterial(shdSrc, [{diffuse: {url:"static/assets/box.jpg"}}], new Color4(1.0))];
-		let materials1 = [this.createMaterial(shdSrc, [{diffuse: {url:"static/assets/default.jpg"}}], new Color4(0.0, 1.0))];
+		const diffuseTex = { diffuse: { url: "static/assets/box.jpg" } };
 
-		let entity = new Entity3D();
-		entity.materials = materials0;
-		entity.geometry = geometry;
-		rc.addEntity(entity);
-		this.mEntities.push( entity );
+		let materials = [this.createMaterial(shdSrc, [diffuseTex], new Color4(Math.random() * 1.5, Math.random() * 1.5, Math.random() * 1.5))];
 
-		entity = new Entity3D();
-		entity.materials = materials1;
-		entity.geometry = geometry;
-		entity.transform.setXYZ(200, 0, 0);
-		rc.addEntity(entity);
-		this.mEntities.push( entity );
+		for (let i = 0; i < 1; ++i) {
+			let entity = new Entity3D({ materials, geometry });
+			entity.transform.setPosition(new Vector3(-500 + i * 130, 0, 0));
+			rc.addEntity(entity);
+		}
 	}
 
-	private mRotValue = 0.0;
 	run(): void {
+		// if (this.mRenderingFlag < 1) {
+		// 	return;
+		// }
+		// this.mRenderingFlag--;
 
-		this.mRotValue += 0.5;
 		this.mRscene.run();
 	}
 }

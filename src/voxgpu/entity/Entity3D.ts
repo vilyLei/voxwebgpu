@@ -11,8 +11,13 @@ import { IRenderableEntityContainer } from "../render/IRenderableEntityContainer
 import AABB from "../cgeom/AABB";
 import { WGRUnitState } from "../render/WGRUnitState";
 
+interface Entity3DParam {
+	transformEnabled?: boolean;
+	transform?: ROTransform | IMatrix4 | Float32Array;
+	materials?: WGMaterial[];
+	geometry?: WGGeometry;
+}
 class Entity3D implements IRenderableEntity {
-
 	private static sUid = 0;
 	private mUid = Entity3D.sUid++;
 
@@ -20,47 +25,73 @@ class Entity3D implements IRenderableEntity {
 	protected mLBs: IAABB;
 	protected mGBs: IAABB;
 	/**
-		 * renderer scene entity flag, be used by the renderer system
-		 * 第0位到第19位总共20位存放自身在space中的 index id(最小值为1, 最大值为1048575,默认值是0, 也就是最多只能展示1048575个entitys),
-		 * 第20位开始到26位为总共7位止存放在renderer中的状态数据(renderer unique id and others)
-		 * 第27位存放是否在container里面
-		 * 第28位开始到29位总共二位存放renderer 载入状态 的相关信息
-		 * 第30位位存放是否渲染运行时排序
-		 */
+	 * renderer scene entity flag, be used by the renderer system
+	 * 第0位到第19位总共20位存放自身在space中的 index id(最小值为1, 最大值为1048575,默认值是0, 也就是最多只能展示1048575个entitys),
+	 * 第20位开始到26位为总共7位止存放在renderer中的状态数据(renderer unique id and others)
+	 * 第27位存放是否在container里面
+	 * 第28位开始到29位总共二位存放renderer 载入状态 的相关信息
+	 * 第30位位存放是否渲染运行时排序
+	 */
 	__$rseFlag = REF.DEFAULT;
-	// __$rrver = 0;
 
 	uuid?: string;
 
 	materials: WGMaterial[];
 	geometry?: WGGeometry;
 
-	bounds?: IAABB;
 	transform?: ROTransform;
 
 	cameraViewing = true;
 
 	readonly rstate = new WGRUnitState();
-	// readonly rers = new Uint16Array([0, 0, 0, 0]);
 
 	/**
 	 * mouse interaction enabled
 	 */
 	mouseEnabled = false;
 
-	constructor(transformEnabled = true) {
-		this.init(transformEnabled);
+	constructor(param?: Entity3DParam) {
+		this.init(param);
 	}
-	protected init(transformEnabled: boolean): void {
-		if (transformEnabled) {
-			this.transform = ROTransform.Create();
+	protected init(param?: Entity3DParam): void {
+		let transformEnabled = !param || param.transformEnabled === undefined || param.transformEnabled === true;
+		let transform: ROTransform | IMatrix4 | Float32Array;
+		if (param) {
+			transform = param.transform as ROTransform;
+			transformEnabled = transformEnabled || this.transform !== undefined;
 		}
-		this.initBounds( transformEnabled );
+		if (transformEnabled) {
+			if (transform) {
+				const fs32 = transform as Float32Array;
+				if (fs32.byteLength !== undefined) {
+					this.transform = ROTransform.Create({ fs32 });
+				}
+				const matrix = transform as IMatrix4;
+				if (matrix.identity !== undefined) {
+					this.transform = ROTransform.Create({ matrix });
+				}
+				const trans = transform as ROTransform;
+				if (trans.getMatrixFS32 !== undefined) {
+					this.transform = trans;
+				}
+			} else {
+				this.transform = ROTransform.Create();
+			}
+		}
+		this.initBounds(transformEnabled);
+		if (param) {
+			this.materials = param.materials;
+			this.geometry = param.geometry;
+			if (this.geometry) {
+				this.update();
+			}
+		}
 	}
 
 	protected initBounds(transformEnabled: boolean): void {
 		this.mGBs = new AABB();
-		// this.mLBs = new AABB();
+		this.mLBs = new AABB();
+		this.mLBs.version = -137;
 	}
 
 	__$testSpaceEnabled(): boolean {
@@ -105,16 +136,17 @@ class Entity3D implements IRenderableEntity {
 		return true;
 	}
 	updateBounds(): void {
-		if(this.mGBs) {
-
+		if (this.mGBs) {
 		}
 	}
 	update(): Entity3D {
-		if (this.transform) {
-			this.transform.update();
-		}
-		if(this.geometry && !this.mLBs) {
-			this.mLBs = this.geometry.bounds;
+		this.transform.update();
+		const g = this.geometry;
+		if (g) {
+			const lb = this.mLBs;
+			if (lb && g.bounds && lb.version != g.bounds.version) {
+				lb.copyFrom(g.bounds);
+			}
 		}
 		return this;
 	}

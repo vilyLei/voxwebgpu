@@ -63,7 +63,7 @@ export class RSceneTest {
 			pipelineDefParam
 		});
 
-		let ufv = new WGRStorageValue(new Float32Array([1, 1, 1, 1]));
+		let ufv = new WGRStorageValue({data: new Float32Array([1, 1, 1, 1])});
 		material.uniformValues = [ufv];
 		material.addTextureWithDatas(texDatas);
 

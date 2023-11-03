@@ -1,14 +1,14 @@
-import { WGRUniformValue } from "./WGRUniformValue";
+import { WGRUniformValueParam, WGRUniformValue } from "./WGRUniformValue";
 
 class WGRStorageValue extends WGRUniformValue {
-	
-	constructor(data: NumberArrayDataType, bufferIndex = 0, uniformIndexInRUnit = 0) {
-		super(data, bufferIndex, uniformIndexInRUnit);
+
+	constructor(param: WGRUniformValueParam) {
+		super(param);
 		this.toStorage();
 	}
 	clone(data: NumberArrayDataType): WGRStorageValue {
 
-		const u = new WGRStorageValue(data, this.bufferIndex, this.index);
+		const u = new WGRUniformValue({data: data, bufferIndex: this.bufferIndex, index: this.index});
 		u.name = this.name;
 		u.byteOffset = this.byteOffset;
 		u.arrayStride = this.arrayStride;

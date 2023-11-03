@@ -30,11 +30,11 @@ class CameraBase implements IRenderCamera {
     private m_lookRHEnabled = true;
 
     private m_matrix = new Matrix4();
-    private m_viewMat = new Matrix4();
+    private mViewMat = new Matrix4();
     private m_viewInvertMat = new Matrix4();
     private m_vpMat = new Matrix4();
     private m_tempMat = new Matrix4();
-    private m_projMat = new Matrix4();
+    private mProjMat = new Matrix4();
     private m_camPos = new Vector3();
     private m_lookAtPos = new Vector3();
     private m_up = new Vector3();
@@ -68,10 +68,8 @@ class CameraBase implements IRenderCamera {
     private m_unlock = true;
 	inversePerspectiveZ = false;
     constructor() {
-		this.viewUniformV = new WGRUniformValue(this.m_viewMat.getLocalFS32()).toShared();
-		this.viewUniformV.shdVarName = "viewMat";
-		this.projUniformV = new WGRUniformValue(this.m_projMat.getLocalFS32()).toShared();
-		this.projUniformV.shdVarName = "projMat";
+		this.viewUniformV = new WGRUniformValue({data: this.mViewMat.getLocalFS32(), shared: true, shdVarName: "viewMat"});
+		this.projUniformV = new WGRUniformValue({data: this.mProjMat.getLocalFS32(), shared: true, shdVarName: "projMat"});
     }
     // 不允许外界修改camera数据
     lock(): void {
@@ -134,7 +132,7 @@ class CameraBase implements IRenderCamera {
             this.m_fovRadian = fovRadian;
             this.m_zNear = zNear;
             this.m_zFar = zFar;
-            this.m_projMat.perspectiveLH(fovRadian, aspect, zNear, zFar);
+            this.mProjMat.perspectiveLH(fovRadian, aspect, zNear, zFar);
             this.m_viewFieldZoom = Math.tan(fovRadian * 0.5);
             this.m_perspectiveEnabled = true;
             this.m_rightHandEnabled = false;
@@ -154,7 +152,7 @@ class CameraBase implements IRenderCamera {
             this.m_fovRadian = fovRadian;
             this.m_zNear = zNear;
             this.m_zFar = zFar;
-            this.m_projMat.perspectiveRH(fovRadian, aspect, zNear, zFar);
+            this.mProjMat.perspectiveRH(fovRadian, aspect, zNear, zFar);
             this.m_viewFieldZoom = Math.tan(fovRadian * 0.5);
             this.m_project2Enabled = false;
             this.m_perspectiveEnabled = true;
@@ -168,7 +166,7 @@ class CameraBase implements IRenderCamera {
             this.m_fovRadian = fovRadian;
             this.m_zNear = zNear;
             this.m_zFar = zFar;
-            this.m_projMat.perspectiveRH2(fovRadian, pw, ph, zNear, zFar);
+            this.mProjMat.perspectiveRH2(fovRadian, pw, ph, zNear, zFar);
             this.m_viewFieldZoom = Math.tan(fovRadian * 0.5);
             this.m_perspectiveEnabled = true;
             this.m_project2Enabled = true;
@@ -186,7 +184,7 @@ class CameraBase implements IRenderCamera {
             this.m_zNear = zNear;
             this.m_zFar = zFar;
             this.m_b = b; this.m_t = t; this.m_l = l; this.m_r = r;
-            this.m_projMat.orthoRH(b, t, l, r, zNear, zFar, this.inversePerspectiveZ ? -1 : 1);
+            this.mProjMat.orthoRH(b, t, l, r, zNear, zFar, this.inversePerspectiveZ ? -1 : 1);
             this.m_perspectiveEnabled = false;
             this.m_rightHandEnabled = true;
             this.m_changed = true;
@@ -197,7 +195,7 @@ class CameraBase implements IRenderCamera {
             this.m_zNear = zNear;
             this.m_zFar = zFar;
             this.m_b = b; this.m_t = t; this.m_l = l; this.m_r = r;
-            this.m_projMat.orthoLH(b, t, l, r, zNear, zFar, this.inversePerspectiveZ ? -1 : 1);
+            this.mProjMat.orthoLH(b, t, l, r, zNear, zFar, this.inversePerspectiveZ ? -1 : 1);
             this.m_perspectiveEnabled = false;
             this.m_rightHandEnabled = false;
             this.m_changed = true;
@@ -634,8 +632,8 @@ class CameraBase implements IRenderCamera {
         scPV3.y /= scPV3.w;
     }
     worldPosToScreen(pv: Vector3): void {
-        this.m_viewMat.transformVector3Self(pv);
-        this.m_projMat.transformVectorSelf(pv);
+        this.mViewMat.transformVector3Self(pv);
+        this.mProjMat.transformVectorSelf(pv);
         pv.x /= pv.w;
         pv.y /= pv.w;
         pv.x *= this.m_viewHalfW;
@@ -645,15 +643,15 @@ class CameraBase implements IRenderCamera {
     }
     // 计算3D空间的球体在屏幕空间的最小包围矩形, outV的x,y表示矩形的x和y;outV的z和w表示宽和高,取值为像素数
     calcViewRectByWorldSphere(pv: Vector3, radius: number, outV: Vector3): void {
-        this.m_viewMat.transformVector3Self(pv);
+        this.mViewMat.transformVector3Self(pv);
         radius *= 1.15;
         outV.x = pv.x - radius;
         outV.y = pv.y - radius;
         outV.z = pv.z;
         pv.x += radius;
         pv.y += radius;
-        this.m_projMat.transformPerspV4Self(outV);
-        this.m_projMat.transformPerspV4Self(pv);
+        this.mProjMat.transformPerspV4Self(outV);
+        this.mProjMat.transformPerspV4Self(pv);
         pv.z = 1.0 / pv.w;
         outV.z = pv.x * pv.z;
         outV.w = pv.y * pv.z;
@@ -671,14 +669,14 @@ class CameraBase implements IRenderCamera {
 
     // 计算3D空间的球体在屏幕空间的最小包围矩形, outV的x,y表示矩形的x和y;outV的z和w表示宽和高,取值0.0 - 1.0之间
     calcScreenRectByWorldSphere(pv: Vector3, radius: number, outV: Vector3): void {
-        this.m_viewMat.transformVector3Self(pv);
+        this.mViewMat.transformVector3Self(pv);
         radius *= 1.15;
         outV.x = pv.x - radius;
         outV.y = pv.y - radius;
         pv.x += radius;
         pv.y += radius;
-        this.m_projMat.transformPerspV4Self(outV);
-        this.m_projMat.transformPerspV4Self(pv);
+        this.mProjMat.transformPerspV4Self(outV);
+        this.mProjMat.transformPerspV4Self(pv);
         pv.z = 1.0 / pv.w;
         outV.z = pv.x * pv.z;
         outV.w = pv.y * pv.z;
@@ -717,7 +715,7 @@ class CameraBase implements IRenderCamera {
     }
     private __calcTestParam(): void {
         if (this.m_invViewMat == null) this.m_invViewMat = new Matrix4();
-        this.m_invViewMat.copyFrom(this.m_viewMat);
+        this.m_invViewMat.copyFrom(this.mViewMat);
         this.m_invViewMat.invert();
 
         let plane: Plane = null;
@@ -1004,16 +1002,16 @@ class CameraBase implements IRenderCamera {
         }
         return false;
     }
-    private m_viewMatrix: Matrix4 = null;
+    private mViewMatrix: Matrix4 = null;
     setViewMatrix(viewMatrix: Matrix4): void {
-        this.m_viewMatrix = viewMatrix;
+        this.mViewMatrix = viewMatrix;
         this.m_changed = true;
     }
     update(): void {
         if (this.m_changed) {
             this.version++;
             this.m_changed = false;
-            if(!this.m_viewMatrix) {
+            if(!this.mViewMatrix) {
 
                 if (this.m_axisRotEnabled) {
                     this.m_matrix.appendRotationPivot(this.m_rotDegree * MathConst.MATH_PI_OVER_180, this.m_rotAxis, this.m_rotPivotPoint);
@@ -1023,15 +1021,15 @@ class CameraBase implements IRenderCamera {
                     this.m_matrix.appendRotationEulerAngle(this.m_rotV.x * MathConst.MATH_PI_OVER_180, this.m_rotV.y * MathConst.MATH_PI_OVER_180, this.m_rotV.z * MathConst.MATH_PI_OVER_180);
                 }
                 if (this.m_lookRHEnabled) {
-                    this.m_viewMat.lookAtRH(this.m_camPos, this.m_lookAtPos, this.m_up);
+                    this.mViewMat.lookAtRH(this.m_camPos, this.m_lookAtPos, this.m_up);
                 }
                 else {
-                    this.m_viewMat.lookAtLH(this.m_camPos, this.m_lookAtPos, this.m_up);
+                    this.mViewMat.lookAtLH(this.m_camPos, this.m_lookAtPos, this.m_up);
                 }
-                this.m_viewMat.append(this.m_matrix);
+                this.mViewMat.append(this.m_matrix);
             }
             else {
-                this.m_viewMat.copyFrom(this.m_viewMatrix);
+                this.mViewMat.copyFrom(this.mViewMatrix);
             }
             if (this.m_project2Enabled) {
                 this.m_nearPlaneWidth = this.m_zNear * Math.tan(this.m_fovRadian * 0.5) * 2.0;
@@ -1041,12 +1039,12 @@ class CameraBase implements IRenderCamera {
                 this.m_nearPlaneHeight = this.m_zNear * Math.tan(this.m_fovRadian * 0.5) * 2.0;
                 this.m_nearPlaneWidth = this.m_aspect * this.m_nearPlaneHeight;
             }
-            this.m_viewInvertMat.copyFrom(this.m_viewMat);
+            this.m_viewInvertMat.copyFrom(this.mViewMat);
             this.m_viewInvertMat.invert();
             //
             this.m_vpMat.identity();
-            this.m_vpMat.copyFrom(this.m_viewMat);
-            this.m_vpMat.append(this.m_projMat);
+            this.m_vpMat.copyFrom(this.mViewMat);
+            this.m_vpMat.append(this.mProjMat);
 
             this.__calcTestParam();
             // very very important !!!
@@ -1056,8 +1054,8 @@ class CameraBase implements IRenderCamera {
     // updateCamMatToUProbe(uniformProbe: IShaderUniformProbe): void {
     //     if (uniformProbe.isEnabled()) {
     //         uniformProbe.update();
-    //         uniformProbe.getFS32At(0).set(this.m_viewMat.getLocalFS32(), 0);
-    //         uniformProbe.getFS32At(1).set(this.m_projMat.getLocalFS32(), 0);
+    //         uniformProbe.getFS32At(0).set(this.mViewMat.getLocalFS32(), 0);
+    //         uniformProbe.getFS32At(1).set(this.mProjMat.getLocalFS32(), 0);
     //     }
     // }
     private updateUniformData(): void {
@@ -1084,13 +1082,13 @@ class CameraBase implements IRenderCamera {
         return this.m_vpMat;
     }
     getViewMatrix(): Matrix4 {
-        return this.m_viewMat;
+        return this.mViewMat;
     }
     getViewInvMatrix(): Matrix4 {
         return this.m_viewInvertMat;
     }
     getProjectMatrix(): Matrix4 {
-        return this.m_projMat;
+        return this.mProjMat;
     }
 }
 export default CameraBase;

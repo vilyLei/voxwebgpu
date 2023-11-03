@@ -1,6 +1,17 @@
 import BitConst from "../../utils/BitConst";
+interface WGRUniformValueParam {
+	data: NumberArrayDataType;
+	bufferIndex?: number;
+	/**
+	 * uniform index in RUnit instance
+	 */
+	index?: number;
+	usage?: number;
+	shared?: boolean;
+	shdVarName?: string;
+	arrayStride?: number;
+}
 class WGRUniformValue {
-
 	private static sUid = 0;
 	private mUid = WGRUniformValue.sUid++;
 
@@ -11,8 +22,8 @@ class WGRUniformValue {
 	index = 0;
 
 	version = -1;
-	bufferIndex: number;
-	data?: NumberArrayDataType;
+	bufferIndex = 0;
+	data: NumberArrayDataType;
 
 	byteOffset = 0;
 	arrayStride = 1;
@@ -20,11 +31,18 @@ class WGRUniformValue {
 	shared = false;
 
 	shdVarName?: string;
-	constructor(data: NumberArrayDataType, bufferIndex = 0, uniformIndexInRUnit = 0) {
-		this.data = data;
-		this.bufferIndex = bufferIndex;
-		this.index = uniformIndexInRUnit;
-		if (data.byteLength <= 64) this.arrayStride = data.byteLength;
+	constructor(param: WGRUniformValueParam) {
+		const d = param.data;
+		this.data = d;
+		this.bufferIndex = param.bufferIndex !== undefined ? param.bufferIndex : 0;
+		this.index = param.index !== undefined ? param.index : 0;
+		if (param.usage !== undefined) this.usage = param.usage;
+		if (param.shared !== undefined) this.shared = param.shared;
+		if (param.shdVarName !== undefined) this.shdVarName = param.shdVarName;
+		this.arrayStride = param.arrayStride !== undefined ? param.arrayStride : 1;
+		if (d && this.arrayStride < 2) {
+			if (d.byteLength <= 64) this.arrayStride = d.byteLength;
+		}
 		this.upate();
 	}
 	getUid(): number {
@@ -51,8 +69,7 @@ class WGRUniformValue {
 	}
 
 	clone(data: NumberArrayDataType): WGRUniformValue {
-
-		const u = new WGRUniformValue(data, this.bufferIndex, this.index);
+		const u = new WGRUniformValue({data: data, bufferIndex: this.bufferIndex, index: this.index});
 		u.name = this.name;
 		u.byteOffset = this.byteOffset;
 		u.arrayStride = this.arrayStride;
@@ -61,4 +78,4 @@ class WGRUniformValue {
 		return u;
 	}
 }
-export { WGRUniformValue }
+export { WGRUniformValueParam, WGRUniformValue };

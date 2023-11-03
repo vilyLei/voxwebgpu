@@ -60,7 +60,7 @@ export class REntity3DContainerTest {
 			pipelineDefParam
 		});
 
-		let ufv = new WGRStorageValue(new Float32Array([color.r, color.g, color.b, 1]));
+		let ufv = new WGRStorageValue({data: new Float32Array([color.r, color.g, color.b, 1])});
 		material.uniformValues = [ufv];
 		material.addTextures(texDatas);
 

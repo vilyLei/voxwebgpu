@@ -7,6 +7,7 @@ import { IWGRPipelineContext } from "./pipeline/IWGRPipelineContext";
 import { IWGRUnit } from "./IWGRUnit";
 import IAABB from "../cgeom/IAABB";
 import { WGRUnitState } from "./WGRUnitState";
+import { IWGMaterial } from "../material/IWGMaterial";
 
 /**
  * 大部分时候作为异步操作的占位符对象
@@ -21,9 +22,10 @@ class WGRUnitEmpty implements IWGRUnit {
 
 	__$rever = 0;
 	bounds: IAABB;
-	// st = new WGRUnitState();
 	st: WGRUnitState;
 	enabled = true;
+	material: IWGMaterial;
+
 	getRF(): boolean {
 		return true;
 	}
