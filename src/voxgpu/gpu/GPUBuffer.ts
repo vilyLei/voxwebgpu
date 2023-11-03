@@ -4,6 +4,8 @@ interface GPUBuffer {
 	 * for example: 'uint16', 'uint32'
 	 */
 	dataFormat?: string;
+	enabled?: boolean;
+	shared?: boolean;
 	/**
 	 * for example: ['float32x4', 'float32x2']
 	 */

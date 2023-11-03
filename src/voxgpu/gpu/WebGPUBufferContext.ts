@@ -108,6 +108,8 @@ class WebGPUBufferContext {
 			}
 		}
 
+		buf.enabled = true;
+		buf.shared = false;
 		buf.uid = WebGPUBufferContext.sVtxUid++;
 		return buf;
 	}
