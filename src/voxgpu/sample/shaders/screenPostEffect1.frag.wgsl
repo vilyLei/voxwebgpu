@@ -10,9 +10,9 @@ fn calcColor3(vtxUV: vec2f) -> vec3f{
 	let color1 = vec3f(1.7, 0.25, 0.5);
 	let color2 = vec3f(0.5, 0.7, 0.25);
 	let color3 = vec3f(0.25, 0.5, 0.7);
-	let point1 = stSize * 0.45 + vec2f(sin(time*2.0) * 10.0, cos(time*2.0) * 5.0);
+	let point1 = stSize * 0.5 + vec2f(sin(time*2.0) * 10.0, cos(time*2.0) * 50.0) * (vtxUV - 0.5) * 4.0;
 	let point2 = stSize * 0.5 + vec2f(sin(time) * 75.0, cos(time)*50.0);
-	let point3 = stSize * 0.55 + vec2f(sin(time) * 25.0, sin(time*2.0)*50.0)*2.0;
+	let point3 = stSize * 0.5 + vec2f(sin(time) * 25.0, sin(time*2.0)*50.0)*2.0;
 	
 	let dist1 = fragCoord - point1;
 	let intensity1 = pow(32.0/(0.01+length(dist1)), 2.0);
@@ -30,7 +30,8 @@ fn calcColor3(vtxUV: vec2f) -> vec3f{
 fn main(
 	@location(0) uv: vec2f
 	) -> @location(0) vec4f {
-	let c3 = calcColor3(uv);
+	//let c3 = calcColor3(fract(uv/0.5));
+	let c3 = calcColor3( uv );
 	let c4 = vec4f(c3.xyz * color.xyz, color.w);
 	return c4;
 }
