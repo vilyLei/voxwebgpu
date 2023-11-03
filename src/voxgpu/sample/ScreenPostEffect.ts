@@ -5,6 +5,8 @@ import { FixScreenPlaneEntity } from "../entity/FixScreenPlaneEntity";
 
 import vertWGSL from "../material/shader/wgsl/fixScreenPlane.vert.wgsl";
 import fragWGSL from "./shaders/screenPostEffect.frag.wgsl";
+import frag1WGSL from "./shaders/screenPostEffect1.frag.wgsl";
+
 import { WGRUniformValue } from "../render/uniform/WGRUniformValue";
 import { WGRStorageValue } from "../render/uniform/WGRStorageValue";
 
@@ -19,26 +21,30 @@ export class ScreenPostEffect {
 		this.initEvent();
 		this.initScene();
 	}
+
 	private initEvent(): void {
 		const rc = this.mRscene;
 		rc.addEventListener(MouseEvent.MOUSE_DOWN, this.mouseDown);
 		new MouseInteraction().initialize(rc, 0, false).setAutoRunning(true);
 	}
+
 	private mouseDown = (evt: MouseEvent): void => {};
+
 	private mColorV = new WGRUniformValue({ data: new Float32Array([1.0, 0.1, 0.2, 1.0]) });
 	private mParamsV = new WGRStorageValue({ data: new Float32Array(4 * 3) });
+
 	private initScene(): void {
 		const rc = this.mRscene;
 
 		this.mParamsV.arrayStride = 16;
 		let param0 = this.mParamsV.data as Float32Array;
 		param0.set([1.0, 1.0, 1.0, 1.0]);
-		param0.set([0.5, 0.5, 0.0, 0.0], 4);
+		param0.set([0.5, 0.5, 512.0, 512.0], 4);
 
 		let shaderSrc = {
 			vertShaderSrc: { code: vertWGSL, uuid: "vert-screenPostEffect" },
 			fragShaderSrc: {
-				code: fragWGSL,
+				code: frag1WGSL,
 				uuid: "frag-screenPostEffect"
 			}
 		};
