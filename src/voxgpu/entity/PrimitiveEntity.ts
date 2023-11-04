@@ -86,6 +86,9 @@ class PrimitiveEntity extends Entity3D {
 				pipelineDefParam
 			});
 			material.addTextures(texs);
+			if(param.instanceCount !== undefined) {
+				material.instanceCount = param.instanceCount;
+			}
 			material.uniformValues = param.uniformValues;
 			if(!material.uniformValues) {
 				material.uniformValues = [this.albedoV, this.armV];

@@ -35,7 +35,13 @@ function getUniformValueFromParam(key: string, param: Entity3DParam, defaultV?: 
 			return v;
 		}
 	}
+	const ufvs = param.uniformValues;
 	if(param.uniformValues) {
+		for(let i = 0; i < ufvs.length; ++i) {
+			if(ufvs[i].shdVarName == key) {
+				return ufvs[i];
+			}
+		}
 	}
 	return defaultV;
 }

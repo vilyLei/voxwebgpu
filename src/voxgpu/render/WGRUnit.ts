@@ -98,13 +98,13 @@ class WGRUnit implements IWGRUnit {
 					rc.setPipeline(st.pipeline);
 				}
 				gt.instanceCount = mt.instanceCount;
-				
+				// console.log("mt.instanceCount: ", mt.instanceCount);
+
 				const ufs = this.uniforms;
 				if (ufs) {
 					for (let i = 0, ln = ufs.length; i < ln; i++) {
 						const uf = ufs[i];
 						if (uf.isEnabled()) {
-							// console.log("ruint setBindGroup(), uf.groupIndex: ", uf.groupIndex);
 							// console.log("ruint setBindGroup(), uf.groupIndex: ", uf.groupIndex,",", uf.bindGroup);
 							rc.setBindGroup(uf.groupIndex, uf.bindGroup);
 						} else {

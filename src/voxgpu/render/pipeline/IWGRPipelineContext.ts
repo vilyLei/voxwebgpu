@@ -8,10 +8,11 @@ import { GPUBindGroupDescriptor } from "../../gpu/GPUBindGroupDescriptor";
 import { IWGRUniformContext } from "../uniform/IWGRUniformContext";
 import { IWGRendererPass } from "./IWGRendererPass";
 
-type BufDataParamType = { size: number, usage: number, defaultData?: NumberArrayDataType, shared: boolean, vuid?: number, usageType?: number };
+type BufDataParamType = { size: number, usage: number, defaultData?: NumberArrayDataType, shared: boolean, vuid?: number, usageType?: number, arrayStride?: number };
 type VtxDescParam = { vertex: { arrayStride: number, params: { offset: number, format: string }[] } };
 type BindGroupDataParamType = { index: number, buffer: GPUBuffer, bufferSize: number, shared: boolean, usageType?: number };
 type VtxPipelinDescParam = { vertex: { buffers?: GPUBuffer[], attributeIndicesArray: number[][] } };
+type UniformBufferParam = { sizes: number[], usage: number, arrayStride?:number };
 
 interface IWGRPipelineContext {
 
@@ -44,12 +45,12 @@ interface IWGRPipelineContext {
 	): GPUBindGroup;
 
 	/**
-	 * @param params { sizes: number[]; usage: number } type instance.
+	 * @param params UniformBufferParam instance.
 	 * @param initSize The defaut value is 0.
 	 * @param force256 The defaut value is true.
 	 * @param mappedAtCreation The defaut value is false.
 	 */
-	createUniformsBuffer(params: { sizes: number[]; usage: number }, initSize?: number, force256?: boolean, mappedAtCreation?: boolean): GPUBuffer | null;
+	createUniformsBuffer(params: UniformBufferParam, initSize?: number, force256?: boolean, mappedAtCreation?: boolean): GPUBuffer | null;
 
 }
-export { BindGroupDataParamType, VtxDescParam, VtxPipelinDescParam, BufDataParamType, IWGRPipelineContext };
+export { BindGroupDataParamType, VtxDescParam, VtxPipelinDescParam, BufDataParamType, UniformBufferParam, IWGRPipelineContext };

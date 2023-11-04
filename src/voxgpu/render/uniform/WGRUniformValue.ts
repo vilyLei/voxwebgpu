@@ -10,6 +10,9 @@ interface WGRUniformValueParam {
 	shared?: boolean;
 	shdVarName?: string;
 	arrayStride?: number;
+	/**
+	 * data element stride
+	 */
 	stride?: number;
 }
 class WGRUniformValue {

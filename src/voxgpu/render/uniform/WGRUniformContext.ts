@@ -2,7 +2,7 @@ import { GPUBuffer } from "../../gpu/GPUBuffer";
 import { GPUSampler } from "../../gpu/GPUSampler";
 import { GPUTextureView } from "../../gpu/GPUTextureView";
 import { UniformVerType, WGRUniform } from "./WGRUniform";
-import { BindGroupDataParamType, BufDataParamType, IWGRPipelineContext } from "../pipeline/IWGRPipelineContext";
+import { BindGroupDataParamType, BufDataParamType, UniformBufferParam, IWGRPipelineContext } from "../pipeline/IWGRPipelineContext";
 import { WGRUniformValue } from "./WGRUniformValue";
 import { WGRUniformParam, WGRUniformTexParam, WGRUniformWrapper, IWGRUniformContext } from "./IWGRUniformContext";
 import { GPUBindGroupDescriptor } from "../../gpu/GPUBindGroupDescriptor";
@@ -75,7 +75,7 @@ class UCtxInstance {
 					for (let i = 0; i < dps.length; ++i) {
 						const dp = dps[i];
 
-						const uniformParam = { sizes: new Array(dp.shared ? 1 : ls.length), usage: dp.usage };
+						const uniformParam = { sizes: new Array(dp.shared ? 1 : ls.length), usage: dp.usage, arrayStride: dp.arrayStride} as UniformBufferParam;
 						let buf: GPUBuffer;
 						if (dp.shared) {
 							// console.log("BBBBBBBBBB uniformParam.sizes: ", uniformParam.sizes);
@@ -100,10 +100,10 @@ class UCtxInstance {
 						// console.log("XXX XXX uniformParam.sizes: ", uniformParam.sizes);
 						// const buffer = this.mPipelineCtx.createUniformsBuffer(uniformParam);
 						this.mBuffers.push(buf);
-						console.log("PPP PPP PPP ,i: ",i," buf.size: ", buf.size);
+						// console.log("PPP PPP PPP ,i: ",i," buf.size: ", buf.size);
 					}
 				}
-				// console.log("XXX XXX this.mBuffers: ", this.mBuffers);
+				console.log("XXX XXX this.mBuffers: ", this.mBuffers);
 				// console.log("XXX XXX ls: ", ls);
 				for (let i = 0; i < ls.length; ++i) {
 					this.createUniformWithWP(ls[i], i, true);
@@ -324,8 +324,8 @@ class WGRUniformContext implements IWGRUniformContext {
 				v.bufferIndex = i;
 				const usageType = v.isStorage() ? 1 : 0;
 				const vuid = v.getUid();
-				// bufDataParams.push({ size: v.arrayStride, usage: v.usage, shared: v.shared, usageType, vuid });
-				bufDataParams.push({ size: v.data.byteLength, usage: v.usage, shared: v.shared, usageType, vuid });
+				const arrayStride = v.arrayStride;
+				bufDataParams.push({ arrayStride, size: v.data.byteLength, usage: v.usage, shared: v.shared, usageType, vuid });
 			}
 			return uctx.createUniform(layoutName, groupIndex, bufDataParams, texParams);
 		}

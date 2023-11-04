@@ -8,7 +8,7 @@ import { GPURenderPipelineEmpty } from "../../gpu/GPURenderPipelineEmpty";
 import { GPUSampler } from "../../gpu/GPUSampler";
 import { GPUTextureView } from "../../gpu/GPUTextureView";
 import { WebGPUContext } from "../../gpu/WebGPUContext";
-import { BindGroupDataParamType, BufDataParamType, VtxDescParam, VtxPipelinDescParam, IWGRPipelineContext } from "./IWGRPipelineContext";
+import { BindGroupDataParamType, BufDataParamType, VtxDescParam, VtxPipelinDescParam, UniformBufferParam, IWGRPipelineContext } from "./IWGRPipelineContext";
 import { WGRPipelineCtxParams } from "./WGRPipelineCtxParams";
 import { WGRPipelineShader } from "./WGRPipelineShader";
 import { WGRUniformParam, WGRUniformContext } from "../uniform/WGRUniformContext";
@@ -87,7 +87,7 @@ class WGRPipelineContext implements IWGRPipelineContext {
 		return buf;
 	}
 	createUniformsBuffer(
-		params: { sizes: number[]; usage: number },
+		params: UniformBufferParam,
 		initSize = 0,
 		force256: boolean = true,
 		mappedAtCreation = false
@@ -116,10 +116,12 @@ class WGRPipelineContext implements IWGRPipelineContext {
 			}
 			const desc = {
 				size: bufSize,
-				usage: params.usage
+				usage: params.usage,
+				arrayStride: params.arrayStride
 			};
 			const buf = this.mWGCtx.device.createBuffer(desc);
 			buf.segs = segs;
+			buf.arrayStride = params.arrayStride;
 			// console.log("createUniformsBuffer(), segs: ", segs);
 			// console.log("createUniformsBuffer(), bufSize: ", bufSize, ", usage: ", params.usage);
 			return buf;
@@ -198,17 +200,19 @@ class WGRPipelineContext implements IWGRPipelineContext {
 			for (let i = 0; i < dps.length; ++i) {
 				const dp = dps[i];
 				if (dp.buffer && dp.bufferSize > 0) {
+					const offset = dp.shared ? 0 : 256 * dp.index
 					// console.log("ooooooooo bindI: ", bindI, ", i: ", i);
-					// console.log("		dp.shared: ", dp.shared, dp.bufferSize);
+					// console.log("		offset: ", offset);
+					// console.log("		dp.shared: ", dp.shared, ", bufferSize: ",dp.bufferSize);
 					// console.log("		", dp.buffer);
 					const ed = {
 						binding: bindIndex + bindI++,
 						resource: {
-							offset: dp.shared ? 0 : 256 * dp.index, // 实际应用中的计算不在这里
+							offset, // 实际应用中的计算不在这里
 							buffer: dp.buffer,
 							size: dp.bufferSize,
 							shared: dp.shared,
-							usageType: dp.usageType
+							usageType: dp.usageType,
 						}
 					};
 					desc.entries.push(ed);

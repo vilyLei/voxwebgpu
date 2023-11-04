@@ -19,7 +19,8 @@ fn main(
   @location(2) normal : vec3<f32>
 ) -> VertexOutput {
 
-  let wpos = objMat * vec4(position.xyz, 1.0);
+  var wpos = objMat * vec4(position.xyz, 1.0);
+  wpos = vec4(wpos.xyz + positions[insIdx].xyz, wpos.w);
   var output : VertexOutput;
   output.Position = projMat * viewMat * wpos;
   output.uv = uv;
