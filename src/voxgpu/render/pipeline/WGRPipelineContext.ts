@@ -14,6 +14,7 @@ import { WGRPipelineShader } from "./WGRPipelineShader";
 import { WGRUniformParam, WGRUniformContext } from "../uniform/WGRUniformContext";
 import { GPUQueue } from "../../gpu/GPUQueue";
 import { IWGRendererPass } from "./IWGRendererPass";
+import { GPUBindGroupLayoutDescriptor } from "../../gpu/GPUBindGroupLayoutDescriptor";
 /**
  * one type shading shader, one WGRPipelineContext instance
  */
@@ -33,7 +34,7 @@ class WGRPipelineContext implements IWGRPipelineContext {
 
 	shadinguuid = "";
 	name = "PipelineContext";
-	readonly uniformCtx = new WGRUniformContext();
+	readonly uniformCtx = new WGRUniformContext(false);
 
 	constructor(wgCtx?: WebGPUContext) {
 		// console.log("XXX XXX create a WGRPipelineContext instance.");
@@ -50,6 +51,17 @@ class WGRPipelineContext implements IWGRPipelineContext {
 				this.mShader.build(p);
 				p.label = this.shadinguuid + "-pl-" + this.mUid;
 				console.log("WGRPipelineContext::init(), param:\n", p);
+				let bindGLayout = this.uniformCtx.getBindGroupLayout(p.multisampleEnabled);
+				let pipeGLayout = ctx.device.createPipelineLayout({
+					label: p.label,
+					bindGroupLayouts:[bindGLayout]
+				});
+				console.log("CCCCCCCCCC 01 bindGLayout: ", bindGLayout);
+				console.log("CCCCCCCCCC 02 pipeGLayout: ", pipeGLayout);
+				if(!this.uniformCtx.isLayoutAuto()) {
+					p.layout = pipeGLayout;
+					console.log("CCCCCCCCCC 03 pipeline use spec layout !!!");
+				}
 				this.pipeline = ctx.device.createRenderPipeline(p);
 			}
 		}
@@ -135,7 +147,11 @@ class WGRPipelineContext implements IWGRPipelineContext {
 		// console.log("updateUniformBufferAt() td: ", td);
 		this.queue.writeBuffer(buffer, buffer.segs[index].index + offset, td.buffer, td.byteOffset, td.byteLength);
 	}
-	uniformBindGroupDescUpdate(
+	createBindGroupLayout(descriptor: GPUBindGroupLayoutDescriptor): GPUBindGroupLayout {
+		const device = this.mWGCtx.device;
+		return device.createBindGroupLayout(descriptor);
+	}
+	bindGroupDescUpdate(
 		desc: GPUBindGroupDescriptor,
 		dataParams?: BindGroupDataParamType[],
 		texParams?: { texView?: GPUTextureView; sampler?: GPUSampler }[],
@@ -178,7 +194,7 @@ class WGRPipelineContext implements IWGRPipelineContext {
 			}
 		}
 	}
-	createUniformBindGroupDesc(
+	createBindGroupDesc(
 		groupIndex: number,
 		dataParams?: BindGroupDataParamType[],
 		texParams?: { texView?: GPUTextureView; sampler?: GPUSampler }[],
@@ -250,14 +266,15 @@ class WGRPipelineContext implements IWGRPipelineContext {
 		}
 		return desc;
 	}
-	createUniformBindGroupWithDesc(desc: GPUBindGroupDescriptor): GPUBindGroup {
+	createBindGroupWithDesc(desc: GPUBindGroupDescriptor): GPUBindGroup {
 		const device = this.mWGCtx.device;
 		if (desc.entries.length < 1) {
 			throw Error("Illegal operation !!!");
 		}
+		console.log("createBindGroupWithDesc(), desc: ", desc);
 		return device.createBindGroup(desc);
 	}
-	createUniformBindGroup(
+	createBindGroup(
 		groupIndex: number,
 		dataParams?: BindGroupDataParamType[],
 		texParams?: { texView?: GPUTextureView; sampler?: GPUSampler }[],
@@ -266,7 +283,7 @@ class WGRPipelineContext implements IWGRPipelineContext {
 	): GPUBindGroup {
 
 		const device = this.mWGCtx.device;
-		const desc = this.createUniformBindGroupDesc(groupIndex, dataParams, texParams, bindIndex, layout);
+		const desc = this.createBindGroupDesc(groupIndex, dataParams, texParams, bindIndex, layout);
 		return device.createBindGroup(desc);
 	}
 	createRenderPipeline(pipelineParams: WGRPipelineCtxParams, descParams: VtxDescParam[]): GPURenderPipeline {

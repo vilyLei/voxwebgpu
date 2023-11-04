@@ -83,6 +83,7 @@ class WGRObjBuilder {
 				if (!tex.view) {
 					tex.view = tex.texture.createView({ dimension: tex.dimension });
 				}
+				tex.view.dimension = tex.dimension
 				utexes[i] = { texView: tex.view };
 			}
 		}

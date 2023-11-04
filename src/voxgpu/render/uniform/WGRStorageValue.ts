@@ -5,6 +5,7 @@ class WGRStorageValue extends WGRUniformValue {
 	constructor(param: WGRUniformValueParam) {
 		super(param);
 		this.toStorage();
+		this.visibility.toBufferForReadOnlyStorage();
 	}
 	clone(data: NumberArrayDataType): WGRStorageValue {
 

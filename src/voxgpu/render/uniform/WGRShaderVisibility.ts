@@ -29,30 +29,51 @@ class WGRShaderVisibility implements GPUBindGroupLayoutEntity {
 	texture?: GPUTextureBindingLayout;
 	storageTexture?: GPUStorageTextureBindingLayout;
 	externalTexture?: GPUExternalTextureBindingLayout;
-
-	toVisibleAll(): void {
+	constructor() {
+		// this.toBufferForUniform();
+		// this.toVisibleAll();
+		// this.toBufferForUniform();
+	}
+	toVisibleAll(): WGRShaderVisibility {
 		this.visibility = GPUShaderStage.FRAGMENT | GPUShaderStage.VERTEX | GPUShaderStage.COMPUTE;
+		return this;
 	}
-	toVisibleVertAndFrag(): void {
+	toVisibleVertAndFrag(): WGRShaderVisibility {
 		this.visibility = GPUShaderStage.FRAGMENT | GPUShaderStage.VERTEX;
+		return this;
 	}
-	toVisibleVert(): void {
+	toVisibleVert(): WGRShaderVisibility {
 		this.visibility = GPUShaderStage.VERTEX;
+		return this;
 	}
-	toVisibleFrag(): void {
+	toVisibleFrag(): WGRShaderVisibility {
 		this.visibility = GPUShaderStage.FRAGMENT;
+		return this;
 	}
-	toVisibleComp(): void {
+	toVisibleComp(): WGRShaderVisibility {
 		this.visibility = GPUShaderStage.COMPUTE;
+		return this;
 	}
-	toBufferForUniform(): void {
-		this.buffer = {type: 'uniform'};
+	toBufferForUniform(): WGRShaderVisibility {
+		this.buffer = { type: 'uniform' };
+		return this;
 	}
-	toBufferForStorage(): void {
-		this.buffer = {type: 'storage'};
+	toBufferForStorage(): WGRShaderVisibility {
+		this.buffer = { type: 'storage' };
+		return this;
 	}
-	toBufferForReadOnlyStorage(): void {
-		this.buffer = {type: 'read-only-storage'};
+	toBufferForReadOnlyStorage(): WGRShaderVisibility {
+		this.buffer = { type: 'read-only-storage' };
+		return this;
+	}
+	toSamplerFiltering(): WGRShaderVisibility {
+		this.sampler = { type: 'filtering' };
+		return this;
+	}
+	toTextureFloat(viewDimension?: string): WGRShaderVisibility {
+		viewDimension = viewDimension ? viewDimension : '2d';
+		this.texture = { sampleType: 'float', viewDimension };
+		return this;
 	}
 
 	clone(): WGRShaderVisibility {

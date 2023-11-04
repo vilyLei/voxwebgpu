@@ -4,7 +4,7 @@ import { GPUDepthStencilState } from "../../gpu/GPUDepthStencilState";
 import { GPUFragmentState } from "../../gpu/GPUFragmentState";
 import { GPUMultisampleObject } from "../../gpu/GPUMultisampleObject";
 import { GPUPrimitiveState } from "../../gpu/GPUPrimitiveState";
-import { GPURenderPipelineDescriptor } from "../../gpu/GPURenderPipelineDescriptor";
+import { GPUPipelineLayout, GPURenderPipelineDescriptor } from "../../gpu/GPURenderPipelineDescriptor";
 import { GPUVertexAttribute } from "../../gpu/GPUVertexAttribute";
 import { GPUVertexBufferLayout } from "../../gpu/GPUVertexBufferLayout";
 import { GPUVertexState } from "../../gpu/GPUVertexState";
@@ -52,7 +52,7 @@ class WGRPipelineCtxParams implements GPURenderPipelineDescriptor {
 	vertShaderSrc?: IWGRShadeSrcParam;
 	fragShaderSrc?: IWGRShadeSrcParam;
 	compShaderSrc?: IWGRShadeSrcParam;
-	layout = "auto";
+	layout: GPUPipelineLayout | string = "auto";
 	vertex: GPUVertexState = {
 		module: null,
 		entryPoint: "main",

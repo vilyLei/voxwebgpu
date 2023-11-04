@@ -70,6 +70,8 @@ class CameraBase implements IRenderCamera {
     constructor() {
 		this.viewUniformV = new WGRUniformValue({data: this.mViewMat.getLocalFS32(), shared: true, shdVarName: "viewMat"});
 		this.projUniformV = new WGRUniformValue({data: this.mProjMat.getLocalFS32(), shared: true, shdVarName: "projMat"});
+        // this.viewUniformV.visibility.toVisibleVert();
+        // this.projUniformV.visibility.toVisibleVert();
     }
     // 不允许外界修改camera数据
     lock(): void {

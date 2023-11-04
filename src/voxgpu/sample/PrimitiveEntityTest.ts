@@ -40,7 +40,6 @@ export class PrimitiveEntityTest {
 			new TorusEntity({radius: 110, axisType: 1}),
 			new PlaneEntity({axisType: 1})
 		];
-
 		for (let i = 0; i < entities.length; ++i) {
 
 			let entity = entities[i]

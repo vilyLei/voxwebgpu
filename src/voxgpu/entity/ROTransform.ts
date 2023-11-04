@@ -12,9 +12,6 @@ import Matrix4 from "../math/Matrix4";
 import Matrix4Pool from "../math/Matrix4Pool";
 import IROTransform from "./IROTransform";
 import { WGRUniformValue } from "../render/uniform/WGRUniformValue";
-// import IROTransUpdateWrapper from "./IROTransUpdateWrapper";
-// import IEntityUpdate from "../../vox/scene/IEntityUpdate";
-// import ITransUpdater from "../../vox/scene/ITransUpdater";
 
 export default class ROTransform implements IROTransform {
 
@@ -449,7 +446,8 @@ export default class ROTransform implements IROTransform {
 				unit.mFS32 = ida.slice(0);
 			}
 		}
-		unit.uniformv = new WGRUniformValue({data: unit.mOMat.getLocalFS32(), shdVarName:"objMat"});
+		unit.uniformv = new WGRUniformValue({data: unit.mOMat.getLocalFS32(), shdVarName:"objMat"});		
+        // unit.uniformv.visibility.toVisibleVert();
 		return unit;
 	}
 

@@ -1,4 +1,3 @@
-import { GPUBuffer } from "../../gpu/GPUBuffer";
 import { GPUSampler } from "../../gpu/GPUSampler";
 import { GPUTextureView } from "../../gpu/GPUTextureView";
 import { WGRUniform } from "./WGRUniform";
@@ -11,7 +10,7 @@ class WGRUniformWrapper {
 	uniform: WGRUniform | null = null;
 	bufDataParams?: BufDataParamType[];
 	bufDataDescs?: BindGroupDataParamType[];
-	texParams?: { texView: GPUTextureView; sampler?: GPUSampler }[];
+	texParams?: { sampler?: GPUSampler, texView: GPUTextureView }[];
 	usage = 0;
 	groupIndex = 0;
 	enabled = true;

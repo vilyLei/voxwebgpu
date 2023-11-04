@@ -22,7 +22,9 @@ import { GPUQuerySet } from "./GPUQuerySet";
 import { GPURenderBundleEncoder } from "./GPURenderBundleEncoder";
 import { GPUSamplerDescriptor } from "./GPUSamplerDescriptor";
 import { GPUSampler } from "./GPUSampler";
-
+/**
+ * See: https://gpuweb.github.io/gpuweb/#gpudevice
+ */
 interface GPUDevice {
 
 	features?: any;
