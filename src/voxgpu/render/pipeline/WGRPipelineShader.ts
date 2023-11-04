@@ -1,6 +1,6 @@
 import { GPUShaderModule } from "../../gpu/GPUShaderModule";
 import { WebGPUContext } from "../../gpu/WebGPUContext";
-import { IWGRShadeSrcParam, WGRPipelineCtxParams } from "./WGRPipelineCtxParams";
+import { WGRShadeSrcParam, WGRPipelineCtxParams } from "./WGRPipelineCtxParams";
 
 class WGRPipelineShader {
 	private mWGCtx: WebGPUContext;
@@ -16,7 +16,7 @@ class WGRPipelineShader {
 			this.mWGCtx = wgCtx;
 		}
 	}
-	private createShaderModule(type: string, param: IWGRShadeSrcParam): GPUShaderModule {
+	private createShaderModule(type: string, param: WGRShadeSrcParam): GPUShaderModule {
 		if(param) {
 			const device = this.mWGCtx.device;
 			if (param.uuid && param.uuid !== "") {
@@ -41,26 +41,7 @@ class WGRPipelineShader {
 		return null;
 	}
 	build(params: WGRPipelineCtxParams): void {
-		// const device = this.mWGCtx.device;
-		// let shdModule = params.shaderSrc
-		// 	? device.createShaderModule({
-		// 			label: "shd",
-		// 			code: params.shaderSrc.code
-		// 	  })
-		// 	: null;
-		// let vertShdModule = params.vertShaderSrc
-		// 	? device.createShaderModule({
-		// 			label: "vertShd",
-		// 			code: params.vertShaderSrc.code
-		// 	  })
-		// 	: shdModule;
-		// let fragShdModule = params.fragShaderSrc
-		// 	? device.createShaderModule({
-		// 			label: "fragShd",
-		// 			code: params.fragShaderSrc.code
-		// 	  })
-		// 	: shdModule;
-
+		
 		let shdModule = params.shaderSrc ? this.createShaderModule("Shader", params.shaderSrc) : null;
 		let vertShdModule = params.vertShaderSrc ? this.createShaderModule("VertShader", params.vertShaderSrc) : shdModule;
 		let fragShdModule = params.fragShaderSrc ? this.createShaderModule("FragShader", params.fragShaderSrc) : shdModule;

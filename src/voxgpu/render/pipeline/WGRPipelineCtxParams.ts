@@ -8,6 +8,7 @@ import { GPUPipelineLayout, GPURenderPipelineDescriptor } from "../../gpu/GPURen
 import { GPUVertexAttribute } from "../../gpu/GPUVertexAttribute";
 import { GPUVertexBufferLayout } from "../../gpu/GPUVertexBufferLayout";
 import { GPUVertexState } from "../../gpu/GPUVertexState";
+import { WGRShadeSrcParam, WGRShderSrcType } from "./WGRShaderParams";
 
 interface WGRPipelineContextDefParam {
 	blendMode?: string;
@@ -18,40 +19,28 @@ interface WGRPipelineContextDefParam {
 	faceCullMode?: string;
 	depthStencilEnabled?: boolean;
 }
-interface WGRShderSrcType {
-	vertShaderSrc?: { code: string, uuid?: string };
-	fragShaderSrc?: { code: string, uuid?: string };
-	compShaderSrc?: { code: string, uuid?: string };
-}
-interface IWGRShadeSrcParam {
-	uuid?: string;
-	vertEntryPoint?: string;
-	fragEntryPoint?: string;
-	compEntryPoint?: string;
-	code: string;
-}
 interface WGRPipelineParamType {
 	sampleCount?: number;
 	multisampleEnabled?: boolean;
 	depthStencilEnabled?: boolean;
 	fragmentEnabled?: boolean;
-	shaderSrc?: IWGRShadeSrcParam;
-	vertShaderSrc?: IWGRShadeSrcParam;
-	fragShaderSrc?: IWGRShadeSrcParam;
-	compShaderSrc?: IWGRShadeSrcParam;
+	shaderSrc?: WGRShadeSrcParam;
+	vertShaderSrc?: WGRShadeSrcParam;
+	fragShaderSrc?: WGRShadeSrcParam;
+	compShaderSrc?: WGRShadeSrcParam;
 	depthStencil?: GPUDepthStencilState;
 }
 class WGRPipelineCtxParams implements GPURenderPipelineDescriptor {
-	label?:string;
+	label?: string;
 	buildDeferred = true;
 	sampleCount = 1;
 	multisampleEnabled = false;
 	depthStencilEnabled = false;
 	fragmentEnabled = true;
-	shaderSrc?: IWGRShadeSrcParam;
-	vertShaderSrc?: IWGRShadeSrcParam;
-	fragShaderSrc?: IWGRShadeSrcParam;
-	compShaderSrc?: IWGRShadeSrcParam;
+	shaderSrc?: WGRShadeSrcParam;
+	vertShaderSrc?: WGRShadeSrcParam;
+	fragShaderSrc?: WGRShadeSrcParam;
+	compShaderSrc?: WGRShadeSrcParam;
 	layout: GPUPipelineLayout | string = "auto";
 	vertex: GPUVertexState = {
 		module: null,
@@ -298,4 +287,4 @@ class WGRPipelineCtxParams implements GPURenderPipelineDescriptor {
 		vert.buffers.push(vtxBufLayout);
 	}
 }
-export { IWGRShadeSrcParam, WGRPipelineContextDefParam, WGRShderSrcType, WGRPipelineParamType, WGRPipelineCtxParams };
+export { WGRShadeSrcParam, WGRPipelineContextDefParam, WGRShderSrcType, WGRPipelineParamType, WGRPipelineCtxParams };

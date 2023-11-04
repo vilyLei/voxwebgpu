@@ -65,8 +65,10 @@ class WGRenderPassNode implements IWGRenderPassNodeRef {
 	): WGRPipelineContext {
 		const plp = pipelineParam;
 		const pipeParams = new WGRPipelineCtxParams({
+			shaderSrc: shdSrc.shaderSrc,
 			vertShaderSrc: shdSrc.vertShaderSrc,
 			fragShaderSrc: shdSrc.fragShaderSrc,
+			compShaderSrc: shdSrc.compShaderSrc,
 			depthStencilEnabled: plp ? (plp.depthStencilEnabled === false ? false : true) : true
 		});
 		if (plp) {
