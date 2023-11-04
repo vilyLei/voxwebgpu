@@ -79,11 +79,7 @@ export class DrawInstanceTest {
 			}
 		}
 
-		let positionsV = new WGRStorageValue({
-			stride,
-			data: posData, shdVarName: 'positions'
-		}
-		);
+		let positionsV = new WGRStorageValue({ stride, data: posData, shdVarName: 'positions' });
 		let albedoV = new WGRUniformValue({ data: new Float32Array([1.0, 0.01, 0.05, 1]), shdVarName: 'albedo' });
 		let armV = new WGRUniformValue({ data: new Float32Array([1, 0.1, 0.1, 1]), shdVarName: 'arm' });
 		let uniformValues: WGRUniformValue[] = [
@@ -95,6 +91,7 @@ export class DrawInstanceTest {
 			vertShaderSrc: { code: vertWGSL, uuid: "vert-primitive-ins" },
 			fragShaderSrc: { code: fragWGSL, uuid: "frag-primitive-ins" }
 		};
+		
 		const rc = this.mRscene;
 		const geometry = this.createGeometry(model, true);
 		let entity = new PrimitiveEntity({ geometry, shaderSrc, uniformValues, instanceCount });
