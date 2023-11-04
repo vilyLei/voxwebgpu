@@ -7,6 +7,7 @@ import { WGMaterialDescripter } from "./WGMaterialDescripter";
 import { WGRUniformValue } from "../render/uniform/WGRUniformValue";
 import { WGRUniform } from "../render/uniform/WGRUniform";
 import { IWGMaterial } from "./IWGMaterial";
+import { IWGMaterialGraph } from "./IWGMaterialGraph";
 
 class WGMaterial implements IWGMaterial {
 	private mRCtx: IWGRPipelineContext;
@@ -23,13 +24,16 @@ class WGMaterial implements IWGMaterial {
 	rpass: IWGRPassRef = {index: 0};
 
 	uniformValues: WGRUniformValue[];
-	visible = true;
+
 
 	// textures: { [key: string]: WGTextureWrapper } = {};
 
 	textures: WGTextureWrapper[];
+	
+	visible = true;
+	graph?: IWGMaterialGraph;
 
-	__$ufs?: WGRUniform[];
+	// __$ufs?: WGRUniform[];
 
 	constructor(descriptor?: WGMaterialDescripter) {
 		this.setDescriptor(descriptor);
