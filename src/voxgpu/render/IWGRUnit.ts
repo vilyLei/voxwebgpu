@@ -24,7 +24,7 @@ interface IWGRUnit {
 	__$rever: number;
 
 	material: IWGMaterial;
-
+	
 	getRF(): boolean;
 	setUniformValues(values: WGRUniformValue[]): void;
 	runBegin(): void;

@@ -25,15 +25,13 @@ class WGMaterial implements IWGMaterial {
 
 	uniformValues: WGRUniformValue[];
 
+	instanceCount = 1;
 
 	// textures: { [key: string]: WGTextureWrapper } = {};
-
 	textures: WGTextureWrapper[];
 	
 	visible = true;
 	graph?: IWGMaterialGraph;
-
-	// __$ufs?: WGRUniform[];
 
 	constructor(descriptor?: WGMaterialDescripter) {
 		this.setDescriptor(descriptor);

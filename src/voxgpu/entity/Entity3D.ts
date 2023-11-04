@@ -26,6 +26,7 @@ interface Entity3DParam {
 	uniformValues?: WGRUniformValue[];
 	uniformValueMap?: { [key: string]: WGRUniformValue }
 	shadinguuid?: string;
+	instanceCount?: number;
 }
 function getUniformValueFromParam(key: string, param: Entity3DParam, defaultV?: WGRUniformValue ): WGRUniformValue {
 	if(param.uniformValueMap) {

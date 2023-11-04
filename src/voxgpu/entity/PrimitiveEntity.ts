@@ -86,8 +86,9 @@ class PrimitiveEntity extends Entity3D {
 				pipelineDefParam
 			});
 			material.addTextures(texs);
-			material.uniformValues = param.uniformValues ? param.uniformValues : [this.albedoV, this.armV];
-			if (material.uniformValues) {
+			material.uniformValues = param.uniformValues;
+			if(!material.uniformValues) {
+				material.uniformValues = [this.albedoV, this.armV];
 				this.albedoV = material.uniformValues[0];
 				this.armV = material.uniformValues[1];
 			}

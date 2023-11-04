@@ -66,9 +66,10 @@ class WGRUnit implements IWGRUnit {
 	}
 	runBegin(): void {
 		const rc = this.rp.passEncoder;
-
-		this.rf = this.enabled && this.rp.enabled && this.st.isDrawable();
-		this.rf = this.rf && this.material.visible;
+		let rf = this.rf;
+		const mt = this.material;
+		rf = this.enabled && this.rp.enabled && this.st.isDrawable();
+		rf = this.rf && mt.visible && mt.instanceCount > 0;
 
 		if (this.rf) {
 			const gt = this.geometry;
@@ -96,7 +97,8 @@ class WGRUnit implements IWGRUnit {
 					// console.log("ruint setPipeline(), this.pipeline: ", this.pipeline);
 					rc.setPipeline(st.pipeline);
 				}
-
+				gt.instanceCount = mt.instanceCount;
+				
 				const ufs = this.uniforms;
 				if (ufs) {
 					for (let i = 0, ln = ufs.length; i < ln; i++) {
@@ -106,10 +108,10 @@ class WGRUnit implements IWGRUnit {
 							// console.log("ruint setBindGroup(), uf.groupIndex: ", uf.groupIndex,",", uf.bindGroup);
 							rc.setBindGroup(uf.groupIndex, uf.bindGroup);
 						} else {
-							this.rf = false;
+							rf = false;
 						}
 					}
-					if (this.rf) {
+					if (rf) {
 						// first, apply shared uniform
 						const ufvs = this.mUfValues;
 						if (ufvs) {
@@ -122,9 +124,10 @@ class WGRUnit implements IWGRUnit {
 					}
 				}
 			} else {
-				this.rf = false;
+				rf = false;
 			}
 		}
+		this.rf = rf;
 	}
 	run(): void {
 		if (this.rf) {

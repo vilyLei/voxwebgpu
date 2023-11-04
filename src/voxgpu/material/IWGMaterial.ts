@@ -25,12 +25,12 @@ interface IWGMaterial extends WGMaterialDescripter {
 	uniformValues: WGRUniformValue[];
 
 	// textures: { [key: string]: WGTextureWrapper } = {};
-
 	textures: WGTextureWrapper[];
-	// __$ufs?: WGRUniform[];
 
 	visible: boolean;
 	graph?: IWGMaterialGraph;
+
+	instanceCount: number;
 
 	addTextureWithDatas(datas: WGImageTextureData[], shdVarNames?: string[]): void;
 
