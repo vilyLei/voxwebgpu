@@ -4,6 +4,7 @@ import { MouseInteraction } from "../ui/MouseInteraction";
 
 import { CoGeomDataType, CoModelTeamLoader } from "../../voxlib/cospace/app/common/CoModelTeamLoader";
 import { WGGeometry } from "../geometry/WGGeometry";
+import { PrimitiveEntity } from "../entity/PrimitiveEntity";
 
 export class ModelLoadTest {
 	private mRscene = new RendererScene();
@@ -48,7 +49,7 @@ export class ModelLoadTest {
 
 	private initScene(): void {
 		const rc = this.mRscene;
-
+		let entity = new PrimitiveEntity();
 	}
 	run(): void {
 		this.mRscene.run();

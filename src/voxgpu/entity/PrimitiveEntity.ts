@@ -11,8 +11,8 @@ import GeometryBase from "../geometry/primitive/GeometryBase";
 import { WGGeometry } from "../geometry/WGGeometry";
 
 class PrimitiveEntity extends Entity3D {
-	protected albedoV: WGRUniformValue; // = new WGRUniformValue({ data: new Float32Array([0.5, 0.5, 0.5, 1]) });
-	protected armV: WGRUniformValue; // = new WGRUniformValue({ data: new Float32Array([1, 0.1, 0.1, 1]) });
+	protected albedoV: WGRUniformValue;
+	protected armV: WGRUniformValue;
 	constructor(param?: Entity3DParam) {
 		super(param);
 		this.createGeometry(param);
@@ -40,12 +40,16 @@ class PrimitiveEntity extends Entity3D {
 		return null;
 	}
 	private createGeometry(param: Entity3DParam): void {
-		let geom = this.getGeometryData(param);
-		this.geometry = new WGGeometry()
-			.addAttribute({ position: geom.getVS() })
-			.addAttribute({ uv: geom.getUVS() })
-			.addAttribute({ normal: geom.getNVS() })
-			.setIndices(geom.getIVS());
+		if (param.geometry) {
+			this.geometry = param.geometry;
+		} else {
+			let geom = this.getGeometryData(param);
+			this.geometry = new WGGeometry()
+				.addAttribute({ position: geom.getVS() })
+				.addAttribute({ uv: geom.getUVS() })
+				.addAttribute({ normal: geom.getNVS() })
+				.setIndices(geom.getIVS());
+		}
 	}
 	protected createMaterial(param: Entity3DParam): void {
 		if (!param) param = {};
@@ -59,12 +63,12 @@ class PrimitiveEntity extends Entity3D {
 		let shdSrc = param.shaderSrc
 			? param.shaderSrc
 			: {
-					vertShaderSrc: { code: vertWGSL, uuid: "primitiveVertShdCode" },
-					fragShaderSrc: {
-						code: texTotal > 0 ? texFragWGSL : fragWGSL,
-						uuid: texTotal > 0 ? "primitiveTexFragShdCode" : "primitiveFragShdCode"
-					}
-			  };
+				vertShaderSrc: { code: vertWGSL, uuid: "primitiveVertShdCode" },
+				fragShaderSrc: {
+					code: texTotal > 0 ? texFragWGSL : fragWGSL,
+					uuid: texTotal > 0 ? "primitiveTexFragShdCode" : "primitiveFragShdCode"
+				}
+			};
 		let depthWriteEnabled = param.depthWriteEnabled === false ? false : true;
 		let pipelineDefParam = {
 			depthWriteEnabled: depthWriteEnabled,
@@ -78,9 +82,9 @@ class PrimitiveEntity extends Entity3D {
 		});
 		material.addTextures(texs);
 		material.uniformValues = param.uniformValues ? param.uniformValues : [this.albedoV, this.armV];
-		if(material.uniformValues) {
-			this.albedoV = material.uniformValues[ 0 ];
-			this.armV = material.uniformValues[ 1 ];
+		if (material.uniformValues) {
+			this.albedoV = material.uniformValues[0];
+			this.armV = material.uniformValues[1];
 		}
 		this.materials = [material];
 	}
