@@ -28,8 +28,10 @@
 // import { FixScreenPlaneTest as Demo } from "./voxgpu/sample/FixScreenPlaneTest";
 // import { PrimitiveEntityTest as Demo } from "./voxgpu/sample/PrimitiveEntityTest";
 
-// import { ScreenPostEffect as Demo } from "./voxgpu/sample/ScreenPostEffect";
-import { ModelLoadTest as Demo } from "./voxgpu/sample/ModelLoadTest";
+import { ScreenPostEffect as Demo } from "./voxgpu/sample/ScreenPostEffect";
+// import { ModelLoadTest as Demo } from "./voxgpu/sample/ModelLoadTest";
+
+// import { DrawInstanceTest as Demo } from "./voxgpu/sample/DrawInstanceTest";
 
 
 let demoIns = new Demo();

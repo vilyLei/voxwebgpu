@@ -31,7 +31,7 @@ export class ScreenPostEffect {
 	private mouseDown = (evt: MouseEvent): void => {};
 
 	private mColorV = new WGRUniformValue({ data: new Float32Array([1.0, 0.1, 0.2, 1.0]) });
-	private mParamsV = new WGRStorageValue({ data: new Float32Array(4 * 3), arrayStride: 16 });
+	private mParamsV = new WGRStorageValue({ data: new Float32Array(4 * 3), stride: 4 });
 
 	private initScene(): void {
 		const rc = this.mRscene;

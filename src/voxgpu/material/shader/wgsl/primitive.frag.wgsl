@@ -1,5 +1,5 @@
 @group(0) @binding(3) var<uniform> albedo: vec4f;
-@group(0) @binding(4) var<uniform> armv: vec4f;
+@group(0) @binding(4) var<uniform> arm: vec4f;
 
 const PI = 3.141592653589793;
 const PI2 = 6.283185307179586;
@@ -188,9 +188,9 @@ fn calcPBRColor3(Normal: vec3<f32>, WorldPos: vec3<f32>, camPos: vec3<f32>) -> v
 
 	var color = vec3<f32>(0.0);
 
-    var ao = armv.x;
-    var roughness = armv.y;
-    var metallic = armv.z;
+    var ao = arm.x;
+    var roughness = arm.y;
+    var metallic = arm.z;
 
 	var N = normalize(Normal);
     var V = normalize(camPos.xyz - WorldPos);

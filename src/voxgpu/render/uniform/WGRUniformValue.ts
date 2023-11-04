@@ -10,6 +10,7 @@ interface WGRUniformValueParam {
 	shared?: boolean;
 	shdVarName?: string;
 	arrayStride?: number;
+	stride?: number;
 }
 class WGRUniformValue {
 	private static sUid = 0;
@@ -40,6 +41,10 @@ class WGRUniformValue {
 		if (param.shared !== undefined) this.shared = param.shared;
 		if (param.shdVarName !== undefined) this.shdVarName = param.shdVarName;
 		this.arrayStride = param.arrayStride !== undefined ? param.arrayStride : 1;
+		const bpe = (d as Float32Array).BYTES_PER_ELEMENT;
+		if(this.arrayStride < 2 && param.stride !== undefined && bpe !== undefined) {
+			this.arrayStride = bpe * param.stride;
+		}
 		if (d && this.arrayStride < 2) {
 			if (d.byteLength <= 64) this.arrayStride = d.byteLength;
 		}

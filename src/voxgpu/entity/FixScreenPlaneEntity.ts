@@ -58,7 +58,7 @@ class FixScreenPlaneEntity extends FixScreenEntity {
 			const texs = param.textures;
 			const texTotal = texs ? texs.length : 0;
 			if (!param.uniformValues) {
-				this.colorV = getUniformValueFromParam("color", param, new WGRUniformValue({ data: new Float32Array([0.5, 0.5, 0.5, 1]) }));
+				this.colorV = getUniformValueFromParam('color', param, new WGRUniformValue({ data: new Float32Array([0.5, 0.5, 0.5, 1]), shdVarName: 'color' }));
 			}
 			let frag_uuid = texTotal > 0 ? "fragTexShdCode" : "fragShdCode";
 			const shdSrc = param.shaderSrc

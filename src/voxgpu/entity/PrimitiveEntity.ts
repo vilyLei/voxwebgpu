@@ -62,8 +62,8 @@ class PrimitiveEntity extends Entity3D {
 			const texs = param.textures;
 			const texTotal = texs ? texs.length : 0;
 			if (!param.uniformValues) {
-				this.albedoV = getUniformValueFromParam("albedo", param, new WGRUniformValue({ data: new Float32Array([0.5, 0.5, 0.5, 1]) }));
-				this.armV = getUniformValueFromParam("arm", param, new WGRUniformValue({ data: new Float32Array([1, 0.1, 0.1, 1]) }));
+				this.albedoV = getUniformValueFromParam("albedo", param, new WGRUniformValue({ data: new Float32Array([0.5, 0.5, 0.5, 1]), shdVarName: 'albedo' }));
+				this.armV = getUniformValueFromParam("arm", param, new WGRUniformValue({ data: new Float32Array([1, 0.1, 0.1, 1]), shdVarName: 'arm' }));
 			}
 			let shdSrc = param.shaderSrc
 				? param.shaderSrc

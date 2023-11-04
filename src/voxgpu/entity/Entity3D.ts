@@ -35,6 +35,8 @@ function getUniformValueFromParam(key: string, param: Entity3DParam, defaultV?: 
 			return v;
 		}
 	}
+	if(param.uniformValues) {
+	}
 	return defaultV;
 }
 class Entity3D implements IRenderableEntity {
