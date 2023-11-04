@@ -28,7 +28,8 @@
 // import { PrimitiveEntityTest as Demo } from "./voxgpu/sample/PrimitiveEntityTest";
 // import { SimplePBRTest as Demo } from "./voxgpu/sample/SimplePBRTest";
 
-import { ScreenPostEffect as Demo } from "./voxgpu/sample/ScreenPostEffect";
+// import { ScreenPostEffect as Demo } from "./voxgpu/sample/ScreenPostEffect";
+import { ModelLoadTest as Demo } from "./voxgpu/sample/ModelLoadTest";
 
 
 let demoIns = new Demo();
