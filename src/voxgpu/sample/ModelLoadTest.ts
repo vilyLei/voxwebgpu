@@ -5,6 +5,7 @@ import { MouseInteraction } from "../ui/MouseInteraction";
 import { CoGeomDataType, CoModelTeamLoader } from "../../voxlib/cospace/app/common/CoModelTeamLoader";
 import { WGGeometry } from "../geometry/WGGeometry";
 import { PrimitiveEntity } from "../entity/PrimitiveEntity";
+import Color4 from "../material/Color4";
 
 export class ModelLoadTest {
 	private mRscene = new RendererScene();
@@ -24,13 +25,13 @@ export class ModelLoadTest {
 		new MouseInteraction().initialize(rc, 0, false).setAutoRunning(true);
 	}
 
-	private createGeom(rgd: CoGeomDataType, normalEnabled = false): WGGeometry {
+	private createGeometry(gd: CoGeomDataType, normalEnabled = false): WGGeometry {
 		const geometry = new WGGeometry()
-			.addAttribute({ position: rgd.vertices })
-			.addAttribute({ uv: rgd.uvsList[0] })
-			.setIndices(rgd.indices);
+			.addAttribute({ position: gd.vertices })
+			.addAttribute({ uv: gd.uvsList[0] })
+			.setIndices(gd.indices);
 		if (normalEnabled) {
-			geometry.addAttribute({ normal: rgd.normals });
+			geometry.addAttribute({ normal: gd.normals });
 		}
 		return geometry;
 	}
@@ -41,15 +42,20 @@ export class ModelLoadTest {
 
 		loader.load([url0], (models: CoGeomDataType[], transforms: Float32Array[]): void => {
 			console.log("loaded models: ", models);
-
-			this.initScene();
+			for (let i = 0; i < models.length; ++i) {
+				this.createEntity(models[i]);
+			}
 		});
 	}
 	private mouseDown = (evt: MouseEvent): void => { };
 
-	private initScene(): void {
+	private createEntity(model: CoGeomDataType): void {
 		const rc = this.mRscene;
-		let entity = new PrimitiveEntity();
+		const geometry = this.createGeometry(model, true);
+		let entity = new PrimitiveEntity({ geometry })
+		.setAlbedo(new Color4().randomRGB(1.5, 0.1))
+		.setARM(1.1, Math.random() * 0.95 + 0.05, Math.random() * 0.9 + 0.1);
+		rc.addEntity( entity );
 	}
 	run(): void {
 		this.mRscene.run();

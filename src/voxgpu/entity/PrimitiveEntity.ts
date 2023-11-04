@@ -40,53 +40,59 @@ class PrimitiveEntity extends Entity3D {
 		return null;
 	}
 	private createGeometry(param: Entity3DParam): void {
-		if (param.geometry) {
+		
+		if (param && param.geometry) {
 			this.geometry = param.geometry;
 		} else {
-			let geom = this.getGeometryData(param);
-			this.geometry = new WGGeometry()
-				.addAttribute({ position: geom.getVS() })
-				.addAttribute({ uv: geom.getUVS() })
-				.addAttribute({ normal: geom.getNVS() })
-				.setIndices(geom.getIVS());
+			const geom = this.getGeometryData(param);
+			if(geom) {
+				this.geometry = new WGGeometry()
+					.addAttribute({ position: geom.getVS() })
+					.addAttribute({ uv: geom.getUVS() })
+					.addAttribute({ normal: geom.getNVS() })
+					.setIndices(geom.getIVS());
+			}
 		}
 	}
 	protected createMaterial(param: Entity3DParam): void {
 		if (!param) param = {};
-
-		const texs = param.textures;
-		const texTotal = texs ? texs.length : 0;
-		if (!param.uniformValues) {
-			this.albedoV = getUniformValueFromParam("albedo", param, new WGRUniformValue({ data: new Float32Array([0.5, 0.5, 0.5, 1]) }));
-			this.armV = getUniformValueFromParam("arm", param, new WGRUniformValue({ data: new Float32Array([1, 0.1, 0.1, 1]) }));
-		}
-		let shdSrc = param.shaderSrc
-			? param.shaderSrc
-			: {
-				vertShaderSrc: { code: vertWGSL, uuid: "primitiveVertShdCode" },
-				fragShaderSrc: {
-					code: texTotal > 0 ? texFragWGSL : fragWGSL,
-					uuid: texTotal > 0 ? "primitiveTexFragShdCode" : "primitiveFragShdCode"
-				}
+		if (param.materials) {
+			this.materials = param.materials;
+		} else {
+			const texs = param.textures;
+			const texTotal = texs ? texs.length : 0;
+			if (!param.uniformValues) {
+				this.albedoV = getUniformValueFromParam("albedo", param, new WGRUniformValue({ data: new Float32Array([0.5, 0.5, 0.5, 1]) }));
+				this.armV = getUniformValueFromParam("arm", param, new WGRUniformValue({ data: new Float32Array([1, 0.1, 0.1, 1]) }));
+			}
+			let shdSrc = param.shaderSrc
+				? param.shaderSrc
+				: {
+					vertShaderSrc: { code: vertWGSL, uuid: "primitiveVertShdCode" },
+					fragShaderSrc: {
+						code: texTotal > 0 ? texFragWGSL : fragWGSL,
+						uuid: texTotal > 0 ? "primitiveTexFragShdCode" : "primitiveFragShdCode"
+					}
+				};
+			let depthWriteEnabled = param.depthWriteEnabled === false ? false : true;
+			let pipelineDefParam = {
+				depthWriteEnabled: depthWriteEnabled,
+				faceCullMode: param.faceCullMode ? param.faceCullMode : "back",
+				blendModes: param.blendModes ? param.blendModes : ["solid"]
 			};
-		let depthWriteEnabled = param.depthWriteEnabled === false ? false : true;
-		let pipelineDefParam = {
-			depthWriteEnabled: depthWriteEnabled,
-			faceCullMode: param.faceCullMode ? param.faceCullMode : "back",
-			blendModes: param.blendModes ? param.blendModes : ["solid"]
-		};
-		const material = new WGMaterial({
-			shadinguuid: param.shadinguuid !== undefined ? param.shadinguuid : "PrimitiveEntity-material-tex" + texTotal,
-			shaderCodeSrc: shdSrc,
-			pipelineDefParam
-		});
-		material.addTextures(texs);
-		material.uniformValues = param.uniformValues ? param.uniformValues : [this.albedoV, this.armV];
-		if (material.uniformValues) {
-			this.albedoV = material.uniformValues[0];
-			this.armV = material.uniformValues[1];
+			const material = new WGMaterial({
+				shadinguuid: param.shadinguuid !== undefined ? param.shadinguuid : "PrimitiveEntity-material-tex" + texTotal,
+				shaderCodeSrc: shdSrc,
+				pipelineDefParam
+			});
+			material.addTextures(texs);
+			material.uniformValues = param.uniformValues ? param.uniformValues : [this.albedoV, this.armV];
+			if (material.uniformValues) {
+				this.albedoV = material.uniformValues[0];
+				this.armV = material.uniformValues[1];
+			}
+			this.materials = [material];
 		}
-		this.materials = [material];
 	}
 	destroy(): void {
 		this.albedoV = null;

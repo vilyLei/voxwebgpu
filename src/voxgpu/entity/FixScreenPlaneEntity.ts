@@ -33,50 +33,59 @@ class FixScreenPlaneEntity extends FixScreenEntity {
 		return this;
 	}
 	private createGeometry(param: FixScreenPlaneEntityParam): void {
-		let geom = new RectPlaneGeometry();
-		geom.axisType = 0;
-		geom.initialize(
-			param.x === undefined ? -1 : param.x,
-			param.y === undefined ? -1 : param.y,
-			param.width === undefined ? 2 : param.width,
-			param.height === undefined ? 2 : param.height
-		);
-		this.geometry = new WGGeometry()
-			.addAttribute({ position: geom.getVS() })
-			.addAttribute({ uv: geom.getUVS() })
-			.setIndices(geom.getIVS());
+		if (param.geometry) {
+			this.geometry = param.geometry;
+		} else {
+
+			let geom = new RectPlaneGeometry();
+			geom.axisType = 0;
+			geom.initialize(
+				param.x === undefined ? -1 : param.x,
+				param.y === undefined ? -1 : param.y,
+				param.width === undefined ? 2 : param.width,
+				param.height === undefined ? 2 : param.height
+			);
+			this.geometry = new WGGeometry()
+				.addAttribute({ position: geom.getVS() })
+				.addAttribute({ uv: geom.getUVS() })
+				.setIndices(geom.getIVS());
+		}
 	}
 	private createMaterial(param: Entity3DParam): void {
-		const texs = param.textures;
-		const texTotal = texs ? texs.length : 0;
-		if (!param.uniformValues) {
-			this.colorV = getUniformValueFromParam("color", param, new WGRUniformValue({ data: new Float32Array([0.5, 0.5, 0.5, 1]) }));
-		}
-		let frag_uuid = texTotal > 0 ? "fragTexShdCode" : "fragShdCode";
-		const shdSrc = param.shaderSrc
-			? param.shaderSrc
-			: {
+		if (param.materials) {
+			this.materials = param.materials;
+		} else {
+			const texs = param.textures;
+			const texTotal = texs ? texs.length : 0;
+			if (!param.uniformValues) {
+				this.colorV = getUniformValueFromParam("color", param, new WGRUniformValue({ data: new Float32Array([0.5, 0.5, 0.5, 1]) }));
+			}
+			let frag_uuid = texTotal > 0 ? "fragTexShdCode" : "fragShdCode";
+			const shdSrc = param.shaderSrc
+				? param.shaderSrc
+				: {
 					vertShaderSrc: { code: vertWGSL, uuid: "vertShdCode" },
 					fragShaderSrc: { code: texTotal > 0 ? texFragWGSL : fragWGSL, uuid: frag_uuid }
-			  };
-		let depthWriteEnabled = param.depthWriteEnabled === undefined ? false : param.depthWriteEnabled;
-		let pipelineDefParam = {
-			depthWriteEnabled: depthWriteEnabled,
-			faceCullMode: param.faceCullMode ? param.faceCullMode : "back",
-			blendModes: param.blendModes ? param.blendModes : ["solid"]
-		};
+				};
+			let depthWriteEnabled = param.depthWriteEnabled === undefined ? false : param.depthWriteEnabled;
+			let pipelineDefParam = {
+				depthWriteEnabled: depthWriteEnabled,
+				faceCullMode: param.faceCullMode ? param.faceCullMode : "back",
+				blendModes: param.blendModes ? param.blendModes : ["solid"]
+			};
 
-		const material = new WGMaterial({
-			shadinguuid: param.shadinguuid !== undefined ? param.shadinguuid : "FixScreenPlaneEntity-material-tex" + texTotal,
-			shaderCodeSrc: shdSrc,
-			pipelineDefParam
-		});
-		material.addTextures(texs);
-		material.uniformValues = param.uniformValues ? param.uniformValues : [this.colorV];
-		if(material.uniformValues) {
-			this.colorV = material.uniformValues[ 0 ];
+			const material = new WGMaterial({
+				shadinguuid: param.shadinguuid !== undefined ? param.shadinguuid : "FixScreenPlaneEntity-material-tex" + texTotal,
+				shaderCodeSrc: shdSrc,
+				pipelineDefParam
+			});
+			material.addTextures(texs);
+			material.uniformValues = param.uniformValues ? param.uniformValues : [this.colorV];
+			if (material.uniformValues) {
+				this.colorV = material.uniformValues[0];
+			}
+			this.materials = [material];
 		}
-		this.materials = [material];
 	}
 	destroy(): void {
 		super.destroy();
