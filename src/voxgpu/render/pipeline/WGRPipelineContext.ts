@@ -187,7 +187,7 @@ class WGRPipelineContext implements IWGRPipelineContext {
 	): GPUBindGroupDescriptor {
 		const device = this.mWGCtx.device;
 
-		if (!this.mBGLayouts[groupIndex]) {
+		if (!layout && !this.mBGLayouts[groupIndex]) {
 			this.mBGLayouts[groupIndex] = this.pipeline.getBindGroupLayout(groupIndex);
 		}
 		let desc = {
