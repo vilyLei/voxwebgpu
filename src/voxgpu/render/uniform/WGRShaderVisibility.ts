@@ -7,8 +7,7 @@ import {
 	GPUBindGroupLayoutEntity
 } from "../../gpu/GPUBindGroupLayoutDescriptor";
 
-import BitConst from "../../utils/BitConst";
-
+import { copyFromObjectValueWithKey } from "../../utils/CommonUtils";
 class WGRShaderVisibility implements GPUBindGroupLayoutEntity {
 
 	label?: string;
@@ -31,5 +30,48 @@ class WGRShaderVisibility implements GPUBindGroupLayoutEntity {
 	storageTexture?: GPUStorageTextureBindingLayout;
 	externalTexture?: GPUExternalTextureBindingLayout;
 
+	toVisibleAll(): void {
+		this.visibility = GPUShaderStage.FRAGMENT | GPUShaderStage.VERTEX | GPUShaderStage.COMPUTE;
+	}
+	toVisibleVertAndFrag(): void {
+		this.visibility = GPUShaderStage.FRAGMENT | GPUShaderStage.VERTEX;
+	}
+	toVisibleVert(): void {
+		this.visibility = GPUShaderStage.VERTEX;
+	}
+	toVisibleFrag(): void {
+		this.visibility = GPUShaderStage.FRAGMENT;
+	}
+	toVisibleComp(): void {
+		this.visibility = GPUShaderStage.COMPUTE;
+	}
+	toBufferForUniform(): void {
+		this.buffer = {type: 'uniform'};
+	}
+	toBufferForStorage(): void {
+		this.buffer = {type: 'storage'};
+	}
+	toBufferForReadOnlyStorage(): void {
+		this.buffer = {type: 'read-only-storage'};
+	}
+
+	clone(): WGRShaderVisibility {
+		const v = new WGRShaderVisibility();
+		v.label = this.label;
+		v.visibility = this.visibility;
+		if (this.buffer) {
+			v.buffer = {};
+			copyFromObjectValueWithKey(this.buffer, v.buffer)
+		}
+		if (this.sampler) {
+			v.sampler = {};
+			copyFromObjectValueWithKey(this.sampler, v.sampler)
+		}
+		if (this.texture) {
+			v.texture = {};
+			copyFromObjectValueWithKey(this.texture, v.texture)
+		}
+		return v;
+	}
 }
 export { WGRShaderVisibility };

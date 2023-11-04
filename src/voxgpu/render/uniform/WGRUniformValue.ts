@@ -1,4 +1,5 @@
 import BitConst from "../../utils/BitConst";
+import { WGRShaderVisibility } from "./WGRShaderVisibility";
 interface WGRUniformValueParam {
 	data: NumberArrayDataType;
 	bufferIndex?: number;
@@ -35,6 +36,9 @@ class WGRUniformValue {
 	shared = false;
 
 	shdVarName?: string;
+
+	readonly visibility = new WGRShaderVisibility();
+	
 	constructor(param: WGRUniformValueParam) {
 		const d = param.data;
 		this.data = d;

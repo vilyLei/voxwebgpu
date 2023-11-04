@@ -7,6 +7,7 @@ import { GPUTextureView } from "../../gpu/GPUTextureView";
 import { GPUBindGroupDescriptor } from "../../gpu/GPUBindGroupDescriptor";
 import { IWGRUniformContext } from "../uniform/IWGRUniformContext";
 import { IWGRendererPass } from "./IWGRendererPass";
+import { GPUBindGroupLayout } from "../../gpu/GPUBindGroupLayout";
 
 type BufDataParamType = { size: number, usage: number, defaultData?: NumberArrayDataType, shared: boolean, vuid?: number, usageType?: number, arrayStride?: number };
 type VtxDescParam = { vertex: { arrayStride: number, params: { offset: number, format: string }[] } };
@@ -27,7 +28,8 @@ interface IWGRPipelineContext {
 		groupIndex: number,
 		dataParams?: { index: number; buffer: GPUBuffer; bufferSize: number }[],
 		texParams?: { texView?: GPUTextureView; sampler?: GPUSampler }[],
-		bindIndex?: number
+		bindIndex?: number,
+		layout?: GPUBindGroupLayout
 	): GPUBindGroupDescriptor;
 
 	uniformBindGroupDescUpdate(
@@ -41,7 +43,8 @@ interface IWGRPipelineContext {
 		groupIndex: number,
 		dataParams?: BindGroupDataParamType[],
 		texParams?: { texView?: GPUTextureView, sampler?: GPUSampler }[],
-		bindIndex?: number
+		bindIndex?: number,
+		layout?: GPUBindGroupLayout
 	): GPUBindGroup;
 
 	/**

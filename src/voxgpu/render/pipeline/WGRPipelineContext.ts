@@ -182,7 +182,8 @@ class WGRPipelineContext implements IWGRPipelineContext {
 		groupIndex: number,
 		dataParams?: BindGroupDataParamType[],
 		texParams?: { texView?: GPUTextureView; sampler?: GPUSampler }[],
-		bindIndex = 0
+		bindIndex = 0,
+		layout?: GPUBindGroupLayout
 	): GPUBindGroupDescriptor {
 		const device = this.mWGCtx.device;
 
@@ -190,7 +191,7 @@ class WGRPipelineContext implements IWGRPipelineContext {
 			this.mBGLayouts[groupIndex] = this.pipeline.getBindGroupLayout(groupIndex);
 		}
 		let desc = {
-			layout: this.mBGLayouts[groupIndex],
+			layout: layout ? layout : this.mBGLayouts[groupIndex],
 			entries: []
 		} as GPUBindGroupDescriptor;
 
@@ -260,11 +261,12 @@ class WGRPipelineContext implements IWGRPipelineContext {
 		groupIndex: number,
 		dataParams?: BindGroupDataParamType[],
 		texParams?: { texView?: GPUTextureView; sampler?: GPUSampler }[],
-		bindIndex = 0
+		bindIndex = 0,
+		layout?: GPUBindGroupLayout
 	): GPUBindGroup {
 
 		const device = this.mWGCtx.device;
-		const desc = this.createUniformBindGroupDesc(groupIndex, dataParams, texParams, bindIndex);
+		const desc = this.createUniformBindGroupDesc(groupIndex, dataParams, texParams, bindIndex, layout);
 		return device.createBindGroup(desc);
 	}
 	createRenderPipeline(pipelineParams: WGRPipelineCtxParams, descParams: VtxDescParam[]): GPURenderPipeline {
