@@ -113,6 +113,38 @@ declare type NumberArrayDataType = DataView | Float32Array | Uint32Array | Uint1
 declare type WebImageType = HTMLImageElement | HTMLCanvasElement | HTMLVideoElement | ImageBitmap;
 declare type ColorRGBAType = {r?: number, g?: number, b?: number, a?: number};
 declare type ColorDataType = ColorRGBAType | number[];
+
+declare enum GPUBufferBindingType {
+    "uniform",
+    "storage",
+    "read-only-storage"
+}
+declare enum GPUSamplerBindingType {
+    "filtering",
+    "non-filtering",
+    "comparison"
+}
+declare enum GPUTextureSampleType {
+    "float",
+    "unfilterable-float",
+    "depth",
+    "sint",
+    "uint"
+}
+declare enum GPUTextureViewDimension {
+    "1d",
+    "2d",
+    "2d-array",
+    "cube",
+    "cube-array",
+    "3d"
+}
+declare enum GPUStorageTextureAccess {
+    "write-only",
+    "read-only",
+    "read-write"
+}
+
 declare module "*.wgsl" {
 	const shader: string;
 	export default shader;

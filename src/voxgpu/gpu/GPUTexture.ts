@@ -13,6 +13,7 @@ interface GPUTexture {
 	dimension: string;
 	/**
 	 * In GPUTextureFormat: https://gpuweb.github.io/gpuweb/#enumdef-gputextureformat
+	 * Some value examples: "bgra8unorm", "rgba16sint","rgba16float","stencil8","depth16unorm","depth24plus","depth24plus-stencil8","depth32float",...
 	 */
 	format: string;
 

@@ -96,7 +96,7 @@ class WGRPipelineContext implements IWGRPipelineContext {
 			let total = params.sizes.length;
 			let size = initSize;
 			let bufSize = size;
-			let segs: { index: number; size: number }[] = new Array(total);
+			let segs: { index: number, size: number }[] = new Array(total);
 			if (force256) {
 				for (let i = 0; i < total; ++i) {
 					size = size <= 256 ? size : size % 256;

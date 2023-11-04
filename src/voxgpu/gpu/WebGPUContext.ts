@@ -22,7 +22,7 @@ class WebGPUContext implements WebGPUContextImpl {
 	readonly device: GPUDevice;
 	readonly queue: GPUQueue;
 	readonly canvasFormat: string;
-	readonly presentationFormat = "bgra8unorm";
+	readonly presentationFormat = 'bgra8unorm';
 	readonly gpu: GPU;
 	readonly gpuAdapter: GPUAdapter;
 	readonly enabled = false;
