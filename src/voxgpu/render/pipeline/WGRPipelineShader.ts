@@ -72,9 +72,13 @@ class WGRPipelineShader {
 		}else {
 			params.fragment = null;
 		}
-		const comp = params.compShaderSrc;
-		if(comp && compShdModule) {
+		shdSrc = params.compShaderSrc;
+		if(shdSrc && compShdModule) {
+			shdSrc = params.compShaderSrc;
 			params.compute = createComputeState( compShdModule );
+			if (shdSrc.compEntryPoint !== undefined) {
+				params.compute.entryPoint = shdSrc.compEntryPoint;
+			}
 		}
 	}
 }

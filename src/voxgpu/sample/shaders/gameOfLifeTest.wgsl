@@ -7,7 +7,7 @@ struct VSOut {
 };
 
 @vertex
-fn main(@location(0) position: vec3f,
+fn vertMain(@location(0) position: vec3f,
         @location(1) uv: vec2f) -> VSOut {
     var vsOut: VSOut;
     vsOut.Position = vec4(position, 1.0);
@@ -21,7 +21,7 @@ fn calcColor3(vtxUV: vec2f) -> vec3f{
 }
 
 @fragment
-fn main(
+fn fragMain(
 	@location(0) uv: vec2f
 	) -> @location(0) vec4f {
 	let c3 = calcColor3(uv);

@@ -42,7 +42,9 @@ export class GameOfLifeTest {
 		let shaderSrc = {
 			shaderSrc: {
 				code: shaderWGSL,
-				uuid: "shader-gameOfLife"
+				uuid: 'shader-gameOfLife',
+				vertEntryPoint: 'vertMain',
+				fragEntryPoint: 'fragMain'
 			}
 		};
 		let uniformValues: WGRUniformValue[] = [this.mColorV, this.mParamsV];
