@@ -29,7 +29,6 @@ class WGRUnit implements IWGRUnit {
 
 	etuuid?: string;
 
-	pipeline: GPURenderPipeline;
 	pipelinectx: IWGRPipelineContext;
 	geometry: WGRPrimitive;
 
@@ -50,7 +49,6 @@ class WGRUnit implements IWGRUnit {
 
 		r.mUfValues			= this.mUfValues;
 		r.uniforms			= this.uniforms;
-		r.pipeline			= this.pipeline;
 		r.pipelinectx		= this.pipelinectx;
 		r.geometry			= this.geometry;
 		r.passes			= this.passes;
@@ -73,10 +71,8 @@ class WGRUnit implements IWGRUnit {
 
 		if (this.rf) {
 			const gt = this.geometry;
-			if (this.pipelinectx) {
-				this.pipeline = this.pipelinectx.pipeline;
-			}
-			if (gt && this.pipeline) {
+			const pipeline = this.pipelinectx.pipeline;
+			if (gt && pipeline) {
 				// 这里面的诸多判断逻辑不应该出现，加入渲染器内部渲染流程之前必须处理好， 后续优化
 
 				const st = __$urst;
@@ -92,10 +88,10 @@ class WGRUnit implements IWGRUnit {
 					st.gt = gt;
 					gt.run(rc);
 				}
-				if (st.pipeline != this.pipeline) {
-					st.pipeline = this.pipeline;
+				if (st.pipeline != pipeline) {
+					st.pipeline = pipeline;
 					// console.log("ruint setPipeline(), this.pipeline: ", this.pipeline);
-					rc.setPipeline(st.pipeline);
+					rc.setPipeline(pipeline);
 				}
 				gt.instanceCount = mt.instanceCount;
 				// console.log("mt.instanceCount: ", mt.instanceCount);
@@ -156,7 +152,6 @@ class WGRUnit implements IWGRUnit {
 			ufctx.removeUniforms(this.uniforms);
 
 			this.mUfValues = null;
-			this.pipeline = null;
 			this.pipelinectx = null;
 			this.material = null;
 			this.rp = null;

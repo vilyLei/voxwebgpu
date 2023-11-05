@@ -1,6 +1,4 @@
-import { WGRUniform } from "./uniform/WGRUniform";
-import { GPURenderPassEncoder } from "../gpu/GPURenderPassEncoder";
-import { GPURenderPipeline } from "../gpu/GPURenderPipeline";
+import { WGRUniform } from "./uniform/WGRUniform";;
 import { WGRPrimitive } from "./WGRPrimitive";
 import { WGRUniformValue } from "./uniform/WGRUniformValue";
 import { IWGRPipelineContext } from "./pipeline/IWGRPipelineContext";
@@ -14,7 +12,6 @@ import { IWGMaterial } from "../material/IWGMaterial";
  */
 class WGRUnitEmpty implements IWGRUnit {
 	uniforms?: WGRUniform[];
-	pipeline: GPURenderPipeline;
 	pipelinectx: IWGRPipelineContext;
 	geometry: WGRPrimitive;
 

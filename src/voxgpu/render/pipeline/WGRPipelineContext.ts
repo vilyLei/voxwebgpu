@@ -15,6 +15,7 @@ import { WGRUniformParam, WGRUniformContext } from "../uniform/WGRUniformContext
 import { GPUQueue } from "../../gpu/GPUQueue";
 import { IWGRendererPass } from "./IWGRendererPass";
 import { GPUBindGroupLayoutDescriptor } from "../../gpu/GPUBindGroupLayoutDescriptor";
+import { GPUComputePipeline } from "../../gpu/GPUComputePipeline";
 /**
  * one type shading shader, one WGRPipelineContext instance
  */
@@ -30,6 +31,8 @@ class WGRPipelineContext implements IWGRPipelineContext {
 
 	rpass: IWGRendererPass;
 	pipeline: GPURenderPipeline = new GPURenderPipelineEmpty();
+	comppipeline: GPUComputePipeline;
+
 	queue: GPUQueue;
 
 	shadinguuid = "";
@@ -49,24 +52,34 @@ class WGRPipelineContext implements IWGRPipelineContext {
 			const p = this.mPipelineParams;
 			if (p) {
 				this.mShader.build(p);
-				p.label = this.shadinguuid + "-pl-" + this.mUid;
 				console.log("WGRPipelineContext::init(), param:\n", p);
-				let bindGLayout = this.uniformCtx.getBindGroupLayout(p.multisampleEnabled);
-				let pipeGLayout = ctx.device.createPipelineLayout({
-					label: p.label,
-					bindGroupLayouts:[bindGLayout]
-				});
-				console.log("CCCCCCCCCC 01 bindGLayout: ", bindGLayout);
-				console.log("CCCCCCCCCC 02 pipeGLayout: ", pipeGLayout);
-				if(!this.uniformCtx.isLayoutAuto()) {
+
+				let bindGLayout: GPUBindGroupLayout;
+				if (!this.uniformCtx.isLayoutAuto()) {
+					bindGLayout = this.uniformCtx.getBindGroupLayout(p.multisampleEnabled);
+					let pipeGLayout = ctx.device.createPipelineLayout({
+						label: p.label,
+						bindGroupLayouts: [bindGLayout]
+					});
+					console.log("CCCCCCCCCC 01 bindGLayout: ", bindGLayout);
+					console.log("CCCCCCCCCC 02 pipeGLayout: ", pipeGLayout);
 					p.layout = pipeGLayout;
 					console.log("CCCCCCCCCC 03 pipeline use spec layout !!!");
 				}
-				this.pipeline = ctx.device.createRenderPipeline(p);
+				if (p.compShaderSrc) {
+					this.comppipeline = ctx.device.createComputePipeline({
+						label: this.shadinguuid + "-comp-pl-" + this.mUid,
+						layout: bindGLayout,
+						compute: p.compute
+					});
+				} else {
+					p.label = this.shadinguuid + "-pl-" + this.mUid;
+					this.pipeline = ctx.device.createRenderPipeline(p);
+				}
 			}
 		}
 	}
-	destroy(): void {}
+	destroy(): void { }
 	runBegin(): void {
 		this.init();
 		this.uniformCtx.runBegin();

@@ -1,5 +1,4 @@
 import { WGRUniform } from "./uniform/WGRUniform";
-import { GPURenderPipeline } from "../gpu/GPURenderPipeline";
 import { WGRPrimitive } from "./WGRPrimitive";
 import { WGRUniformValue } from "./uniform/WGRUniformValue";
 import { IWGRPipelineContext } from "./pipeline/IWGRPipelineContext";
@@ -9,22 +8,15 @@ import { IWGMaterial } from "../material/IWGMaterial";
 
 interface IWGRUnit {
 	uniforms?: WGRUniform[];
-	pipeline: GPURenderPipeline;
 	pipelinectx: IWGRPipelineContext;
 	geometry?: WGRPrimitive;
-
 	bounds: IAABB;
-
 	etuuid?: string;
-
 	enabled: boolean;
 	passes?: IWGRUnit[];
 	st: WGRUnitState;
-
 	__$rever: number;
-
 	material: IWGMaterial;
-	
 	getRF(): boolean;
 	setUniformValues(values: WGRUniformValue[]): void;
 	runBegin(): void;
