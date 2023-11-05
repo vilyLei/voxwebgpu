@@ -16,6 +16,7 @@ import { GPUQueue } from "../../gpu/GPUQueue";
 import { IWGRendererPass } from "./IWGRendererPass";
 import { GPUBindGroupLayoutDescriptor } from "../../gpu/GPUBindGroupLayoutDescriptor";
 import { GPUComputePipeline } from "../../gpu/GPUComputePipeline";
+import { GPUPipelineLayout } from "../../gpu/GPUPipelineLayout";
 /**
  * one type shading shader, one WGRPipelineContext instance
  */
@@ -28,10 +29,10 @@ class WGRPipelineContext implements IWGRPipelineContext {
 	private mBGLayouts: GPUBindGroupLayout[] = new Array(8);
 	private mPipelineParams: WGRPipelineCtxParams;
 	private mShader = new WGRPipelineShader();
-
+	type = "render";
 	rpass: IWGRendererPass;
-	pipeline: GPURenderPipeline = new GPURenderPipelineEmpty();
-	comppipeline: GPUComputePipeline;
+	pipeline?: GPURenderPipeline = new GPURenderPipelineEmpty();
+	comppipeline?: GPUComputePipeline;
 
 	queue: GPUQueue;
 
@@ -54,25 +55,29 @@ class WGRPipelineContext implements IWGRPipelineContext {
 				this.mShader.build(p);
 				console.log("WGRPipelineContext::init(), param:\n", p);
 
-				let bindGLayout: GPUBindGroupLayout;
+				let pipeGLayout: GPUPipelineLayout;
 				if (!this.uniformCtx.isLayoutAuto()) {
-					bindGLayout = this.uniformCtx.getBindGroupLayout(p.multisampleEnabled);
-					let pipeGLayout = ctx.device.createPipelineLayout({
+					const bindGLayout = this.uniformCtx.getBindGroupLayout(p.multisampleEnabled);
+					pipeGLayout = ctx.device.createPipelineLayout({
 						label: p.label,
 						bindGroupLayouts: [bindGLayout]
 					});
 					console.log("CCCCCCCCCC 01 bindGLayout: ", bindGLayout);
 					console.log("CCCCCCCCCC 02 pipeGLayout: ", pipeGLayout);
-					p.layout = pipeGLayout;
 					console.log("CCCCCCCCCC 03 pipeline use spec layout !!!");
 				}
 				if (p.compShaderSrc) {
-					this.comppipeline = ctx.device.createComputePipeline({
+					const desc = {
 						label: this.shadinguuid + "-comp-pl-" + this.mUid,
-						layout: bindGLayout,
+						layout: pipeGLayout,
 						compute: p.compute
-					});
+					};
+					console.log("GPUShaderStage.COMPUTE: ", GPUShaderStage.COMPUTE);
+					console.log("create compute pieline desc: ", desc);
+					this.comppipeline = ctx.device.createComputePipeline( desc );
+					this.type = "compute";
 				} else {
+					p.layout = pipeGLayout;
 					p.label = this.shadinguuid + "-pl-" + this.mUid;
 					this.pipeline = ctx.device.createRenderPipeline(p);
 				}
@@ -302,28 +307,30 @@ class WGRPipelineContext implements IWGRPipelineContext {
 	createRenderPipeline(pipelineParams: WGRPipelineCtxParams, descParams: VtxDescParam[]): GPURenderPipeline {
 		const ctx = this.mWGCtx;
 		if (descParams) {
-			let location = 0;
-			for (let k = 0; k < descParams.length; ++k) {
-				const vtx = descParams[k].vertex;
-				pipelineParams.addVertexBufferLayout({ arrayStride: vtx.arrayStride, attributes: [], stepMode: "vertex" });
-				const params = vtx.params;
-				for (let i = 0; i < params.length; ++i) {
-					const p = params[i];
-					pipelineParams.addVertexBufferAttribute(
-						{
-							shaderLocation: location++,
-							offset: p.offset,
-							format: p.format
-						},
-						k
-					);
-				}
-				if (pipelineParams.buildDeferred) {
-					this.mPipelineParams = pipelineParams;
-				} else {
-					this.mShader.build(pipelineParams);
+			if(!pipelineParams.compShaderSrc) {
+				let location = 0;
+				for (let k = 0; k < descParams.length; ++k) {
+					const vtx = descParams[k].vertex;
+					pipelineParams.addVertexBufferLayout({ arrayStride: vtx.arrayStride, attributes: [], stepMode: "vertex" });
+					const params = vtx.params;
+					for (let i = 0; i < params.length; ++i) {
+						const p = params[i];
+						pipelineParams.addVertexBufferAttribute(
+							{
+								shaderLocation: location++,
+								offset: p.offset,
+								format: p.format
+							},
+							k
+						);
+					}
 				}
 			}
+		}
+		if (pipelineParams.buildDeferred) {
+			this.mPipelineParams = pipelineParams;
+		} else {
+			this.mShader.build(pipelineParams);
 		}
 		console.log("createRenderPipeline(), pipelineParams:\n", pipelineParams);
 		if (!this.mPipelineParams) {

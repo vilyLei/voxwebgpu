@@ -10,6 +10,7 @@ class WGRenderPassNode implements IWGRenderPassNodeRef {
 	private static sUid = 0;
 	private mUid = WGRenderPassNode.sUid++;
 	private mWGCtx: WebGPUContext;
+	private mDrawing = true;
 
 	name = "";
 
@@ -23,6 +24,7 @@ class WGRenderPassNode implements IWGRenderPassNodeRef {
 	prevNode: WGRenderPassNode;
 
 	constructor(drawing = true) {
+		this.mDrawing = drawing;
 		this.rpass = new WGRendererPass(null, drawing);
 	}
 	destroy(): void {
@@ -96,18 +98,22 @@ class WGRenderPassNode implements IWGRenderPassNodeRef {
 	createRenderPipeline(pipelineParams: WGRPipelineCtxParams, vtxDesc: VtxPipelinDescParam): WGRPipelineContext {
 		const pipelineCtx = new WGRPipelineContext(this.mWGCtx);
 		this.pipelineCtxs.push(pipelineCtx);
-		pipelineParams.setDepthStencilFormat(this.rpass.depthTexture.format);
+		
+		if (this.mDrawing) {
 
-		const passParam = this.rpass.getPassParams();
-		if (passParam.multisampleEnabled) {
-			if (pipelineParams.multisample) {
-				pipelineParams.multisample.count = passParam.sampleCount;
-			} else {
-				pipelineParams.multisample = {
-					count: passParam.sampleCount
-				};
+			pipelineParams.setDepthStencilFormat(this.rpass.depthTexture.format);
+
+			const passParam = this.rpass.getPassParams();
+			if (passParam.multisampleEnabled) {
+				if (pipelineParams.multisample) {
+					pipelineParams.multisample.count = passParam.sampleCount;
+				} else {
+					pipelineParams.multisample = {
+						count: passParam.sampleCount
+					};
+				}
+				pipelineParams.sampleCount = passParam.sampleCount;
 			}
-			pipelineParams.sampleCount = passParam.sampleCount;
 		}
 
 		pipelineCtx.createRenderPipelineWithBuf(pipelineParams, vtxDesc);
@@ -117,10 +123,6 @@ class WGRenderPassNode implements IWGRenderPassNodeRef {
 
 	runBegin(): void {
 		this.rpass.enabled = this.enabled;
-		// if(this.name === 'newpassnode') {
-		// 	console.log("XXX this.rpass.enabled: ", this.rpass.enabled, this.enabled);
-		// }
-		// console.log("this.rpass.enabled: ", this.rpass.enabled);
 		this.rcommands = [];
 		if (this.enabled) {
 			this.rpass.runBegin();

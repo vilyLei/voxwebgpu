@@ -69,6 +69,11 @@ class Entity3D implements IRenderableEntity {
 
 	transform?: ROTransform;
 
+	/**
+	 * for compute shader computing process
+	 */
+	workgcounts?: Uint16Array;
+
 	cameraViewing = true;
 
 	readonly rstate = new WGRUnitState();

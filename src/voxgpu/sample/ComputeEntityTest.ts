@@ -67,6 +67,9 @@ export class ComputeEntityTest {
 		let v0 = new WGRUniformValue({data: gridsSizesArray, stride: 1});
 		let v1 = new WGRStorageValue({data: cellStateArray0, stride: 1});
 		let v2 = new WGRStorageValue({data: cellStateArray1, stride: 1});
+		v0.visibility.toVisibleComp();
+		v1.visibility.toVisibleComp();
+		v2.visibility.toVisibleComp();
 		v2.visibility.toBufferForStorage();
 
 		let uniformvs: WGRUniformValue[] = [v0, v1, v2];

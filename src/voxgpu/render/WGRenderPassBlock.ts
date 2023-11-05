@@ -14,6 +14,7 @@ class WGRenderPassBlock {
 	private mWGCtx: WebGPUContext;
 	private mRendererUid = 0;
 
+	private mCompPassNodes: WGRenderPassNode[] = [];
 	private mRPassNodes: WGRenderPassNode[] = [];
 	private mPassNodes: WGRenderPassNode[] = [];
 	private mUnits: IWGRUnit[] = [];
@@ -60,6 +61,7 @@ class WGRenderPassBlock {
 		if (computing) {
 			passNode.name = "newcomppassnode-" + this.mPassNodes.length;
 			passNode.initialize(this.mWGCtx, param);
+			this.mCompPassNodes.push(passNode);
 		} else {
 			passNode.name = "newpassnode-" + this.mPassNodes.length;
 			let prevNode = this.mRPassNodes[this.mRPassNodes.length - 1];
@@ -84,7 +86,14 @@ class WGRenderPassBlock {
 		return node;
 	}
 	createRenderPipelineCtxWithMaterial(material: WGMaterialDescripter): { ctx: WGRPipelineContext, rpass: IWGRendererPass } {
-		const node = this.getPassNode(material.rpass);
+		let node = this.getPassNode(material.rpass);
+		console.log("material.shaderCodeSrc.compShaderSrc: ", material.shaderCodeSrc.compShaderSrc);
+		if (material.shaderCodeSrc.compShaderSrc) {
+			if (this.mCompPassNodes.length < 1) {
+				this.appendRendererPass({ computeEnabled: true });
+			}
+			node = this.mCompPassNodes[this.mCompPassNodes.length - 1];
+		}
 		return { ctx: node.createRenderPipelineCtxWithMaterial(material), rpass: node.rpass };
 	}
 	// pipelineParam value likes {blendMode: "transparent", depthWriteEnabled: false, faceCullMode: "back"}

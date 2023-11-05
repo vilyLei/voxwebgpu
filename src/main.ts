@@ -30,9 +30,9 @@
 
 // import { ScreenPostEffect as Demo } from "./voxgpu/sample/ScreenPostEffect";
 // import { ModelLoadTest as Demo } from "./voxgpu/sample/ModelLoadTest";
-import { DrawInstanceTest as Demo } from "./voxgpu/sample/DrawInstanceTest";
+// import { DrawInstanceTest as Demo } from "./voxgpu/sample/DrawInstanceTest";
 
-// import { ComputeEntityTest as Demo } from "./voxgpu/sample/ComputeEntityTest";
+import { ComputeEntityTest as Demo } from "./voxgpu/sample/ComputeEntityTest";
 // import { GameOfLifeTest as Demo } from "./voxgpu/sample/GameOfLifeTest";
 
 let demoIns = new Demo();

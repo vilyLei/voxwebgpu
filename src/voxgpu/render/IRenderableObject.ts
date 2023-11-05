@@ -35,7 +35,7 @@ interface IRenderableObject {
 	/**
 	 * for compute shader computing process
 	 */
-	workgroups?: Uint16Array;
+	workgcounts?: Uint16Array;
 
 	isRendering(): boolean;
 	isInRenderer(): boolean;

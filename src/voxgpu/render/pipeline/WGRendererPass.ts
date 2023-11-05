@@ -45,6 +45,7 @@ class WGRendererPass implements IWGRendererPass {
 
 	enabled = true;
 	constructor(wgCtx?: WebGPUContext, drawing = true) {
+		console.log("WGRendererPass::constructor(), drawing: ", drawing);
 		this.mDrawing = drawing;
 		if (wgCtx) {
 			this.initialize(wgCtx);
@@ -143,8 +144,10 @@ class WGRendererPass implements IWGRendererPass {
 					depthStencilAttachment: depStcAtt
 				};
 
+				// console.log("XXX create a rendering pass");
 				this.passEncoder = cmdEncoder.beginRenderPass(renderPassDescriptor);
 			} else {
+				// console.log("XXX create a compute pass");
 				this.compPassEncoder = cmdEncoder.beginComputePass();
 			}
 		}

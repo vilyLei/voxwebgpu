@@ -6,6 +6,7 @@ class ComputeEntity extends Entity3D {
 		param.transformEnabled = false;
 		super(param);
 		this.cameraViewing = false;
+		this.workgcounts = new Uint16Array([1,1,0,0]);
 		this.createMaterial(param);
 	}
 	

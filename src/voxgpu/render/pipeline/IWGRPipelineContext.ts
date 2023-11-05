@@ -2,6 +2,7 @@ import { GPUBindGroup } from "../../gpu/GPUBindGroup";
 import { WebGPUContext } from "../../gpu/WebGPUContext";
 import { GPUBuffer } from "../../gpu/GPUBuffer";
 import { GPURenderPipeline } from "../../gpu/GPURenderPipeline";
+import { GPUComputePipeline } from "../../gpu/GPUComputePipeline";
 import { GPUSampler } from "../../gpu/GPUSampler";
 import { GPUTextureView } from "../../gpu/GPUTextureView";
 import { GPUBindGroupDescriptor } from "../../gpu/GPUBindGroupDescriptor";
@@ -29,7 +30,8 @@ type UniformBufferParam = { sizes: number[], usage: number, arrayStride?:number 
 interface IWGRPipelineContext {
 
 	rpass: IWGRendererPass;
-	pipeline: GPURenderPipeline;
+	pipeline?: GPURenderPipeline;
+	comppipeline?: GPUComputePipeline;
 	readonly uniformCtx: IWGRUniformContext;
 
 	destroy(): void;

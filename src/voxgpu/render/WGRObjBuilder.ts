@@ -55,8 +55,8 @@ class WGRObjBuilder {
 		if(isComputing) {
 			let et = (entity as IRenderableObject);
 			let rcompunit = new WGRCompUnit();
-			if(et.workgroups) {
-				rcompunit.workgroups = et.workgroups;
+			if(et.workgcounts) {
+				rcompunit.workgcounts = et.workgcounts;
 			}
 			rcompunit.rp = pctx.rpass;
 			ru = rcompunit;

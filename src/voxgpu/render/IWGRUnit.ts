@@ -18,7 +18,7 @@ interface IWGRUnit {
 	__$rever: number;
 	material: IWGMaterial;
 
-	workgroups?: Uint16Array;
+	workgcounts?: Uint16Array;
 
 	getRF(): boolean;
 	setUniformValues(values: WGRUniformValue[]): void;

@@ -21,6 +21,7 @@ class WGRCompUnitRunSt {
 
 const __$urst = new WGRCompUnitRunSt();
 const __$rcompeust = new WGRUnitState();
+const __$workgcounts = new Uint16Array([1, 1, 0, 0])
 
 class WGRCompUnit implements IWGRUnit {
 	private mUfValues: WGRUniformValue[];
@@ -31,7 +32,6 @@ class WGRCompUnit implements IWGRUnit {
 	etuuid?: string;
 
 	pipelinectx: IWGRPipelineContext;
-	geometry: WGRPrimitive;
 
 	bounds: IAABB;
 
@@ -44,7 +44,7 @@ class WGRCompUnit implements IWGRUnit {
 	rp: IWGRendererPass;
 	material: IWGMaterial;
 
-	workgroups = new Uint16Array([1, 1, 0, 0]);
+	workgcounts = __$workgcounts;
 
 	clone(): WGRCompUnit {
 
@@ -53,7 +53,6 @@ class WGRCompUnit implements IWGRUnit {
 		r.mUfValues = this.mUfValues;
 		r.uniforms = this.uniforms;
 		r.pipelinectx = this.pipelinectx;
-		r.geometry = this.geometry;
 		r.passes = this.passes;
 		r.rp = this.rp;
 
@@ -70,11 +69,9 @@ class WGRCompUnit implements IWGRUnit {
 		const mt = this.material;
 		let rf = this.enabled && this.rp.enabled && this.st.isDrawable();
 		rf = rf && mt.visible;
-
 		if (rf) {
-			const gt = this.geometry;
-			const pipeline = this.pipelinectx.pipeline;
-			if (gt && pipeline) {
+			const pipeline = this.pipelinectx.comppipeline;
+			if (pipeline) {
 				// 这里面的诸多判断逻辑不应该出现，加入渲染器内部渲染流程之前必须处理好， 后续优化
 
 				const st = __$urst;
@@ -124,8 +121,15 @@ class WGRCompUnit implements IWGRUnit {
 	run(): void {
 		if (this.rf) {
 			const rc = this.rp.compPassEncoder;
-			const works = this.workgroups;
-			rc.dispatchWorkgroups(works[0], works[1], works[2]);
+			const works = this.workgcounts;
+			// console.log("dispatchWorkgroups(), works: ", works);
+			if(works[1] > 0 && works[2] > 0) {
+				rc.dispatchWorkgroups(works[0], works[1], works[2]);
+			}else if(works[1] > 0){
+				rc.dispatchWorkgroups(works[0], works[1]);
+			}else {				
+				rc.dispatchWorkgroups(works[0]);
+			}
 		}
 	}
 
@@ -141,6 +145,7 @@ class WGRCompUnit implements IWGRUnit {
 			this.material = null;
 			this.rp = null;
 			this.st = null;
+			this.workgcounts = null;
 		}
 	}
 }
