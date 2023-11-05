@@ -67,12 +67,11 @@ class WGRCompUnit implements IWGRUnit {
 	}
 	runBegin(): void {
 		const rc = this.rp.compPassEncoder;
-		let rf = this.rf;
 		const mt = this.material;
-		rf = this.enabled && this.rp.enabled && this.st.isDrawable();
-		rf = this.rf && mt.visible;
+		let rf = this.enabled && this.rp.enabled && this.st.isDrawable();
+		rf = rf && mt.visible;
 
-		if (this.rf) {
+		if (rf) {
 			const gt = this.geometry;
 			const pipeline = this.pipelinectx.pipeline;
 			if (gt && pipeline) {
