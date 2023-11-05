@@ -51,8 +51,7 @@ class WGRUniformValue {
 		const bpe = (d as Float32Array).BYTES_PER_ELEMENT;
 		if(this.arrayStride < 2 && param.stride !== undefined && bpe !== undefined) {
 			this.arrayStride = bpe * param.stride;
-		}
-		if (d && this.arrayStride < 2) {
+		}else if (d && this.arrayStride < 2) {
 			if (d.byteLength <= 64) this.arrayStride = d.byteLength;
 		}
 		this.upate();

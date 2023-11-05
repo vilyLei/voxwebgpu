@@ -333,10 +333,14 @@ class WGRPipelineContext implements IWGRPipelineContext {
 	}
 
 	createRenderPipelineWithBuf(pipelineParams: WGRPipelineCtxParams, vtxDesc: VtxPipelinDescParam): GPURenderPipeline {
-		const vtx = vtxDesc.vertex;
-		const vtxDescParams = this.createRenderPipelineVtxParams(vtx.buffers, vtx.attributeIndicesArray);
-		console.log("vtxDescParams: ", vtxDescParams);
-		return this.createRenderPipeline(pipelineParams, vtxDescParams);
+		if(vtxDesc) {
+			const vtx = vtxDesc.vertex;
+			const vtxDescParams = vtx ? this.createRenderPipelineVtxParams(vtx.buffers, vtx.attributeIndicesArray): [{}] as VtxDescParam[];
+			// console.log("vtxDescParams: ", vtxDescParams);
+			return this.createRenderPipeline(pipelineParams, vtxDescParams);
+		}else {
+			return this.createRenderPipeline(pipelineParams, [{}] as VtxDescParam[]);
+		}
 	}
 	createRenderPipelineVtxParam(vtxBuf: GPUBuffer, attributeIndices: number[]): VtxDescParam {
 		const p: VtxDescParam = {
