@@ -9,7 +9,7 @@ interface GPURenderPipelineDescriptor {
 	label?: string;
 
 	layout: GPUPipelineLayout | string;
-	vertex: GPUVertexState;
+	vertex?: GPUVertexState;
 	fragment?: GPUFragmentState;
 	primitive?: GPUPrimitiveState;
 	depthStencil?: GPUDepthStencilState;

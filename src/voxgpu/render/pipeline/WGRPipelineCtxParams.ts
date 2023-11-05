@@ -2,13 +2,14 @@ import { GPUBlendComponent } from "../../gpu/GPUBlendComponent";
 import { GPUColorTargetState } from "../../gpu/GPUColorTargetState";
 import { GPUDepthStencilState } from "../../gpu/GPUDepthStencilState";
 import { GPUFragmentState } from "../../gpu/GPUFragmentState";
+import { GPUComputeState } from "../../gpu/GPUComputeState";
 import { GPUMultisampleObject } from "../../gpu/GPUMultisampleObject";
 import { GPUPrimitiveState } from "../../gpu/GPUPrimitiveState";
 import { GPUPipelineLayout, GPURenderPipelineDescriptor } from "../../gpu/GPURenderPipelineDescriptor";
 import { GPUVertexAttribute } from "../../gpu/GPUVertexAttribute";
 import { GPUVertexBufferLayout } from "../../gpu/GPUVertexBufferLayout";
 import { GPUVertexState } from "../../gpu/GPUVertexState";
-import { WGRShadeSrcParam, WGRShderSrcType } from "./WGRShaderParams";
+import { createFragmentState, WGRShadeSrcParam, WGRShderSrcType } from "./WGRShaderParams";
 
 interface WGRPipelineContextDefParam {
 	blendMode?: string;
@@ -42,12 +43,13 @@ class WGRPipelineCtxParams implements GPURenderPipelineDescriptor {
 	fragShaderSrc?: WGRShadeSrcParam;
 	compShaderSrc?: WGRShadeSrcParam;
 	layout: GPUPipelineLayout | string = "auto";
-	vertex: GPUVertexState = {
+	vertex?: GPUVertexState = {
 		module: null,
 		entryPoint: "main",
 		buffers: []
 	};
 	fragment?: GPUFragmentState;
+	compute?: GPUComputeState;
 	primitive?: GPUPrimitiveState;
 	depthStencil?: GPUDepthStencilState;
 	multisample?: GPUMultisampleObject;
@@ -68,15 +70,7 @@ class WGRPipelineCtxParams implements GPURenderPipelineDescriptor {
 				};
 			}
 			if (this.fragmentEnabled) {
-				this.fragment = {
-					module: null,
-					entryPoint: "main",
-					targets: [
-						{
-							format: "bgra8unorm"
-						}
-					]
-				};
+				this.fragment = createFragmentState();
 			}
 			this.primitive = {
 				frontFace: "ccw",

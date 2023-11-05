@@ -1,4 +1,6 @@
-import { GPUBlendComponent } from "../../gpu/GPUBlendComponent";
+import { GPUFragmentState } from "../../gpu/GPUFragmentState";
+import { GPUComputeState } from "../../gpu/GPUComputeState";
+import { GPUShaderModule } from "../../gpu/GPUShaderModule";
 
 interface WGRShadeSrcParam {
 	code: string;
@@ -13,4 +15,25 @@ interface WGRShderSrcType {
 	fragShaderSrc?: WGRShadeSrcParam;
 	compShaderSrc?: WGRShadeSrcParam;
 }
-export { WGRShderSrcType, WGRShadeSrcParam };
+
+function createFragmentState(shaderModule?: GPUShaderModule): GPUFragmentState {
+	const st = {
+		module: shaderModule,
+		entryPoint: "main",
+		targets: [
+			{
+				format: "bgra8unorm"
+			}
+		]
+	} as GPUFragmentState;
+	return st;
+}
+function createComputeState(shaderModule?: GPUShaderModule): GPUComputeState {
+	const st = {
+		module: shaderModule,
+		entryPoint: "main"
+	} as GPUComputeState;
+	return st;
+}
+
+export { WGRShderSrcType, WGRShadeSrcParam, createFragmentState, createComputeState };

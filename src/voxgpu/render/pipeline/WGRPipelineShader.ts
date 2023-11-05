@@ -1,6 +1,7 @@
 import { GPUShaderModule } from "../../gpu/GPUShaderModule";
 import { WebGPUContext } from "../../gpu/WebGPUContext";
 import { WGRShadeSrcParam, WGRPipelineCtxParams } from "./WGRPipelineCtxParams";
+import { createFragmentState, createComputeState } from "./WGRShaderParams";
 
 class WGRPipelineShader {
 	private mWGCtx: WebGPUContext;
@@ -48,17 +49,32 @@ class WGRPipelineShader {
 		let compShdModule = params.compShaderSrc ? this.createShaderModule("CompShader", params.compShaderSrc) : shdModule;
 
 		const vert = params.vertex;
-		vert.module = vertShdModule;
-		if (params.vertShaderSrc.vertEntryPoint) {
-			vert.entryPoint = params.vertShaderSrc.vertEntryPoint;
+		let shdSrc = params.shaderSrc ? params.shaderSrc : params.vertShaderSrc;
+		if(shdSrc) {
+			vert.module = vertShdModule;
+			if (shdSrc.vertEntryPoint !== undefined) {
+				vert.entryPoint = shdSrc.vertEntryPoint;
+			}
+		}else {
+			params.vertex = null;
 		}
 
-		const frag = params.fragment;
-		if (frag) {
-			frag.module = fragShdModule;
-			if (params.fragShaderSrc.fragEntryPoint) {
-				frag.entryPoint = params.fragShaderSrc.fragEntryPoint;
+		let frag = params.fragment;
+		shdSrc = params.shaderSrc ? params.shaderSrc : params.fragShaderSrc;
+		if(shdSrc) {
+			if(!frag) {
+				frag = params.fragment = createFragmentState();
 			}
+			frag.module = fragShdModule;
+			if (shdSrc.fragEntryPoint !== undefined) {
+				frag.entryPoint = shdSrc.fragEntryPoint;
+			}
+		}else {
+			params.fragment = null;
+		}
+		const comp = params.compShaderSrc;
+		if(comp && compShdModule) {
+			params.compute = createComputeState( compShdModule );
 		}
 	}
 }
