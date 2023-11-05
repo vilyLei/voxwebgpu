@@ -32,6 +32,10 @@ interface IRenderableObject {
 	 */
 	mouseEnabled: boolean;
 	cameraViewing: boolean;
+	/**
+	 * for compute shader computing process
+	 */
+	workgroups?: Uint16Array;
 
 	isRendering(): boolean;
 	isInRenderer(): boolean;

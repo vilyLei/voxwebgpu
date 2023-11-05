@@ -6,11 +6,13 @@ import { GPUBuffer } from "../gpu/GPUBuffer";
 import { WGRenderPassBlock } from "../render/WGRenderPassBlock";
 import { WGRUniformValue } from "./uniform/WGRUniformValue";
 import { GPUTextureView } from "../gpu/GPUTextureView";
+import { WGRCompUnit } from "./WGRCompUnit";
+import { IRenderableObject } from "./IRenderableObject";
 
 type GeomType = { indexBuffer?: GPUBuffer; vertexBuffers: GPUBuffer[]; indexCount?: number; vertexCount?: number };
 
 class WGRObjBuilder {
-	constructor() {}
+	constructor() { }
 	createPrimitive(geomParam?: GeomType): WGRPrimitive {
 		const g = new WGRPrimitive();
 		g.ibuf = geomParam.indexBuffer;
@@ -24,18 +26,20 @@ class WGRObjBuilder {
 		return g;
 	}
 	createRPass(entity: Entity3D, block: WGRenderPassBlock, primitive: WGRPrimitive, materialIndex = 0): IWGRUnit {
+
 		const material = entity.materials[materialIndex];
-		// if(!material.__$ufs) {
 
 		let pctx = material.getRCtx();
 		if (!pctx) {
 			if (material.pipelineVtxParam) {
 				material.pipelineVtxParam.vertex.buffers = primitive.vbufs;
 			} else {
-				material.pipelineVtxParam = { vertex: { buffers: primitive.vbufs, attributeIndicesArray: [] } };
-				const ls = material.pipelineVtxParam.vertex.attributeIndicesArray;
-				for (let i = 0; i < primitive.vbufs.length; ++i) {
-					ls.push([0]);
+				if (primitive) {
+					material.pipelineVtxParam = { vertex: { buffers: primitive.vbufs, attributeIndicesArray: [] } };
+					const ls = material.pipelineVtxParam.vertex.attributeIndicesArray;
+					for (let i = 0; i < primitive.vbufs.length; ++i) {
+						ls.push([0]);
+					}
 				}
 			}
 			const rpparam = block.createRenderPipelineCtxWithMaterial(material);
@@ -44,12 +48,26 @@ class WGRObjBuilder {
 		}
 
 		// console.log("createRUnit(), utexes: ", utexes);
+		const isComputing = material.shaderCodeSrc.compShaderSrc;
 
-		let ru = new WGRUnit();
+		let ru: IWGRUnit;
 
-		ru.geometry = primitive;
+		if(isComputing) {
+			let et = (entity as IRenderableObject);
+			let rcompunit = new WGRCompUnit();
+			if(et.workgroups) {
+				rcompunit.workgroups = et.workgroups;
+			}
+			rcompunit.rp = pctx.rpass;
+			ru = rcompunit;
+		}else {
+			let runit = new WGRUnit();
+			runit.geometry = primitive;	
+			runit.rp = pctx.rpass;
+			ru = runit;
+		}
+
 		ru.pipelinectx = pctx;
-
 		const uniformCtx = pctx.uniformCtx;
 		let uvalues: WGRUniformValue[] = [];
 
@@ -99,36 +117,41 @@ class WGRObjBuilder {
 		}
 		// ru.unfsuuid = material.shadinguuid + material.name;
 		ru.material = material;
-		ru.rp = pctx.rpass;
 		return ru;
 	}
 	createRUnit(entity: Entity3D, block: WGRenderPassBlock): IWGRUnit {
+
 		const wgctx = block.getWGCtx();
 
-		const geometry = entity.geometry;
-		const gts = geometry.attributes;
+		let primitive: WGRPrimitive;
+		if (entity.geometry) {
 
-		// console.log("########## geometry.gpuvbufs: ", geometry.gpuvbufs);
-		// console.log("########## geometry.gpuibuf: ", geometry.indexBuffer.gpuibuf);
+			const geometry = entity.geometry;
+			const gts = geometry.attributes;
 
-		const gvbufs = geometry.gpuvbufs;
+			// console.log("########## geometry.gpuvbufs: ", geometry.gpuvbufs);
+			// console.log("########## geometry.gpuibuf: ", geometry.indexBuffer.gpuibuf);
 
-		const vertexBuffers: GPUBuffer[] = gvbufs ? gvbufs : new Array(gts.length);
-		if (!gvbufs) {
-			for (let i = 0; i < gts.length; ++i) {
-				const gt = gts[i];
-				vertexBuffers[i] = wgctx.buffer.createVertexBuffer(gt.data, gt.bufferOffset, gt.strides);
+			const gvbufs = geometry.gpuvbufs;
+
+			const vertexBuffers: GPUBuffer[] = gvbufs ? gvbufs : new Array(gts.length);
+			if (!gvbufs) {
+				for (let i = 0; i < gts.length; ++i) {
+					const gt = gts[i];
+					vertexBuffers[i] = wgctx.buffer.createVertexBuffer(gt.data, gt.bufferOffset, gt.strides);
+				}
+				geometry.gpuvbufs = vertexBuffers;
 			}
-			geometry.gpuvbufs = vertexBuffers;
+
+			const gibuf = geometry.indexBuffer;
+			const indexBuffer = gibuf ? (gibuf.gpuibuf ? gibuf.gpuibuf : wgctx.buffer.createIndexBuffer(gibuf.data)) : null;
+			if (indexBuffer) gibuf.gpuibuf = indexBuffer;
+
+			const indexCount = indexBuffer ? indexBuffer.elementCount : 0;
+			const vertexCount = vertexBuffers[0].vectorCount;
+			primitive = this.createPrimitive({ vertexBuffers, indexBuffer, indexCount, vertexCount });
+
 		}
-
-		const gibuf = geometry.indexBuffer;
-		const indexBuffer = gibuf ? (gibuf.gpuibuf ? gibuf.gpuibuf : wgctx.buffer.createIndexBuffer(gibuf.data)) : null;
-		if (indexBuffer) gibuf.gpuibuf = indexBuffer;
-
-		const indexCount = indexBuffer ? indexBuffer.elementCount : 0;
-		const vertexCount = vertexBuffers[0].vectorCount;
-		const primitive = this.createPrimitive({ vertexBuffers, indexBuffer, indexCount, vertexCount });
 
 		let ru: IWGRUnit;
 		const mts = entity.materials;

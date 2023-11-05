@@ -1,7 +1,5 @@
 import { WGRUniform } from "./uniform/WGRUniform";
 import { GPUBuffer } from "../gpu/GPUBuffer";
-import { GPURenderPassEncoder } from "../gpu/GPURenderPassEncoder";
-import { GPURenderPipeline } from "../gpu/GPURenderPipeline";
 import { WGRPrimitive } from "./WGRPrimitive";
 import { WGRUniformValue } from "./uniform/WGRUniformValue";
 import { IWGRPipelineContext } from "./pipeline/IWGRPipelineContext";
@@ -10,18 +8,21 @@ import IAABB from "../cgeom/IAABB";
 import { IWGRendererPass } from "../render/pipeline/IWGRendererPass";
 import { WGRUnitState } from "./WGRUnitState";
 import { IWGMaterial } from "../material/IWGMaterial";
+import { GPUComputePassEncoder } from "../gpu/GPUComputePassEncoder";
+import { GPUComputePipeline } from "../gpu/GPUComputePipeline";
 
-class WGRUnitRunSt {
-	pipeline: GPURenderPipeline;
-	rc: GPURenderPassEncoder;
+class WGRCompUnitRunSt {
+	pipeline: GPUComputePipeline;
+	rc: GPUComputePassEncoder;
 	gt: WGRPrimitive;
 	ibuf: GPUBuffer;
 	unfsuuid: string;
 }
 
-const __$urst = new WGRUnitRunSt();
-const __$reust = new WGRUnitState();
-class WGRUnit implements IWGRUnit {
+const __$urst = new WGRCompUnitRunSt();
+const __$rcompeust = new WGRUnitState();
+
+class WGRCompUnit implements IWGRUnit {
 	private mUfValues: WGRUniformValue[];
 	private rf = true;
 
@@ -34,25 +35,27 @@ class WGRUnit implements IWGRUnit {
 
 	bounds: IAABB;
 
-	st = __$reust;
+	st = __$rcompeust;
 
 	__$rever = 0;
 
 	enabled = true;
 	passes: IWGRUnit[];
 	rp: IWGRendererPass;
-
 	material: IWGMaterial;
-	clone(): WGRUnit {
 
-		const r = new WGRUnit();
+	workgroups = new Uint16Array([1, 1, 0, 0]);
 
-		r.mUfValues			= this.mUfValues;
-		r.uniforms			= this.uniforms;
-		r.pipelinectx		= this.pipelinectx;
-		r.geometry			= this.geometry;
-		r.passes			= this.passes;
-		r.rp				= this.rp;
+	clone(): WGRCompUnit {
+
+		const r = new WGRCompUnit();
+
+		r.mUfValues = this.mUfValues;
+		r.uniforms = this.uniforms;
+		r.pipelinectx = this.pipelinectx;
+		r.geometry = this.geometry;
+		r.passes = this.passes;
+		r.rp = this.rp;
 
 		return r;
 	}
@@ -63,11 +66,11 @@ class WGRUnit implements IWGRUnit {
 		this.mUfValues = values;
 	}
 	runBegin(): void {
-		const rc = this.rp.passEncoder;
+		const rc = this.rp.compPassEncoder;
 		let rf = this.rf;
 		const mt = this.material;
 		rf = this.enabled && this.rp.enabled && this.st.isDrawable();
-		rf = this.rf && mt.visible && mt.instanceCount > 0;
+		rf = this.rf && mt.visible;
 
 		if (this.rf) {
 			const gt = this.geometry;
@@ -84,17 +87,11 @@ class WGRUnit implements IWGRUnit {
 					st.unfsuuid = "";
 				}
 
-				if (st.gt != gt) {
-					st.gt = gt;
-					gt.run(rc);
-				}
 				if (st.pipeline != pipeline) {
 					st.pipeline = pipeline;
 					// console.log("ruint setPipeline(), this.pipeline: ", this.pipeline);
 					rc.setPipeline(pipeline);
 				}
-				gt.instanceCount = mt.instanceCount;
-				// console.log("mt.instanceCount: ", mt.instanceCount);
 
 				const ufs = this.uniforms;
 				if (ufs) {
@@ -127,20 +124,9 @@ class WGRUnit implements IWGRUnit {
 	}
 	run(): void {
 		if (this.rf) {
-			const rc = this.rp.passEncoder;
-			const gt = this.geometry;
-			const st = __$urst;
-			if (gt.ibuf) {
-				if (st.ibuf != gt.ibuf) {
-					st.ibuf = gt.ibuf;
-					rc.setIndexBuffer(gt.ibuf, gt.ibuf.dataFormat);
-				}
-				// console.log("runit draw this.etuuid: ", this.etuuid);
-				// console.log(gt.indexCount, ", gt.instanceCount: ", gt.instanceCount);
-				rc.drawIndexed(gt.indexCount, gt.instanceCount);
-			} else {
-				rc.draw(gt.vertexCount, gt.instanceCount);
-			}
+			const rc = this.rp.compPassEncoder;
+			const works = this.workgroups;
+			rc.dispatchWorkgroups(works[0], works[1], works[2]);
 		}
 	}
 
@@ -160,4 +146,4 @@ class WGRUnit implements IWGRUnit {
 	}
 }
 
-export { WGRUnit };
+export { WGRCompUnit };

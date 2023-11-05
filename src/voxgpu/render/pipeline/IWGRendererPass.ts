@@ -1,6 +1,7 @@
 import Color4 from "../../material/Color4";
 import { GPUCommandEncoder } from "../../gpu/GPUCommandEncoder";
 import { GPURenderPassEncoder } from "../../gpu/GPURenderPassEncoder";
+import { GPUComputePassEncoder } from "../../gpu/GPUComputePassEncoder";
 import { GPUTexture } from "../../gpu/GPUTexture";
 import { GPUTextureView } from "../../gpu/GPUTextureView";
 
@@ -16,7 +17,8 @@ interface IWGRendererPass {
 
 	enabled: boolean;
     colorView: GPUTextureView;
-    passEncoder: GPURenderPassEncoder;
+    passEncoder?: GPURenderPassEncoder;
+    compPassEncoder?: GPUComputePassEncoder;
     commandEncoder: GPUCommandEncoder;
     clearColor: Color4;
 
