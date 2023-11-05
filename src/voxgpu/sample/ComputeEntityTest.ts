@@ -48,6 +48,7 @@ export class ComputeEntityTest {
 	private mouseDown = (evt: MouseEvent): void => {};
 
 	private createUniformValues(): WGRUniformValue[] {
+		
 		const gridsSizesArray = new Float32Array([gridSize, gridSize]);
 		const cellStateArray0 = new Uint32Array(gridSize * gridSize);
 		for (let i = 0; i < cellStateArray0.length; i+=3) {
