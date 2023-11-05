@@ -14,6 +14,7 @@ class WGRenderPassBlock {
 	private mWGCtx: WebGPUContext;
 	private mRendererUid = 0;
 
+	private mRPassNodes: WGRenderPassNode[] = [];
 	private mPassNodes: WGRenderPassNode[] = [];
 	private mUnits: IWGRUnit[] = [];
 
@@ -40,6 +41,7 @@ class WGRenderPassBlock {
 			const passNode = new WGRenderPassNode();
 			passNode.initialize(wgCtx, param);
 			this.mPassNodes.push(passNode);
+			this.mRPassNodes.push(passNode);
 		}
 	}
 	addRUnit(unit: IWGRUnit): void {
@@ -51,14 +53,24 @@ class WGRenderPassBlock {
 		}
 	}
 	appendRendererPass(param?: WGRPassParams): IWGRPassRef {
-		let node = this.mPassNodes[this.mPassNodes.length - 1];
-		const passNode = new WGRenderPassNode();
-		// passNode.uniformCtx = this.uniformCtx;
-		passNode.prevNode = node;
-		passNode.initialize(this.mWGCtx, param ? param : node.param);
-		const rpass = passNode.rpass;
-		rpass.colorAttachment.loadOp = "load";
-		rpass.depStcAttachment.depthLoadOp = "load";
+
+		const computing = param && param.computeEnabled === true;
+
+		const passNode = new WGRenderPassNode(!computing);
+		if (computing) {
+			passNode.name = "newcomppassnode-" + this.mPassNodes.length;
+			passNode.initialize(this.mWGCtx, param);
+		} else {
+			passNode.name = "newpassnode-" + this.mPassNodes.length;
+			let prevNode = this.mRPassNodes[this.mRPassNodes.length - 1];
+			passNode.prevNode = prevNode;
+			passNode.initialize(this.mWGCtx, param ? param : prevNode.param);
+			const rpass = passNode.rpass;
+			rpass.name = "newpass";
+			rpass.colorAttachment.loadOp = "load";
+			rpass.depStcAttachment.depthLoadOp = "load";
+			this.mRPassNodes.push(passNode);
+		}
 		this.mPassNodes.push(passNode);
 		return { index: this.mPassNodes.length - 1, node: passNode };
 	}
@@ -116,7 +128,7 @@ class WGRenderPassBlock {
 			// console.log('>');
 			const uts = this.mUnits;
 			let utsLen = uts.length;
-			for (let i = 0; i < utsLen; ) {
+			for (let i = 0; i < utsLen;) {
 				const ru = uts[i];
 				if (ru.__$rever == ru.st.__$rever) {
 					if (ru.getRF()) {
@@ -146,6 +158,8 @@ class WGRenderPassBlock {
 	destroy(): void {
 		if (this.mWGCtx) {
 			this.mWGCtx = null;
+			this.mRPassNodes = [];
+			this.mPassNodes = [];
 		}
 	}
 }

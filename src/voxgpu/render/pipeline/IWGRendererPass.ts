@@ -12,6 +12,10 @@ interface WGRPassParams {
      * 'depth24plus','depth32float'
      */
 	depthFormat?: string;
+    /**
+     * 是否是 compute pass
+     */
+    computeEnabled?: boolean;
 }
 interface IWGRendererPass {
 

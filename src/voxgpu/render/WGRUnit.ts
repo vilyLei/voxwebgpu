@@ -64,12 +64,12 @@ class WGRUnit implements IWGRUnit {
 	}
 	runBegin(): void {
 		const rc = this.rp.passEncoder;
-		let rf = this.rf;
 		const mt = this.material;
-		rf = this.enabled && this.rp.enabled && this.st.isDrawable();
-		rf = this.rf && mt.visible && mt.instanceCount > 0;
-
-		if (this.rf) {
+		
+		let rf = this.enabled && this.rp.enabled && this.st.isDrawable();
+		rf = rf && mt.visible && mt.instanceCount > 0;
+		
+		if (rf) {
 			const gt = this.geometry;
 			const pipeline = this.pipelinectx.pipeline;
 			if (gt && pipeline) {

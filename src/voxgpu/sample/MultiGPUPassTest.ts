@@ -40,8 +40,10 @@ export class MultiGPUPassTest {
 	private mouseDown = (evt: MouseEvent): void => {
 		let node = this.mRPass.node;
 		console.log("mousedown evt call this.mRPass: ", this.mRPass);
+		console.log("mousedown evt call AAAA node: ", node);
 		console.log("mousedown evt call node.enabled: ", node.enabled);
 		node.enabled = !node.enabled;
+		console.log("mousedown evt call BBBB node: ", node);
 	}
 	private createMaterial(shdSrc: WGRShderSrcType, texs?: WGTextureDataDescriptor[], color?: Color4, blendModes: string[] = ["solid"], faceCullMode = "back"): WGMaterial {
 

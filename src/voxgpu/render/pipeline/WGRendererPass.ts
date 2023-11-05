@@ -4,6 +4,7 @@ import { GPUCommandEncoder } from "../../gpu/GPUCommandEncoder";
 import { GPURenderPassColorAttachment } from "../../gpu/GPURenderPassColorAttachment";
 import { GPURenderPassDescriptor } from "../../gpu/GPURenderPassDescriptor";
 import { GPURenderPassEncoder } from "../../gpu/GPURenderPassEncoder";
+import { GPUComputePassEncoder } from "../../gpu/GPUComputePassEncoder";
 import { GPUTexture } from "../../gpu/GPUTexture";
 import { GPUTextureDescriptor } from "../../gpu/GPUTextureDescriptor";
 import { GPUTextureView } from "../../gpu/GPUTextureView";
@@ -16,9 +17,13 @@ class WGRendererPass implements IWGRendererPass {
 	private mWGCtx: WebGPUContext;
 	private mParams: WGRPassParams;
 	private mDepthTexture: GPUTexture;
+	private mDrawing = true;
+
+	name = "";
 
 	colorView: GPUTextureView;
-	passEncoder: GPURenderPassEncoder;
+	passEncoder?: GPURenderPassEncoder;
+	compPassEncoder?: GPUComputePassEncoder;
 	commandEncoder: GPUCommandEncoder;
 	clearColor = new Color4(0.0, 0.0, 0.0, 1.0);
 
@@ -39,7 +44,8 @@ class WGRendererPass implements IWGRendererPass {
 	prevPass: WGRendererPass;
 
 	enabled = true;
-	constructor(wgCtx?: WebGPUContext) {
+	constructor(wgCtx?: WebGPUContext, drawing = true) {
+		this.mDrawing = drawing;
 		if (wgCtx) {
 			this.initialize(wgCtx);
 		}
@@ -55,14 +61,15 @@ class WGRendererPass implements IWGRendererPass {
 	}
 	build(params: WGRPassParams): void {
 
-		params.multisampleEnabled = params.sampleCount && params.sampleCount > 1;
-
-		this.mParams = params;
-		if(this.prevPass) {
-			this.mDepthTexture = this.prevPass.mDepthTexture;
-			this.colorView = this.prevPass.colorView;
-		}else{
-			this.createRenderPassTexture(params);
+		if (this.mDrawing) {
+			params.multisampleEnabled = params.sampleCount && params.sampleCount > 1;
+			this.mParams = params;
+			if (this.prevPass) {
+				this.mDepthTexture = this.prevPass.mDepthTexture;
+				this.colorView = this.prevPass.colorView;
+			} else {
+				this.createRenderPassTexture(params);
+			}
 		}
 	}
 	private createRenderPassTexture(params: WGRPassParams): void {
@@ -97,52 +104,62 @@ class WGRendererPass implements IWGRendererPass {
 	}
 	runBegin(): void {
 		const ctx = this.mWGCtx;
-		if (ctx.enabled) {
+		if (this.enabled && ctx.enabled) {
 			const device = ctx.device;
 			const param = this.mParams;
 
 			this.commandEncoder = device.createCommandEncoder();
 			const cmdEncoder = this.commandEncoder;
-
-			const colorAtt = this.colorAttachment;
-			colorAtt.clearValue = this.clearColor;
-			const prev = this.prevPass;
-			if(prev) {
-				if (param.multisampleEnabled) {
-					colorAtt.view = prev.colorView;
-					colorAtt.resolveTarget = prev.colorAttachment.resolveTarget;
+			if (this.mDrawing) {
+				const colorAtt = this.colorAttachment;
+				colorAtt.clearValue = this.clearColor;
+				const prev = this.prevPass;
+				if (prev) {
+					if (param.multisampleEnabled) {
+						colorAtt.view = prev.colorView;
+						colorAtt.resolveTarget = prev.colorAttachment.resolveTarget;
+					} else {
+						colorAtt.view = prev.colorAttachment.view;
+					}
 				} else {
-					colorAtt.view = prev.colorAttachment.view;
+					if (param.multisampleEnabled) {
+						colorAtt.view = this.colorView;
+						colorAtt.resolveTarget = this.resolveTarget ? this.resolveTarget : ctx.createCurrentView();
+					} else {
+						colorAtt.view = this.resolveView ? this.resolveView : ctx.createCurrentView();
+					}
 				}
-			}else {
-				if (param.multisampleEnabled) {
-					colorAtt.view = this.colorView;
-					colorAtt.resolveTarget = this.resolveTarget ? this.resolveTarget : ctx.createCurrentView();
+
+				const depStcAtt = this.depStcAttachment;
+				if (prev) {
+					depStcAtt.view = prev.depStcAttachment.view;
 				} else {
-					colorAtt.view = this.resolveView ? this.resolveView : ctx.createCurrentView();
+					depStcAtt.view = this.mDepthTexture.createView();
 				}
+
+				let colorAttachments: GPURenderPassColorAttachment[] = [colorAtt];
+				const renderPassDescriptor: GPURenderPassDescriptor = {
+					colorAttachments: colorAttachments,
+					depthStencilAttachment: depStcAtt
+				};
+
+				this.passEncoder = cmdEncoder.beginRenderPass(renderPassDescriptor);
+			} else {
+				this.compPassEncoder = cmdEncoder.beginComputePass();
 			}
-
-			const depStcAtt = this.depStcAttachment;
-			if(prev) {
-				depStcAtt.view = prev.depStcAttachment.view;
-			}else {
-				depStcAtt.view = this.mDepthTexture.createView();
-			}
-
-			let colorAttachments: GPURenderPassColorAttachment[] = [colorAtt];
-			const renderPassDescriptor: GPURenderPassDescriptor = {
-				colorAttachments: colorAttachments,
-				depthStencilAttachment: depStcAtt
-			};
-
-			this.passEncoder = cmdEncoder.beginRenderPass(renderPassDescriptor);
 		}
 	}
 	runEnd(): GPUCommandBuffer {
 		const ctx = this.mWGCtx;
-		if (ctx.enabled) {
-			this.passEncoder.end();
+		// if(this.name === 'newpass') {
+		// 	console.log("XXX rpass this.enabled: ", this.enabled);
+		// }
+		if (this.enabled && ctx.enabled) {
+			if (this.mDrawing) {
+				this.passEncoder.end();
+			} else {
+				this.compPassEncoder.end();
+			}
 			return this.commandEncoder.finish();
 		}
 		return null;

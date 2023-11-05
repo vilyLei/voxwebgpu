@@ -9,10 +9,12 @@ class WGRenderPassNode implements IWGRenderPassNodeRef {
 
 	private static sUid = 0;
 	private mUid = WGRenderPassNode.sUid++;
-
 	private mWGCtx: WebGPUContext;
+
+	name = "";
+
 	pipelineCtxs: WGRPipelineContext[] = [];
-	rpass = new WGRendererPass();
+	rpass: WGRendererPass;
 	pctxMap: Map<string, WGRPipelineContext> = new Map();
 	rcommands: GPUCommandBuffer[];
 	param?: WGRPassParams;
@@ -20,6 +22,9 @@ class WGRenderPassNode implements IWGRenderPassNodeRef {
 	enabled = true;
 	prevNode: WGRenderPassNode;
 
+	constructor(drawing = true) {
+		this.rpass = new WGRendererPass(null, drawing);
+	}
 	destroy(): void {
 		this.prevNode = null;
 	}
@@ -31,7 +36,7 @@ class WGRenderPassNode implements IWGRenderPassNodeRef {
 		if (!this.mWGCtx && wgCtx && wgCtx.enabled) {
 			this.mWGCtx = wgCtx;
 
-			if(this.prevNode) {
+			if (this.prevNode) {
 				this.rpass.prevPass = this.prevNode.rpass;
 			}
 			this.rpass.initialize(wgCtx);
@@ -43,14 +48,14 @@ class WGRenderPassNode implements IWGRenderPassNodeRef {
 
 		const flag = material.shadinguuid && material.shadinguuid !== "";
 		const map = this.pctxMap;
-		if(flag) {
-			if(map.has(material.shadinguuid)) {
+		if (flag) {
+			if (map.has(material.shadinguuid)) {
 				console.log("WGRenderPassBlock::createRenderPipelineCtxWithMaterial(), apply old ctx.");
 				return map.get(material.shadinguuid);
 			}
 		}
 		const ctx = this.createRenderPipelineCtx(material.shaderCodeSrc, material.pipelineVtxParam, material.pipelineDefParam);
-		if(flag) {
+		if (flag) {
 			ctx.shadinguuid = material.shadinguuid;
 			map.set(material.shadinguuid, ctx);
 		}
@@ -112,6 +117,10 @@ class WGRenderPassNode implements IWGRenderPassNodeRef {
 
 	runBegin(): void {
 		this.rpass.enabled = this.enabled;
+		// if(this.name === 'newpassnode') {
+		// 	console.log("XXX this.rpass.enabled: ", this.rpass.enabled, this.enabled);
+		// }
+		// console.log("this.rpass.enabled: ", this.rpass.enabled);
 		this.rcommands = [];
 		if (this.enabled) {
 			this.rpass.runBegin();
