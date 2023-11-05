@@ -62,9 +62,9 @@ class WGRPipelineContext implements IWGRPipelineContext {
 						label: p.label,
 						bindGroupLayouts: [bindGLayout]
 					});
-					console.log("CCCCCCCCCC 01 bindGLayout: ", bindGLayout);
-					console.log("CCCCCCCCCC 02 pipeGLayout: ", pipeGLayout);
-					console.log("CCCCCCCCCC 03 pipeline use spec layout !!!");
+					// console.log("CCCCCCCCCC 01 bindGLayout: ", bindGLayout);
+					// console.log("CCCCCCCCCC 02 pipeGLayout: ", pipeGLayout);
+					// console.log("CCCCCCCCCC 03 pipeline use spec layout !!!");
 				}
 				if (p.compShaderSrc) {
 					const desc = {
@@ -72,8 +72,8 @@ class WGRPipelineContext implements IWGRPipelineContext {
 						layout: pipeGLayout,
 						compute: p.compute
 					};
-					console.log("GPUShaderStage.COMPUTE: ", GPUShaderStage.COMPUTE);
-					console.log("create compute pieline desc: ", desc);
+					// console.log("GPUShaderStage.COMPUTE: ", GPUShaderStage.COMPUTE);
+					// console.log("create compute pieline desc: ", desc);
 					this.comppipeline = ctx.device.createComputePipeline( desc );
 					this.type = "compute";
 				} else {

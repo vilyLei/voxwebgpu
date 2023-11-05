@@ -38,12 +38,20 @@ class WGRShaderVisibility implements GPUBindGroupLayoutEntity {
 		this.visibility = GPUShaderStage.FRAGMENT | GPUShaderStage.VERTEX | GPUShaderStage.COMPUTE;
 		return this;
 	}
-	toVisibleVertAndFrag(): WGRShaderVisibility {
+	toVisibleVertFrag(): WGRShaderVisibility {
 		this.visibility = GPUShaderStage.FRAGMENT | GPUShaderStage.VERTEX;
 		return this;
 	}
 	toVisibleVert(): WGRShaderVisibility {
 		this.visibility = GPUShaderStage.VERTEX;
+		return this;
+	}
+	toVisibleVertComp(): WGRShaderVisibility {
+		this.visibility = GPUShaderStage.VERTEX | GPUShaderStage.COMPUTE;
+		return this;
+	}
+	toVisibleFragComp(): WGRShaderVisibility {
+		this.visibility = GPUShaderStage.FRAGMENT | GPUShaderStage.COMPUTE;
 		return this;
 	}
 	toVisibleFrag(): WGRShaderVisibility {

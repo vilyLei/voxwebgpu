@@ -144,19 +144,14 @@ class WGRendererPass implements IWGRendererPass {
 					depthStencilAttachment: depStcAtt
 				};
 
-				// console.log("XXX create a rendering pass");
 				this.passEncoder = cmdEncoder.beginRenderPass(renderPassDescriptor);
 			} else {
-				// console.log("XXX create a compute pass");
 				this.compPassEncoder = cmdEncoder.beginComputePass();
 			}
 		}
 	}
 	runEnd(): GPUCommandBuffer {
 		const ctx = this.mWGCtx;
-		// if(this.name === 'newpass') {
-		// 	console.log("XXX rpass this.enabled: ", this.enabled);
-		// }
 		if (this.enabled && ctx.enabled) {
 			if (this.mDrawing) {
 				this.passEncoder.end();

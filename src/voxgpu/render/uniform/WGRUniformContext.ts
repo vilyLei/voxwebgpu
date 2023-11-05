@@ -69,7 +69,7 @@ class UCtxInstance {
 				ets.push( v );
 			}
 		}
-		console.log("UCtxInstance:: getBindGroupLayout(), CCCCCCC ets: ", ets);
+		// console.log("UCtxInstance:: getBindGroupLayout(), CCCCCCC ets: ", ets);
 		const desc = {
 			label: '(BindGroupLayout)UCtxInstance' + this.mUid,
 			entries: ets

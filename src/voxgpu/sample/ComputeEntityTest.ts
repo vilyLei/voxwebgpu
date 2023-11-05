@@ -1,10 +1,6 @@
 import MouseEvent from "../event/MouseEvent";
 import { RendererScene } from "../rscene/RendererScene";
 import { MouseInteraction } from "../ui/MouseInteraction";
-import { FixScreenPlaneEntity } from "../entity/FixScreenPlaneEntity";
-
-import shaderWGSL from "./shaders/gameOfLifeTest.wgsl";
-// import fragWGSL from "./shaders/screenPostEffect.frag.wgsl";
 
 import { WGRUniformValue } from "../render/uniform/WGRUniformValue";
 import { WGRStorageValue } from "../render/uniform/WGRStorageValue";
@@ -53,28 +49,23 @@ export class ComputeEntityTest {
 
 	private createUniformValues(): WGRUniformValue[] {
 		const gridsSizesArray = new Float32Array([gridSize, gridSize]);
-		// Create an array representing the active state of each cell.
-		const cellStateArray0 = new Uint32Array(gridSize * gridSize);		
-		// Mark every third cell of the first grid as active.
+		const cellStateArray0 = new Uint32Array(gridSize * gridSize);
 		for (let i = 0; i < cellStateArray0.length; i+=3) {
 			cellStateArray0[i] = 1;
 		}
 		const cellStateArray1 = new Uint32Array(gridSize * gridSize);
-		// Mark every other cell of the second grid as active.
 		for (let i = 0; i < cellStateArray1.length; i++) {
 			cellStateArray1[i] = i % 2;
 		}
-		let v0 = new WGRUniformValue({data: gridsSizesArray, stride: 1});
-		let v1 = new WGRStorageValue({data: cellStateArray0, stride: 1});
-		let v2 = new WGRStorageValue({data: cellStateArray1, stride: 1});
-		v0.visibility.toVisibleComp();
-		v1.visibility.toVisibleComp();
-		v2.visibility.toVisibleComp();
-		v2.visibility.toBufferForStorage();
+		const v0 = new WGRUniformValue({data: gridsSizesArray, stride: 1});
+		const v1 = new WGRStorageValue({data: cellStateArray0, stride: 1});
+		const v2 = new WGRStorageValue({data: cellStateArray1, stride: 1});
+		v0.toVisibleAll();
+		v1.toVisibleVertComp();
+		v2.toVisibleComp();
+		v2.toBufferForStorage();
 
-		let uniformvs: WGRUniformValue[] = [v0, v1, v2];
-		console.log("uniformvs: ", uniformvs);
-		return uniformvs;
+		return [v0, v1, v2];
 	}
 
 	private initScene(): void {

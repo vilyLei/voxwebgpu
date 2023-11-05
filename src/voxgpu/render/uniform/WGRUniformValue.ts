@@ -63,8 +63,30 @@ class WGRUniformValue {
 		this.shared = true;
 		return this;
 	}
-	toUniform(): void {
+	toVisibleAll(): WGRUniformValue{
+		this.visibility.toVisibleAll();
+		return this;
+	}
+	toVisibleVertComp(): WGRUniformValue{
+		this.visibility.toVisibleVertComp();
+		return this;
+	}
+	toVisibleComp(): WGRUniformValue{
+		this.visibility.toVisibleComp();
+		return this;
+	}
+	toBufferForStorage(): WGRUniformValue{
+		this.visibility.toBufferForStorage();
+		return this;
+	}
+	toBufferForReadOnlyStorage(): WGRUniformValue{
+		this.visibility.toBufferForReadOnlyStorage();
+		return this;
+	}
+
+	toUniform(): WGRUniformValue {
 		this.usage = GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST;
+		return this;
 	}
 	toStorage(): void {
 		this.usage = GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST;
