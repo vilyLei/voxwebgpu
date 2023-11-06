@@ -36,7 +36,8 @@
 // import { GameOfLifeTest as Demo } from "./voxgpu/sample/GameOfLifeTest";
 // import { ComputeMaterialTest as Demo } from "./voxgpu/sample/ComputeMaterialTest";
 // import { GameOfLifeMultiMaterialPass as Demo } from "./voxgpu/sample/GameOfLifeMultiMaterialPass";
-import { GameOfLifePretty as Demo } from "./voxgpu/sample/GameOfLifePretty";
+// import { GameOfLifePretty as Demo } from "./voxgpu/sample/GameOfLifePretty";
+import { GameOfLifeSphere as Demo } from "./voxgpu/sample/GameOfLifeSphere";
 
 let demoIns = new Demo();
 function main(): void {
