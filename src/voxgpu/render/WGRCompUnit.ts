@@ -93,7 +93,7 @@ class WGRCompUnit implements IWGRUnit {
 					for (let i = 0, ln = ufs.length; i < ln; i++) {
 						const uf = ufs[i];
 						if (uf.isEnabled()) {
-							console.log("compruint setBindGroup(), bindGroup: ", uf.bindGroup);
+							// console.log("compruint setBindGroup(), bindGroup: ", uf.bindGroup);
 							// console.log("ruint setBindGroup(), uf.groupIndex: ", uf.groupIndex,",", uf.bindGroup);
 							rc.setBindGroup(uf.groupIndex, uf.bindGroup);
 						} else {
@@ -126,7 +126,7 @@ class WGRCompUnit implements IWGRUnit {
 			if (works[1] > 0 && works[2] > 0) {
 				rc.dispatchWorkgroups(works[0], works[1], works[2]);
 			} else if (works[1] > 0) {
-				console.log("dispatchWorkgroups(x: " + works[0] + ", y: " + works[1] + ")");
+				// console.log("dispatchWorkgroups(x: " + works[0] + ", y: " + works[1] + ")");
 				rc.dispatchWorkgroups(works[0], works[1]);
 			} else {
 				rc.dispatchWorkgroups(works[0]);

@@ -101,7 +101,7 @@ class WGRUnit implements IWGRUnit {
 					for (let i = 0, ln = ufs.length; i < ln; i++) {
 						const uf = ufs[i];
 						if (uf.isEnabled()) {
-							console.log("ruint setBindGroup(), bindGroup: ", uf.bindGroup);
+							// console.log("ruint setBindGroup(), bindGroup: ", uf.bindGroup);
 							// console.log("ruint setBindGroup(), uf.groupIndex: ", uf.groupIndex,",", uf.bindGroup);
 							rc.setBindGroup(uf.groupIndex, uf.bindGroup);
 						} else {
@@ -140,7 +140,7 @@ class WGRUnit implements IWGRUnit {
 				// console.log(gt.indexCount, ", gt.instanceCount: ", gt.instanceCount);
 				rc.drawIndexed(gt.indexCount, gt.instanceCount);
 			} else {
-				console.log("runit draw(), vertexCount: ", gt.vertexCount,", instanceCount: ", gt.instanceCount);
+				// console.log("runit draw(), vertexCount: ", gt.vertexCount,", instanceCount: ", gt.instanceCount);
 				rc.draw(gt.vertexCount, gt.instanceCount);
 			}
 		}

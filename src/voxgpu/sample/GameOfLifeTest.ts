@@ -13,7 +13,7 @@ import { WGRShderSrcType } from "../material/WGMaterialDescripter";
 
 type NodeType = { rendEntity: FixScreenPlaneEntity; compEntity?: ComputeEntity };
 
-const gridSize = 16;
+const gridSize = 64;
 const shdWorkGroupSize = 8;
 
 const compShdCode = `
@@ -79,28 +79,6 @@ export class GameOfLifeTest {
 	private mouseDown = (evt: MouseEvent): void => {
 		this.mFlag = 1;
 	};
-	private createGeometry(): WGGeometry {
-		let hsize = 0.8;
-		let vertices = new Float32Array([
-			//   X,    Y,
-			-hsize,
-			-hsize, // Triangle 1 (Blue)
-			hsize,
-			-hsize,
-			hsize,
-			hsize,
-
-			-hsize,
-			-hsize, // Triangle 2 (Red)
-			hsize,
-			hsize,
-			-hsize,
-			hsize
-		]);
-		const geometry = new WGGeometry().addAttribute({ position: vertices, strides: [2] });
-		return geometry;
-	}
-
 	private createUniformValues(): { ufvs0: WGRUniformValue[], ufvs1: WGRUniformValue[] }[] {
 		const gridsSizesArray = new Float32Array([gridSize, gridSize]);
 		const cellStateArray0 = new Uint32Array(gridSize * gridSize);
@@ -113,15 +91,13 @@ export class GameOfLifeTest {
 			cellStateArray1[i] = i % 2;
 		}
 
-		// console.log("gridsSizesArray: ", gridsSizesArray);
-		// console.log("cellStateArray0: ", cellStateArray0);
-		// console.log("cellStateArray1: ", cellStateArray1);
 		let shared = true;
 		let sharedData0 = { data: cellStateArray0 };
 		let sharedData1 = { data: cellStateArray1 };
 
 		const v0 = new WGRUniformValue({ data: gridsSizesArray, stride: 2, shared });
 		v0.toVisibleAll();
+
 		// build rendering uniforms
 		const va1 = new WGRStorageValue({ sharedData: sharedData0, stride: 1, shared }).toVisibleVertComp();
 		const vb1 = new WGRStorageValue({ sharedData: sharedData1, stride: 1, shared }).toVisibleVertComp();
@@ -141,15 +117,13 @@ export class GameOfLifeTest {
 		return objs;
 	}
 	private mNodes: NodeType[] = [];
-	private mSign = 0;
+	private mStep = 0;
 	private initScene(): void {
 		const rc = this.mRscene;
 
 		let ufvsObjs = this.createUniformValues();
 
-
 		// build ping-pong rendering process
-		const geometry = this.createGeometry();
 		let shaderSrc = {
 			shaderSrc: {
 				code: shaderWGSL,
@@ -160,20 +134,15 @@ export class GameOfLifeTest {
 		} as WGRShderSrcType;
 		let instanceCount = gridSize * gridSize;
 		let uniformValues = ufvsObjs[0].ufvs0;
-		// console.log("uniformValues: ", uniformValues);
-		// let entity = new FixScreenPlaneEntity({x: -0.8,y:-0.8, width: 1.6, height: 1.6,  shadinguuid: "rshd0", shaderSrc, uniformValues, instanceCount });
-		let entity = new FixScreenPlaneEntity({shadinguuid: "rshd0", shaderSrc, uniformValues, instanceCount, geometry });
+		let entity = new FixScreenPlaneEntity({x: -0.8, y: -0.8, width: 1.6, height: 1.6, shadinguuid: "rshd0", shaderSrc, uniformValues, instanceCount });
 		rc.addEntity(entity);
 		this.mNodes = [{ rendEntity: entity, compEntity: null }];
-		// const geometry = this.mNodes[0].rendEntity.geometry;
+		entity.rstate.visible = false;
+		const geometry = this.mNodes[0].rendEntity.geometry;
 		uniformValues = ufvsObjs[0].ufvs1;
 		entity = new FixScreenPlaneEntity({ shadinguuid: "rshd1", shaderSrc, uniformValues, instanceCount, geometry });
 		rc.addEntity(entity);
 		this.mNodes.push({ rendEntity: entity, compEntity: null });
-		entity.rstate.visible = false;
-
-
-
 
 		// build ping-pong computing process
 		shaderSrc = {
@@ -185,36 +154,33 @@ export class GameOfLifeTest {
 		};
 
 		const workgroupCount = Math.ceil(gridSize / shdWorkGroupSize);
-		uniformValues = ufvsObjs[1].ufvs0;
+		uniformValues = ufvsObjs[1].ufvs1;
 		let compEentity = new ComputeEntity({ shadinguuid: "compshd0", shaderSrc, uniformValues }).setWorkcounts(workgroupCount, workgroupCount);
 		rc.addEntity(compEentity);
+		compEentity.rstate.visible = false;
 		this.mNodes[0].compEntity = compEentity;
-		uniformValues = ufvsObjs[1].ufvs1;
+		uniformValues = ufvsObjs[1].ufvs0;
 		compEentity = new ComputeEntity({ shadinguuid: "compshd1", shaderSrc, uniformValues }).setWorkcounts(workgroupCount, workgroupCount);
 		rc.addEntity(compEentity);
-		compEentity.rstate.visible = false;
 		this.mNodes[1].compEntity = compEentity;
-
 	}
-
+	private mFrameDelay = 3;
 	run(): void {
-		if (this.mFlag < 1) {
+		if(this.mFrameDelay > 0) {
+			this.mFrameDelay --;
 			return;
 		}
-		this.mFlag--;
-		console.log("run() >> >> >> >> >>");
+		this.mFrameDelay = 3;
 
 		for (let i = 0; i < this.mNodes.length; i++) {
 			const t = this.mNodes[i];
 			t.rendEntity.setVisible(false);
 			if(t.compEntity)t.compEntity.setVisible(false);
 		}
-		let index = this.mSign % 2;
-		// console.log("index: ", index);
+		let index = this.mStep % 2;
 		this.mNodes[index].rendEntity.setVisible(true);
 		if(this.mNodes[index].compEntity)this.mNodes[index].compEntity.setVisible(true);
-
-		this.mSign++;
+		this.mStep++;
 
 		this.mRscene.run();
 	}
