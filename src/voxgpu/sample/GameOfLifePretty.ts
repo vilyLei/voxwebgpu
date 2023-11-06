@@ -9,7 +9,7 @@ import { WGRShderSrcType } from "../material/WGMaterialDescripter";
 import { WGCompMaterial } from "../material/WGCompMaterial";
 import { WGMaterial } from "../material/WGMaterial";
 
-const gridSize = 64;
+const gridSize = 100;
 const shdWorkGroupSize = 8;
 
 const compShdCode = `
@@ -77,7 +77,7 @@ export class GameOfLifePretty {
 		const gridsSizesArray = new Float32Array([gridSize, gridSize]);
 		const cellStateArray0 = new Uint32Array(gridSize * gridSize);
 		for (let i = 0; i < cellStateArray0.length; i++) {
-			cellStateArray0[i] = Math.random() > 0.6 ? 1 : 0;
+			cellStateArray0[i] = Math.random() > 0.8 ? 1 : 0;
 		}
 		const cellStateArray1 = new Uint32Array(gridSize * gridSize);
 		for (let i = 0; i < cellStateArray1.length; i++) {
@@ -86,7 +86,7 @@ export class GameOfLifePretty {
 
 		const lifeStateArray3 = new Float32Array(gridSize * gridSize);
 		for (let i = 0; i < lifeStateArray3.length; i++) {
-			lifeStateArray3[i] = i % 2;
+			lifeStateArray3[i] = 0.01;
 		}
 
 		let shared = true;
