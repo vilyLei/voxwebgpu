@@ -161,12 +161,13 @@ export class GameOfLifeTest {
 		let instanceCount = gridSize * gridSize;
 		let uniformValues = ufvsObjs[0].ufvs0;
 		// console.log("uniformValues: ", uniformValues);
-		let entity = new FixScreenPlaneEntity({ shadinguuid: "rshd0", shaderSrc, geometry, uniformValues, instanceCount });
+		// let entity = new FixScreenPlaneEntity({x: -0.8,y:-0.8, width: 1.6, height: 1.6,  shadinguuid: "rshd0", shaderSrc, uniformValues, instanceCount });
+		let entity = new FixScreenPlaneEntity({shadinguuid: "rshd0", shaderSrc, uniformValues, instanceCount, geometry });
 		rc.addEntity(entity);
 		this.mNodes = [{ rendEntity: entity, compEntity: null }];
-
+		// const geometry = this.mNodes[0].rendEntity.geometry;
 		uniformValues = ufvsObjs[0].ufvs1;
-		entity = new FixScreenPlaneEntity({ shadinguuid: "rshd1", shaderSrc, geometry, uniformValues, instanceCount });
+		entity = new FixScreenPlaneEntity({ shadinguuid: "rshd1", shaderSrc, uniformValues, instanceCount, geometry });
 		rc.addEntity(entity);
 		this.mNodes.push({ rendEntity: entity, compEntity: null });
 		entity.rstate.visible = false;

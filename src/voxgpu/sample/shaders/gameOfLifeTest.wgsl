@@ -16,7 +16,7 @@ fn vertMain(input: VertexInput) -> VertexOutput {
     let cellOffset = cell / grid * 2.0;
 
     var state = f32(cellState[input.instance]);
-    let gridPos = (input.pos * state + 1.0) / grid - 1.0 + cellOffset;
+    let gridPos = (input.pos.xy * state + 1.0) / grid - 1.0 + cellOffset;
 
     var output: VertexOutput;
     output.pos = vec4f(gridPos, 0.0, 1.0);
