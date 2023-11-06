@@ -8,6 +8,7 @@ import { WGRStorageValue } from "../render/uniform/WGRStorageValue";
 import { WGRShderSrcType } from "../material/WGMaterialDescripter";
 import { WGCompMaterial } from "../material/WGCompMaterial";
 import { WGMaterial } from "../material/WGMaterial";
+import Vector3 from "../math/Vector3";
 
 const gridSize = 32;
 const shdWorkGroupSize = 8;
@@ -77,7 +78,7 @@ export class GameOfLifeSphere {
 		const gridsSizesArray = new Float32Array([gridSize, gridSize]);
 		const cellStateArray0 = new Uint32Array(gridSize * gridSize);
 		for (let i = 0; i < cellStateArray0.length; i++) {
-			cellStateArray0[i] = Math.random() > 0.8 ? 1 : 0;
+			cellStateArray0[i] = Math.random() > 0.5 ? 1 : 0;
 		}
 		const cellStateArray1 = new Uint32Array(gridSize * gridSize);
 		for (let i = 0; i < cellStateArray1.length; i++) {
@@ -89,10 +90,25 @@ export class GameOfLifeSphere {
 			lifeStateArray3[i] = 0.01;
 		}
 
+		const posisitonArray4 = new Float32Array(gridSize * gridSize * 3);
+		let posV = new Vector3();
+		let sizeV = new Vector3(50,50,50);
+		let k = 0;
+		for (let i = 0; i < gridSize; i++) {
+			for (let j = 0; j < gridSize; j++) {
+				let pv = new Vector3(j * sizeV.x, 0, i * sizeV.z).addBy(posV);				
+				posisitonArray4[k] = pv.x;
+				posisitonArray4[k+1] = pv.y;
+				posisitonArray4[k+2] = pv.z;
+				k += 3;
+			}
+		}
+
 		let shared = true;
 		let sharedData0 = { data: cellStateArray0 };
 		let sharedData1 = { data: cellStateArray1 };
 		let sharedData3 = { data: lifeStateArray3 };
+		let sharedData4 = { data: posisitonArray4 };
 
 		const v0 = new WGRUniformValue({ data: gridsSizesArray, stride: 2, shared });
 		v0.toVisibleAll();
@@ -101,6 +117,7 @@ export class GameOfLifeSphere {
 		const va1 = new WGRStorageValue({ sharedData: sharedData0, stride: 1, shared }).toVisibleVertComp();
 		const vb1 = new WGRStorageValue({ sharedData: sharedData1, stride: 1, shared }).toVisibleVertComp();
 		const vc1 = new WGRStorageValue({ sharedData: sharedData3, stride: 1, shared }).toVisibleAll();
+		const vd1 = new WGRStorageValue({ sharedData: sharedData4, stride: 1, shared }).toVisibleVertComp();
 
 		// build computing uniforms
 		const compva1 = new WGRStorageValue({ sharedData: sharedData0, stride: 1, shared }).toVisibleVertComp();
@@ -123,12 +140,12 @@ export class GameOfLifeSphere {
 	private mStep = 0;
 
 	private createMaterial(shaderCodeSrc: WGRShderSrcType, uniformValues: WGRUniformValue[], shadinguuid: string, instanceCount: number): WGMaterial {
-			return new WGMaterial({
-				shadinguuid,
-				shaderCodeSrc,
-				instanceCount,
-				uniformValues
-			});
+		return new WGMaterial({
+			shadinguuid,
+			shaderCodeSrc,
+			instanceCount,
+			uniformValues
+		});
 	}
 	private createCompMaterial(shaderCodeSrc: WGRShderSrcType, uniformValues: WGRUniformValue[], shadinguuid: string, workgroupCount = 2): WGCompMaterial {
 		return new WGCompMaterial({
