@@ -10,7 +10,7 @@ class ComputeEntity extends Entity3D {
 		this.createMaterial(param);
 	}
 	setWorkcounts(x: number, y?: number, z?: number): ComputeEntity {
-		let ts = this.workcounts;
+		const ts = this.workcounts;
 		ts[0] = x;
 		ts[1] = y !== undefined ? y : 0;
 		ts[2] = z !== undefined ? z : 0;
@@ -21,19 +21,11 @@ class ComputeEntity extends Entity3D {
 		if (param.materials) {
 			this.materials = param.materials;
 		} else {
-			let shdSrc = param.shaderSrc;
-			let depthWriteEnabled = param.depthWriteEnabled === false ? false : true;
-			let pipelineDefParam = {
-				depthWriteEnabled: depthWriteEnabled,
-				faceCullMode: param.faceCullMode ? param.faceCullMode : "back",
-				blendModes: param.blendModes ? param.blendModes : ["solid"]
-			};
+			const shaderCodeSrc = param.shaderSrc;
 			const material = new WGMaterial({
 				shadinguuid: param.shadinguuid !== undefined ? param.shadinguuid : "ComputeEntity-material",
-				shaderCodeSrc: shdSrc,
-				pipelineDefParam
+				shaderCodeSrc
 			});
-
 			if (param.instanceCount !== undefined) {
 				material.instanceCount = param.instanceCount;
 			}

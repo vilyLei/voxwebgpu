@@ -33,7 +33,10 @@
 // import { DrawInstanceTest as Demo } from "./voxgpu/sample/DrawInstanceTest";
 
 // import { ComputeEntityTest as Demo } from "./voxgpu/sample/ComputeEntityTest";
-import { GameOfLifeTest as Demo } from "./voxgpu/sample/GameOfLifeTest";
+// import { GameOfLifeTest as Demo } from "./voxgpu/sample/GameOfLifeTest";
+// import { ComputeMaterialTest as Demo } from "./voxgpu/sample/ComputeMaterialTest";
+// import { GameOfLifeMultiMaterialPass as Demo } from "./voxgpu/sample/GameOfLifeMultiMaterialPass";
+import { GameOfLifePretty as Demo } from "./voxgpu/sample/GameOfLifePretty";
 
 let demoIns = new Demo();
 function main(): void {

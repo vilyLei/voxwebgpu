@@ -8,6 +8,7 @@ import { WGRUniformValue } from "./uniform/WGRUniformValue";
 import { GPUTextureView } from "../gpu/GPUTextureView";
 import { WGRCompUnit } from "./WGRCompUnit";
 import { IRenderableObject } from "./IRenderableObject";
+import { WGCompMaterial } from "../material/WGCompMaterial";
 
 type GeomType = { indexBuffer?: GPUBuffer; vertexBuffers: GPUBuffer[]; indexCount?: number; vertexCount?: number };
 
@@ -55,8 +56,12 @@ class WGRObjBuilder {
 		if(isComputing) {
 			let et = (entity as IRenderableObject);
 			let rcompunit = new WGRCompUnit();
+			let compMat = material as WGCompMaterial;
 			if(et.workcounts) {
 				rcompunit.workcounts = et.workcounts;
+			}
+			if(compMat && compMat.workcounts) {
+				rcompunit.workcounts = compMat.workcounts;
 			}
 			rcompunit.rp = pctx.rpass;
 			ru = rcompunit;
@@ -150,7 +155,6 @@ class WGRObjBuilder {
 			const indexCount = indexBuffer ? indexBuffer.elementCount : 0;
 			const vertexCount = vertexBuffers[0].vectorCount;
 			primitive = this.createPrimitive({ vertexBuffers, indexBuffer, indexCount, vertexCount });
-
 		}
 
 		let ru: IWGRUnit;
@@ -169,6 +173,7 @@ class WGRObjBuilder {
 		ru.st = entity.rstate;
 		ru.st.__$rendering = true;
 		ru.__$rever = ru.st.__$rever;
+
 		ru.etuuid = entity.uuid;
 		block.addRUnit(ru);
 		return ru;

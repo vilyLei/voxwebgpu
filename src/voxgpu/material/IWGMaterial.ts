@@ -4,9 +4,7 @@ import { WGRPipelineContextDefParam, WGRShderSrcType } from "../render/pipeline/
 import { VtxPipelinDescParam, IWGRPipelineContext } from "../render/pipeline/IWGRPipelineContext";
 import { WGMaterialDescripter } from "./WGMaterialDescripter";
 import { WGRUniformValue } from "../render/uniform/WGRUniformValue";
-// import { WGRUniform } from "../render/uniform/WGRUniform";
 import { IWGRPassRef } from "../render/pipeline/IWGRPassRef";
-import { IWGMaterialShaderLayout } from "./IWGMaterialShaderLayout";
 import { IWGMaterialGraph } from "./IWGMaterialGraph";
 
 interface IWGMaterial extends WGMaterialDescripter {

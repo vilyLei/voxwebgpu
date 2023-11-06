@@ -1,16 +1,13 @@
-import MouseEvent from "../event/MouseEvent";
 import { RendererScene } from "../rscene/RendererScene";
-import { MouseInteraction } from "../ui/MouseInteraction";
 import { FixScreenPlaneEntity } from "../entity/FixScreenPlaneEntity";
 
 import shaderWGSL from "./shaders/gameOfLife.wgsl";
 
 import { WGRUniformValue } from "../render/uniform/WGRUniformValue";
 import { WGRStorageValue } from "../render/uniform/WGRStorageValue";
-import { ComputeEntity } from "../entity/ComputeEntity";
 import { WGRShderSrcType } from "../material/WGMaterialDescripter";
-
-type NodeType = { rendEntity: FixScreenPlaneEntity; compEntity?: ComputeEntity };
+import { WGCompMaterial } from "../material/WGCompMaterial";
+import { WGMaterial } from "../material/WGMaterial";
 
 const gridSize = 64;
 const shdWorkGroupSize = 8;
@@ -33,14 +30,14 @@ fn cellActive(x: u32, y: u32) -> u32 {
 @compute @workgroup_size(${shdWorkGroupSize}, ${shdWorkGroupSize})
 fn compMain(@builtin(global_invocation_id) cell: vec3u) {
 	// Determine how many active neighbors this cell has.
-	let activeNeighbors = cellActive(cell.x+1, cell.y+1) +
-							cellActive(cell.x+1, cell.y) +
-							cellActive(cell.x+1, cell.y-1) +
-							cellActive(cell.x, cell.y-1) +
-							cellActive(cell.x-1, cell.y-1) +
-							cellActive(cell.x-1, cell.y) +
-							cellActive(cell.x-1, cell.y+1) +
-							cellActive(cell.x, cell.y+1);
+	let activeNeighbors = cellActive(cell.x+1, 		cell.y+1) +
+							cellActive(cell.x+1, 	cell.y) +
+							cellActive(cell.x+1, 	cell.y-1) +
+							cellActive(cell.x, 		cell.y-1) +
+							cellActive(cell.x-1, 	cell.y-1) +
+							cellActive(cell.x-1, 	cell.y) +
+							cellActive(cell.x-1, 	cell.y+1) +
+							cellActive(cell.x, 		cell.y+1);
 
 	let i = cellIndex(cell.xy);
 
@@ -57,27 +54,16 @@ fn compMain(@builtin(global_invocation_id) cell: vec3u) {
 		}
 	}
 }`;
-export class GameOfLifeTest {
+export class GameOfLifeMultiMaterialPass {
 	private mRscene = new RendererScene();
 
 	initialize(): void {
-		console.log("GameOfLifeTest::initialize() ...");
+		console.log("GameOfLifeMultiMaterialPass::initialize() ...");
 
 		const rc = this.mRscene;
 		rc.initialize();
-		this.initEvent();
 		this.initScene();
 	}
-	private mFlag = 6;
-	private initEvent(): void {
-		const rc = this.mRscene;
-		rc.addEventListener(MouseEvent.MOUSE_DOWN, this.mouseDown);
-		new MouseInteraction().initialize(rc, 0, false).setAutoRunning(true);
-	}
-
-	private mouseDown = (evt: MouseEvent): void => {
-		this.mFlag = 1;
-	};
 	private createUniformValues(): { ufvs0: WGRUniformValue[]; ufvs1: WGRUniformValue[] }[] {
 		const gridsSizesArray = new Float32Array([gridSize, gridSize]);
 		const cellStateArray0 = new Uint32Array(gridSize * gridSize);
@@ -108,20 +94,37 @@ export class GameOfLifeTest {
 		const compvb2 = new WGRStorageValue({ sharedData: sharedData0, stride: 1, shared }).toVisibleComp();
 		compvb2.toBufferForStorage();
 
-		let objs = [
+		return [
 			{ ufvs0: [v0, va1], ufvs1: [v0, vb1] },
 			{ ufvs0: [v0, compva1, compva2], ufvs1: [v0, compvb1, compvb2] }
 		];
-		return objs;
 	}
-	private mNodes: NodeType[] = [];
+	private mEntity: FixScreenPlaneEntity;
 	private mStep = 0;
+
+	private createMaterial(shaderCodeSrc: WGRShderSrcType, uniformValues: WGRUniformValue[], shadinguuid: string, instanceCount: number): WGMaterial {
+			return new WGMaterial({
+				shadinguuid,
+				shaderCodeSrc,
+				instanceCount,
+				uniformValues
+			});
+	}
+	private createCompMaterial(shaderCodeSrc: WGRShderSrcType, uniformValues: WGRUniformValue[], shadinguuid: string, workgroupCount = 2): WGCompMaterial {
+		return new WGCompMaterial({
+			shadinguuid,
+			shaderCodeSrc,
+			uniformValues
+		}).setWorkcounts(workgroupCount, workgroupCount);
+	}
 	private initScene(): void {
 		const rc = this.mRscene;
 
-		let ufvsObjs = this.createUniformValues();
+		const ufvsObjs = this.createUniformValues();
 
-		// build ping-pong rendering process
+		const instanceCount = gridSize * gridSize;
+		const workgroupCount = Math.ceil(gridSize / shdWorkGroupSize);
+
 		let shaderSrc = {
 			shaderSrc: {
 				code: shaderWGSL,
@@ -130,45 +133,36 @@ export class GameOfLifeTest {
 				fragEntryPoint: "fragMain"
 			}
 		} as WGRShderSrcType;
-		let instanceCount = gridSize * gridSize;
-		let uniformValues = ufvsObjs[0].ufvs0;
-		let entity = new FixScreenPlaneEntity({
-			x: -0.8, y: -0.8, width: 1.6, height: 1.6,
-			shadinguuid: "rshd0", shaderSrc, uniformValues, instanceCount
-		});
-		rc.addEntity(entity);
-		this.mNodes = [{ rendEntity: entity, compEntity: null }];
-		entity.rstate.visible = false;
-		const geometry = this.mNodes[0].rendEntity.geometry;
-		uniformValues = ufvsObjs[0].ufvs1;
-		entity = new FixScreenPlaneEntity({ shadinguuid: "rshd1", shaderSrc, uniformValues, instanceCount, geometry });
-		rc.addEntity(entity);
-		this.mNodes.push({ rendEntity: entity, compEntity: null });
-
-		// build ping-pong computing process
-		shaderSrc = {
+		let compShaderSrc = {
 			compShaderSrc: {
 				code: compShdCode,
 				uuid: "shader-computing",
 				compEntryPoint: "compMain"
 			}
 		};
+		const materials: WGMaterial[] = [
+			// build ping-pong rendering process
+			this.createMaterial(shaderSrc, ufvsObjs[0].ufvs0, "rshd0", instanceCount),
+			this.createMaterial(shaderSrc, ufvsObjs[0].ufvs1, "rshd1", instanceCount),
+			// build ping-pong computing process
+			this.createCompMaterial(compShaderSrc, ufvsObjs[1].ufvs1, "compshd0", workgroupCount),
+			this.createCompMaterial(compShaderSrc, ufvsObjs[1].ufvs0, "compshd1", workgroupCount),
+		];
 
-		const workgroupCount = Math.ceil(gridSize / shdWorkGroupSize);
-		uniformValues = ufvsObjs[1].ufvs1;
-		let compEentity = new ComputeEntity({ shadinguuid: "compshd0", shaderSrc, uniformValues }).setWorkcounts(workgroupCount, workgroupCount);
-		rc.addEntity(compEentity);
-		compEentity.rstate.visible = false;
-		this.mNodes[0].compEntity = compEentity;
-		uniformValues = ufvsObjs[1].ufvs0;
-		compEentity = new ComputeEntity({ shadinguuid: "compshd1", shaderSrc, uniformValues }).setWorkcounts(workgroupCount, workgroupCount);
-		rc.addEntity(compEentity);
-		this.mNodes[1].compEntity = compEentity;
+		let entity = new FixScreenPlaneEntity({
+			x: -0.8, y: -0.8, width: 1.6, height: 1.6,
+			materials
+		});
+		rc.addEntity(entity);
+		materials[0].visible = false;
+		materials[2].visible = false;
+
+		this.mEntity = entity;
 	}
 
 	private mFrameDelay = 3;
 	run(): void {
-		let rendering = this.mNodes[0].compEntity.isRendering();
+		let rendering = this.mEntity.isRendering();
 		if (rendering) {
 			if (this.mFrameDelay > 0) {
 				this.mFrameDelay--;
@@ -176,36 +170,12 @@ export class GameOfLifeTest {
 			}
 			this.mFrameDelay = 3;
 
-			const nodes = this.mNodes;
-			for (let i = 0; i < nodes.length; i++) {
-				const t = nodes[i];
-				const flag = (this.mStep % 2 + i) % 2 == 0;
-				t.rendEntity.visible = flag;
-				t.compEntity.visible = flag;
+			const ms = this.mEntity.materials;
+			for (let i = 0; i < ms.length; i++) {
+				ms[i].visible = (this.mStep % 2 + i) % 2 == 0;
 			}
 			this.mStep++;
 		}
 		this.mRscene.run(rendering);
-	}
-	run2(): void {
-		if (this.mRscene.renderer.isEnabled()) {
-			if (this.mFrameDelay > 0) {
-				this.mFrameDelay--;
-				return;
-			}
-			this.mFrameDelay = 3;
-			const nodes = this.mNodes;
-			for (let i = 0; i < nodes.length; i++) {
-				const t = nodes[i];
-				t.rendEntity.visible = false;
-				t.compEntity.visible = false;
-			}
-			let index = this.mStep % 2;
-			nodes[index].rendEntity.visible = true;
-			nodes[index].compEntity.visible = true;
-			this.mStep++;
-
-			this.mRscene.run();
-		}
 	}
 }

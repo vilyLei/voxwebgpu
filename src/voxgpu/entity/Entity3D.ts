@@ -238,6 +238,13 @@ class Entity3D implements IRenderableEntity {
 	isFree(): boolean {
 		return this.__$rseFlag == REF.DEFAULT;
 	}
+	set visible(v: boolean) {
+		this.rstate.visible = v;
+	}
+	get visible(): boolean {
+		return this.rstate.visible;
+	}
+
 	setVisible(v: boolean): Entity3D {
 		this.rstate.visible = v;
 		return this;

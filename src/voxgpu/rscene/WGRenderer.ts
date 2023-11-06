@@ -205,21 +205,22 @@ class WGRenderer implements IRenderer {
 	isEnabled(): boolean {
 		return this.enabled && this.mWGCtx && this.mWGCtx.enabled;
 	}
-	run(): void {
+	run(rendering = true): void {
 		if (this.enabled) {
 			const ctx = this.mWGCtx;
 			if (ctx && ctx.enabled) {
 				this.mNodeMana.update();
+				if(rendering) {
+					const rbs = this.mRPBlocks;
+					if (rbs.length > 0) {
+						const rb = rbs[0];
 
-				const rbs = this.mRPBlocks;
-				if (rbs.length > 0) {
-					const rb = rbs[0];
-
-					rb.runBegin();
-					rb.run();
-					rb.runEnd();
-					const cmds = rb.rcommands;
-					ctx.queue.submit(cmds);
+						rb.runBegin();
+						rb.run();
+						rb.runEnd();
+						const cmds = rb.rcommands;
+						ctx.queue.submit(cmds);
+					}
 				}
 			}
 		}

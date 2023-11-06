@@ -118,7 +118,7 @@ class RendererScene implements IRendererScene {
 		const st = this.racontext.getStage();
 		st.removeEventListener(type, func);
 	}
-	run(): void {
+	run(rendering = true): void {
 
 		const r = this.renderer;
 		if (this.enabled && r && r.isEnabled()) {
@@ -126,8 +126,7 @@ class RendererScene implements IRendererScene {
 			this.camera.update();
 			const st = this.racontext.getStage();
 			st.enterFrame();
-
-			r.run();
+			r.run(rendering);
 		}
 	}
 	destroy(): void {}

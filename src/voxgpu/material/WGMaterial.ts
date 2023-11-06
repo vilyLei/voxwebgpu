@@ -29,7 +29,7 @@ class WGMaterial implements IWGMaterial {
 
 	// textures: { [key: string]: WGTextureWrapper } = {};
 	textures: WGTextureWrapper[];
-	
+
 	visible = true;
 	graph?: IWGMaterialGraph;
 
@@ -107,6 +107,8 @@ class WGMaterial implements IWGMaterial {
 			if (d.pipelineVtxParam) this.pipelineVtxParam = d.pipelineVtxParam;
 			if (d.pipelineDefParam) this.pipelineDefParam = d.pipelineDefParam;
 			if (d.rpass) this.rpass = d.rpass;
+			if (d.uniformValues) this.uniformValues = d.uniformValues;
+			if (d.instanceCount !== undefined) this.instanceCount = d.instanceCount;
 		}
 	}
 	initialize(pipelineCtx: IWGRPipelineContext): void {
