@@ -79,12 +79,11 @@ export class GameOfLifeTest {
 	private mouseDown = (evt: MouseEvent): void => {
 		this.mFlag = 1;
 	};
-	private createUniformValues(): { ufvs0: WGRUniformValue[], ufvs1: WGRUniformValue[] }[] {
+	private createUniformValues(): { ufvs0: WGRUniformValue[]; ufvs1: WGRUniformValue[] }[] {
 		const gridsSizesArray = new Float32Array([gridSize, gridSize]);
 		const cellStateArray0 = new Uint32Array(gridSize * gridSize);
 		for (let i = 0; i < cellStateArray0.length; i++) {
 			cellStateArray0[i] = Math.random() > 0.6 ? 1 : 0;
-			// cellStateArray0[i] = 1;
 		}
 		const cellStateArray1 = new Uint32Array(gridSize * gridSize);
 		for (let i = 0; i < cellStateArray1.length; i++) {
@@ -134,7 +133,10 @@ export class GameOfLifeTest {
 		} as WGRShderSrcType;
 		let instanceCount = gridSize * gridSize;
 		let uniformValues = ufvsObjs[0].ufvs0;
-		let entity = new FixScreenPlaneEntity({x: -0.8, y: -0.8, width: 1.6, height: 1.6, shadinguuid: "rshd0", shaderSrc, uniformValues, instanceCount });
+		let entity = new FixScreenPlaneEntity({
+			x: -0.8, y: -0.8, width: 1.6, height: 1.6,
+			shadinguuid: "rshd0", shaderSrc, uniformValues, instanceCount
+		});
 		rc.addEntity(entity);
 		this.mNodes = [{ rendEntity: entity, compEntity: null }];
 		entity.rstate.visible = false;
@@ -148,8 +150,8 @@ export class GameOfLifeTest {
 		shaderSrc = {
 			compShaderSrc: {
 				code: compShdCode,
-				uuid: 'shader-computing',
-				compEntryPoint: 'compMain'
+				uuid: "shader-computing",
+				compEntryPoint: "compMain"
 			}
 		};
 
@@ -166,22 +168,24 @@ export class GameOfLifeTest {
 	}
 	private mFrameDelay = 3;
 	run(): void {
-		if(this.mFrameDelay > 0) {
-			this.mFrameDelay --;
-			return;
-		}
-		this.mFrameDelay = 3;
+		if (this.mRscene.renderer.isEnabled()) {
+			if (this.mFrameDelay > 0) {
+				this.mFrameDelay--;
+				return;
+			}
+			this.mFrameDelay = 3;
 
-		for (let i = 0; i < this.mNodes.length; i++) {
-			const t = this.mNodes[i];
-			t.rendEntity.setVisible(false);
-			if(t.compEntity)t.compEntity.setVisible(false);
-		}
-		let index = this.mStep % 2;
-		this.mNodes[index].rendEntity.setVisible(true);
-		if(this.mNodes[index].compEntity)this.mNodes[index].compEntity.setVisible(true);
-		this.mStep++;
+			for (let i = 0; i < this.mNodes.length; i++) {
+				const t = this.mNodes[i];
+				t.rendEntity.setVisible(false);
+				if (t.compEntity) t.compEntity.setVisible(false);
+			}
+			let index = this.mStep % 2;
+			this.mNodes[index].rendEntity.setVisible(true);
+			if (this.mNodes[index].compEntity) this.mNodes[index].compEntity.setVisible(true);
+			this.mStep++;
 
-		this.mRscene.run();
+			this.mRscene.run();
+		}
 	}
 }
