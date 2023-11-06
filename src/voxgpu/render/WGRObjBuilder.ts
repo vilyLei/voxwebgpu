@@ -53,19 +53,19 @@ class WGRObjBuilder {
 
 		let ru: IWGRUnit;
 
-		if(isComputing) {
+		if (isComputing) {
 			let et = (entity as IRenderableObject);
 			let rcompunit = new WGRCompUnit();
 			let compMat = material as WGCompMaterial;
-			if(et.workcounts) {
+			if (et.workcounts) {
 				rcompunit.workcounts = et.workcounts;
 			}
-			if(compMat && compMat.workcounts) {
+			if (compMat && compMat.workcounts) {
 				rcompunit.workcounts = compMat.workcounts;
 			}
 			rcompunit.rp = pctx.rpass;
 			ru = rcompunit;
-		}else {
+		} else {
 			let runit = new WGRUnit();
 			runit.geometry = primitive;
 			runit.rp = pctx.rpass;
@@ -77,13 +77,14 @@ class WGRObjBuilder {
 		let uvalues: WGRUniformValue[] = [];
 
 		const cam = block.camera;
-
-		if (entity.transform) {
-			uvalues.push(entity.transform.uniformv);
-		}
-		if (entity.cameraViewing) {
-			uvalues.push(cam.viewUniformV);
-			uvalues.push(cam.projUniformV);
+		if (!isComputing) {
+			if (entity.transform) {
+				uvalues.push(entity.transform.uniformv);
+			}
+			if (entity.cameraViewing) {
+				uvalues.push(cam.viewUniformV);
+				uvalues.push(cam.projUniformV);
+			}
 		}
 
 		if (material.uniformValues) {
@@ -99,15 +100,17 @@ class WGRObjBuilder {
 		let texList = material.textures;
 		let utexes: { texView: GPUTextureView }[];
 		// console.log("createRUnit(), texList: ", texList);
-		if (texList && texList.length > 0) {
-			utexes = new Array(texList.length);
-			for (let i = 0; i < texList.length; i++) {
-				const tex = texList[i].texture;
-				if (!tex.view) {
-					tex.view = tex.texture.createView({ dimension: tex.dimension });
+		if (!isComputing) {
+			if (texList && texList.length > 0) {
+				utexes = new Array(texList.length);
+				for (let i = 0; i < texList.length; i++) {
+					const tex = texList[i].texture;
+					if (!tex.view) {
+						tex.view = tex.texture.createView({ dimension: tex.dimension });
+					}
+					tex.view.dimension = tex.dimension
+					utexes[i] = { texView: tex.view };
 				}
-				tex.view.dimension = tex.dimension
-				utexes[i] = { texView: tex.view };
 			}
 		}
 		if ((uvalues && uvalues.length > 0) || (utexes && utexes.length > 0)) {

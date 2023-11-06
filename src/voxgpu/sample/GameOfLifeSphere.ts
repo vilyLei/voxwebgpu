@@ -1,5 +1,6 @@
 import { RendererScene } from "../rscene/RendererScene";
-import { FixScreenPlaneEntity } from "../entity/FixScreenPlaneEntity";
+import MouseEvent from "../event/MouseEvent";
+import { MouseInteraction } from "../ui/MouseInteraction";
 
 import shaderWGSL from "./shaders/gameOfLifeSphere.wgsl";
 
@@ -9,8 +10,9 @@ import { WGRShderSrcType } from "../material/WGMaterialDescripter";
 import { WGCompMaterial } from "../material/WGCompMaterial";
 import { WGMaterial } from "../material/WGMaterial";
 import Vector3 from "../math/Vector3";
+import { SphereEntity } from "../entity/SphereEntity";
 
-const gridSize = 32;
+const gridSize = 16;
 const shdWorkGroupSize = 8;
 
 const compShdCode = `
@@ -63,6 +65,8 @@ fn compMain(@builtin(global_invocation_id) cell: vec3u) {
 		}
 	}
 	if(lifeState[i] < 0.01) { lifeState[i] = 0.01; }
+	// cellStateOut[i] = 1;
+	// lifeState[i] = 1.0;
 }`;
 export class GameOfLifeSphere {
 	private mRscene = new RendererScene();
@@ -72,7 +76,13 @@ export class GameOfLifeSphere {
 
 		const rc = this.mRscene;
 		rc.initialize();
+		this.initEvent();
 		this.initScene();
+	}
+	private initEvent(): void {
+		const rc = this.mRscene;
+		// rc.addEventListener(MouseEvent.MOUSE_DOWN, this.mouseDown);
+		new MouseInteraction().initialize(rc, 0, false).setAutoRunning(true);
 	}
 	private createUniformValues(): { ufvs0: WGRUniformValue[]; ufvs1: WGRUniformValue[] }[] {
 		const gridsSizesArray = new Float32Array([gridSize, gridSize]);
@@ -90,9 +100,12 @@ export class GameOfLifeSphere {
 			lifeStateArray3[i] = 0.01;
 		}
 
-		const posisitonArray4 = new Float32Array(gridSize * gridSize * 3);
-		let posV = new Vector3();
-		let sizeV = new Vector3(50,50,50);
+		const posisitonArray4 = new Float32Array(gridSize * gridSize * 4);
+		let sizeV = new Vector3(50,0.0,50);		
+		let posV = new Vector3().copyFrom(sizeV);
+		posV.scaleBy(gridSize);
+		posV.scaleBy(-0.5);
+
 		let k = 0;
 		for (let i = 0; i < gridSize; i++) {
 			for (let j = 0; j < gridSize; j++) {
@@ -100,7 +113,7 @@ export class GameOfLifeSphere {
 				posisitonArray4[k] = pv.x;
 				posisitonArray4[k+1] = pv.y;
 				posisitonArray4[k+2] = pv.z;
-				k += 3;
+				k += 4;
 			}
 		}
 
@@ -117,7 +130,7 @@ export class GameOfLifeSphere {
 		const va1 = new WGRStorageValue({ sharedData: sharedData0, stride: 1, shared }).toVisibleVertComp();
 		const vb1 = new WGRStorageValue({ sharedData: sharedData1, stride: 1, shared }).toVisibleVertComp();
 		const vc1 = new WGRStorageValue({ sharedData: sharedData3, stride: 1, shared }).toVisibleAll();
-		const vd1 = new WGRStorageValue({ sharedData: sharedData4, stride: 1, shared }).toVisibleVertComp();
+		const v4 = new WGRStorageValue({ sharedData: sharedData4, stride: 3, shared }).toVisibleVertComp();
 
 		// build computing uniforms
 		const compva1 = new WGRStorageValue({ sharedData: sharedData0, stride: 1, shared }).toVisibleVertComp();
@@ -132,11 +145,11 @@ export class GameOfLifeSphere {
 		compv3.toBufferForStorage();
 
 		return [
-			{ ufvs0: [v0, va1, vc1], ufvs1: [v0, vb1, vc1] },
+			{ ufvs0: [v0, va1, vc1, v4], ufvs1: [v0, vb1, vc1, v4] },
 			{ ufvs0: [v0, compva1, compva2, compv3], ufvs1: [v0, compvb1, compvb2, compv3] }
 		];
 	}
-	private mEntity: FixScreenPlaneEntity;
+	private mEntity: SphereEntity;
 	private mStep = 0;
 
 	private createMaterial(shaderCodeSrc: WGRShderSrcType, uniformValues: WGRUniformValue[], shadinguuid: string, instanceCount: number): WGMaterial {
@@ -181,13 +194,14 @@ export class GameOfLifeSphere {
 			// build ping-pong rendering process
 			this.createMaterial(shaderSrc, ufvsObjs[0].ufvs0, "rshd0", instanceCount),
 			this.createMaterial(shaderSrc, ufvsObjs[0].ufvs1, "rshd1", instanceCount),
-			// build ping-pong computing process
+			// // build ping-pong computing process
 			this.createCompMaterial(compShaderSrc, ufvsObjs[1].ufvs1, "compshd0", workgroupCount),
 			this.createCompMaterial(compShaderSrc, ufvsObjs[1].ufvs0, "compshd1", workgroupCount),
 		];
 
-		let entity = new FixScreenPlaneEntity({
-			x: -0.8, y: -0.8, width: 1.6, height: 1.6,
+		let entity = new SphereEntity({
+			transufvShared: true,
+			radius: 20, longitudeNumSegments:10, latitudeNumSegments:10,
 			materials
 		});
 		rc.addEntity(entity);

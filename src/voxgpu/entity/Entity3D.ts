@@ -16,6 +16,7 @@ import { WGRUniformValue } from "../render/uniform/WGRUniformValue";
 interface Entity3DParam {
 	transformEnabled?: boolean;
 	transform?: ROTransform | IMatrix4 | Float32Array;
+	transufvShared?: boolean;
 	materials?: WGMaterial[];
 	geometry?: WGGeometry;
 	textures?: WGTextureDataDescriptor[];
@@ -110,6 +111,10 @@ class Entity3D implements IRenderableEntity {
 			} else {
 				this.transform = ROTransform.Create();
 			}
+		}
+		
+		if(param.transufvShared === true) {
+			this.transform.uniformv.shared = true;
 		}
 		this.initBounds(transformEnabled);
 		if (param) {
