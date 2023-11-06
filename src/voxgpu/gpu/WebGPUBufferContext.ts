@@ -1,4 +1,5 @@
 import { GPUBuffer } from "./GPUBuffer";
+import { GPUBufferDescriptor } from "./GPUBufferDescriptor";
 import { WebGPUContextImpl } from "./WebGPUContextImpl";
 
 class WebGPUBufferContext {
@@ -29,13 +30,13 @@ class WebGPUBufferContext {
 	}
 
 	createIndexBuffer(data: IndexArrayViewType, offset = 0, mappedAtCreation = true): GPUBuffer {
-		return this.createBuffer(data, offset, GPUBufferUsage.INDEX, mappedAtCreation);
+		return this.createVtxBuffer(data, offset, GPUBufferUsage.INDEX, mappedAtCreation);
 	}
 	createVertexBuffer(data: NumberArrayViewType, offset = 0, vectorLengths?: number[], mappedAtCreation = true): GPUBuffer {
-		return this.createBuffer(data, offset, GPUBufferUsage.VERTEX, mappedAtCreation, vectorLengths);
+		return this.createVtxBuffer(data, offset, GPUBufferUsage.VERTEX, mappedAtCreation, vectorLengths);
 	}
 
-	createBuffer(
+	createVtxBuffer(
 		data: NumberArrayViewType,
 		offset = 0,
 		usage = GPUBufferUsage.VERTEX,
@@ -44,15 +45,19 @@ class WebGPUBufferContext {
 	): GPUBuffer {
 		let size = data.byteLength % 4;
 		// 如果不是4的倍数会报错
-		size = data.byteLength + (size > 0 ? (4 - size) : 0);
-		const buf = this.mWGCtx.device.createBuffer({
+		size = data.byteLength + (size > 0 ? 4 - size : 0);
+		// const buf = this.mWGCtx.device.createBuffer({
+		// 	size: size,
+		// 	usage: usage,
+		// 	mappedAtCreation
+		// });
+		const buf = this.createBuffer({
 			size: size,
 			usage: usage,
 			mappedAtCreation
 		});
 
 		if (mappedAtCreation) {
-
 			const b = buf.getMappedRange();
 			let eleBytes = 0;
 			if (data instanceof Float32Array) {
@@ -91,7 +96,6 @@ class WebGPUBufferContext {
 			buf.elementCount = data.length;
 
 			if (vectorLengths && vectorLengths.length > 0) {
-
 				let arrayStride = 0;
 				const offsets: number[] = new Array(vectorLengths.length);
 				const formats: string[] = new Array(vectorLengths.length);
@@ -110,6 +114,11 @@ class WebGPUBufferContext {
 
 		buf.enabled = true;
 		buf.shared = false;
+		buf.uid = WebGPUBufferContext.sVtxUid++;
+		return buf;
+	}
+	createBuffer(desc: GPUBufferDescriptor): GPUBuffer {
+		const buf = this.mWGCtx.device.createBuffer(desc);
 		buf.uid = WebGPUBufferContext.sVtxUid++;
 		return buf;
 	}

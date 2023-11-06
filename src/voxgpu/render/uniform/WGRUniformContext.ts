@@ -29,7 +29,7 @@ class UCtxInstance {
 	ready = false;
 	shdUniform: SharedUniformObj;
 	layoutAuto = true;
-	constructor() { }
+	constructor() {}
 
 	private getFreeIndex(): number {
 		if (this.mFreeIds.length > 0) return this.mFreeIds.pop();
@@ -50,7 +50,7 @@ class UCtxInstance {
 			for (let i = 0; i < dps.length; ++i) {
 				const p = dps[i];
 				p.visibility.binding = ets.length;
-				if(!p.visibility.buffer) {
+				if (!p.visibility.buffer) {
 					p.visibility.toBufferForUniform();
 				}
 				ets.push(p.visibility);
@@ -62,16 +62,16 @@ class UCtxInstance {
 				const p = tps[i];
 				let v = new WGRShaderVisibility().toSamplerFiltering();
 				v.binding = ets.length;
-				ets.push( v );
+				ets.push(v);
 				v = new WGRShaderVisibility().toTextureFloat(p.texView.dimension);
 				v.texture.multisampled = multisampled === true ? true : false;
 				v.binding = ets.length;
-				ets.push( v );
+				ets.push(v);
 			}
 		}
 		// console.log("UCtxInstance:: getBindGroupLayout(), CCCCCCC ets: ", ets);
 		const desc = {
-			label: '(BindGroupLayout)UCtxInstance' + this.mUid,
+			label: "(BindGroupLayout)UCtxInstance" + this.mUid,
 			entries: ets
 		};
 		this.mBindGroupLayout = this.mPipelineCtx.createBindGroupLayout(desc);
@@ -114,33 +114,44 @@ class UCtxInstance {
 					const store = WGHBufferStore.getStore(wgctx);
 
 					const dps = wp.bufDataParams;
-					// const vbList: WGRShaderVisibility[] = new Array(dps.length);
 					for (let i = 0; i < dps.length; ++i) {
 						const dp = dps[i];
 						dp.visibility.binding = i;
-						// vbList[i] = dp.visibility;
 
-						const sizes = new Array(dp.shared ? 1 : ls.length)
+						const sizes = new Array(dp.shared ? 1 : ls.length);
 						const uniformParam = { sizes, usage: dp.usage, arrayStride: dp.arrayStride } as UniformBufferParam;
 						let buf: GPUBuffer;
-						if (dp.shared) {
-							// console.log("BBBBBBBBBB uniformParam.sizes: ", uniformParam.sizes);
-							if (store.hasWithUid(dp.vuid)) {
-								buf = store.getWithUid(dp.vuid);
-								console.log("apply old shared uniform gpu buffer...");
+						const sharedData = dp.ufvalue.sharedData;
+						if (sharedData) {
+							buf = sharedData.buffer;
+						}
+						if (!buf) {
+							if (dp.shared) {
+								// console.log("BBBBBBBBBB uniformParam.sizes: ", uniformParam.sizes);
+								if (store.hasWithUid(dp.vuid)) {
+									buf = store.getWithUid(dp.vuid);
+									console.log("apply old shared uniform gpu buffer...");
+								} else {
+									console.log("create new shared uniform gpu buffer...");
+									uniformParam.sizes[0] = ls[0].bufDataParams[i].size;
+									buf = this.mPipelineCtx.createUniformsBuffer(uniformParam);
+									// dp.ufvalue.__$gbuf = buf;
+									store.addWithUid(dp.vuid, buf);
+								}
+								buf.shared = true;
 							} else {
-								console.log("create new shared uniform gpu buffer...");
-								uniformParam.sizes[0] = ls[0].bufDataParams[i].size;
+								for (let j = 0; j < ls.length; ++j) {
+									uniformParam.sizes[j] = ls[j].bufDataParams[i].size;
+								}
 								buf = this.mPipelineCtx.createUniformsBuffer(uniformParam);
-								store.addWithUid(dp.vuid, buf);
+								// this.mOldPrivateBufs.push(buf);
 							}
-							buf.shared = true;
-						} else {
-							for (let j = 0; j < ls.length; ++j) {
-								uniformParam.sizes[j] = ls[j].bufDataParams[i].size;
-							}
-							buf = this.mPipelineCtx.createUniformsBuffer(uniformParam);
+						}
+						if (!dp.shared) {
 							this.mOldPrivateBufs.push(buf);
+						}
+						if (sharedData && !sharedData.buffer) {
+							sharedData.buffer = buf;
 						}
 						// console.log("XXX XXX dps[",i,"].shared: ", dp.shared);
 						// console.log("XXX XXX uniformParam.sizes: ", uniformParam.sizes);
@@ -219,7 +230,7 @@ class UCtxInstance {
 				uf.bindGroup = this.mPipelineCtx.createBindGroup(wp.groupIndex, null, wp.texParams);
 			}
 			uf.bindGroup.index = UCtxInstance.sBindGroupIndex++;
-			console.log("XXX XXX createUniformWithWP(), create a bindGroup.");
+			console.log("XXX XXX createUniformWithWP(), create a bindGroup: ", uf.bindGroup);
 			uf.__$$updateSubUniforms();
 		}
 	}
@@ -350,14 +361,14 @@ class WGRUniformContext implements IWGRUniformContext {
 	}
 	getBindGroupLayout(multisampled?: boolean): GPUBindGroupLayout {
 		if (this.mUCtxIns) {
-			return this.mUCtxIns.getBindGroupLayout( multisampled );
+			return this.mUCtxIns.getBindGroupLayout(multisampled);
 		}
 		return null;
 	}
 	runBegin(): void {
 		const ls = this.mInsList;
 		// console.log("WGRUniformContext::runBegin(), ls.length: ", ls.length);
-		for (let i = 0; i < ls.length;) {
+		for (let i = 0; i < ls.length; ) {
 			ls[i].runBegin();
 			if (ls[i].isEnabled()) {
 				ls[i].ready = false;
@@ -368,7 +379,7 @@ class WGRUniformContext implements IWGRUniformContext {
 			}
 		}
 	}
-	runEnd(): void { }
+	runEnd(): void {}
 
 	createUniformsWithValues(params: WGRUniformParam[]): WGRUniform[] {
 		// console.log("WGRUniformContext::createUniformsWithValues(), params: ", params);
@@ -402,7 +413,8 @@ class WGRUniformContext implements IWGRUniformContext {
 					shared: v.shared,
 					usageType,
 					vuid,
-					visibility
+					visibility,
+					ufvalue: v
 				});
 			}
 			return uctx.createUniform(layoutName, groupIndex, bufDataParams, texParams);

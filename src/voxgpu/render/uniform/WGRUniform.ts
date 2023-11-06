@@ -39,6 +39,8 @@ class WGRUniform {
 		if(v.ver != value.version) {
 			v.ver = value.version;
 			// console.log("WRORUniform::setValue(), call ...shared: ", value.shared, value.shdVarName);
+			// console.log("WRORUniform::setValue(), call ...value.__$gbuf: ", value.__$gbuf);
+			// this.mPipelineCtx.updateUniformBufferAt(value.__$gbuf ? value.__$gbuf : this.buffers[i], value.data, v.shared ? 0 : this.index, value.byteOffset);
 			this.mPipelineCtx.updateUniformBufferAt(this.buffers[i], value.data, v.shared ? 0 : this.index, value.byteOffset);
 		}
 	}

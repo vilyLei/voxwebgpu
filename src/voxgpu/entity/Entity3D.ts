@@ -72,7 +72,7 @@ class Entity3D implements IRenderableEntity {
 	/**
 	 * for compute shader computing process
 	 */
-	workgcounts?: Uint16Array;
+	workcounts?: Uint16Array;
 
 	cameraViewing = true;
 

@@ -39,6 +39,7 @@ export class Entity3DVisibilityTest {
 
 		let et = this.mEntities[0];
 		et.rstate.visible = !et.rstate.visible;
+		console.log("et.rstate.visible: ", et.rstate.visible);
 	}
 	private createMaterial(shdSrc: WGRShderSrcType, texs?: WGTextureDataDescriptor[], color?: Color4, blendModes: string[] = ["solid"], faceCullMode = "back"): WGMaterial {
 

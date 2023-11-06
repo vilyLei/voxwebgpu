@@ -53,18 +53,18 @@ export class RSceneEntityManagement {
 		// }
 		// this.mRenderingFlag = 1;
 
-		// const geometry = this.createGeom(this.geomData.createSphere(50));
-		// const shdSrc = {
-		// 	vertShaderSrc: { code: vertWGSL, uuid: "vertShdCode" },
-		// 	fragShaderSrc: { code: fragWGSL, uuid: "fragShdCode" }
-		// };
-		// const diffuseTex = { diffuse: { url: "static/assets/default.jpg" } };
+		const geometry = this.createGeom(this.geomData.createSphere(50));
+		const shdSrc = {
+			vertShaderSrc: { code: vertWGSL, uuid: "vertShdCode" },
+			fragShaderSrc: { code: fragWGSL, uuid: "fragShdCode" }
+		};
+		const diffuseTex = { diffuse: { url: "static/assets/default.jpg" } };
 
-		// let materials = [this.createMaterial(shdSrc, [diffuseTex], new Color4(Math.random() * 1.5, Math.random() * 1.5, Math.random() * 1.5))];
-		// let entity = new Entity3D({ materials, geometry });
-		// entity.transform.setPosition(new Vector3(-500 + this.mEntitices.length * 130, 0, 0));
-		// this.mEntitices.push(entity);
-		// rc.addEntity(entity);
+		let materials = [this.createMaterial(shdSrc, [diffuseTex], new Color4(Math.random() * 1.5, Math.random() * 1.5, Math.random() * 1.5))];
+		let entity = new Entity3D({ materials, geometry });
+		entity.transform.setPosition(new Vector3(-500 + this.mEntitices.length * 130, 0, 0));
+		this.mEntitices.push(entity);
+		rc.addEntity(entity);
 	};
 	private createMaterial(
 		shdSrc: WGRShderSrcType,
@@ -120,13 +120,13 @@ export class RSceneEntityManagement {
 
 		let materials = [this.createMaterial(shdSrc, [diffuseTex], new Color4(Math.random() * 1.5, Math.random() * 1.5, Math.random() * 1.5))];
 
-		// for (let i = 0; i < 1; ++i) {
-		// 	let entity = new Entity3D({ materials, geometry });
-		// 	entity.transform.setPosition(new Vector3(-500 + i * 130, 0, 0));
-		// 	this.mEntitices.push(entity);
-		// 	rc.addEntity(entity);
-		// }
-		// return;
+		for (let i = 0; i < 1; ++i) {
+			let entity = new Entity3D({ materials, geometry });
+			entity.transform.setPosition(new Vector3(-500 + i * 130, 0, 0));
+			this.mEntitices.push(entity);
+			rc.addEntity(entity);
+		}
+		return;
 
 		let urls = [
 			"static/assets/box.jpg",

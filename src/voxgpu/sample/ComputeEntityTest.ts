@@ -11,7 +11,6 @@ const shdWorkGroupSize = 8;
 
 const compShdCode = `
 			@group(0) @binding(0) var<uniform> grid: vec2f;
-
 			@group(0) @binding(1) var<storage> cellStateIn: array<u32>;
 			@group(0) @binding(2) var<storage, read_write> cellStateOut: array<u32>;
 
@@ -26,7 +25,7 @@ const compShdCode = `
 				} else {
 					cellStateOut[cellIndex(cell.xy)] = 1;
 				}
-			}`
+			}`;
 export class ComputeEntityTest {
 	private mRscene = new RendererScene();
 
@@ -48,7 +47,7 @@ export class ComputeEntityTest {
 	private mouseDown = (evt: MouseEvent): void => {};
 
 	private createUniformValues(): WGRUniformValue[] {
-		
+
 		const gridsSizesArray = new Float32Array([gridSize, gridSize]);
 		const cellStateArray0 = new Uint32Array(gridSize * gridSize);
 		for (let i = 0; i < cellStateArray0.length; i+=3) {
@@ -58,12 +57,9 @@ export class ComputeEntityTest {
 		for (let i = 0; i < cellStateArray1.length; i++) {
 			cellStateArray1[i] = i % 2;
 		}
-		const v0 = new WGRUniformValue({data: gridsSizesArray, stride: 1});
-		const v1 = new WGRStorageValue({data: cellStateArray0, stride: 1});
-		const v2 = new WGRStorageValue({data: cellStateArray1, stride: 1});
-		v0.toVisibleAll();
-		v1.toVisibleVertComp();
-		v2.toVisibleComp();
+		const v0 = new WGRUniformValue({data: gridsSizesArray, stride: 2}).toVisibleAll();
+		const v1 = new WGRStorageValue({data: cellStateArray0, stride: 1}).toVisibleVertComp();
+		const v2 = new WGRStorageValue({data: cellStateArray1, stride: 1}).toVisibleComp();
 		v2.toBufferForStorage();
 
 		return [v0, v1, v2];

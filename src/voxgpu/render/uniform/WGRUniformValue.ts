@@ -1,21 +1,8 @@
+import { GPUBuffer } from "../../gpu/GPUBuffer";
 import BitConst from "../../utils/BitConst";
 import { WGRShaderVisibility } from "./WGRShaderVisibility";
-interface WGRUniformValueParam {
-	data: NumberArrayDataType;
-	bufferIndex?: number;
-	/**
-	 * uniform index in RUnit instance
-	 */
-	index?: number;
-	usage?: number;
-	shared?: boolean;
-	shdVarName?: string;
-	arrayStride?: number;
-	/**
-	 * data element stride
-	 */
-	stride?: number;
-}
+import { WGRUniformSharedData, WGRUniformValueParam } from "./WGRUniformValueParam";
+
 class WGRUniformValue {
 	private static sUid = 0;
 	private mUid = WGRUniformValue.sUid++;
@@ -34,28 +21,45 @@ class WGRUniformValue {
 	arrayStride = 1;
 	usage = GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST;
 	shared = false;
+	sharedData?: WGRUniformSharedData;
 
 	shdVarName?: string;
+	__$gbuf: GPUBuffer;
 
-	readonly visibility = new WGRShaderVisibility();
-	
+	visibility = new WGRShaderVisibility();
+
 	constructor(param: WGRUniformValueParam) {
-		const d = param.data;
+		let d = param.data;
 		this.data = d;
 		this.bufferIndex = param.bufferIndex !== undefined ? param.bufferIndex : 0;
 		this.index = param.index !== undefined ? param.index : 0;
 		if (param.usage !== undefined) this.usage = param.usage;
 		if (param.shared !== undefined) this.shared = param.shared;
+		if (param.sharedData !== undefined) {
+			this.sharedData = param.sharedData;
+			d = this.sharedData.data;
+			this.data = d;
+		}
 		if (param.shdVarName !== undefined) this.shdVarName = param.shdVarName;
 		this.arrayStride = param.arrayStride !== undefined ? param.arrayStride : 1;
 		const bpe = (d as Float32Array).BYTES_PER_ELEMENT;
-		if(this.arrayStride < 2 && param.stride !== undefined && bpe !== undefined) {
+		if (this.arrayStride < 2 && param.stride !== undefined && bpe !== undefined) {
 			this.arrayStride = bpe * param.stride;
-		}else if (d && this.arrayStride < 2) {
+		} else if (d && this.arrayStride < 2) {
 			if (d.byteLength <= 64) this.arrayStride = d.byteLength;
 		}
 		this.upate();
 	}
+	// swapBuffer(v: WGRUniformValue): void {
+	// 	if(v && v.__$gbuf && this.__$gbuf) {
+	// 		if(v.__$gbuf !== this.__$gbuf) {
+	// 			const buf = v.__$gbuf;
+	// 			v.__$gbuf = this.__$gbuf;
+	// 			this.__$gbuf = buf;
+	// 			// this.upate();
+	// 		}
+	// 	}
+	// }
 	getUid(): number {
 		return this.mUid;
 	}
@@ -63,23 +67,23 @@ class WGRUniformValue {
 		this.shared = true;
 		return this;
 	}
-	toVisibleAll(): WGRUniformValue{
+	toVisibleAll(): WGRUniformValue {
 		this.visibility.toVisibleAll();
 		return this;
 	}
-	toVisibleVertComp(): WGRUniformValue{
+	toVisibleVertComp(): WGRUniformValue {
 		this.visibility.toVisibleVertComp();
 		return this;
 	}
-	toVisibleComp(): WGRUniformValue{
+	toVisibleComp(): WGRUniformValue {
 		this.visibility.toVisibleComp();
 		return this;
 	}
-	toBufferForStorage(): WGRUniformValue{
+	toBufferForStorage(): WGRUniformValue {
 		this.visibility.toBufferForStorage();
 		return this;
 	}
-	toBufferForReadOnlyStorage(): WGRUniformValue{
+	toBufferForReadOnlyStorage(): WGRUniformValue {
 		this.visibility.toBufferForReadOnlyStorage();
 		return this;
 	}
@@ -102,13 +106,18 @@ class WGRUniformValue {
 	}
 
 	clone(data: NumberArrayDataType): WGRUniformValue {
-		const u = new WGRUniformValue({data: data, bufferIndex: this.bufferIndex, index: this.index});
+		const u = new WGRUniformValue({ data: data, bufferIndex: this.bufferIndex, index: this.index });
 		u.name = this.name;
 		u.byteOffset = this.byteOffset;
 		u.arrayStride = this.arrayStride;
 		u.usage = this.usage;
-
 		return u;
+	}
+	destroy(): void {
+		this.data = null;
+		this.sharedData = null;
+		this.shared = null;
+		this.visibility = null;
 	}
 }
 export { WGRUniformValueParam, WGRUniformValue };

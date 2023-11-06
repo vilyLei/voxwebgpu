@@ -6,16 +6,21 @@ class ComputeEntity extends Entity3D {
 		param.transformEnabled = false;
 		super(param);
 		this.cameraViewing = false;
-		this.workgcounts = new Uint16Array([1,1,0,0]);
+		this.workcounts = new Uint16Array([1, 1, 0, 0]);
 		this.createMaterial(param);
 	}
-	
+	setWorkcounts(x: number, y?: number, z?: number): ComputeEntity {
+		let ts = this.workcounts;
+		ts[0] = x;
+		ts[1] = y !== undefined ? y : 0;
+		ts[2] = z !== undefined ? z : 0;
+		return this;
+	}
 	protected createMaterial(param: Entity3DParam): void {
 		if (!param) param = {};
 		if (param.materials) {
 			this.materials = param.materials;
 		} else {
-			
 			let shdSrc = param.shaderSrc;
 			let depthWriteEnabled = param.depthWriteEnabled === false ? false : true;
 			let pipelineDefParam = {
@@ -28,11 +33,11 @@ class ComputeEntity extends Entity3D {
 				shaderCodeSrc: shdSrc,
 				pipelineDefParam
 			});
-			
-			if(param.instanceCount !== undefined) {
+
+			if (param.instanceCount !== undefined) {
 				material.instanceCount = param.instanceCount;
 			}
-			material.uniformValues = param.uniformValues;			
+			material.uniformValues = param.uniformValues;
 			this.materials = [material];
 		}
 	}

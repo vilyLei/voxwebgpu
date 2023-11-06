@@ -21,7 +21,7 @@ class WGRCompUnitRunSt {
 
 const __$urst = new WGRCompUnitRunSt();
 const __$rcompeust = new WGRUnitState();
-const __$workgcounts = new Uint16Array([1, 1, 0, 0])
+const __$workcounts = new Uint16Array([1, 1, 0, 0]);
 
 class WGRCompUnit implements IWGRUnit {
 	private mUfValues: WGRUniformValue[];
@@ -44,10 +44,9 @@ class WGRCompUnit implements IWGRUnit {
 	rp: IWGRendererPass;
 	material: IWGMaterial;
 
-	workgcounts = __$workgcounts;
+	workcounts = __$workcounts;
 
 	clone(): WGRCompUnit {
-
 		const r = new WGRCompUnit();
 
 		r.mUfValues = this.mUfValues;
@@ -94,6 +93,7 @@ class WGRCompUnit implements IWGRUnit {
 					for (let i = 0, ln = ufs.length; i < ln; i++) {
 						const uf = ufs[i];
 						if (uf.isEnabled()) {
+							console.log("compruint setBindGroup(), bindGroup: ", uf.bindGroup);
 							// console.log("ruint setBindGroup(), uf.groupIndex: ", uf.groupIndex,",", uf.bindGroup);
 							rc.setBindGroup(uf.groupIndex, uf.bindGroup);
 						} else {
@@ -121,22 +121,21 @@ class WGRCompUnit implements IWGRUnit {
 	run(): void {
 		if (this.rf) {
 			const rc = this.rp.compPassEncoder;
-			const works = this.workgcounts;
+			const works = this.workcounts;
 			// console.log("dispatchWorkgroups(), works: ", works);
-			if(works[1] > 0 && works[2] > 0) {
+			if (works[1] > 0 && works[2] > 0) {
 				rc.dispatchWorkgroups(works[0], works[1], works[2]);
-			}else if(works[1] > 0){
+			} else if (works[1] > 0) {
+				console.log("dispatchWorkgroups(x: " + works[0] + ", y: " + works[1] + ")");
 				rc.dispatchWorkgroups(works[0], works[1]);
-			}else {				
+			} else {
 				rc.dispatchWorkgroups(works[0]);
 			}
 		}
 	}
 
 	destroy(): void {
-
 		if (this.pipelinectx) {
-
 			const ufctx = this.pipelinectx.uniformCtx;
 			ufctx.removeUniforms(this.uniforms);
 
@@ -145,7 +144,7 @@ class WGRCompUnit implements IWGRUnit {
 			this.material = null;
 			this.rp = null;
 			this.st = null;
-			this.workgcounts = null;
+			this.workcounts = null;
 		}
 	}
 }

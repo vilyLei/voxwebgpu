@@ -11,6 +11,7 @@ import { IWGRendererPass } from "./IWGRendererPass";
 import { GPUBindGroupLayout } from "../../gpu/GPUBindGroupLayout";
 import { GPUBindGroupLayoutDescriptor } from "../../gpu/GPUBindGroupLayoutDescriptor";
 import { WGRShaderVisibility } from "../uniform/WGRShaderVisibility";
+import { WGRUniformValue } from "../uniform/WGRUniformValue";
 
 interface BufDataParamType {
 	size: number;
@@ -20,7 +21,8 @@ interface BufDataParamType {
 	vuid?: number;
 	usageType?: number;
 	arrayStride?: number;
-	visibility?: WGRShaderVisibility
+	visibility?: WGRShaderVisibility,
+	ufvalue?: WGRUniformValue
 };
 type VtxDescParam = { vertex: { arrayStride: number, params: { offset: number, format: string }[] } };
 type BindGroupDataParamType = { index: number, buffer: GPUBuffer, bufferSize: number, shared: boolean, usageType?: number };

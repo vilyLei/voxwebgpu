@@ -149,7 +149,8 @@ class WGRPipelineContext implements IWGRPipelineContext {
 				usage: params.usage,
 				arrayStride: params.arrayStride
 			};
-			const buf = this.mWGCtx.device.createBuffer(desc);
+			// const buf = this.mWGCtx.device.createBuffer(desc);
+			const buf = this.mWGCtx.buffer.createBuffer(desc);
 			buf.segs = segs;
 			buf.arrayStride = params.arrayStride;
 			// console.log("createUniformsBuffer(), segs: ", segs);
@@ -284,13 +285,16 @@ class WGRPipelineContext implements IWGRPipelineContext {
 		}
 		return desc;
 	}
+	private static sBindGroupUid = 0;
 	createBindGroupWithDesc(desc: GPUBindGroupDescriptor): GPUBindGroup {
 		const device = this.mWGCtx.device;
 		if (desc.entries.length < 1) {
 			throw Error("Illegal operation !!!");
 		}
 		console.log("createBindGroupWithDesc(), desc: ", desc);
-		return device.createBindGroup(desc);
+		const p = device.createBindGroup(desc);
+		p.uid = WGRPipelineContext.sBindGroupUid ++;
+		return p;
 	}
 	createBindGroup(
 		groupIndex: number,
@@ -302,7 +306,9 @@ class WGRPipelineContext implements IWGRPipelineContext {
 
 		const device = this.mWGCtx.device;
 		const desc = this.createBindGroupDesc(groupIndex, dataParams, texParams, bindIndex, layout);
-		return device.createBindGroup(desc);
+		const p = device.createBindGroup(desc);
+		p.uid = WGRPipelineContext.sBindGroupUid ++;
+		return p;
 	}
 	createRenderPipeline(pipelineParams: WGRPipelineCtxParams, descParams: VtxDescParam[]): GPURenderPipeline {
 		const ctx = this.mWGCtx;

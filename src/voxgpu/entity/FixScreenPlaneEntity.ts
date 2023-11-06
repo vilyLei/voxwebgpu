@@ -55,11 +55,11 @@ class FixScreenPlaneEntity extends FixScreenEntity {
 		if (param.materials) {
 			this.materials = param.materials;
 		} else {
-			const texs = param.textures;
-			const texTotal = texs ? texs.length : 0;
 			if (!param.uniformValues) {
 				this.colorV = getUniformValueFromParam('color', param, new WGRUniformValue({ data: new Float32Array([0.5, 0.5, 0.5, 1]), shdVarName: 'color' }));
 			}
+			const texs = param.textures;
+			const texTotal = texs ? texs.length : 0;
 			let frag_uuid = texTotal > 0 ? "fragTexShdCode" : "fragShdCode";
 			const shdSrc = param.shaderSrc
 				? param.shaderSrc
@@ -80,6 +80,9 @@ class FixScreenPlaneEntity extends FixScreenEntity {
 				pipelineDefParam
 			});
 			material.addTextures(texs);
+			if(param.instanceCount !== undefined) {
+				material.instanceCount = param.instanceCount;
+			}
 			material.uniformValues = param.uniformValues ? param.uniformValues : [this.colorV];
 			if (material.uniformValues) {
 				this.colorV = material.uniformValues[0];

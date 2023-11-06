@@ -55,14 +55,14 @@ class WGRObjBuilder {
 		if(isComputing) {
 			let et = (entity as IRenderableObject);
 			let rcompunit = new WGRCompUnit();
-			if(et.workgcounts) {
-				rcompunit.workgcounts = et.workgcounts;
+			if(et.workcounts) {
+				rcompunit.workcounts = et.workcounts;
 			}
 			rcompunit.rp = pctx.rpass;
 			ru = rcompunit;
 		}else {
 			let runit = new WGRUnit();
-			runit.geometry = primitive;	
+			runit.geometry = primitive;
 			runit.rp = pctx.rpass;
 			ru = runit;
 		}
