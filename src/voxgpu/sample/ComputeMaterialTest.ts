@@ -88,28 +88,17 @@ export class ComputeMaterialTest {
 	}
 	private createMaterial(shaderCodeSrc: WGRShderSrcType, shadinguuid: string, workgroupCountX = 2, workgroupCountY = 2): WGCompMaterial {
 		const uniformValues = this.createUniformValues();
-		return new WGCompMaterial({
-			shadinguuid,
-			shaderCodeSrc,
-			uniformValues
+		return new WGCompMaterial({ shadinguuid, shaderCodeSrc, uniformValues
 		}).setWorkcounts(workgroupCountX, workgroupCountY);
 	}
 	private initScene(): void {
 		const rc = this.mRscene;
 
 		let shaderCodeSrc0 = {
-			compShaderSrc: {
-				code: compShdCode0,
-				uuid: "computing-0",
-				compEntryPoint: "compMain"
-			}
+			compShaderSrc: { code: compShdCode0, uuid: "computing-0", compEntryPoint: "compMain" }
 		};
 		let shaderCodeSrc1 = {
-			compShaderSrc: {
-				code: compShdCode1,
-				uuid: "computing-1",
-				compEntryPoint: "compMain"
-			}
+			compShaderSrc: { code: compShdCode1, uuid: "computing-1", compEntryPoint: "compMain" }
 		};
 		let materials = [this.createMaterial(shaderCodeSrc0, "comp-1"), this.createMaterial(shaderCodeSrc1, "comp-2", 4, 4)];
 		rc.addEntity( new ComputeEntity({ materials }) );
