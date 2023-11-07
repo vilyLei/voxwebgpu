@@ -248,7 +248,11 @@ class WGRUniformCtxInstance {
 			uf.buffers = wp.bufObj.buffers.slice(0);
 			uf.versions = this.createVers(wp);
 			uf.uvfs = this.createUvfs(wp);
-			uf.uniformAppend = wp.uniformAppend;
+			let ivs: number[] = new Array(uf.uvfs.length);
+			for(let i = 0; i < ivs.length; ++i) {
+				ivs[i] = (uf.uvfs[i].shared || !wp.uniformAppend) ? 0 : uf.index;
+			}
+			uf.ivs = ivs;
 			const dps = wp.bufDataParams;
 			if (dps) {
 				let desc = this.mBindGroupDesc;
