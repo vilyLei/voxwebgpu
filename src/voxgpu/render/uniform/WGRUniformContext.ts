@@ -66,16 +66,16 @@ class WGRUniformContext implements IWGRUniformContext {
 	}
 	runEnd(): void {}
 
-	createUniformsWithValues(params: WGRUniformParam[]): WGRUniform[] {
+	createUniformsWithValues(params: WGRUniformParam[], uniformAppend?: boolean): WGRUniform[] {
 		// console.log("WGRUniformContext::createUniformsWithValues(), params: ", params);
 		let uniforms: WGRUniform[] = [];
 		for (let i = 0; i < params.length; ++i) {
 			const p = params[i];
-			uniforms.push(this.createUniformWithValues(p.layoutName, p.groupIndex, p.values, p.texParams));
+			uniforms.push(this.createUniformWithValues(p.layoutName, p.groupIndex, p.values, p.texParams, uniformAppend));
 		}
 		return uniforms;
 	}
-	createUniformWithValues(layoutName: string, groupIndex: number, values: WGRUniformValue[], texParams?: WGRUniformTexParam[]): WGRUniform {
+	createUniformWithValues(layoutName: string, groupIndex: number, values: WGRUniformValue[], texParams?: WGRUniformTexParam[], uniformAppend?: boolean): WGRUniform {
 		if (this.mBindGCtx) {
 			const uctx = this.getUCtx(layoutName);
 			if (!uctx.ready) {
@@ -101,7 +101,7 @@ class WGRUniformContext implements IWGRUniformContext {
 					ufvalue: v
 				});
 			}
-			return uctx.createUniform(layoutName, groupIndex, bufDataParams, texParams);
+			return uctx.createUniform(layoutName, groupIndex, bufDataParams, texParams, uniformAppend);
 		}
 		throw Error("Illegal operation !!!");
 		return null;
@@ -110,12 +110,13 @@ class WGRUniformContext implements IWGRUniformContext {
 		layoutName: string,
 		groupIndex: number,
 		bufDataParams?: BufDataParamType[],
-		texParams?: { texView: GPUTextureView; sampler?: GPUSampler }[]
+		texParams?: { texView: GPUTextureView; sampler?: GPUSampler }[],
+		uniformAppend?: boolean
 	): WGRUniform | null {
 		if (this.mBindGCtx) {
 			const uctx = this.getUCtx(layoutName);
 			this.mInsList.push(uctx);
-			return uctx.createUniform(layoutName, groupIndex, bufDataParams, texParams);
+			return uctx.createUniform(layoutName, groupIndex, bufDataParams, texParams, uniformAppend);
 		}
 		return null;
 	}

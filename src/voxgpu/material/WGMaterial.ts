@@ -1,11 +1,16 @@
-import { WGTextureDataDescriptor, createDataWithDescriptor, WGImageTextureData, WGTextureWrapperParam, WGTextureWrapper } from "../texture/WGTextureWrapper";
+import {
+	WGTextureDataDescriptor,
+	createDataWithDescriptor,
+	WGImageTextureData,
+	WGTextureWrapperParam,
+	WGTextureWrapper
+} from "../texture/WGTextureWrapper";
 
 import { WGRPipelineContextDefParam, WGRShderSrcType } from "../render/pipeline/WGRPipelineCtxParams";
 import { VtxPipelinDescParam, IWGRPipelineContext } from "../render/pipeline/IWGRPipelineContext";
 import { IWGRPassRef } from "../render/pipeline/IWGRPassRef";
 import { WGMaterialDescripter } from "./WGMaterialDescripter";
 import { WGRUniformValue } from "../render/uniform/WGRUniformValue";
-import { WGRUniform } from "../render/uniform/WGRUniform";
 import { IWGMaterial } from "./IWGMaterial";
 import { IWGMaterialGraph } from "./IWGMaterialGraph";
 
@@ -21,8 +26,12 @@ class WGMaterial implements IWGMaterial {
 	shaderCodeSrc?: WGRShderSrcType;
 	pipelineVtxParam?: VtxPipelinDescParam;
 	pipelineDefParam?: WGRPipelineContextDefParam;
-	rpass: IWGRPassRef = {index: 0};
+	rpass: IWGRPassRef = { index: 0 };
 
+	/**
+	 * material uniforms append to pipeline, or not
+	 */
+	uniformAppend?: boolean;
 	uniformValues: WGRUniformValue[];
 
 	instanceCount = 1;
@@ -74,14 +83,14 @@ class WGMaterial implements IWGMaterial {
 		this.addTextureWithData(td, descriptor.shdVarName);
 	}
 	addTextures(descriptors: WGTextureDataDescriptor[]): void {
-		if(descriptors) {
+		if (descriptors) {
 			for (let i = 0; i < descriptors.length; ++i) {
 				this.addTexture(descriptors[i]);
 			}
 		}
 	}
 	isREnabled(): boolean {
-		if(this.mREnabled) {
+		if (this.mREnabled) {
 			return this.mREnabled;
 		}
 		const texs = this.textures;
@@ -107,6 +116,8 @@ class WGMaterial implements IWGMaterial {
 			if (d.pipelineVtxParam) this.pipelineVtxParam = d.pipelineVtxParam;
 			if (d.pipelineDefParam) this.pipelineDefParam = d.pipelineDefParam;
 			if (d.rpass) this.rpass = d.rpass;
+			if (d.uniformAppend !== undefined) this.uniformAppend = d.uniformAppend;
+
 			if (d.uniformValues) this.uniformValues = d.uniformValues;
 			if (d.instanceCount !== undefined) this.instanceCount = d.instanceCount;
 		}

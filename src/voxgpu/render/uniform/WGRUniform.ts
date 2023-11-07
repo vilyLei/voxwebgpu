@@ -23,6 +23,7 @@ class WGRUniform {
 	versions: UniformVerType[];
 	bindGroup: GPUBindGroup;
 	uvfs: WGRUniformValue[];
+	uniformAppend = true;
 	/**
 	 * bind group index
 	 */
@@ -40,7 +41,7 @@ class WGRUniform {
 		const v = this.versions[index];
 		if(v.ver != value.version) {
 			v.ver = value.version;
-			this.mBindGCtx.updateUniformBufferAt(this.buffers[index], value.data, v.shared ? 0 : this.index, value.byteOffset);
+			this.mBindGCtx.updateUniformBufferAt(this.buffers[index], value.data, (v.shared || !this.uniformAppend) ? 0 : this.index, value.byteOffset);
 		}
 	}
 	isEnabled(): boolean {

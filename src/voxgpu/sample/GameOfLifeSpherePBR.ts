@@ -161,14 +161,16 @@ export class GameOfLifeSpherePBR {
 			shadinguuid,
 			shaderCodeSrc,
 			instanceCount,
-			uniformValues
+			uniformValues,
+			uniformAppend: false
 		});
 	}
 	private createCompMaterial(shaderCodeSrc: WGRShderSrcType, uniformValues: WGRUniformValue[], shadinguuid: string, workgroupCount = 2): WGCompMaterial {
 		return new WGCompMaterial({
 			shadinguuid,
 			shaderCodeSrc,
-			uniformValues
+			uniformValues,
+			// uniformAppend: false
 		}).setWorkcounts(workgroupCount, workgroupCount);
 	}
 	private initScene(): void {
@@ -203,7 +205,7 @@ export class GameOfLifeSpherePBR {
 			// build ping-pong rendering process
 			this.createMaterial(shaderSrc, ufvsObjs[0].ufvs0, "rshd0", instanceCount),
 			this.createMaterial(shaderSrc, ufvsObjs[0].ufvs1, "rshd1", instanceCount),
-			// // // build ping-pong computing process
+			// build ping-pong computing process
 			this.createCompMaterial(compShaderSrc, ufvsObjs[1].ufvs1, "compshd0", workgroupCount),
 			this.createCompMaterial(compShaderSrc, ufvsObjs[1].ufvs0, "compshd1", workgroupCount),
 		];
@@ -213,6 +215,7 @@ export class GameOfLifeSpherePBR {
 			alignYRatio : 0.0, materials
 		});
 		rc.addEntity(entity);
+
 		materials[0].visible = false;
 		materials[2].visible = false;
 

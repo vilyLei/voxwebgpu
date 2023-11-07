@@ -118,7 +118,7 @@ class WGRObjBuilder {
 					values: uvalues,
 					texParams: utexes
 				}
-			]);
+			], material.uniformAppend);
 		}
 		// ru.unfsuuid = material.shadinguuid + material.name;
 		ru.material = material;

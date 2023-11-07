@@ -58,10 +58,6 @@ class WGRBindGroupContext {
 	getWGCtx(): WebGPUContext {
 		return this.mWGCtx;
 	}
-	// createUniformBuffer(desc: GPUBufferDescriptor): GPUBuffer {
-	// 	const buf = this.mWGCtx.device.createBuffer(desc);
-	// 	return buf;
-	// }
 	createUniformBufferWithParam(bufSize: number, usage: number, mappedAtCreation = false): GPUBuffer {
 		const desc = {
 			size: bufSize,
@@ -71,6 +67,12 @@ class WGRBindGroupContext {
 		const buf = this.mWGCtx.device.createBuffer(desc);
 		return buf;
 	}
+	/**
+	 * @param params UniformBufferParam instance.
+	 * @param initSize The defaut value is 0.
+	 * @param force256 The defaut value is true.
+	 * @param mappedAtCreation The defaut value is false.
+	 */
 	createUniformsBuffer(
 		params: UniformBufferParam,
 		initSize = 0,
@@ -129,10 +131,12 @@ class WGRBindGroupContext {
 		desc: GPUBindGroupDescriptor,
 		dataParams?: BindGroupDataParamType[],
 		texParams?: { texView?: GPUTextureView; sampler?: GPUSampler }[],
-		index = 0
+		index = 0,
+		uniformAppend?: boolean
 	): void {
 		let ei = 0;
 		let es = desc.entries;
+		let flag = uniformAppend === false ? true : false;
 		if (dataParams) {
 			const dps = dataParams;
 			for (let i = 0; i < dps.length; ++i) {
@@ -141,10 +145,9 @@ class WGRBindGroupContext {
 					const res = es[i].resource as GPUBindGroupDescriptorEntityResource;
 					if (res.offset !== undefined) {
 						// the minimum BufferBindingType::ReadOnlyStorage alignment (256)
-						res.offset = res.shared ? 0 : index * 256;
+						res.offset = res.shared || flag ? 0 : index * 256;
 						res.buffer = dp.buffer;
 						res.size = dp.bufferSize;
-						// console.log(">>>>>>>>> res.shared: ", res.shared, ", offset: ", res.offset, ", index: ", index, ", size:",dp.buffer.size);
 					}
 					ei++;
 				} else {

@@ -81,9 +81,6 @@ class WGRenderPassNode implements IWGRenderPassNodeRef {
 		if (plp) {
 			if (plp.blendModes) {
 				pipeParams.setBlendModes(plp.blendModes);
-			} else if (plp.blendMode === "transparent") {
-				// for test
-				pipeParams.setTransparentBlendParam(0);
 			}
 			if (plp.depthStencil) {
 				pipeParams.setDepthStencil(plp.depthStencil);
@@ -98,7 +95,7 @@ class WGRenderPassNode implements IWGRenderPassNodeRef {
 	createRenderPipeline(pipelineParams: WGRPipelineCtxParams, vtxDesc: VtxPipelinDescParam): WGRPipelineContext {
 		const pipelineCtx = new WGRPipelineContext(this.mWGCtx);
 		this.pipelineCtxs.push(pipelineCtx);
-		
+
 		if (this.mDrawing) {
 
 			pipelineParams.setDepthStencilFormat(this.rpass.depthTexture.format);

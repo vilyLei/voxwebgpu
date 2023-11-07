@@ -7,6 +7,7 @@ interface GPUBindGroupDescriptorEntityResource {
 	offset?: number;
 	size?: number;
 	shared?: boolean;
+	uniformAppend?: boolean;
 	usageType?: number;
 }
 interface GPUBindGroupDescriptorEntity {

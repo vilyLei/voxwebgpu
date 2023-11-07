@@ -10,6 +10,10 @@ interface WGMaterialDescripter {
 	pipelineVtxParam?: VtxPipelinDescParam;
 	pipelineDefParam?: WGRPipelineContextDefParam;
 	rpass?: IWGRPassRef;
+	/**
+	 * material uniforms append to pipeline, or not
+	 */
+	uniformAppend?: boolean;
 	instanceCount?: number;
 	uniformValues?: WGRUniformValue[];
 }

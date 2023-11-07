@@ -19,6 +19,7 @@ interface WGRPipelineContextDefParam {
 	depthStencil?: GPUDepthStencilState;
 	faceCullMode?: string;
 	depthStencilEnabled?: boolean;
+	pipelineAppend?: boolean;
 }
 interface WGRPipelineParamType {
 	sampleCount?: number;
@@ -156,17 +157,6 @@ class WGRPipelineCtxParams implements GPURenderPipelineDescriptor {
 					break;
 			}
 		}
-	}
-	setTransparentBlendParam(targetIndex = 0): void {
-		let color = {
-			srcFactor: "src-alpha",
-			dstFactor: "one-minus-src-alpha"
-		};
-		let alpha = {
-			srcFactor: "zero",
-			dstFactor: "one"
-		};
-		this.setBlendParam(color, alpha, targetIndex);
 	}
 	setBlendModes(modes: string[]): void {
 		for (let i = 0; i < modes.length; ++i) {
