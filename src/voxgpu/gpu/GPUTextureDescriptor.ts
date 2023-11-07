@@ -14,7 +14,7 @@ interface GPUTextureDescriptor {
 	 *
 	 * for example: [16, 16, 2] or { width: 16, height: 16, depthOrArrayLayers: 2 }
 	 */
-	size: GPUExtent3D;
+	size?: GPUExtent3D;
 	/**
 	 * Whether the texture is one-dimensional, an array of two-dimensional layers, or three-dimensional.
 	 * The default value is "2d".

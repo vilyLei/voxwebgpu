@@ -1,6 +1,7 @@
 import { GPUTexture } from "./GPUTexture";
 import { WebGPUContextImpl } from "./WebGPUContextImpl";
 import { calculateMipLevels, GPUMipmapGenerator } from "../texture/GPUMipmapGenerator";
+import { GPUTextureDescriptor } from "./GPUTextureDescriptor";
 
 class WebGPUTextureContext {
 	private mWGCtx: WebGPUContextImpl;
@@ -18,6 +19,44 @@ class WebGPUTextureContext {
 			this.mipmapGenerator.initialize(wgCtx.device);
 		}
 	}
+	
+	createFloatRTTTexture(descriptor?: GPUTextureDescriptor): GPUTexture {
+		if (!descriptor) descriptor = {};
+		if (descriptor.format === undefined) {
+			descriptor.format = 'rgba16float';
+		}
+		return this.createRTTTexture(descriptor);
+	}
+	createColorRTTTexture(descriptor?: GPUTextureDescriptor): GPUTexture {
+		if (!descriptor) descriptor = {};
+		if (descriptor.format === undefined) {
+			descriptor.format = 'bgra8unorm';
+		}
+		return this.createRTTTexture(descriptor);
+	}
+	createDepthRTTTexture(descriptor?: GPUTextureDescriptor): GPUTexture {
+		if (!descriptor) descriptor = {};
+		if (descriptor.format === undefined) {
+			descriptor.format = 'depth24plus';
+		}
+		return this.createRTTTexture(descriptor);
+	}
+	createRTTTexture(descriptor?: GPUTextureDescriptor): GPUTexture {
+		if (!descriptor) descriptor = {};
+
+		if (descriptor.size === undefined) {
+			const canvas = this.mWGCtx.canvas;
+			descriptor.size = [canvas.width, canvas.height];
+		}
+		if (descriptor.format === undefined) {
+			descriptor.format = this.mWGCtx.canvasFormat;
+		}
+		if (descriptor.usage === undefined) {
+			descriptor.usage = GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.TEXTURE_BINDING;
+		}
+		return this.createTexture(descriptor);
+	}
+	
 	async createTex2DByUrl(url: string, generateMipmaps = true, flipY = false, format = "rgba8unorm") {
 		const response = await fetch(url);
 
@@ -33,6 +72,12 @@ class WebGPUTextureContext {
 		return tex;
 	}
 
+	createTexture(descriptor: GPUTextureDescriptor): GPUTexture {
+		const device = this.mWGCtx.device;
+		let tex = device.createTexture(descriptor);
+		tex.uid = WebGPUTextureContext.sUid++;
+		return tex;
+	}
 	createTex2DByImage(image: WebImageType, generateMipmaps = true, flipY = false, format = "rgba8unorm", label?: string): GPUTexture {
 		const device = this.mWGCtx.device;
 		const mipmapG = this.mipmapGenerator;
@@ -44,13 +89,11 @@ class WebGPUTextureContext {
 			mipLevelCount,
 			usage: GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST | GPUTextureUsage.RENDER_ATTACHMENT
 		};
-		let tex = device.createTexture(textureDescriptor);
+		let tex = this.createTexture(textureDescriptor);
 		device.queue.copyExternalImageToTexture({ source: image, flipY }, { texture: tex }, [image.width, image.height]);
-
 		if (generateMipmaps) {
 			mipmapG.generateMipmap(tex, textureDescriptor);
 		}
-		tex.uid = WebGPUTextureContext.sUid++;
 		return tex;
 	}
 
@@ -62,7 +105,6 @@ class WebGPUTextureContext {
 		const images = await Promise.all(promises);
 		const tex = this.createTexCubeByImages(images, generateMipmaps, flipY, (format = "rgba8unorm"));
 		tex.url = urls[0];
-		tex.uid = WebGPUTextureContext.sUid++;
 		return tex;
 	}
 	createTexCubeByImages(images: WebImageType[], generateMipmaps = true, flipY = false, format = "rgba8unorm", label?: string): GPUTexture {
@@ -79,7 +121,7 @@ class WebGPUTextureContext {
 			mipLevelCount,
 			usage: GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST | GPUTextureUsage.RENDER_ATTACHMENT
 		};
-		const tex = device.createTexture(textureDescriptor);
+		const tex = this.createTexture(textureDescriptor);
 		for (let i = 0; i < images.length; ++i) {
 			image = images[i];
 			queue.copyExternalImageToTexture({ source: image, flipY }, { texture: tex, origin: [0, 0, i] }, [image.width, image.height]);
@@ -87,7 +129,6 @@ class WebGPUTextureContext {
 		if (generateMipmaps) {
 			mipmapG.generateMipmap(tex, textureDescriptor);
 		}
-		tex.uid = WebGPUTextureContext.sUid++;
 		return tex;
 	}
 }

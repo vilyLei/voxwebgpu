@@ -25,7 +25,7 @@
 // import { Entity3DVisibilityTest as Demo } from "./voxgpu/sample/Entity3DVisibilityTest";
 // import { RSceneEntityManagement as Demo } from "./voxgpu/sample/RSceneEntityManagement";
 // import { SimplePBRTest as Demo } from "./voxgpu/sample/SimplePBRTest";
-// import { FixScreenPlaneTest as Demo } from "./voxgpu/sample/FixScreenPlaneTest";
+import { FixScreenPlaneTest as Demo } from "./voxgpu/sample/FixScreenPlaneTest";
 // import { PrimitiveEntityTest as Demo } from "./voxgpu/sample/PrimitiveEntityTest";
 
 // import { ScreenPostEffect as Demo } from "./voxgpu/sample/ScreenPostEffect";
@@ -38,7 +38,7 @@
 // import { GameOfLifeMultiMaterialPass as Demo } from "./voxgpu/sample/GameOfLifeMultiMaterialPass";
 // import { GameOfLifePretty as Demo } from "./voxgpu/sample/GameOfLifePretty";
 // import { GameOfLifeSphere as Demo } from "./voxgpu/sample/GameOfLifeSphere";
-import { GameOfLifeSpherePBR as Demo } from "./voxgpu/sample/GameOfLifeSpherePBR";
+// import { GameOfLifeSpherePBR as Demo } from "./voxgpu/sample/GameOfLifeSpherePBR";
 
 let demoIns = new Demo();
 function main(): void {
