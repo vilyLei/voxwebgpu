@@ -170,7 +170,7 @@ export class GameOfLifeSpherePBR {
 			shadinguuid,
 			shaderCodeSrc,
 			uniformValues,
-			// uniformAppend: false
+			uniformAppend: false
 		}).setWorkcounts(workgroupCount, workgroupCount);
 	}
 	private initScene(): void {
@@ -204,10 +204,10 @@ export class GameOfLifeSpherePBR {
 		const materials: WGMaterial[] = [
 			// build ping-pong rendering process
 			this.createMaterial(shaderSrc, ufvsObjs[0].ufvs0, "rshd0", instanceCount),
-			this.createMaterial(shaderSrc, ufvsObjs[0].ufvs1, "rshd1", instanceCount),
+			this.createMaterial(shaderSrc, ufvsObjs[0].ufvs1, "rshd0", instanceCount),
 			// build ping-pong computing process
 			this.createCompMaterial(compShaderSrc, ufvsObjs[1].ufvs1, "compshd0", workgroupCount),
-			this.createCompMaterial(compShaderSrc, ufvsObjs[1].ufvs0, "compshd1", workgroupCount),
+			this.createCompMaterial(compShaderSrc, ufvsObjs[1].ufvs0, "compshd0", workgroupCount),
 		];
 		let entity = new CylinderEntity({
 			radius: 20, height: 38,

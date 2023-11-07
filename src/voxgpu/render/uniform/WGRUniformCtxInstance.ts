@@ -245,7 +245,6 @@ class WGRUniformCtxInstance {
 		// console.log("createUniformWithWP(), wp.groupIndex: ", wp.groupIndex);
 		const uf = wp.uniform;
 		if (uf && (!uf.bindGroup || force)) {
-			// uf.buffers = this.mBuffers;
 			uf.buffers = wp.bufObj.buffers.slice(0);
 			uf.versions = this.createVers(wp);
 			uf.uvfs = this.createUvfs(wp);
@@ -254,21 +253,22 @@ class WGRUniformCtxInstance {
 			if (dps) {
 				let desc = this.mBindGroupDesc;
 				let ps = this.mBufDataDescs;
-				if (!desc) {
-					if (!ps) {
-						ps = [];
+				if (!desc || !wp.uniformAppend) {
+					if (!ps || !wp.uniformAppend) {
+						ps = new Array( dps.length );
 						for (let j = 0; j < dps.length; ++j) {
 							const dp = dps[j];
-							ps.push({ index: index, buffer: uf.buffers[j], bufferSize: dp.size, shared: dp.shared, usageType: dp.usageType });
+							ps[j] = { index: index, buffer: uf.buffers[j], bufferSize: dp.size, shared: dp.shared, usageType: dp.usageType };
 						}
 						this.mBufDataDescs = ps;
 					}
-					for (let j = 0; j < ps.length; ++j) {
-						ps[j].index = index;
+					if(wp.uniformAppend) {
+						for (let j = 0; j < ps.length; ++j) {
+							ps[j].index = index;
+						}
 					}
 
 					const layout = this.layoutAuto ? null : this.mBindGroupLayout;
-					// console.log("XXX XXX createUniformWithWP(), layout: ", layout);
 
 					desc = this.mBindGCtx.createBindGroupDesc(wp.groupIndex, ps, wp.texParams, 0, layout);
 					this.mBindGroupDesc = desc;
