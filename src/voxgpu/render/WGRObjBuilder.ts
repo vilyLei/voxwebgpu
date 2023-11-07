@@ -165,7 +165,7 @@ class WGRObjBuilder {
 				passes[i] = this.createRPass(entity, block, primitive, i);
 			}
 			ru = new WGRUnit();
-			console.log("xxxxxxxxx passes: ", passes);
+			// console.log("xxxxxxxxx passes: ", passes);
 			ru.passes = passes;
 		} else {
 			ru = this.createRPass(entity, block, primitive);

@@ -11,9 +11,7 @@ import { WGRShderSrcType } from "../material/WGMaterialDescripter";
 import { WGCompMaterial } from "../material/WGCompMaterial";
 import { WGMaterial } from "../material/WGMaterial";
 import Vector3 from "../math/Vector3";
-import { SphereEntity } from "../entity/SphereEntity";
 import RenderStatusDisplay from "../rscene/RenderStatusDisplay";
-import { BoxEntity } from "../entity/BoxEntity";
 import { Entity3D } from "../entity/Entity3D";
 import { CylinderEntity } from "../entity/CylinderEntity";
 

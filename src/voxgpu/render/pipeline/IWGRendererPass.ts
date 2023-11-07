@@ -25,7 +25,7 @@ interface IWGRendererPass {
     compPassEncoder?: GPUComputePassEncoder;
     commandEncoder: GPUCommandEncoder;
     clearColor: Color4;
-
+	isDrawing(): boolean;
 	/**
 	 * read only
 	 */

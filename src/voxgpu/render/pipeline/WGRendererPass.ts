@@ -51,6 +51,9 @@ class WGRendererPass implements IWGRendererPass {
 			this.initialize(wgCtx);
 		}
 	}
+	isDrawing(): boolean {
+		return this.mDrawing;
+	}
 	get depthTexture(): GPUTexture {
 		return this.mDepthTexture;
 	}

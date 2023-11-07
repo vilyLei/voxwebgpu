@@ -1,7 +1,7 @@
 import { GPUBindGroup } from "../../gpu/GPUBindGroup";
 import { GPUBuffer } from "../../gpu/GPUBuffer";
 import { WGRUniformValue } from "./WGRUniformValue";
-import { IWGRPipelineContext } from "../pipeline/IWGRPipelineContext";
+import { WGRBindGroupContext } from "../pipeline/WGRBindGroupContext";
 
 type UniformVerType = { vid: number, ver: number, shared: boolean, shdVarName?: string };
 interface WGRUniformCtx {
@@ -12,7 +12,7 @@ class WGRUniform {
 	private mUid = WGRUniform.sUid++;
 	private mCloned = false;
 	private mCtx: WGRUniformCtx;
-    private mPipelineCtx: IWGRPipelineContext;
+    private mBindGCtx: WGRBindGroupContext;
 
 	private mSubUfs: WGRUniform[] = [];
 
@@ -28,8 +28,8 @@ class WGRUniform {
 	 */
 	groupIndex = -1;
 
-	constructor(pipelineCtx: IWGRPipelineContext, ctx: WGRUniformCtx){
-		this.mPipelineCtx = pipelineCtx;
+	constructor(bindGCtx: WGRBindGroupContext, ctx: WGRUniformCtx){
+		this.mBindGCtx = bindGCtx;
 		this.mCtx = ctx;
 	}
 
@@ -40,20 +40,7 @@ class WGRUniform {
 		const v = this.versions[index];
 		if(v.ver != value.version) {
 			v.ver = value.version;
-			// console.log("WRORUniform::setValue(), call ..., shared: ", value.shared, ",", value.shdVarName);
-			// console.log("WRORUniform::setValue(), call ..., v: ", v);
-			// console.log("WRORUniform::setValue(), call ..., value: ", value);
-			// if(v.shdVarName !== value.shdVarName) {
-			// 	console.log("WRORUniform::setValue(), versions: ", this.versions);
-			// 	console.log("WRORUniform::setValue(), uvfs: ", this.uvfs);
-			// 	throw Error('Illegal operation: v.shdVarName !== value.shdVarName !!!');
-			// }
-			// if(v.vid !== value.getUid()) {
-			// 	throw Error('Illegal operation: v.vid !== value.getUid() !!!');
-			// }
-			// console.log("WRORUniform::setValue(), call ...value.__$gbuf: ", value.__$gbuf);
-			// this.mPipelineCtx.updateUniformBufferAt(value.__$gbuf ? value.__$gbuf : this.buffers[i], value.data, v.shared ? 0 : this.index, value.byteOffset);
-			this.mPipelineCtx.updateUniformBufferAt(this.buffers[index], value.data, v.shared ? 0 : this.index, value.byteOffset);
+			this.mBindGCtx.updateUniformBufferAt(this.buffers[index], value.data, v.shared ? 0 : this.index, value.byteOffset);
 		}
 	}
 	isEnabled(): boolean {
@@ -81,7 +68,7 @@ class WGRUniform {
 	}
 	clone(): WGRUniform {
 
-		const u = new WGRUniform(this.mPipelineCtx, this.mCtx);
+		const u = new WGRUniform(this.mBindGCtx, this.mCtx);
 		u.index = this.index;
 		u.layoutName = this.layoutName;
 		u.buffers = this.buffers;
@@ -121,7 +108,7 @@ class WGRUniform {
 
 		this.groupIndex = -1;
 		this.index = -1;
-		this.mPipelineCtx = null;
+		this.mBindGCtx = null;
 		this.buffers = null;
 	}
 }

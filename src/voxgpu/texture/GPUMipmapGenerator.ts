@@ -20,7 +20,6 @@ export function calculateMipLevels(width: number, height: number): number {
  * thanks: https://github.com/toji/web-texture-tool/blob/main/src/webgpu-mipmap-generator.js
  */
 export class GPUMipmapGenerator {
-
 	private device: GPUDevice | null = null;
 	private sampler: GPUSampler | null = null;
 	private mipmapShaderModule: GPUShaderModule | null = null;
@@ -29,12 +28,12 @@ export class GPUMipmapGenerator {
 	private pipelines: any = {};
 
 	constructor(device?: GPUDevice) {
-		this.initialize( device );
+		this.initialize(device);
 	}
 	initialize(device?: GPUDevice): void {
-		if(device && !this.device) {
+		if (device && !this.device) {
 			this.device = device;
-			this.sampler = device.createSampler({ minFilter: 'linear' });
+			this.sampler = device.createSampler({ minFilter: "linear" });
 		}
 	}
 	/**
@@ -47,7 +46,7 @@ export class GPUMipmapGenerator {
 			// Shader modules is shared between all pipelines, so only create once.
 			if (!this.mipmapShaderModule) {
 				this.mipmapShaderModule = this.device.createShaderModule({
-					label: 'Mipmap Generator',
+					label: "Mipmap Generator",
 					code: `
             var<private> pos : array<vec2<f32>, 3> = array<vec2<f32>, 3>(
               vec2<f32>(-1.0, -1.0), vec2<f32>(-1.0, 3.0), vec2<f32>(3.0, -1.0));
@@ -72,37 +71,40 @@ export class GPUMipmapGenerator {
             fn fragmentMain(@location(0) texCoord : vec2<f32>) -> @location(0) vec4<f32> {
               return textureSample(img, imgSampler, texCoord);
             }
-          `,
+          `
 				});
 
 				this.bindGroupLayout = this.device.createBindGroupLayout({
-					label: 'Mipmap Generator',
-					entries: [{
-						binding: 0,
-						visibility: GPUShaderStage.FRAGMENT,
-						sampler: {},
-					}, {
-						binding: 1,
-						visibility: GPUShaderStage.FRAGMENT,
-						texture: {},
-					}]
+					label: "Mipmap Generator",
+					entries: [
+						{
+							binding: 0,
+							visibility: GPUShaderStage.FRAGMENT,
+							sampler: {}
+						},
+						{
+							binding: 1,
+							visibility: GPUShaderStage.FRAGMENT,
+							texture: {}
+						}
+					]
 				});
 				this.pipelineLayout = this.device.createPipelineLayout({
-					label: 'Mipmap Generator',
-					bindGroupLayouts: [this.bindGroupLayout],
-				})
+					label: "Mipmap Generator",
+					bindGroupLayouts: [this.bindGroupLayout]
+				});
 			}
 
 			pipeline = this.device.createRenderPipeline({
 				layout: this.pipelineLayout,
 				vertex: {
 					module: this.mipmapShaderModule,
-					entryPoint: 'vertexMain',
+					entryPoint: "vertexMain"
 				},
 				fragment: {
 					module: this.mipmapShaderModule,
-					entryPoint: 'fragmentMain',
-					targets: [{ format }],
+					entryPoint: "fragmentMain",
+					targets: [{ format }]
 				}
 			});
 			this.pipelines[format] = pipeline;
@@ -121,8 +123,8 @@ export class GPUMipmapGenerator {
 		// TODO: Does this need to handle sRGB formats differently?
 		const pipeline = this.getMipmapPipeline(textureDescriptor.format);
 
-		if (textureDescriptor.dimension == '3d' || textureDescriptor.dimension == '1d') {
-			throw new Error('Generating mipmaps for non-2d textures is currently unsupported!');
+		if (textureDescriptor.dimension == "3d" || textureDescriptor.dimension == "1d") {
+			throw new Error("Generating mipmaps for non-2d textures is currently unsupported!");
 		}
 
 		let texSizeDesc = textureDescriptor.size as GPUExtent3DDict;
@@ -152,11 +154,11 @@ export class GPUMipmapGenerator {
 				size: {
 					width: Math.max(1, texSizeDesc.width >>> 1),
 					height: Math.max(1, texSizeDesc.height >>> 1),
-					depthOrArrayLayers: arrayLayerCount,
+					depthOrArrayLayers: arrayLayerCount
 				},
 				format: textureDescriptor.format,
 				usage: GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_SRC | GPUTextureUsage.RENDER_ATTACHMENT,
-				mipLevelCount: textureDescriptor.mipLevelCount - 1,
+				mipLevelCount: textureDescriptor.mipLevelCount - 1
 			};
 			mipTexture = this.device.createTexture(mipTextureDescriptor);
 		}
@@ -166,9 +168,9 @@ export class GPUMipmapGenerator {
 			let srcView = texture.createView({
 				baseMipLevel: 0,
 				mipLevelCount: 1,
-				dimension: '2d',
+				dimension: "2d",
 				baseArrayLayer: arrayLayer,
-				arrayLayerCount: 1,
+				arrayLayerCount: 1
 			});
 
 			let dstMipLevel = renderToSource ? 1 : 0;
@@ -176,28 +178,33 @@ export class GPUMipmapGenerator {
 				const dstView = mipTexture.createView({
 					baseMipLevel: dstMipLevel++,
 					mipLevelCount: 1,
-					dimension: '2d',
+					dimension: "2d",
 					baseArrayLayer: arrayLayer,
-					arrayLayerCount: 1,
+					arrayLayerCount: 1
 				});
 
 				const passEncoder = commandEncoder.beginRenderPass({
-					colorAttachments: [{
-						view: dstView,
-						loadOp: 'clear',
-						storeOp: 'store'
-					}],
+					colorAttachments: [
+						{
+							view: dstView,
+							loadOp: "clear",
+							storeOp: "store"
+						}
+					]
 				});
 
 				const bindGroup = this.device.createBindGroup({
 					layout: this.bindGroupLayout,
-					entries: [{
-						binding: 0,
-						resource: this.sampler,
-					}, {
-						binding: 1,
-						resource: srcView,
-					}],
+					entries: [
+						{
+							binding: 0,
+							resource: this.sampler
+						},
+						{
+							binding: 1,
+							resource: srcView
+						}
+					]
 				});
 
 				passEncoder.setPipeline(pipeline);
@@ -215,17 +222,21 @@ export class GPUMipmapGenerator {
 			const mipLevelSize = {
 				width: Math.max(1, texSizeDesc.width >>> 1),
 				height: Math.max(1, texSizeDesc.height >>> 1),
-				depthOrArrayLayers: arrayLayerCount,
+				depthOrArrayLayers: arrayLayerCount
 			};
 
 			for (let i = 1; i < textureDescriptor.mipLevelCount; ++i) {
-				commandEncoder.copyTextureToTexture({
-					texture: mipTexture,
-					mipLevel: i - 1,
-				}, {
-					texture: texture,
-					mipLevel: i,
-				}, mipLevelSize);
+				commandEncoder.copyTextureToTexture(
+					{
+						texture: mipTexture,
+						mipLevel: i - 1
+					},
+					{
+						texture: texture,
+						mipLevel: i
+					},
+					mipLevelSize
+				);
 
 				mipLevelSize.width = Math.max(1, mipLevelSize.width >>> 1);
 				mipLevelSize.height = Math.max(1, mipLevelSize.height >>> 1);

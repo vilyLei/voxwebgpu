@@ -93,12 +93,13 @@ export class GameOfLifeSphere {
 		const cellStateArray0 = new Uint32Array(gridSize * gridSize);
 		for (let i = 0; i < cellStateArray0.length; i++) {
 
-			if(i % 22 == 0) {
-				cellStateArray0[i] = 1;
-			}
-			let t = (Date.now()/12345.34347);
-			t = t - Math.floor(t);
-			cellStateArray0[i] = Math.min(Math.random(), t) > 0.5 ? 1 : 0;
+			// if(i % 22 == 0) {
+			// 	cellStateArray0[i] = 1;
+			// }
+			// let t = (Date.now()/12345.34347);
+			// t = t - Math.floor(t);
+			// cellStateArray0[i] = Math.min(Math.random(), t) > 0.5 ? 1 : 0;
+			cellStateArray0[i] = Math.random() > 0.6 ? 1 : 0;
 		}
 		const cellStateArray1 = new Uint32Array(gridSize * gridSize);
 		for (let i = 0; i < cellStateArray1.length; i++) {
@@ -198,7 +199,7 @@ export class GameOfLifeSphere {
 				compEntryPoint: "compMain"
 			}
 		};
-		const materials: WGMaterial[] = [
+		const materials = [
 			// build ping-pong rendering process
 			this.createMaterial(shaderSrc, ufvsObjs[0].ufvs0, "rshd0", instanceCount),
 			this.createMaterial(shaderSrc, ufvsObjs[0].ufvs1, "rshd1", instanceCount),

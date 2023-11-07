@@ -12,6 +12,7 @@ import { GPUBindGroupLayout } from "../../gpu/GPUBindGroupLayout";
 import { GPUBindGroupLayoutDescriptor } from "../../gpu/GPUBindGroupLayoutDescriptor";
 import { WGRShaderVisibility } from "../uniform/WGRShaderVisibility";
 import { WGRUniformValue } from "../uniform/WGRUniformValue";
+import { WGRBindGroupContext } from "./WGRBindGroupContext";
 
 interface BufDataParamType {
 	size: number;
@@ -30,7 +31,7 @@ type VtxPipelinDescParam = { vertex: { buffers?: GPUBuffer[], attributeIndicesAr
 type UniformBufferParam = { sizes: number[], usage: number, arrayStride?:number };
 
 interface IWGRPipelineContext {
-
+	bindGroupCtx: WGRBindGroupContext;
 	rpass: IWGRendererPass;
 	pipeline?: GPURenderPipeline;
 	comppipeline?: GPUComputePipeline;
@@ -38,38 +39,37 @@ interface IWGRPipelineContext {
 
 	destroy(): void;
 	getWGCtx(): WebGPUContext;
-	updateUniformBufferAt(buffer: GPUBuffer, td: NumberArrayDataType, index: number, byteOffset?: number): void;
-	createBindGroupLayout(descriptor: GPUBindGroupLayoutDescriptor): GPUBindGroupLayout;
-	createBindGroupDesc(
-		groupIndex: number,
-		dataParams?: { index: number; buffer: GPUBuffer; bufferSize: number }[],
-		texParams?: { texView?: GPUTextureView; sampler?: GPUSampler }[],
-		bindIndex?: number,
-		layout?: GPUBindGroupLayout
-	): GPUBindGroupDescriptor;
 
-	bindGroupDescUpdate(
-		desc: GPUBindGroupDescriptor,
-		dataParams?: BindGroupDataParamType[],
-		texParams?: { texView?: GPUTextureView; sampler?: GPUSampler }[],
-		index?: number
-	): void;
-	createBindGroupWithDesc(desc: GPUBindGroupDescriptor): GPUBindGroup;
-	createBindGroup(
-		groupIndex: number,
-		dataParams?: BindGroupDataParamType[],
-		texParams?: { texView?: GPUTextureView, sampler?: GPUSampler }[],
-		bindIndex?: number,
-		layout?: GPUBindGroupLayout
-	): GPUBindGroup;
-
-	/**
-	 * @param params UniformBufferParam instance.
-	 * @param initSize The defaut value is 0.
-	 * @param force256 The defaut value is true.
-	 * @param mappedAtCreation The defaut value is false.
-	 */
-	createUniformsBuffer(params: UniformBufferParam, initSize?: number, force256?: boolean, mappedAtCreation?: boolean): GPUBuffer | null;
+	// updateUniformBufferAt(buffer: GPUBuffer, td: NumberArrayDataType, index: number, byteOffset?: number): void;
+	// createBindGroupLayout(descriptor: GPUBindGroupLayoutDescriptor): GPUBindGroupLayout;
+	// createBindGroupDesc(
+	// 	groupIndex: number,
+	// 	dataParams?: { index: number; buffer: GPUBuffer; bufferSize: number }[],
+	// 	texParams?: { texView?: GPUTextureView; sampler?: GPUSampler }[],
+	// 	bindIndex?: number,
+	// 	layout?: GPUBindGroupLayout
+	// ): GPUBindGroupDescriptor;
+	// bindGroupDescUpdate(
+	// 	desc: GPUBindGroupDescriptor,
+	// 	dataParams?: BindGroupDataParamType[],
+	// 	texParams?: { texView?: GPUTextureView; sampler?: GPUSampler }[],
+	// 	index?: number
+	// ): void;
+	// createBindGroupWithDesc(desc: GPUBindGroupDescriptor): GPUBindGroup;
+	// createBindGroup(
+	// 	groupIndex: number,
+	// 	dataParams?: BindGroupDataParamType[],
+	// 	texParams?: { texView?: GPUTextureView, sampler?: GPUSampler }[],
+	// 	bindIndex?: number,
+	// 	layout?: GPUBindGroupLayout
+	// ): GPUBindGroup;
+	// /**
+	//  * @param params UniformBufferParam instance.
+	//  * @param initSize The defaut value is 0.
+	//  * @param force256 The defaut value is true.
+	//  * @param mappedAtCreation The defaut value is false.
+	//  */
+	// createUniformsBuffer(params: UniformBufferParam, initSize?: number, force256?: boolean, mappedAtCreation?: boolean): GPUBuffer | null;
 
 }
 export { BindGroupDataParamType, VtxDescParam, VtxPipelinDescParam, BufDataParamType, UniformBufferParam, IWGRPipelineContext };

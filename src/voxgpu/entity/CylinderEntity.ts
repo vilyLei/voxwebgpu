@@ -17,6 +17,12 @@ class CylinderEntity extends PrimitiveEntity {
 
 	protected getGeometryData(param: CylinderEntityParam): GeometryBase {
 		if (!param) param = {};
+		// param.radius ??= 100;
+		// param.height ??= 300;
+		// param.longitudeNumSegments ??= 20;
+		// param.latitudeNumSegments ??= 20;
+		// param.uvType ??= 1;
+		// param.alignYRatio ??= -0.5;
 		if (param.radius === undefined) param.radius = 100.0;
 		if (param.height === undefined) param.height = 300.0;
 		if (param.longitudeNumSegments === undefined) param.longitudeNumSegments = 20;

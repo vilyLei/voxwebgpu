@@ -10,8 +10,6 @@ import { WGRenderer } from "../rscene/WGRenderer";
 import { WGImage2DTextureData } from "../texture/WGTextureWrapper";
 import { WGRShderSrcType } from "../material/WGMaterialDescripter";
 import Vector3 from "../math/Vector3";
-import { WGRStorageValue } from "../render/uniform/WGRStorageValue";
-import { WGRUniformValue } from "../render/uniform/WGRUniformValue";
 
 export class VertEntityTest {
 
@@ -23,7 +21,7 @@ export class VertEntityTest {
 	initialize(): void {
 
 		console.log("VertEntityTest::initialize() ...");
-		
+
 		const shdSrc = {
 			vertShaderSrc: { code: vertWGSL, uuid: "vertShdCode" },
 			fragShaderSrc: { code: fragWGSL, uuid: "fragShdCode" }
@@ -80,7 +78,7 @@ export class VertEntityTest {
 		this.mRotY += 0.5;
 		this.mEntity.transform.setRotationXYZ(0, this.mRotY, this.mRotY + 0.5);
 		this.mEntity.update();
-		
+
 		this.renderer.run();
 	}
 }

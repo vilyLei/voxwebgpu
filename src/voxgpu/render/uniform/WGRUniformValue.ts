@@ -14,7 +14,6 @@ class WGRUniformValue {
 	index = 0;
 
 	version = -1;
-	// bufferIndex = 0;
 	data: NumberArrayDataType;
 
 	byteOffset = 0;
@@ -24,7 +23,6 @@ class WGRUniformValue {
 	sharedData?: WGRUniformSharedData;
 
 	shdVarName?: string;
-	// __$gbuf: GPUBuffer;
 
 	visibility = new WGRShaderVisibility();
 
@@ -49,6 +47,13 @@ class WGRUniformValue {
 			if (d.byteLength <= 64) this.arrayStride = d.byteLength;
 		}
 		this.upate();
+	}
+	get byteLength(): number {
+		return this.data.byteLength;
+		// if(this.data) {
+		// 	return this.data.byteLength;
+		// }
+		// return 0;
 	}
 	getUid(): number {
 		return this.mUid;
