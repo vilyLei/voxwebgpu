@@ -145,57 +145,6 @@ class WGRUniformCtxInstance {
 						// console.log("VVVVVVVVVVVVVVVVV 04 ...");
 					}
 				}
-				/*
-				if (wp.bufDataParams) {
-
-
-
-					const wgctx = this.mBindGCtx.getWGCtx();
-					const store = WGHBufferStore.getStore(wgctx);
-
-					const dps = wp.bufDataParams;
-					for (let i = 0; i < dps.length; ++i) {
-						const dp = dps[i];
-						dp.visibility.binding = i;
-
-						const sizes = new Array(dp.shared ? 1 : ls.length);
-						const uniformParam = { sizes, usage: dp.usage, arrayStride: dp.arrayStride } as UniformBufferParam;
-						let buf: GPUBuffer;
-						const sharedData = dp.ufvalue.sharedData;
-						if (sharedData) {
-							buf = sharedData.buffer;
-						}
-						if (!buf) {
-							if (dp.shared) {
-								if (store.hasWithUid(dp.vuid)) {
-									buf = store.getWithUid(dp.vuid);
-									// console.log("apply old shared uniform gpu buffer...");
-								} else {
-									// console.log("create new shared uniform gpu buffer...");
-									uniformParam.sizes[0] = ls[0].bufDataParams[i].size;
-									buf = this.mBindGCtx.createUniformsBuffer(uniformParam);
-									store.addWithUid(dp.vuid, buf);
-								}
-								buf.shared = true;
-							} else {
-								for (let j = 0; j < ls.length; ++j) {
-									uniformParam.sizes[j] = ls[j].bufDataParams[i].size;
-								}
-								buf = this.mBindGCtx.createUniformsBuffer(uniformParam);
-							}
-						}
-						if (!dp.shared && !sharedData) {
-							bo.oldBufs.push(buf);
-						}
-						if (sharedData && !sharedData.buffer) {
-							sharedData.buffer = buf;
-						}
-						// this.mBuffers.push(buf);
-						bo.buffers.push(buf);
-						// console.log("PPP PPP PPP ,i: ",i," buf.size: ", buf.size);
-					}
-				}
-				//*/
 				// console.log("XXX XXX this.mBuffers: ", this.mBuffers);
 				for (let i = 0; i < ls.length; ++i) {
 					this.createUniformWithWP(ls[i], i, true);
