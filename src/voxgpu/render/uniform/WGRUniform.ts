@@ -3,26 +3,26 @@ import { GPUBuffer } from "../../gpu/GPUBuffer";
 import { WGRUniformValue } from "./WGRUniformValue";
 import { IWGRPipelineContext } from "../pipeline/IWGRPipelineContext";
 
-type UniformVerType = { ver: number, shared: boolean };
+type UniformVerType = { vid: number, ver: number, shared: boolean, shdVarName?: string };
 interface WGRUniformCtx {
 	removeUniform(u: WGRUniform): void;
 }
 class WGRUniform {
+	private static sUid = 0;
+	private mUid = WGRUniform.sUid++;
 	private mCloned = false;
-	private mCtx: WGRUniformCtx = null;
-    private mPipelineCtx: IWGRPipelineContext | null = null;
+	private mCtx: WGRUniformCtx;
+    private mPipelineCtx: IWGRPipelineContext;
 
 	private mSubUfs: WGRUniform[] = [];
-
-	uid = 0;
 
 	index = -1;
 	layoutName = "";
 
-	buffers: GPUBuffer[] | null = null;
+	buffers: GPUBuffer[];
 	versions: UniformVerType[];
-	bindGroup: GPUBindGroup | null = null;
-
+	bindGroup: GPUBindGroup;
+	uvfs: WGRUniformValue[];
 	/**
 	 * bind group index
 	 */
@@ -33,15 +33,27 @@ class WGRUniform {
 		this.mCtx = ctx;
 	}
 
-	setValue(value: WGRUniformValue): void {
-		const i = value.bufferIndex;
-		const v = this.versions[i];
+	getUid(): number {
+		return this.mUid;
+	}
+	setValue(value: WGRUniformValue, index = 0): void {
+		const v = this.versions[index];
 		if(v.ver != value.version) {
 			v.ver = value.version;
-			// console.log("WRORUniform::setValue(), call ...shared: ", value.shared, value.shdVarName);
+			// console.log("WRORUniform::setValue(), call ..., shared: ", value.shared, ",", value.shdVarName);
+			// console.log("WRORUniform::setValue(), call ..., v: ", v);
+			// console.log("WRORUniform::setValue(), call ..., value: ", value);
+			// if(v.shdVarName !== value.shdVarName) {
+			// 	console.log("WRORUniform::setValue(), versions: ", this.versions);
+			// 	console.log("WRORUniform::setValue(), uvfs: ", this.uvfs);
+			// 	throw Error('Illegal operation: v.shdVarName !== value.shdVarName !!!');
+			// }
+			// if(v.vid !== value.getUid()) {
+			// 	throw Error('Illegal operation: v.vid !== value.getUid() !!!');
+			// }
 			// console.log("WRORUniform::setValue(), call ...value.__$gbuf: ", value.__$gbuf);
 			// this.mPipelineCtx.updateUniformBufferAt(value.__$gbuf ? value.__$gbuf : this.buffers[i], value.data, v.shared ? 0 : this.index, value.byteOffset);
-			this.mPipelineCtx.updateUniformBufferAt(this.buffers[i], value.data, v.shared ? 0 : this.index, value.byteOffset);
+			this.mPipelineCtx.updateUniformBufferAt(this.buffers[index], value.data, v.shared ? 0 : this.index, value.byteOffset);
 		}
 	}
 	isEnabled(): boolean {
@@ -84,13 +96,14 @@ class WGRUniform {
 		const ls: WGRUniform[] = new Array(total);
 		for(let i = 0; i < total; ++i) {
 			ls[i] = this.clone();
-			ls[i].uid = 1000 + i;
+			// ls[i].uid = 1000 + i;
 		}
 		return ls;
 	}
 	destroy(): void {
 		if(this.mCtx) {
 			this.mSubUfs = [];
+			this.uvfs = null;
 			if(this.mCloned) {
 
 				this.index = -1;
@@ -100,8 +113,8 @@ class WGRUniform {
 			}else {
 
 				this.mCtx.removeUniform( this );
-				this.mCtx = null;
 			}
+			this.mCtx = null;
 		}
 	}
 	__$$destroy(): void {

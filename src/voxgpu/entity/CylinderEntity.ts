@@ -7,6 +7,8 @@ interface CylinderEntityParam extends Entity3DParam {
 	height?: number;
 	longitudeNumSegments?: number;
 	latitudeNumSegments?: number;
+	uvType?: number;
+	alignYRatio?: number;
 }
 class CylinderEntity extends PrimitiveEntity {
 	constructor(param?: CylinderEntityParam) {
@@ -19,8 +21,10 @@ class CylinderEntity extends PrimitiveEntity {
 		if (param.height === undefined) param.height = 300.0;
 		if (param.longitudeNumSegments === undefined) param.longitudeNumSegments = 20;
 		if (param.latitudeNumSegments === undefined) param.latitudeNumSegments = 20;
+		if (param.uvType === undefined) param.uvType = 1;
+		if (param.alignYRatio === undefined) param.alignYRatio = -0.5;
 		let g = new CylinderGeometry();
-		g.initialize(param.radius, param.height, param.longitudeNumSegments, param.latitudeNumSegments);
+		g.initialize(param.radius, param.height, param.longitudeNumSegments, param.latitudeNumSegments,param.uvType,param.alignYRatio);
 		return g;
 	}
 }

@@ -9,7 +9,7 @@ import { WGRShderSrcType } from "../material/WGMaterialDescripter";
 import { WGCompMaterial } from "../material/WGCompMaterial";
 import { WGMaterial } from "../material/WGMaterial";
 
-const gridSize = 100;
+const gridSize = 64;
 const shdWorkGroupSize = 8;
 
 const compShdCode = `
@@ -152,7 +152,7 @@ export class GameOfLifePretty {
 				vertEntryPoint: "vertMain",
 				fragEntryPoint: "fragMain"
 			}
-		} as WGRShderSrcType;
+		};
 		let compShaderSrc = {
 			compShaderSrc: {
 				code: compShdCode,

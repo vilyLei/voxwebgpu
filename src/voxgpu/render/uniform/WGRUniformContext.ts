@@ -114,6 +114,7 @@ class UCtxInstance {
 					const store = WGHBufferStore.getStore(wgctx);
 
 					const dps = wp.bufDataParams;
+					// console.log("^^^^^ dps: ", dps);
 					for (let i = 0; i < dps.length; ++i) {
 						const dp = dps[i];
 						dp.visibility.binding = i;
@@ -176,24 +177,36 @@ class UCtxInstance {
 		}
 	}
 	private static sBindGroupIndex = 0;
-	private createVers(wp: WGRUniformWrapper): { ver: number; shared: boolean }[] {
+	private createVers(wp: WGRUniformWrapper): UniformVerType[] {
 		const dps = wp.bufDataParams;
 		const map = this.shdUniform.map;
 
+		// console.log("createVers(), *** *** *** dps: ", dps);
 		let versions = new Array(dps.length);
 		for (let i = 0; i < dps.length; ++i) {
 			// console.log("*** *** *** createVers(), dps[",i,"].shared: ", dps[i].shared);
-			if (dps[i].shared) {
-				const vid = dps[i].vuid;
+			const ufv = dps[i].ufvalue;
+			if (ufv.shared === true) {
+				const vid = ufv.getUid();
 				if (!map.has(vid)) {
-					map.set(vid, { ver: -1, shared: true });
+					map.set(vid, { vid: ufv.getUid(), ver: -1, shared: true, shdVarName: ufv.shdVarName });
 				}
 				versions[i] = map.get(vid);
 			} else {
-				versions[i] = { ver: -1, shared: false };
+				versions[i] = { vid: ufv.getUid(), ver: -1, shared: false, shdVarName: ufv.shdVarName };
 			}
 		}
 		return versions;
+	}
+	private createUvfs(wp: WGRUniformWrapper): WGRUniformValue[] {
+		const dps = wp.bufDataParams;
+		let uvfs = new Array(dps.length);
+		for (let i = 0; i < dps.length; ++i) {
+			// console.log("*** *** *** createVers(), dps[",i,"].shared: ", dps[i].shared);
+			uvfs[i] = dps[i].ufvalue;
+
+		}
+		return uvfs;
 	}
 	private createUniformWithWP(wp: WGRUniformWrapper, index: number, force = false): void {
 		console.log("createUniformWithWP(), wp.groupIndex: ", wp.groupIndex);
@@ -201,6 +214,10 @@ class UCtxInstance {
 		if (uf && (!uf.bindGroup || force)) {
 			uf.buffers = this.mBuffers;
 			uf.versions = this.createVers(wp);
+			uf.uvfs = this.createUvfs(wp);
+			// console.log("BBBBBBBBBBBBBB uf.getUid(): ", uf.getUid());
+			// console.log("BBBBBBBBBBBBBB uf.versions: ", uf.versions);
+			// console.log("BBBBBBBBBBBBBB uf.uvfs: ", uf.uvfs);
 			const dps = wp.bufDataParams;
 			if (dps) {
 				let desc = this.mBindGroupDesc;
@@ -235,13 +252,6 @@ class UCtxInstance {
 		}
 	}
 	runEnd(): void {
-		// if(this.mOldBufs) {
-		// 	for (let i = 0; i < this.mOldBufs.length; ++i) {
-		// 		this.mOldBufs[i].destroy();
-		// 		console.log("destroy a gpu buffer...");
-		// 	}
-		// 	this.mOldBufs = [];
-		// }
 	}
 	createUniform(
 		layoutName: string,
@@ -401,7 +411,6 @@ class WGRUniformContext implements IWGRUniformContext {
 			const bufDataParams: BufDataParamType[] = [];
 			for (let i = 0; i < values.length; ++i) {
 				const v = values[i];
-				v.bufferIndex = i;
 				const usageType = v.isStorage() ? 1 : 0;
 				const vuid = v.getUid();
 				const arrayStride = v.arrayStride;

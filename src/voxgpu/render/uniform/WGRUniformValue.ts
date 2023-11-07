@@ -14,7 +14,7 @@ class WGRUniformValue {
 	index = 0;
 
 	version = -1;
-	bufferIndex = 0;
+	// bufferIndex = 0;
 	data: NumberArrayDataType;
 
 	byteOffset = 0;
@@ -24,14 +24,14 @@ class WGRUniformValue {
 	sharedData?: WGRUniformSharedData;
 
 	shdVarName?: string;
-	__$gbuf: GPUBuffer;
+	// __$gbuf: GPUBuffer;
 
 	visibility = new WGRShaderVisibility();
 
 	constructor(param: WGRUniformValueParam) {
 		let d = param.data;
 		this.data = d;
-		this.bufferIndex = param.bufferIndex !== undefined ? param.bufferIndex : 0;
+		// this.bufferIndex = param.bufferIndex !== undefined ? param.bufferIndex : 0;
 		this.index = param.index !== undefined ? param.index : 0;
 		if (param.usage !== undefined) this.usage = param.usage;
 		if (param.shared !== undefined) this.shared = param.shared;
@@ -50,16 +50,6 @@ class WGRUniformValue {
 		}
 		this.upate();
 	}
-	// swapBuffer(v: WGRUniformValue): void {
-	// 	if(v && v.__$gbuf && this.__$gbuf) {
-	// 		if(v.__$gbuf !== this.__$gbuf) {
-	// 			const buf = v.__$gbuf;
-	// 			v.__$gbuf = this.__$gbuf;
-	// 			this.__$gbuf = buf;
-	// 			// this.upate();
-	// 		}
-	// 	}
-	// }
 	getUid(): number {
 		return this.mUid;
 	}
@@ -106,7 +96,7 @@ class WGRUniformValue {
 	}
 
 	clone(data: NumberArrayDataType): WGRUniformValue {
-		const u = new WGRUniformValue({ data: data, bufferIndex: this.bufferIndex, index: this.index });
+		const u = new WGRUniformValue({ data: data, index: this.index });
 		u.name = this.name;
 		u.byteOffset = this.byteOffset;
 		u.arrayStride = this.arrayStride;

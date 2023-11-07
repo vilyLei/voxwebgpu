@@ -35,7 +35,7 @@ export class PrimitiveEntityTest {
 		let entities: PrimitiveEntity[] = [
 			new SphereEntity(),
 			new BoxEntity(),
-			new CylinderEntity(),
+			new CylinderEntity({alignYRatio : 0.0}),
 			new CubeEntity({cubeSize: 130}),
 			new TorusEntity({radius: 110, axisType: 1}),
 			new PlaneEntity({axisType: 1})

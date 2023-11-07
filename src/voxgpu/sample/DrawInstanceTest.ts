@@ -52,7 +52,7 @@ export class DrawInstanceTest {
 			}
 		});
 	}
-	private mouseDown = (evt: MouseEvent): void => { };
+	private mouseDown = (evt: MouseEvent): void => {};
 
 	private createEntity(model: CoGeomDataType): void {
 
@@ -91,7 +91,7 @@ export class DrawInstanceTest {
 			vertShaderSrc: { code: vertWGSL, uuid: "vert-primitive-ins" },
 			fragShaderSrc: { code: fragWGSL, uuid: "frag-primitive-ins" }
 		};
-		
+
 		const rc = this.mRscene;
 		const geometry = this.createGeometry(model, true);
 		let entity = new PrimitiveEntity({ geometry, shaderSrc, uniformValues, instanceCount });

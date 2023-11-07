@@ -7,7 +7,7 @@ import { WGRUniformValue } from "./WGRUniformValue";
 type WGRUniformTexParam = { texView: GPUTextureView, sampler?: GPUSampler };
 type WGRUniformParam = { layoutName: string, groupIndex: number, values: WGRUniformValue[], texParams?: WGRUniformTexParam[] };
 class WGRUniformWrapper {
-	uniform: WGRUniform | null = null;
+	uniform: WGRUniform;
 	bufDataParams?: BufDataParamType[];
 	bufDataDescs?: BindGroupDataParamType[];
 	texParams?: { sampler?: GPUSampler, texView: GPUTextureView }[];

@@ -112,12 +112,11 @@ class Entity3D implements IRenderableEntity {
 				this.transform = ROTransform.Create();
 			}
 		}
-		
-		if(param.transufvShared === true) {
-			this.transform.uniformv.shared = true;
-		}
 		this.initBounds(transformEnabled);
 		if (param) {
+			if(param.transufvShared === true) {
+				this.transform.uniformv.shared = true;
+			}
 			this.materials = param.materials;
 			this.geometry = param.geometry;
 			if (this.geometry) {

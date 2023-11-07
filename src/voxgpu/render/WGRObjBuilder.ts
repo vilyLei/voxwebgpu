@@ -90,9 +90,6 @@ class WGRObjBuilder {
 		if (material.uniformValues) {
 			uvalues = uvalues.concat(material.uniformValues);
 		}
-		if (uvalues.length > 0) {
-			ru.setUniformValues(uvalues);
-		}
 		// transform 与 其他材质uniform数据构造和使用应该分开,
 		// 哪些uniform是依据material变化的，哪些是共享的，哪些是transform等变换的数据
 
@@ -168,6 +165,7 @@ class WGRObjBuilder {
 				passes[i] = this.createRPass(entity, block, primitive, i);
 			}
 			ru = new WGRUnit();
+			console.log("xxxxxxxxx passes: ", passes);
 			ru.passes = passes;
 		} else {
 			ru = this.createRPass(entity, block, primitive);

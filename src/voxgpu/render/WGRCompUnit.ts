@@ -1,7 +1,7 @@
 import { WGRUniform } from "./uniform/WGRUniform";
 import { GPUBuffer } from "../gpu/GPUBuffer";
 import { WGRPrimitive } from "./WGRPrimitive";
-import { WGRUniformValue } from "./uniform/WGRUniformValue";
+// import { WGRUniformValue } from "./uniform/WGRUniformValue";
 import { IWGRPipelineContext } from "./pipeline/IWGRPipelineContext";
 import { IWGRUnit } from "./IWGRUnit";
 import IAABB from "../cgeom/IAABB";
@@ -24,7 +24,6 @@ const __$rcompeust = new WGRUnitState();
 const __$workcounts = new Uint16Array([1, 1, 0, 0]);
 
 class WGRCompUnit implements IWGRUnit {
-	private mUfValues: WGRUniformValue[];
 	private rf = true;
 
 	uniforms?: WGRUniform[];
@@ -49,7 +48,6 @@ class WGRCompUnit implements IWGRUnit {
 	clone(): WGRCompUnit {
 		const r = new WGRCompUnit();
 
-		r.mUfValues = this.mUfValues;
 		r.uniforms = this.uniforms;
 		r.pipelinectx = this.pipelinectx;
 		r.passes = this.passes;
@@ -60,9 +58,9 @@ class WGRCompUnit implements IWGRUnit {
 	getRF(): boolean {
 		return this.enabled && this.st.isDrawable();
 	}
-	setUniformValues(values: WGRUniformValue[]): void {
-		this.mUfValues = values;
-	}
+	// setUniformValues(values: WGRUniformValue[]): void {
+	// 	this.mUfValues = values;
+	// }
 	runBegin(): void {
 		const rc = this.rp.compPassEncoder;
 		const mt = this.material;
@@ -96,19 +94,11 @@ class WGRCompUnit implements IWGRUnit {
 							// console.log("compruint setBindGroup(), bindGroup: ", uf.bindGroup);
 							// console.log("ruint setBindGroup(), uf.groupIndex: ", uf.groupIndex,",", uf.bindGroup);
 							rc.setBindGroup(uf.groupIndex, uf.bindGroup);
+							for(let j = 0, ln = uf.uvfs.length; j < ln; j++) {
+								uf.setValue(uf.uvfs[j], j);
+							}
 						} else {
 							rf = false;
-						}
-					}
-					if (rf) {
-						// first, apply shared uniform
-						const ufvs = this.mUfValues;
-						if (ufvs) {
-							// console.log("ufvs.length: ", ufvs.length);
-							for (let i = 0, ln = ufvs.length; i < ln; i++) {
-								// console.log("ruint ufs setValue(), i: ", i);
-								ufs[ufvs[i].index].setValue(ufvs[i]);
-							}
 						}
 					}
 				}
@@ -139,7 +129,6 @@ class WGRCompUnit implements IWGRUnit {
 			const ufctx = this.pipelinectx.uniformCtx;
 			ufctx.removeUniforms(this.uniforms);
 
-			this.mUfValues = null;
 			this.pipelinectx = null;
 			this.material = null;
 			this.rp = null;

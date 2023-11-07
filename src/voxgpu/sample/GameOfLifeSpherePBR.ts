@@ -1,8 +1,9 @@
 import { RendererScene } from "../rscene/RendererScene";
 import MouseEvent from "../event/MouseEvent";
 import { MouseInteraction } from "../ui/MouseInteraction";
-
-import shaderWGSL from "./shaders/gameOfLifeSphere.wgsl";
+//src\voxgpu\sample\shaders\gameOfLifeSpherePBR.vert.wgsl
+import vertWGSL from "./shaders/gameOfLifeSpherePBR.vert.wgsl";
+import fragWGSL from "./shaders/gameOfLifeSpherePBR.frag.wgsl";
 
 import { WGRUniformValue } from "../render/uniform/WGRUniformValue";
 import { WGRStorageValue } from "../render/uniform/WGRStorageValue";
@@ -12,6 +13,9 @@ import { WGMaterial } from "../material/WGMaterial";
 import Vector3 from "../math/Vector3";
 import { SphereEntity } from "../entity/SphereEntity";
 import RenderStatusDisplay from "../rscene/RenderStatusDisplay";
+import { BoxEntity } from "../entity/BoxEntity";
+import { Entity3D } from "../entity/Entity3D";
+import { CylinderEntity } from "../entity/CylinderEntity";
 
 const gridSize = 256;
 const shdWorkGroupSize = 8;
@@ -51,27 +55,27 @@ fn compMain(@builtin(global_invocation_id) cell: vec3u) {
 		case 2: { // Active cells with 2 neighbors stay active.
 			cellStateOut[i] = cellStateIn[i];
 			if(cellStateOut[i] > 0) {
-				lifeState[i] += 0.5;
+				lifeState[i] += 0.05;
 			} else {
-				lifeState[i] -= 0.5;
+				lifeState[i] -= 0.05;
 			}
 		}
 		case 3: { // Cells with 3 neighbors become or stay active.
 			cellStateOut[i] = 1;
-			lifeState[i] += 0.5;
+			lifeState[i] += 0.1;
 		}
 		default: { // Cells with < 2 or > 3 neighbors become inactive.
 			cellStateOut[i] = 0;
-			lifeState[i] = 0.01;
+			lifeState[i] -= 0.05;
 		}
 	}
 	if(lifeState[i] < 0.01) { lifeState[i] = 0.01; }
 }`;
-export class GameOfLifeSphere {
+export class GameOfLifeSpherePBR {
 	private mRscene = new RendererScene();
 
 	initialize(): void {
-		console.log("GameOfLifeSphere::initialize() ...");
+		console.log("GameOfLifeSpherePBR::initialize() ...");
 
 		const rc = this.mRscene;
 		rc.initialize();
@@ -92,13 +96,7 @@ export class GameOfLifeSphere {
 		const gridsSizesArray = new Float32Array([gridSize, gridSize]);
 		const cellStateArray0 = new Uint32Array(gridSize * gridSize);
 		for (let i = 0; i < cellStateArray0.length; i++) {
-
-			if(i % 22 == 0) {
-				cellStateArray0[i] = 1;
-			}
-			let t = (Date.now()/12345.34347);
-			t = t - Math.floor(t);
-			cellStateArray0[i] = Math.min(Math.random(), t) > 0.5 ? 1 : 0;
+			cellStateArray0[i] = Math.random() > 0.6 ? 1 : 0;
 		}
 		const cellStateArray1 = new Uint32Array(gridSize * gridSize);
 		for (let i = 0; i < cellStateArray1.length; i++) {
@@ -157,7 +155,7 @@ export class GameOfLifeSphere {
 			{ ufvs0: [v0, compva1, compva2, compv3], ufvs1: [v0, compvb1, compvb2, compv3] }
 		];
 	}
-	private mEntity: SphereEntity;
+	private mEntity: Entity3D;
 	private mStep = 0;
 
 	private createMaterial(shaderCodeSrc: WGRShderSrcType, uniformValues: WGRUniformValue[], shadinguuid: string, instanceCount: number): WGMaterial {
@@ -184,10 +182,15 @@ export class GameOfLifeSphere {
 		const workgroupCount = Math.ceil(gridSize / shdWorkGroupSize);
 
 		let shaderSrc = {
-			shaderSrc: {
-				code: shaderWGSL,
-				uuid: "shader-gameOfLife",
+			vertShaderSrc: {
+				code: vertWGSL,
+				uuid: "vert-gameOfLife",
 				vertEntryPoint: "vertMain",
+				fragEntryPoint: "fragMain"
+			},
+			fragShaderSrc: {
+				code: fragWGSL,
+				uuid: "frag-gameOfLife",
 				fragEntryPoint: "fragMain"
 			}
 		} as WGRShderSrcType;
@@ -206,11 +209,10 @@ export class GameOfLifeSphere {
 			this.createCompMaterial(compShaderSrc, ufvsObjs[1].ufvs1, "compshd0", workgroupCount),
 			this.createCompMaterial(compShaderSrc, ufvsObjs[1].ufvs0, "compshd1", workgroupCount),
 		];
-
-		let entity = new SphereEntity({
-			transufvShared: true,
-			radius: 20, longitudeNumSegments:10, latitudeNumSegments:10,
-			materials
+		let entity = new CylinderEntity({
+			radius: 20, height: 38,
+			longitudeNumSegments: 10, latitudeNumSegments: 10,
+			alignYRatio : 0.0, materials
 		});
 		rc.addEntity(entity);
 		materials[0].visible = false;

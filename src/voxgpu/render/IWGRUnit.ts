@@ -21,7 +21,7 @@ interface IWGRUnit {
 	workcounts?: Uint16Array;
 
 	getRF(): boolean;
-	setUniformValues(values: WGRUniformValue[]): void;
+	// setUniformValues(values: WGRUniformValue[]): void;
 	runBegin(): void;
 	run(): void;
 	destroy(): void;

@@ -3,7 +3,7 @@ import { GPUBuffer } from "../gpu/GPUBuffer";
 import { GPURenderPassEncoder } from "../gpu/GPURenderPassEncoder";
 import { GPURenderPipeline } from "../gpu/GPURenderPipeline";
 import { WGRPrimitive } from "./WGRPrimitive";
-import { WGRUniformValue } from "./uniform/WGRUniformValue";
+// import { WGRUniformValue } from "./uniform/WGRUniformValue";
 import { IWGRPipelineContext } from "./pipeline/IWGRPipelineContext";
 import { IWGRUnit } from "./IWGRUnit";
 import IAABB from "../cgeom/IAABB";
@@ -22,7 +22,6 @@ class WGRUnitRunSt {
 const __$urst = new WGRUnitRunSt();
 const __$reust = new WGRUnitState();
 class WGRUnit implements IWGRUnit {
-	private mUfValues: WGRUniformValue[];
 	private rf = true;
 
 	uniforms?: WGRUniform[];
@@ -47,7 +46,7 @@ class WGRUnit implements IWGRUnit {
 
 		const r = new WGRUnit();
 
-		r.mUfValues			= this.mUfValues;
+		// r.mUfValues			= this.mUfValues;
 		r.uniforms			= this.uniforms;
 		r.pipelinectx		= this.pipelinectx;
 		r.geometry			= this.geometry;
@@ -60,15 +59,12 @@ class WGRUnit implements IWGRUnit {
 		// console.log("this.st.isDrawable(): ", this.st.isDrawable());
 		return this.enabled && this.st.isDrawable();
 	}
-	setUniformValues(values: WGRUniformValue[]): void {
-		this.mUfValues = values;
-	}
 	runBegin(): void {
 		const rc = this.rp.passEncoder;
 		const mt = this.material;
 		let rf = this.enabled && this.rp.enabled && this.st.isDrawable();
 		rf = rf && mt.visible && mt.instanceCount > 0;
-
+		// console.log("rnit::runBegin(), rf: ", rf);
 		if (rf) {
 			const gt = this.geometry;
 			const pipeline = this.pipelinectx.pipeline;
@@ -102,23 +98,31 @@ class WGRUnit implements IWGRUnit {
 						const uf = ufs[i];
 						if (uf.isEnabled()) {
 							// console.log("ruint setBindGroup(), bindGroup: ", uf.bindGroup);
+							// console.log("ruint setBindGroup(), bindGroup: ", uf.bindGroup, ", uf.getUid(): ", uf.getUid());
 							// console.log("ruint setBindGroup(), uf.groupIndex: ", uf.groupIndex,",", uf.bindGroup);
 							rc.setBindGroup(uf.groupIndex, uf.bindGroup);
+							for(let j = 0, ln = uf.uvfs.length; j < ln; j++) {
+								// console.log("ruint uf(",i,") setValue(), j: ", j);
+								uf.setValue(uf.uvfs[j], j);
+							}
 						} else {
 							rf = false;
 						}
 					}
-					if (rf) {
-						// first, apply shared uniform
-						const ufvs = this.mUfValues;
-						if (ufvs) {
-							// console.log("ufvs.length: ", ufvs.length);
-							for (let i = 0, ln = ufvs.length; i < ln; i++) {
-								// console.log("ruint ufs setValue(), i: ", i);
-								ufs[ufvs[i].index].setValue(ufvs[i]);
-							}
-						}
-					}
+					// if (rf) {
+					// 	// first, apply shared uniform
+					// 	const ufvs = this.mUfValues;
+					// 	if (ufvs) {
+					// 		// console.log("ufvs.length: ", ufvs.length);
+					// 		console.log("################## set value begin.");
+					// 		console.log("################## ufs: ", ufs);
+					// 		for (let i = 0, ln = ufvs.length; i < ln; i++) {
+					// 			console.log("ruint ufs setValue(), i: ", i);
+					// 			ufs[ufvs[i].index].setValue(ufvs[i]);
+					// 		}
+					// 		console.log("################## set value end.");
+					// 	}
+					// }
 				}
 			} else {
 				rf = false;
@@ -137,7 +141,7 @@ class WGRUnit implements IWGRUnit {
 					rc.setIndexBuffer(gt.ibuf, gt.ibuf.dataFormat);
 				}
 				// console.log("runit drawIndexed this.etuuid: ", this.etuuid);
-				// console.log(gt.indexCount, ", gt.instanceCount: ", gt.instanceCount);
+				// console.log("runit drawIndexed indexCount: ", gt.indexCount, ", gt.instanceCount: ", gt.instanceCount);
 				rc.drawIndexed(gt.indexCount, gt.instanceCount);
 			} else {
 				// console.log("runit draw(), vertexCount: ", gt.vertexCount,", instanceCount: ", gt.instanceCount);
@@ -153,7 +157,6 @@ class WGRUnit implements IWGRUnit {
 			const ufctx = this.pipelinectx.uniformCtx;
 			ufctx.removeUniforms(this.uniforms);
 
-			this.mUfValues = null;
 			this.pipelinectx = null;
 			this.material = null;
 			this.rp = null;

@@ -8,7 +8,7 @@ interface WGRUniformValueParam {
 	 * uniform value data object
 	 */
 	data?: NumberArrayDataType;
-	bufferIndex?: number;
+	// bufferIndex?: number;
 	/**
 	 * uniform index in RUnit instance
 	 */
