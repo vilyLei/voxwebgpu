@@ -1,7 +1,29 @@
 # voxwebgpu
 A lightweight WebGPU computing and 2d/3d rendering system
 
-installation and running:
+Features:
+
+   1. 用户态与系统态隔离。
+
+   2. 高频调用与低频调用隔离。
+
+   3. 面向用户的易用性封装。
+
+   4. 渲染数据(内外部相关资源)和渲染机制分离。
+
+   5. 用户操作和渲染系统调度并行机制。
+
+   6. 数据/语义驱动。
+
+   7. 异步并行的场景/模型载入。
+
+   8. computing与rendering用法机制一致性。
+         1). 构造过程一致性。
+         2). 启用过程一致性。
+         3). 自动兼容到material多pass以及material graph机制中。
+
+
+Installation and running:
 
    第一步，全局安装git[ https://git-scm.com/downloads ]。
    step 1, install global git[ https://git-scm.com/downloads ].
