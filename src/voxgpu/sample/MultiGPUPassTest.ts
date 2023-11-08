@@ -23,12 +23,15 @@ export class MultiGPUPassTest {
 	initialize(): void {
 		console.log("MultiGPUPassTest::initialize() ...");
 
+		let callback = (): void => {
+			this.initEvent();
+			this.initScene();
+		}
 		this.mRscene.initialize({
 			rpassparam: {multisampleEnabled: true, depthTestEnabled: true},
-			camera: {position: new Vector3(600.0, 600.0, 0.0)}
+			camera: {eye: new Vector3(600.0, 600.0, 0.0)},
+			callback
 		});
-		this.initEvent();
-		this.initScene();
 	}
 	private initEvent(): void {
 		const rc = this.mRscene;
@@ -36,14 +39,6 @@ export class MultiGPUPassTest {
 		new MouseInteraction().initialize(rc, 0, false).setAutoRunning(true);
 	}
 
-	private mouseDown = (evt: MouseEvent): void => {
-		let node = this.mRPass.node;
-		console.log("mousedown evt call this.mRPass: ", this.mRPass);
-		console.log("mousedown evt call AAAA node: ", node);
-		console.log("mousedown evt call node.enabled: ", node.enabled);
-		node.enabled = !node.enabled;
-		console.log("mousedown evt call BBBB node: ", node);
-	}
 	private createMaterial(shdSrc: WGRShderSrcType, texs?: WGTextureDataDescriptor[], color?: Color4, blendModes: string[] = ["solid"], faceCullMode = "back"): WGMaterial {
 
 		color = color ? color : new Color4();
@@ -82,7 +77,17 @@ export class MultiGPUPassTest {
 		}
 		return geometry;
 	}
-	private mRPass: IWGRPassRef;
+	private mRPass0: IWGRPassRef;
+	private mRPass1: IWGRPassRef;
+
+	private mouseDown = (evt: MouseEvent): void => {
+		let node = this.mRPass1.node;
+		console.log("mousedown evt call this.mRPass1: ", this.mRPass1);
+		console.log("mousedown evt call AAAA node: ", node);
+		console.log("mousedown evt call node.enabled: ", node.enabled);
+		node.enabled = !node.enabled;
+		console.log("mousedown evt call BBBB node: ", node);
+	}
 	private initScene(): void {
 
 		const rc = this.mRscene;
@@ -99,8 +104,11 @@ export class MultiGPUPassTest {
 		let materials0 = [this.createMaterial(shdSrc, [diffuseTex], new Color4(1.0, 0.0, 0.0))];
 		let materials1 = [this.createMaterial(shdSrc, [diffuseTex], new Color4(0.0, 1.0, 0.0))];
 
-		this.mRPass = rc.renderer.appendRendererPass();
-		materials1[0].rpass = {rpass: this.mRPass};
+		this.mRPass0 = rc.renderer.getRPBlockAt(0).getRenderPassAt(0);
+		console.log("this.mRPass0: ", this.mRPass0);
+
+		this.mRPass1 = rc.renderer.appendRendererPass();
+		materials1[0].rpass = {rpass: this.mRPass1};
 
 		let entity = new Entity3D();
 		entity.materials = materials0;

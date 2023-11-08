@@ -19,15 +19,17 @@ class RendererScene implements IRendererScene {
 	private mStage: Stage3D;
 
 	enabled = true;
-	renderer: WGRenderer;
+	private mRenderer: WGRenderer;
 	racontext: RAdapterContext;
 	camera: Camera;
 
 	constructor(uidBase: number = 0) {
 		this.mUid = uidBase + RendererScene.sUid++;
 	}
-
-	getUid(): number {
+	get renderer(): WGRenderer {
+		return this.mRenderer;
+	}
+	get uid(): number {
 		return this.mUid;
 	}
 
@@ -38,12 +40,12 @@ class RendererScene implements IRendererScene {
 			const renderer = new WGRenderer();
 			config = checkConfig(config);
 
-			this.mStage = new Stage3D(this.getUid(), document);
+			this.mStage = new Stage3D(this.uid, document);
 			this.racontext = new RAdapterContext();
 			this.racontext.initialize({ stage: this.mStage, canvas: config.canvas, div: config.div });
 			renderer.initialize(config);
 
-			this.renderer = renderer;
+			this.mRenderer = renderer;
 			this.camera = renderer.camera;
 		}
 	}
@@ -84,14 +86,14 @@ class RendererScene implements IRendererScene {
 		if (entity.isContainer()) {
 			this.addContainer(entity as IRenderableEntityContainer, processIndex);
 		} else {
-			this.renderer.addEntity(entity as Entity3D, processIndex, deferred);
+			this.mRenderer.addEntity(entity as Entity3D, processIndex, deferred);
 		}
 	}
 	removeEntity(entity: IRenderableObject): void {
 		if (entity.isContainer()) {
 
 		} else {
-			this.renderer.removeEntity( entity as Entity3D );
+			this.mRenderer.removeEntity( entity as Entity3D );
 		}
 	}
 	/**
@@ -115,7 +117,7 @@ class RendererScene implements IRendererScene {
 	}
 	run(rendering = true): void {
 
-		const r = this.renderer;
+		const r = this.mRenderer;
 		if (this.enabled && r && r.isEnabled()) {
 
 			this.camera.update();

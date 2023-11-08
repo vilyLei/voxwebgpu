@@ -38,9 +38,9 @@ class WGRenderer implements IRenderer {
 
 		let p = this.mConfig.camera;
 		if(!p) p = {};
-		if(!p.position) p.position = new Vector3(1100.0, 1100.0, 1100.0);
+		if(!p.eye) p.eye = new Vector3(1100.0, 1100.0, 1100.0);
 		if(!p.up) p.up = new Vector3(0, 1, 0);
-		if(!p.look) p.look = new Vector3();
+		if(!p.origin) p.origin = new Vector3();
 		if(p.fovDegree === undefined) p.fovDegree = 45;
 		if(p.near === undefined) p.near = 0.1;
 		if(p.far === undefined) p.far = 8000;
@@ -53,13 +53,13 @@ class WGRenderer implements IRenderer {
 			cam.inversePerspectiveZ = true;
 			cam.orthoRH(p.near, p.far, -0.5 * height, 0.5 * height, -0.5 * width, 0.5 * width);
 		}
-		cam.lookAtRH(p.position, p.look, p.up);
+		cam.lookAtRH(p.eye, p.origin, p.up);
 		cam.setViewXY(0, 0);
 		cam.setViewSize(width, height);
 		cam.update();
 
 	}
-	getUid(): number {
+	get uid(): number {
 		return 0;
 	}
 	getStage3D(): IRenderStage3D {
@@ -104,12 +104,14 @@ class WGRenderer implements IRenderer {
 	private intDefaultBlock(): void {
 		if (this.mRPBlocks.length < 1) {
 			let param = this.mConfig.rpassparam;
-			let defaultParam = {
-				sampleCount: 4,
-				multisampleEnabled: true,
-				depthFormat: "depth24plus"
-			};
-			this.createRenderBlock(param ? param : defaultParam);
+			if(!param) {
+				param = {
+					sampleCount: 4,
+					multisampleEnabled: true,
+					depthFormat: "depth24plus"
+				};
+			}
+			this.createRenderBlock( param );
 		}
 	}
 	private init(): void {
@@ -121,9 +123,11 @@ class WGRenderer implements IRenderer {
 			this.mRPBlocks[i].initialize(ctx);
 		}
 	}
+
 	getWGCtx(): WebGPUContext {
 		return this.mWGCtx;
 	}
+
 	addEntity(entity: Entity3D, processIndex = 0, deferred = true): void {
 		if (this.mInit) {
 			this.initialize();
@@ -174,6 +178,7 @@ class WGRenderer implements IRenderer {
 		throw Error("Illegal operations !!!");
 	}
 	getRPBlockAt(i: number): WGRenderPassBlock {
+		this.intDefaultBlock();
 		return this.mRPBlocks[i];
 	}
 	createRenderBlock(param?: WGRPassParam): WGRenderPassBlock {

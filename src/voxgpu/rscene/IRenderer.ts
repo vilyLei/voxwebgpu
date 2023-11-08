@@ -13,7 +13,7 @@ import { IRenderableEntity } from "../render/IRenderableEntity";
  */
 interface IRenderer {
 
-	getUid(): number;
+	uid: number;
 	getStage3D(): IRenderStage3D;
 	getCamera(): IRenderCamera;
 

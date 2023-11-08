@@ -54,6 +54,22 @@ class WGRenderPassBlock {
 			this.mUnits.push(unit);
 		}
 	}
+	getRenderPassAt(index: number): IWGRPassRef {
+
+		const ls = this.mRPassNodes;
+		const ln = ls.length;
+		if(index < 0) index = 0;
+		else if(index >= ln) index = ln;
+		return { index, node: ls[index] };
+	}
+	getComptePassAt(index: number): IWGRPassRef {
+
+		const ls = this.mCompPassNodes;
+		const ln = ls.length;
+		if(index < 0) index = 0;
+		else if(index >= ln) index = ln;
+		return { index, node: ls[index] };
+	}
 	appendRendererPass(param?: WGRPassParam): IWGRPassRef {
 
 		if(!param) param = {};

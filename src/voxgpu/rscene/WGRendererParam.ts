@@ -5,8 +5,8 @@ import { IWGRPassRef } from "../render/pipeline/IWGRPassRef";
 import Vector3 from "../math/Vector3";
 
 interface WGCameraParam {
-	position?: Vector3;
-	look?: Vector3;
+	eye?: Vector3;
+	origin?: Vector3;
 	up?: Vector3;
 	near?: number;
 	far?: number;
