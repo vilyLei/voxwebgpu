@@ -9,7 +9,8 @@ class WGRStorageValue extends WGRUniformValue {
 	}
 	clone(data: NumberArrayDataType): WGRStorageValue {
 
-		const u = new WGRUniformValue({data: data, index: this.index});
+		// const u = new WGRUniformValue({data: data, index: this.index});
+		const u = new WGRUniformValue({data: data});
 		u.name = this.name;
 		u.byteOffset = this.byteOffset;
 		u.arrayStride = this.arrayStride;

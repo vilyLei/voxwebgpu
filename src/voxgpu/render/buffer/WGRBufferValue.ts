@@ -6,10 +6,10 @@ import { WGRBufferData, WGRBufferValueParam } from "./WGRBufferValueParam";
 class WGRBufferValue extends WGRBufferView {
 
 	name?: string;
-	/**
-	 * Uniform index of RUnit instance uniforms array
-	 */
-	index = 0;
+	// /**
+	//  * Uniform index of RUnit instance uniforms array
+	//  */
+	// index = 0;
 
 	byteOffset = 0;
 	arrayStride = 1;
@@ -26,7 +26,7 @@ class WGRBufferValue extends WGRBufferView {
 		this.shared = false;
 		let d = param.data;
 		this.data = d;
-		this.index = param.index !== undefined ? param.index : 0;
+		// this.index = param.index !== undefined ? param.index : 0;
 		if (param.usage !== undefined) this.usage = param.usage;
 		if (param.shared !== undefined) this.shared = param.shared;
 		if (param.bufData) {
@@ -94,7 +94,8 @@ class WGRBufferValue extends WGRBufferView {
 	}
 
 	clone(data: NumberArrayDataType): WGRBufferValue {
-		const u = new WGRBufferValue({ data: data, index: this.index });
+		// const u = new WGRBufferValue({ data: data, index: this.index });
+		const u = new WGRBufferValue({ data: data});
 		u.name = this.name;
 		u.byteOffset = this.byteOffset;
 		u.arrayStride = this.arrayStride;

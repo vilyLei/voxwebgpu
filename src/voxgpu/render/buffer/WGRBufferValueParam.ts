@@ -14,10 +14,10 @@ interface WGRBufferValueParam {
 	 */
 	data?: NumberArrayDataType;
 	// bufferIndex?: number;
-	/**
-	 * uniform index in RUnit instance
-	 */
-	index?: number;
+	// /**
+	//  * uniform index in RUnit instance
+	//  */
+	// index?: number;
 	usage?: number;
 	/**
 	 * uniform value object is shared, or not
