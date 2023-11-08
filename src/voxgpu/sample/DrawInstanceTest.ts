@@ -17,9 +17,6 @@ export class DrawInstanceTest {
 	private mTeamLoader = new CoModelTeamLoader();
 	initialize(): void {
 		console.log("DrawInstanceTest::initialize() ...");
-
-		const rc = this.mRscene;
-		rc.initialize();
 		this.initEvent();
 		this.initModels();
 	}

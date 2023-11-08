@@ -68,9 +68,6 @@ export class GameOfLifePretty {
 
 	initialize(): void {
 		console.log("GameOfLifePretty::initialize() ...");
-
-		const rc = this.mRscene;
-		rc.initialize();
 		this.initScene();
 	}
 	private createUniformValues(): { ufvs0: WGRUniformValue[]; ufvs1: WGRUniformValue[] }[] {

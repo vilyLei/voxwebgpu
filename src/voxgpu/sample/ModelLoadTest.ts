@@ -12,9 +12,6 @@ export class ModelLoadTest {
 	private mTeamLoader = new CoModelTeamLoader();
 	initialize(): void {
 		console.log("ModelLoadTest::initialize() ...");
-
-		const rc = this.mRscene;
-		rc.initialize();
 		this.initEvent();
 		this.initModels();
 	}

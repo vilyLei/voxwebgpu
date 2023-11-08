@@ -22,8 +22,6 @@ export class RSceneTest {
 	initialize(): void {
 		console.log("RSceneTest::initialize() ...");
 
-		this.mRscene.initialize();
-
 		this.initEvent();
 
 		const shdSrc = {

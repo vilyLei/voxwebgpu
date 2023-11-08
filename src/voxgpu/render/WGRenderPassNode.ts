@@ -1,4 +1,4 @@
-import { WGRPassParams, WGRendererPass } from "./pipeline/WGRendererPass";
+import { WGRPassParam, WGRendererPass } from "./pipeline/WGRendererPass";
 import { WGRPipelineContextDefParam, WGRShderSrcType, WGRPipelineCtxParams } from "./pipeline/WGRPipelineCtxParams";
 import { VtxPipelinDescParam, WGRPipelineContext } from "./pipeline/WGRPipelineContext";
 import { WebGPUContext } from "../gpu/WebGPUContext";
@@ -18,7 +18,7 @@ class WGRenderPassNode implements IWGRenderPassNodeRef {
 	rpass: WGRendererPass;
 	pctxMap: Map<string, WGRPipelineContext> = new Map();
 	rcommands: GPUCommandBuffer[];
-	param?: WGRPassParams;
+	param?: WGRPassParam;
 
 	enabled = true;
 	prevNode: WGRenderPassNode;
@@ -33,8 +33,11 @@ class WGRenderPassNode implements IWGRenderPassNodeRef {
 	getUid(): number {
 		return this.mUid;
 	}
-	initialize(wgCtx: WebGPUContext, param?: WGRPassParams): void {
+	initialize(wgCtx: WebGPUContext, param?: WGRPassParam): void {
+
 		this.param = param ? param : this.param;
+		if(!this.param) this.param = {};
+
 		if (!this.mWGCtx && wgCtx && wgCtx.enabled) {
 			this.mWGCtx = wgCtx;
 
@@ -42,7 +45,21 @@ class WGRenderPassNode implements IWGRenderPassNodeRef {
 				this.rpass.prevPass = this.prevNode.rpass;
 			}
 			this.rpass.initialize(wgCtx);
-			this.rpass.build(this.param);
+			this.checkRPassParam( this.param );
+			this.rpass.build( this.param );
+		}
+	}
+	private checkRPassParam(param: WGRPassParam): void {
+
+		if(param.sampleCount !== undefined && param.sampleCount > 1) {
+			param.multisampleEnabled = true;
+		}else if(param.multisampleEnabled === true) {
+			param.sampleCount = 4;
+		}else {
+			param.multisampleEnabled = false;
+		}
+		if(param.depthFormat == undefined) {
+			param.depthFormat = 'depth24plus';
 		}
 	}
 
@@ -97,8 +114,14 @@ class WGRenderPassNode implements IWGRenderPassNodeRef {
 		this.pipelineCtxs.push(pipelineCtx);
 
 		if (this.mDrawing) {
-
-			pipelineParams.setDepthStencilFormat(this.rpass.depthTexture.format);
+			if(this.rpass.depthTexture) {
+				console.log("### ### ### 启用深度及模板测试功能 !!!");
+				pipelineParams.setDepthStencilFormat(this.rpass.depthTexture.format);
+			}else {
+				console.log("### ### ### 没有启用深度及模板测试功能 !!!");
+				pipelineParams.depthStencilEnabled = false;
+				pipelineParams.depthStencil = undefined;
+			}
 
 			const passParam = this.rpass.getPassParams();
 			if (passParam.multisampleEnabled) {

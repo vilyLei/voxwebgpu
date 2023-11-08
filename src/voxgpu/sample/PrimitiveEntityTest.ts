@@ -12,12 +12,8 @@ import { PrimitiveEntity } from "../entity/PrimitiveEntity";
 
 export class PrimitiveEntityTest {
 	private mRscene = new RendererScene();
-
 	initialize(): void {
 		console.log("PrimitiveEntityTest::initialize() ...");
-
-		const rc = this.mRscene;
-		rc.initialize();
 		this.initEvent();
 		this.initScene();
 	}

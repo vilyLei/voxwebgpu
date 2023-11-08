@@ -62,9 +62,6 @@ export class GameOfLifeTest {
 
 	initialize(): void {
 		console.log("GameOfLifeTest::initialize() ...");
-
-		const rc = this.mRscene;
-		rc.initialize();
 		this.initEvent();
 		this.initScene();
 	}
@@ -138,7 +135,7 @@ export class GameOfLifeTest {
 		});
 		rc.addEntity(entity);
 		this.mNodes = [{ rendEntity: entity, compEntity: null }];
-		entity.rstate.visible = false;
+		entity.visible = false;
 		const geometry = this.mNodes[0].rendEntity.geometry;
 		uniformValues = ufvsObjs[0].ufvs1;
 		entity = new FixScreenPlaneEntity({ shadinguuid: "rshd1", shaderSrc, uniformValues, instanceCount, geometry });
@@ -158,7 +155,7 @@ export class GameOfLifeTest {
 		uniformValues = ufvsObjs[1].ufvs1;
 		let compEentity = new ComputeEntity({ shadinguuid: "compshd0", shaderSrc, uniformValues }).setWorkcounts(workgroupCount, workgroupCount);
 		rc.addEntity(compEentity);
-		compEentity.rstate.visible = false;
+		compEentity.visible = false;
 		this.mNodes[0].compEntity = compEentity;
 		uniformValues = ufvsObjs[1].ufvs0;
 		compEentity = new ComputeEntity({ shadinguuid: "compshd1", shaderSrc, uniformValues }).setWorkcounts(workgroupCount, workgroupCount);

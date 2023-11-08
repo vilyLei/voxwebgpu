@@ -11,8 +11,7 @@ export class RTTTest {
 	initialize(): void {
 		console.log("RTTTest::initialize() ...");
 
-		const rc = this.mRscene;
-		rc.initialize();
+		this.mRscene.initialize({rpassparam: {multisampleEnabled: true, depthTestEnabled: false}});
 		this.initEvent();
 		this.initScene();
 	}
@@ -44,6 +43,7 @@ export class RTTTest {
 		entity.setColor(new Color4(0.2,0.5,0.7));
 		rc.addEntity(entity);
 
+		///*
 		let rPass = rc.renderer.appendRendererPass();
 		this.mRPass = rPass;
 		// x = -0.8;
@@ -61,6 +61,7 @@ export class RTTTest {
 		entity = new FixScreenPlaneEntity({x, y, width, height, textures: [diffuseTex], rpasses:[{rpass: rPass}]});
 		entity.setColor(new Color4(0.1,0.3,0.9));
 		rc.addEntity(entity);
+		//*/
 	}
 
 	run(): void {

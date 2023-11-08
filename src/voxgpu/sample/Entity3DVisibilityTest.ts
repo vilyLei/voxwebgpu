@@ -22,16 +22,12 @@ export class Entity3DVisibilityTest {
 
 	initialize(): void {
 		console.log("Entity3DVisibilityTest::initialize() ...");
-
-		const rc = this.mRscene;
-		rc.initialize();
 		this.initEvent();
 		this.initScene();
 	}
 	private initEvent(): void {
 		const rc = this.mRscene;
 		rc.addEventListener(MouseEvent.MOUSE_DOWN, this.mouseDown);
-
 		new MouseInteraction().initialize(rc, 0, false).setAutoRunning(true);
 	}
 

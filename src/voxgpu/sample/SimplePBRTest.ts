@@ -21,9 +21,6 @@ export class SimplePBRTest {
 
 	initialize(): void {
 		console.log("SimplePBRTest::initialize() ...");
-
-		const rc = this.mRscene;
-		rc.initialize();
 		this.initEvent();
 		this.initScene();
 	}

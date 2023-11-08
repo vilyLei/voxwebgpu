@@ -27,8 +27,6 @@ export class SimpleLightTest {
 	initialize(): void {
 		console.log("SimpleLightTest::initialize() ...");
 
-		const rc = this.mRscene;
-		rc.initialize();
 		this.initEvent();
 
 		const shdSrc = {

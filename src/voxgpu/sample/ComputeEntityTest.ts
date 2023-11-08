@@ -31,9 +31,6 @@ export class ComputeEntityTest {
 
 	initialize(): void {
 		console.log("ComputeEntityTest::initialize() ...");
-
-		const rc = this.mRscene;
-		rc.initialize();
 		this.initEvent();
 		this.initScene();
 	}

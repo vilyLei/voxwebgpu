@@ -40,7 +40,7 @@ class WGHBufferStore {
 	private static sStores: WGHBufferStoreIns[] = new Array(1024);
 
 	static getStore(ctx: WebGPUContextImpl): WGHBufferStoreIns {
-		const i = ctx.getUid();
+		const i = ctx.uid;
 		const sts = WGHBufferStore.sStores;
 		if (!sts[i]) {
 			sts[i] = new WGHBufferStoreIns();

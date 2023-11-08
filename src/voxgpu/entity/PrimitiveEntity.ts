@@ -40,7 +40,7 @@ class PrimitiveEntity extends Entity3D {
 		return null;
 	}
 	private createGeometry(param: Entity3DParam): void {
-		
+
 		if (param && param.geometry) {
 			this.geometry = param.geometry;
 		} else {
@@ -96,6 +96,18 @@ class PrimitiveEntity extends Entity3D {
 				this.armV = material.uniformValues[1];
 			}
 			this.materials = [material];
+		}
+		const rpasses = param.rpasses;
+		if(rpasses) {
+			const ms = this.materials;
+			// 这里的实现需要优化, 因为一个material实际上可以加入到多个rpass中去
+			let len = Math.min(rpasses.length, ms.length);
+			for(let i = 0; i < len; ++i) {
+				const rpass = ms[i].rpass;
+				if(!rpass || !rpass.rpass.node) {
+					ms[i].rpass = rpasses[i];
+				}
+			}
 		}
 	}
 	destroy(): void {

@@ -74,9 +74,6 @@ export class GameOfLifeSpherePBR {
 
 	initialize(): void {
 		console.log("GameOfLifeSpherePBR::initialize() ...");
-
-		const rc = this.mRscene;
-		rc.initialize();
 		this.initEvent();
 		this.initScene();
 	}
@@ -206,7 +203,6 @@ export class GameOfLifeSpherePBR {
 
 			this.createMaterial(shaderSrc, ufvsObjs[0].ufvs0, instanceCount),
 			this.createMaterial(shaderSrc, ufvsObjs[0].ufvs1, instanceCount),
-
 			this.createCompMaterial(compShaderSrc, ufvsObjs[1].ufvs1, workgroupCount),
 			this.createCompMaterial(compShaderSrc, ufvsObjs[1].ufvs0, workgroupCount),
 		];

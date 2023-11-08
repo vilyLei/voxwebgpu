@@ -1,7 +1,6 @@
 import Color4 from "../../material/Color4";
 import { GPUCommandBuffer } from "../../gpu/GPUCommandBuffer";
 import { GPUCommandEncoder } from "../../gpu/GPUCommandEncoder";
-// import { GPURenderPassColorAttachment } from "../../gpu/GPURenderPassColorAttachment";
 import { GPURenderPassDescriptor } from "../../gpu/GPURenderPassDescriptor";
 import { GPURenderPassEncoder } from "../../gpu/GPURenderPassEncoder";
 import { GPUComputePassEncoder } from "../../gpu/GPUComputePassEncoder";
@@ -9,15 +8,13 @@ import { GPUTexture } from "../../gpu/GPUTexture";
 import { GPUTextureDescriptor } from "../../gpu/GPUTextureDescriptor";
 import { GPUTextureView } from "../../gpu/GPUTextureView";
 import { WebGPUContext } from "../../gpu/WebGPUContext";
-import { WGRPassParams, IWGRendererPass } from "./IWGRendererPass";
-// import { GPURenderPassDepthStencilAttachment } from "../../gpu/GPURenderPassDepthStencilAttachment";
+import { WGRPassParam, IWGRendererPass } from "./IWGRendererPass";
 import { WGRPColorAttachment } from "./WGRPColorAttachment";
 import { WGRPDepthStencilAttachment } from "./WGRPDepthStencilAttachment";
 
 class WGRendererPass implements IWGRendererPass {
-
 	private mWGCtx: WebGPUContext;
-	private mParams: WGRPassParams;
+	private mParam: WGRPassParam;
 	private mDepthTexture: GPUTexture;
 	private mDrawing = true;
 
@@ -29,17 +26,11 @@ class WGRendererPass implements IWGRendererPass {
 	commandEncoder: GPUCommandEncoder;
 	clearColor = new Color4(0.0, 0.0, 0.0, 1.0);
 
-	resolveTarget: GPUTextureView;
-	resolveView: GPUTextureView;
-
-	colorAttachment = new WGRPColorAttachment();
-	depStcAttachment = new WGRPDepthStencilAttachment();
-
 	passColors = [new WGRPColorAttachment()];
-	// passDepthStencils = [new WGRPDepthStencilAttachment()];
+	passDepthStencil: WGRPDepthStencilAttachment;
 
 	prevPass: WGRendererPass;
-
+	separate = false;
 	enabled = true;
 	constructor(wgCtx?: WebGPUContext, drawing = true) {
 		console.log("WGRendererPass::constructor(), drawing: ", drawing);
@@ -57,14 +48,14 @@ class WGRendererPass implements IWGRendererPass {
 	initialize(wgCtx: WebGPUContext): void {
 		this.mWGCtx = wgCtx;
 	}
-	getPassParams(): WGRPassParams {
-		return this.mParams;
+	getPassParams(): WGRPassParam {
+		return this.mParam;
 	}
-	build(params: WGRPassParams): void {
-
+	build(params: WGRPassParam): void {
+		console.log("WGRendererPass::build() mDrawing: ", this.mDrawing, "params: ", params);
 		if (this.mDrawing) {
 			params.multisampleEnabled = params.sampleCount && params.sampleCount > 1;
-			this.mParams = params;
+			this.mParam = params;
 			if (this.prevPass) {
 				this.mDepthTexture = this.prevPass.mDepthTexture;
 				this.colorView = this.prevPass.colorView;
@@ -73,33 +64,77 @@ class WGRendererPass implements IWGRendererPass {
 			}
 		}
 	}
-	private createRenderPassTexture(params: WGRPassParams): void {
+	private createRenderPassTexture(param: WGRPassParam): void {
 		const ctx = this.mWGCtx;
-		const device = ctx.device;
-		const canvas = ctx.canvas;
+		let separate = this.separate;
 
-		if (params && params.multisampleEnabled) {
-			const texture = device.createTexture({
-				size: [ctx.canvas.width, ctx.canvas.height],
-				sampleCount: params.sampleCount,
-				format: ctx.presentationFormat,
-				usage: GPUTextureUsage.RENDER_ATTACHMENT
-			});
-			this.colorView = texture.createView();
+		let sampleCount = 1;
+		const multisampled = param.multisampleEnabled === true;
+		if (multisampled) {
+			sampleCount = param.sampleCount;
+		}
+		let size = [ctx.canvasWidth, ctx.canvasHeight];
+
+		let pcs = this.passColors;
+		let colorAtt = pcs[0];
+		if (this.separate) {
+			let ls = param.colorAttachments;
+			if (ls && ls.length > 0) {
+				for (let i = 1; i < ls.length; ++i) {
+					pcs.push(new WGRPColorAttachment());
+				}
+				for (let i = 0; i < ls.length; ++i) {
+					colorAtt = pcs[i].setParam(ls[i]);
+				}
+			} else {
+				const texture = ctx.texture.createRTTTexture({
+					size,
+					sampleCount,
+					format: ctx.presentationFormat,
+					usage: GPUTextureUsage.RENDER_ATTACHMENT
+				});
+				this.colorView = texture.createView();
+				colorAtt.view = this.colorView;
+				colorAtt.viewTexture = texture;
+			}
+		} else {
+			if (multisampled) {
+				const texture = ctx.texture.createRTTTexture({
+					size,
+					sampleCount,
+					format: ctx.presentationFormat,
+					usage: GPUTextureUsage.RENDER_ATTACHMENT
+				});
+				this.colorView = texture.createView();
+				colorAtt.view = this.colorView;
+				colorAtt.viewTexture = texture;
+			}
 		}
 
-		const depthTexDesc = {
-			size: [canvas.width, canvas.height],
-			format: "depth24plus",
-			usage: GPUTextureUsage.RENDER_ATTACHMENT
-		} as GPUTextureDescriptor;
-		if (params) {
-			if (params.multisampleEnabled) depthTexDesc.sampleCount = params.sampleCount;
-			if (params.depthFormat) depthTexDesc.format = params.depthFormat;
+		if (!(param.depthTestEnabled === false) || param.depthStencilAttachment) {
+			let dsp = param.depthStencilAttachment;
+			let dsAtt = this.passDepthStencil;
+			if (!dsAtt) dsAtt = new WGRPDepthStencilAttachment().setParam(dsp);
+			this.passDepthStencil = dsAtt;
+
+			if (!dsAtt.view && !separate) {
+				size = [ctx.canvasWidth, ctx.canvasHeight];
+				let format = "depth24plus";
+				if (param.depthFormat !== undefined) format = param.depthFormat;
+				const depthTexDesc = {
+					size,
+					sampleCount,
+					format,
+					usage: GPUTextureUsage.RENDER_ATTACHMENT
+				} as GPUTextureDescriptor;
+
+				const depthTexture = ctx.texture.createRTTTexture(depthTexDesc);
+				this.mDepthTexture = depthTexture;
+				dsAtt.view = depthTexture.createView();
+				dsAtt.viewTexture = depthTexture;
+			}
 		}
 
-		const depthTexture = device.createTexture(depthTexDesc);
-		this.mDepthTexture = depthTexture;
 		// console.log(this);
 		// console.log("depthTexDesc: ", depthTexDesc, ", depthTexture: ", depthTexture);
 	}
@@ -107,49 +142,65 @@ class WGRendererPass implements IWGRendererPass {
 		const ctx = this.mWGCtx;
 		if (this.enabled && ctx.enabled) {
 			const device = ctx.device;
-			const param = this.mParams;
+			const param = this.mParam;
 
 			this.commandEncoder = device.createCommandEncoder();
 			const cmdEncoder = this.commandEncoder;
 			if (this.mDrawing) {
-
 				let pcs = this.passColors;
-				if(pcs.length == 1) {
-					pcs[0].clearValue.copyFrom( this.clearColor );
-				}
 
-				const colorAtt = this.colorAttachment;
-				colorAtt.clearValue.copyFrom( this.clearColor );
+				const colorT = pcs[0];
+
+				let dsAtt = this.passDepthStencil;
 
 				const prev = this.prevPass;
 				if (prev) {
+					const prevColorAtt = prev.passColors[0];
+					const prevDSAtt = prev.passDepthStencil;
+
+					colorT.loadOp = "load";
+
 					if (param.multisampleEnabled) {
-						colorAtt.view = prev.colorView;
-						colorAtt.resolveTarget = prev.colorAttachment.resolveTarget;
+						colorT.view = prevColorAtt.view;
+						colorT.resolveTarget = prevColorAtt.resolveTarget;
 					} else {
-						colorAtt.view = prev.colorAttachment.view;
+						colorT.view = prevColorAtt.view;
+					}
+					if (prevDSAtt) {
+						if (!dsAtt) {
+							dsAtt = new WGRPDepthStencilAttachment();
+							dsAtt.depthLoadOp = "load";
+							this.passDepthStencil = dsAtt;
+						}
+						dsAtt = this.passDepthStencil;
+						dsAtt.view = prevDSAtt.view;
 					}
 				} else {
-					if (param.multisampleEnabled) {
-						colorAtt.view = this.colorView;
-						colorAtt.resolveTarget = this.resolveTarget ? this.resolveTarget : ctx.createCurrentView();
+					if (this.separate) {
 					} else {
-						colorAtt.view = this.resolveView ? this.resolveView : ctx.createCurrentView();
+						if (pcs.length == 1) {
+							pcs[0].clearValue.copyFrom(this.clearColor);
+						}
+						if (param.multisampleEnabled) {
+							colorT.resolveTarget = colorT.resolveTargetTexture ? colorT.resolveTarget : ctx.createCurrentView();
+						} else {
+							colorT.view = colorT.viewTexture ? colorT.view : ctx.createCurrentView();
+						}
 					}
 				}
 
-				const depStcAtt = this.depStcAttachment;
-				if (prev) {
-					depStcAtt.view = prev.depStcAttachment.view;
+				let colorAttachments = this.passColors;
+				let renderPassDescriptor: GPURenderPassDescriptor;
+				if (dsAtt) {
+					renderPassDescriptor = {
+						colorAttachments: colorAttachments,
+						depthStencilAttachment: dsAtt
+					};
 				} else {
-					depStcAtt.view = this.mDepthTexture.createView();
+					renderPassDescriptor = {
+						colorAttachments: colorAttachments
+					};
 				}
-
-				let colorAttachments = [colorAtt];
-				const renderPassDescriptor: GPURenderPassDescriptor = {
-					colorAttachments: colorAttachments,
-					depthStencilAttachment: depStcAtt
-				};
 
 				this.passEncoder = cmdEncoder.beginRenderPass(renderPassDescriptor);
 			} else {
@@ -170,4 +221,4 @@ class WGRendererPass implements IWGRendererPass {
 		return null;
 	}
 }
-export { IWGRendererPass, WGRPassParams, WGRendererPass };
+export { IWGRendererPass, WGRPassParam, WGRendererPass };

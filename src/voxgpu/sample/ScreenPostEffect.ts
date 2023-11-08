@@ -15,9 +15,6 @@ export class ScreenPostEffect {
 
 	initialize(): void {
 		console.log("ScreenPostEffect::initialize() ...");
-
-		const rc = this.mRscene;
-		rc.initialize();
 		this.initEvent();
 		this.initScene();
 	}

@@ -1,18 +1,30 @@
 import { WebGPUContext } from "../gpu/WebGPUContext";
-import { WGRPipelineContextDefParam, WGRPassParams, WGRenderPassBlock } from "../render/WGRenderPassBlock";
+import { WGRPipelineContextDefParam, WGRPassParam, WGRenderPassBlock } from "../render/WGRenderPassBlock";
 import { GPUCanvasConfiguration } from "../gpu/GPUCanvasConfiguration";
 import { IWGRPassRef } from "../render/pipeline/IWGRPassRef";
+import Vector3 from "../math/Vector3";
 
+interface WGCameraParam {
+	position?: Vector3;
+	look?: Vector3;
+	up?: Vector3;
+	near?: number;
+	far?: number;
+	perspective?: boolean;
+	fovDegree?: number;
+}
 interface WGRendererConfig {
 	gpuCanvasCfg?: GPUCanvasConfiguration;
 	ctx?: WebGPUContext;
 	canvas?: HTMLCanvasElement;
 	div?: HTMLDivElement;
+	rpassparam?: WGRPassParam;
+	camera?: WGCameraParam;
 	callback?: (type?: string) => void;
 }
 class RPassInfoParam {
 	blockIndex = 0;
-	rparam: WGRPassParams;
+	rparam: WGRPassParam;
 	ref: IWGRPassRef;
 }
 
@@ -58,4 +70,4 @@ function checkConfig(config?: WGRendererConfig): WGRendererConfig {
 	config.gpuCanvasCfg = canvasCFG;
 	return config;
 }
-export { RPassInfoParam, WGRendererConfig, WGRPipelineContextDefParam, checkConfig };
+export { WGCameraParam, RPassInfoParam, WGRendererConfig, WGRPipelineContextDefParam, checkConfig };

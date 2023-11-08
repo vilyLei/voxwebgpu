@@ -6,7 +6,6 @@ import fragWGSL from "./shaders/sampleTextureColorParam.frag.wgsl";
 import { WGTextureDataDescriptor, WGMaterial } from "../material/WGMaterial";
 import { WGGeometry } from "../geometry/WGGeometry";
 import { Entity3D } from "../entity/Entity3D";
-// import { WGImage2DTextureData } from "../texture/WGTextureWrapper";
 import { WGRShderSrcType } from "../material/WGMaterialDescripter";
 import Vector3 from "../math/Vector3";
 import { WGRStorageValue } from "../render/uniform/WGRStorageValue";
@@ -22,7 +21,6 @@ export class REntity3DContainerTest {
 	initialize(): void {
 		console.log("REntity3DContainerTest::initialize() ...");
 
-		this.mRscene.initialize();
 		this.initEvent();
 		this.initScene();
 	}

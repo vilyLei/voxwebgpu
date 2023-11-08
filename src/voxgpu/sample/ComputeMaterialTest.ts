@@ -53,9 +53,6 @@ export class ComputeMaterialTest {
 
 	initialize(): void {
 		console.log("ComputeMaterialTest::initialize() ...");
-
-		const rc = this.mRscene;
-		rc.initialize();
 		this.initEvent();
 		this.initScene();
 	}

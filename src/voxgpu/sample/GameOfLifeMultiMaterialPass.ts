@@ -59,9 +59,6 @@ export class GameOfLifeMultiMaterialPass {
 
 	initialize(): void {
 		console.log("GameOfLifeMultiMaterialPass::initialize() ...");
-
-		const rc = this.mRscene;
-		rc.initialize();
 		this.initScene();
 	}
 	private createUniformValues(): { ufvs0: WGRUniformValue[]; ufvs1: WGRUniformValue[] }[] {

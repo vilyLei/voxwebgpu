@@ -16,8 +16,10 @@ interface WebGPUContextImpl {
 	readonly gpu: GPU;
 	readonly gpuAdapter: GPUAdapter;
 	readonly enabled: boolean;
-	
-	getUid(): number;
+
+	uid: number;
+	canvasWidth: number;
+	canvasHeight: number;
 	/**
 	 * @param format GPU texture format string.
 	 * @param error The default value is true.

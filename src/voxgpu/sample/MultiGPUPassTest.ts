@@ -13,27 +13,26 @@ import { RendererScene } from "../rscene/RendererScene";
 import { MouseInteraction } from "../ui/MouseInteraction";
 import Color4 from "../material/Color4";
 import { IWGRPassRef } from "../render/pipeline/IWGRPassRef";
+import Vector3 from "../math/Vector3";
 
 export class MultiGPUPassTest {
 
 	private mRscene = new RendererScene();
-
 	geomData = new GeomDataBuilder();
 
 	initialize(): void {
 		console.log("MultiGPUPassTest::initialize() ...");
 
-		const rc = this.mRscene;
-		rc.initialize();
-
+		this.mRscene.initialize({
+			rpassparam: {multisampleEnabled: true, depthTestEnabled: true},
+			camera: {position: new Vector3(600.0, 600.0, 0.0)}
+		});
 		this.initEvent();
-
 		this.initScene();
 	}
 	private initEvent(): void {
 		const rc = this.mRscene;
 		rc.addEventListener(MouseEvent.MOUSE_DOWN, this.mouseDown);
-
 		new MouseInteraction().initialize(rc, 0, false).setAutoRunning(true);
 	}
 

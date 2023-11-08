@@ -19,7 +19,7 @@ class WebGPUTextureContext {
 			this.mipmapGenerator.initialize(wgCtx.device);
 		}
 	}
-	
+
 	createFloatRTTTexture(descriptor?: GPUTextureDescriptor): GPUTexture {
 		if (!descriptor) descriptor = {};
 		if (descriptor.format === undefined) {
@@ -44,19 +44,19 @@ class WebGPUTextureContext {
 	createRTTTexture(descriptor?: GPUTextureDescriptor): GPUTexture {
 		if (!descriptor) descriptor = {};
 
+		const ctx = this.mWGCtx;
 		if (descriptor.size === undefined) {
-			const canvas = this.mWGCtx.canvas;
-			descriptor.size = [canvas.width, canvas.height];
+			descriptor.size = [ctx.canvasWidth, ctx.canvasHeight];
 		}
 		if (descriptor.format === undefined) {
-			descriptor.format = this.mWGCtx.canvasFormat;
+			descriptor.format = ctx.presentationFormat;
 		}
 		if (descriptor.usage === undefined) {
 			descriptor.usage = GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.TEXTURE_BINDING;
 		}
 		return this.createTexture(descriptor);
 	}
-	
+
 	async createTex2DByUrl(url: string, generateMipmaps = true, flipY = false, format = "rgba8unorm") {
 		const response = await fetch(url);
 

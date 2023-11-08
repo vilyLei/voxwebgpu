@@ -26,9 +26,6 @@ export class RSceneEntityManagement {
 
 	initialize(): void {
 		console.log("RSceneEntityManagement::initialize() ...");
-
-		const rc = this.mRscene;
-		rc.initialize();
 		this.initEvent();
 		this.initScene();
 	}

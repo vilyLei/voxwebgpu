@@ -31,9 +31,6 @@ class WebGPUContext implements WebGPUContextImpl {
 	readonly texture = new WebGPUTextureContext();
 	readonly buffer = new WebGPUBufferContext();
 	constructor(){}
-	getUid(): number {
-		return this.mUid;
-	}
 	/**
 	 * @param format GPU texture format string.
 	 * @param error The default value is true.
@@ -41,6 +38,16 @@ class WebGPUContext implements WebGPUContextImpl {
 	 */
 	checkGPUTextureFormat(format: string, error: boolean = true): boolean {
 		return checkGPUTextureFormat(format, error);
+	}
+
+	get uid(): number {
+		return this.mUid;
+	}
+	get canvasWidth(): number {
+		return this.canvas.width;
+	}
+	get canvasHeight(): number {
+		return this.canvas.height;
 	}
 	async initialize(canvas: HTMLCanvasElement, wgConfig?: GPUCanvasConfiguration, deviceDescriptor?: GPUDeviceDescriptor) {
 

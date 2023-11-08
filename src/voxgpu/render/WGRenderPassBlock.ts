@@ -1,4 +1,4 @@
-import { IWGRendererPass, WGRPassParams } from "./pipeline/WGRendererPass";
+import { IWGRendererPass, WGRPassParam } from "./pipeline/WGRendererPass";
 import { WGRPipelineContextDefParam, WGRShderSrcType, WGRPipelineCtxParams } from "./pipeline/WGRPipelineCtxParams";
 import { VtxPipelinDescParam, WGRPipelineContext } from "./pipeline/WGRPipelineContext";
 import { WebGPUContext } from "../gpu/WebGPUContext";
@@ -16,6 +16,7 @@ class WGRenderPassBlock {
 
 	private mCompPassNodes: WGRenderPassNode[] = [];
 	private mRPassNodes: WGRenderPassNode[] = [];
+	private mRSeparatePassNodes: WGRenderPassNode[] = [];
 	private mPassNodes: WGRenderPassNode[] = [];
 	private mUnits: IWGRUnit[] = [];
 
@@ -24,14 +25,14 @@ class WGRenderPassBlock {
 
 	enabled = true;
 
-	constructor(rendererUid: number, wgCtx?: WebGPUContext, param?: WGRPassParams) {
+	constructor(rendererUid: number, wgCtx?: WebGPUContext, param?: WGRPassParam) {
 		this.mRendererUid = rendererUid;
 		this.initialize(wgCtx, param);
 	}
 	getWGCtx(): WebGPUContext {
 		return this.mWGCtx;
 	}
-	initialize(wgCtx: WebGPUContext, param?: WGRPassParams): void {
+	initialize(wgCtx: WebGPUContext, param?: WGRPassParam): void {
 		if (!this.mWGCtx && wgCtx && wgCtx.enabled) {
 			this.mWGCtx = wgCtx;
 			for (let i = 0; i < this.mPassNodes.length; ++i) {
@@ -53,28 +54,63 @@ class WGRenderPassBlock {
 			this.mUnits.push(unit);
 		}
 	}
-	appendRendererPass(param?: WGRPassParams): IWGRPassRef {
+	appendRendererPass(param?: WGRPassParam): IWGRPassRef {
 
+		if(!param) param = {};
 		const computing = param && param.computeEnabled === true;
-
+		let index = -1;
 		const passNode = new WGRenderPassNode(!computing);
 		if (computing) {
 			passNode.name = "newcomppassnode-" + this.mPassNodes.length;
 			passNode.initialize(this.mWGCtx, param);
 			this.mCompPassNodes.push(passNode);
+			index = this.mCompPassNodes.length - 1;
 		} else {
 			passNode.name = "newpassnode-" + this.mPassNodes.length;
-			let prevNode = this.mRPassNodes[this.mRPassNodes.length - 1];
-			passNode.prevNode = prevNode;
-			passNode.initialize(this.mWGCtx, param ? param : prevNode.param);
-			const rpass = passNode.rpass;
-			rpass.name = "newpass";
-			rpass.colorAttachment.loadOp = "load";
-			rpass.depStcAttachment.depthLoadOp = "load";
-			this.mRPassNodes.push(passNode);
+			let prevNode: WGRenderPassNode;
+			let prevPass = param.prevPass;
+			let prevNodeParam: WGRPassParam;
+
+			if(prevPass && prevPass.node !== undefined) {
+
+				prevNode = prevPass.node as WGRenderPassNode;
+				prevNodeParam = prevNode.param;
+				param.multisampleEnabled = prevNodeParam.multisampleEnabled;
+				param.depthFormat = prevNodeParam.depthFormat;
+
+				passNode.prevNode = prevNode;
+				passNode.initialize(this.mWGCtx, param ? param : prevNode.param);
+				const rpass = passNode.rpass;
+				rpass.name = "newpass_type01";
+				rpass.passColors[0].loadOp = "load";
+				rpass.passDepthStencil.depthLoadOp = "load";
+				this.mRPassNodes.push(passNode);
+				index = -1;
+
+			}else if(!(param.separate === false)) {
+
+				prevNode = this.mRPassNodes[this.mRPassNodes.length - 1];
+				prevNodeParam = prevNode.param;
+				param.multisampleEnabled = prevNodeParam.multisampleEnabled;
+				param.depthFormat = prevNodeParam.depthFormat;
+
+				passNode.prevNode = prevNode;
+				passNode.initialize(this.mWGCtx, param ? param : prevNode.param);
+				const rpass = passNode.rpass;
+				rpass.name = "newpass_type02";
+				this.mRPassNodes.push(passNode);
+				index = this.mRPassNodes.length - 1;
+			}else {
+				passNode.initialize(this.mWGCtx, param ? param : prevNode.param);
+				const rpass = passNode.rpass;
+				rpass.separate = true;
+				rpass.name = "newpass_type03(separate)";
+				this.mRSeparatePassNodes.push(passNode);
+				index = -1;
+			}
 		}
 		this.mPassNodes.push(passNode);
-		return { index: this.mPassNodes.length - 1, node: passNode };
+		return { index, node: passNode };
 	}
 	private getPassNode(ref: IWGRPassRef): WGRenderPassNode {
 		let node = this.mPassNodes[this.mPassNodes.length - 1];
@@ -171,4 +207,4 @@ class WGRenderPassBlock {
 		}
 	}
 }
-export { WGRPipelineContextDefParam, WGRPassParams, WGRenderPassBlock };
+export { WGRPipelineContextDefParam, WGRPassParam, WGRenderPassBlock };

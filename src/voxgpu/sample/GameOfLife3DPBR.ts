@@ -74,9 +74,6 @@ export class GameOfLife3DPBR {
 
 	initialize(): void {
 		console.log("GameOfLife3DPBR::initialize() ...");
-
-		const rc = this.mRscene;
-		rc.initialize();
 		this.initEvent();
 		this.initScene();
 	}

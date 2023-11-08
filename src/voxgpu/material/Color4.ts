@@ -71,6 +71,27 @@ export default class Color4 implements IColor4 {
 	clone(): Color4 {
 		return new Color4(this.r, this.g, this.b, this.a);
 	}
+	setParam(param: ColorDataType): Color4 {
+		let v = param;
+		if (v) {
+			const c = this;
+			const vs = v as number[];
+			if (vs.length !== undefined) {
+				const len = vs.length;
+				if (len > 0) c.r = vs[0];
+				if (len > 1) c.g = vs[1];
+				if (len > 2) c.b = vs[2];
+				if (len > 3) c.a = vs[3];
+			} else {
+				const vo = v as ColorRGBAType;
+				if (vo.r !== undefined) c.r = vo.r;
+				if (vo.g !== undefined) c.g = vo.g;
+				if (vo.b !== undefined) c.b = vo.b;
+				if (vo.a !== undefined) c.a = vo.a;
+			}
+		}
+		return this;
+	}
 	gammaCorrect(): Color4 {
 		const f = 1.0 / 2.2;
 		this.r = Math.pow(this.r, f);

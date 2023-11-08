@@ -9,9 +9,6 @@ export class FixScreenPlaneTest {
 
 	initialize(): void {
 		console.log("FixScreenPlaneTest::initialize() ...");
-
-		const rc = this.mRscene;
-		rc.initialize();
 		this.initEvent();
 		this.initScene();
 	}

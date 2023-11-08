@@ -72,9 +72,6 @@ export class GameOfLifeSphere {
 
 	initialize(): void {
 		console.log("GameOfLifeSphere::initialize() ...");
-
-		const rc = this.mRscene;
-		rc.initialize();
 		this.initEvent();
 		this.initScene();
 	}

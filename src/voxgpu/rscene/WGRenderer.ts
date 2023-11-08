@@ -2,7 +2,7 @@ import Camera from "../view/Camera";
 import { Entity3D } from "../entity/Entity3D";
 import { WebGPUContext } from "../gpu/WebGPUContext";
 import { WGRObjBuilder } from "../render/WGRObjBuilder";
-import { WGRPipelineContextDefParam, WGRPassParams, WGRenderPassBlock } from "../render/WGRenderPassBlock";
+import { WGRPipelineContextDefParam, WGRPassParam, WGRenderPassBlock } from "../render/WGRenderPassBlock";
 import { WGEntityNodeMana } from "./WGEntityNodeMana";
 import Vector3 from "../math/Vector3";
 import IRenderStage3D from "../render/IRenderStage3D";
@@ -15,15 +15,14 @@ import { WGRendererConfig, checkConfig } from "./WGRendererParam";
 class WGRenderer implements IRenderer {
 	private ___$$$$$$$Author = "VilyLei(vily313@126.com)";
 	private static sUid = 0;
-	private mUid = WGRenderer.sUid ++;
+	private mUid = WGRenderer.sUid++;
 	private mInit = true;
 	private mDiv: HTMLDivElement;
 	private mRPBlocks: WGRenderPassBlock[] = [];
-	// private mBlockRPassParams: WGRPassParams[] = [];
-	// private mRPassInfos: RPassInfoParam[] = [];
 	private mWGCtx: WebGPUContext;
 	private mROBuilder = new WGRObjBuilder();
 	private mNodeMana = new WGEntityNodeMana();
+	private mConfig: WGRendererConfig;
 
 	readonly camera = new Camera();
 	enabled = true;
@@ -36,11 +35,29 @@ class WGRenderer implements IRenderer {
 		}
 	}
 	private initCamera(width: number, height: number): void {
+
+		let p = this.mConfig.camera;
+		if(!p) p = {};
+		if(!p.position) p.position = new Vector3(1100.0, 1100.0, 1100.0);
+		if(!p.up) p.up = new Vector3(0, 1, 0);
+		if(!p.look) p.look = new Vector3();
+		if(p.fovDegree === undefined) p.fovDegree = 45;
+		if(p.near === undefined) p.near = 0.1;
+		if(p.far === undefined) p.far = 8000;
+		p.perspective = p.perspective === false ? false : true;
+
 		const cam = this.camera;
-		const camUpDirect = new Vector3(0, 1, 0);
-		cam.perspectiveRH((Math.PI * 45) / 180.0, width / height, 0.1, 5000);
-		cam.lookAtRH(new Vector3(800.0, 800.0, 800.0), new Vector3(), camUpDirect);
+		if (p.perspective) {
+			cam.perspectiveRH((Math.PI * p.fovDegree) / 180.0, width / height, p.near, p.far);
+		} else {
+			cam.inversePerspectiveZ = true;
+			cam.orthoRH(p.near, p.far, -0.5 * height, 0.5 * height, -0.5 * width, 0.5 * width);
+		}
+		cam.lookAtRH(p.position, p.look, p.up);
+		cam.setViewXY(0, 0);
+		cam.setViewSize(width, height);
 		cam.update();
+
 	}
 	getUid(): number {
 		return 0;
@@ -81,18 +98,18 @@ class WGRenderer implements IRenderer {
 					this.mNodeMana.updateToTarget();
 				});
 			}
-
-
+			this.mConfig = config;
 		}
 	}
 	private intDefaultBlock(): void {
 		if (this.mRPBlocks.length < 1) {
-			this.createRenderBlock({
+			let param = this.mConfig.rpassparam;
+			let defaultParam = {
 				sampleCount: 4,
 				multisampleEnabled: true,
 				depthFormat: "depth24plus"
-			});
-			// this.buildRPasses();
+			};
+			this.createRenderBlock(param ? param : defaultParam);
 		}
 	}
 	private init(): void {
@@ -101,34 +118,13 @@ class WGRenderer implements IRenderer {
 		this.initCamera(canvas.width, canvas.height);
 
 		for (let i = 0; i < this.mRPBlocks.length; ++i) {
-			this.mRPBlocks[i].initialize( ctx );
+			this.mRPBlocks[i].initialize(ctx);
 		}
-		// for (let i = 0; i < this.mBlockRPassParams.length; ++i) {
-		// 	this.createRenderBlock(this.mBlockRPassParams[i]);
-		// }
-		// this.mBlockRPassParams = [];
-
-		// this.buildRPasses();
 	}
-	// private buildRPasses(): void {
-	// 	for (let i = 0; i < this.mRPassInfos.length; ) {
-	// 		const rinfo = this.mRPassInfos[i];
-
-	// 		if (rinfo.blockIndex >= 0 && rinfo.blockIndex < this.mRPBlocks.length) {
-	// 			const ref = this.mRPBlocks[rinfo.blockIndex].appendRendererPass(rinfo.rparam);
-	// 			rinfo.ref.index = ref.index;
-	// 			rinfo.ref.node = ref.node;
-	// 			this.mRPassInfos.splice(i, 1);
-	// 		} else {
-	// 			++i;
-	// 		}
-	// 	}
-	// }
 	getWGCtx(): WebGPUContext {
 		return this.mWGCtx;
 	}
 	addEntity(entity: Entity3D, processIndex = 0, deferred = true): void {
-
 		if (this.mInit) {
 			this.initialize();
 		}
@@ -158,7 +154,7 @@ class WGRenderer implements IRenderer {
 
 	removeEntity(entity: Entity3D): void {
 		if (entity) {
-			if(entity.isInRenderer()) {
+			if (entity.isInRenderer()) {
 				entity.rstate.__$rever++;
 				entity.rstate.__$inRenderer = false;
 				entity.rstate.__$rendering = false;
@@ -166,7 +162,7 @@ class WGRenderer implements IRenderer {
 			}
 		}
 	}
-	appendRendererPass(processIndex = 0, param?: WGRPassParams): IWGRPassRef {
+	appendRendererPass(processIndex = 0, param?: WGRPassParam): IWGRPassRef {
 		this.intDefaultBlock();
 		const len = this.mRPBlocks.length;
 		if (len > 0) {
@@ -180,7 +176,7 @@ class WGRenderer implements IRenderer {
 	getRPBlockAt(i: number): WGRenderPassBlock {
 		return this.mRPBlocks[i];
 	}
-	createRenderBlock(param?: WGRPassParams): WGRenderPassBlock {
+	createRenderBlock(param?: WGRPassParam): WGRenderPassBlock {
 		if (this.mWGCtx) {
 			const rb = new WGRenderPassBlock(this.mUid, this.mWGCtx, param);
 			rb.camera = this.camera;
@@ -204,7 +200,7 @@ class WGRenderer implements IRenderer {
 			const ctx = this.mWGCtx;
 			if (ctx && ctx.enabled) {
 				this.mNodeMana.update();
-				if(rendering) {
+				if (rendering) {
 					const rbs = this.mRPBlocks;
 					if (rbs.length > 0) {
 						const rb = rbs[0];

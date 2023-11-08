@@ -58,7 +58,7 @@ class RendererScene implements IRendererScene {
 	private addContainer(container: IRenderableEntityContainer, processid: number = 0): void {
 
 		if(container.isContainer()) {
-
+			this.initialize();
 			if (container.__$wuid < 0 && container.__$contId < 1) {
 				let i = 0;
 				for (; i < this.mContainers.length; ++i) {
@@ -73,12 +73,6 @@ class RendererScene implements IRendererScene {
 					container.__$setRenderer(this);
 					this.mContainers.push(container);
 					container.update();
-					// if(container.isSpaceEnabled()) {
-					// 	this.mRspace.addEntity(container);
-					// }
-					// if(container.getREType() >= 20) {
-					// 	this.renderer.addContainer(container, this.m_processids[processid]);
-					// }
 				}
 			}
 		}else {
@@ -86,7 +80,7 @@ class RendererScene implements IRendererScene {
 		}
 	}
 	addEntity(entity: IRenderableObject, processIndex = 0, deferred = true): void {
-
+		this.initialize();
 		if (entity.isContainer()) {
 			this.addContainer(entity as IRenderableEntityContainer, processIndex);
 		} else {
@@ -107,6 +101,7 @@ class RendererScene implements IRendererScene {
 	 * @param bubbleEnabled the default value is false
 	 */
 	addEventListener(type: number, func: (evt: any) => void, captureEnabled: boolean = true, bubbleEnabled: boolean = true): void {
+		this.initialize();
 		const st = this.racontext.getStage();
 		st.addEventListener(type, func, captureEnabled, bubbleEnabled);
 	}
