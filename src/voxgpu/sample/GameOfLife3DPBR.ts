@@ -1,7 +1,6 @@
 import { RendererScene } from "../rscene/RendererScene";
 import MouseEvent from "../event/MouseEvent";
 import { MouseInteraction } from "../ui/MouseInteraction";
-//src\voxgpu\sample\shaders\gameOfLifeSpherePBR.vert.wgsl
 import vertWGSL from "./shaders/gameOfLifeSpherePBR.vert.wgsl";
 import fragWGSL from "./shaders/gameOfLifeSpherePBR.frag.wgsl";
 
@@ -153,7 +152,21 @@ export class GameOfLife3DPBR {
 	private mEntity: Entity3D;
 	private mStep = 0;
 
-	private createMaterial(shaderCodeSrc: WGRShderSrcType, uniformValues: WGRUniformValue[], instanceCount: number): WGMaterial {
+	private createMaterial(uniformValues: WGRUniformValue[]): WGMaterial {
+		
+		const instanceCount = gridSize * gridSize;
+		let shaderCodeSrc = {
+			vertShaderSrc: {
+				code: vertWGSL,
+				uuid: "vert-gameOfLife",
+				vertEntryPoint: "vertMain",
+			},
+			fragShaderSrc: {
+				code: fragWGSL,
+				uuid: "frag-gameOfLife",
+				fragEntryPoint: "fragMain"
+			}
+		} as WGRShderSrcType;
 		return new WGMaterial({
 			shadinguuid: 'rendering',
 			shaderCodeSrc,
@@ -162,7 +175,16 @@ export class GameOfLife3DPBR {
 			uniformAppend: false
 		});
 	}
-	private createCompMaterial(shaderCodeSrc: WGRShderSrcType, uniformValues: WGRUniformValue[], workgroupCount = 2): WGCompMaterial {
+	private createCompMaterial(uniformValues: WGRUniformValue[]): WGCompMaterial {
+		
+		const workgroupCount = Math.ceil(gridSize / shdWorkGroupSize);
+		let shaderCodeSrc = {
+			compShaderSrc: {
+				code: compShdCode,
+				uuid: "shader-computing",
+				compEntryPoint: "compMain"
+			}
+		};
 		return new WGCompMaterial({
 			shadinguuid: 'computing',
 			shaderCodeSrc,
@@ -175,36 +197,14 @@ export class GameOfLife3DPBR {
 
 		const ufvsObjs = this.createUniformValues();
 
-		const instanceCount = gridSize * gridSize;
-		const workgroupCount = Math.ceil(gridSize / shdWorkGroupSize);
-
-		let shaderSrc = {
-			vertShaderSrc: {
-				code: vertWGSL,
-				uuid: "vert-gameOfLife",
-				vertEntryPoint: "vertMain",
-			},
-			fragShaderSrc: {
-				code: fragWGSL,
-				uuid: "frag-gameOfLife",
-				fragEntryPoint: "fragMain"
-			}
-		} as WGRShderSrcType;
-		let compShaderSrc = {
-			compShaderSrc: {
-				code: compShdCode,
-				uuid: "shader-computing",
-				compEntryPoint: "compMain"
-			}
-		};
 		// build ping-pong material rendering/computing process
 		const materials: WGMaterial[] = [
 
-			this.createMaterial(shaderSrc, ufvsObjs[0].ufvs0, instanceCount),
-			this.createMaterial(shaderSrc, ufvsObjs[0].ufvs1, instanceCount),
+			this.createMaterial(ufvsObjs[0].ufvs0),
+			this.createMaterial(ufvsObjs[0].ufvs1),
 
-			this.createCompMaterial(compShaderSrc, ufvsObjs[1].ufvs1, workgroupCount),
-			this.createCompMaterial(compShaderSrc, ufvsObjs[1].ufvs0, workgroupCount),
+			this.createCompMaterial(ufvsObjs[1].ufvs1),
+			this.createCompMaterial(ufvsObjs[1].ufvs0),
 		];
 		let entity = new CylinderEntity({
 			radius: 20, height: 38,
@@ -212,9 +212,6 @@ export class GameOfLife3DPBR {
 			alignYRatio : 0.0, materials
 		});
 		rc.addEntity(entity);
-
-		materials[0].visible = false;
-		materials[2].visible = false;
 
 		this.mEntity = entity;
 	}
