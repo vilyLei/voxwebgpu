@@ -38,8 +38,6 @@ export class MultiGPUPassTest {
 
 	private createMaterial(shdSrc: WGRShderSrcType, texs?: WGTextureDataDescriptor[], param?: ColorDataType, blendModes: string[] = ["solid"], faceCullMode = "back"): WGMaterial {
 
-		let color =  new Color4().setParam(param);
-	
 		let pipelineDefParam = {
 			depthWriteEnabled: true,
 			faceCullMode,
@@ -56,7 +54,7 @@ export class MultiGPUPassTest {
 			pipelineDefParam
 		});
 
-		let ufv = new WGRStorageValue({data: new Float32Array([color.r, color.g, color.b, 1])});
+		let ufv = new WGRStorageValue({data: new Float32Array(new Color4().setParam(param).getArray4())});
 		material.uniformValues = [ufv];
 		material.addTextures(texs);
 

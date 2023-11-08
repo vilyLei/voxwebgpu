@@ -113,6 +113,16 @@ export default class Color4 implements IColor4 {
 		arr[offset + 3] = this.a;
 		return this;
 	}
+	getArray4(): number[] {
+		let arr = new Array(4);
+		this.toArray4(arr);
+		return arr;
+	}
+	getArray3(): number[] {
+		let arr = new Array(3);
+		this.toArray3(arr);
+		return arr;
+	}
 	fromArray3(arr: number[] | Float32Array, offset: number = 0): Color4 {
 		this.r = arr[offset];
 		this.g = arr[offset + 1];
