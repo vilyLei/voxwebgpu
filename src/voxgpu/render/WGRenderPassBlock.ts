@@ -13,6 +13,7 @@ import { WGRenderPassNode } from "./WGRenderPassNode";
 class WGRenderPassBlock {
 	private mWGCtx: WebGPUContext;
 	private mRendererUid = 0;
+	private mrPassParam: WGRPassParam;
 
 	private mCompPassNodes: WGRenderPassNode[] = [];
 	private mRPassNodes: WGRenderPassNode[] = [];
@@ -26,6 +27,7 @@ class WGRenderPassBlock {
 	enabled = true;
 
 	constructor(rendererUid: number, wgCtx?: WebGPUContext, param?: WGRPassParam) {
+		this.mrPassParam = param;
 		this.mRendererUid = rendererUid;
 		this.initialize(wgCtx, param);
 	}
@@ -33,17 +35,21 @@ class WGRenderPassBlock {
 		return this.mWGCtx;
 	}
 	initialize(wgCtx: WebGPUContext, param?: WGRPassParam): void {
-		if (!this.mWGCtx && wgCtx && wgCtx.enabled) {
-			this.mWGCtx = wgCtx;
-			for (let i = 0; i < this.mPassNodes.length; ++i) {
-				this.mPassNodes[i].initialize(wgCtx);
+		this.mrPassParam = param ? param : this.mrPassParam;
+		if(wgCtx) {
+			param = this.mrPassParam;
+			if (!this.mWGCtx && wgCtx && wgCtx.enabled) {
+				this.mWGCtx = wgCtx;
+				for (let i = 0; i < this.mPassNodes.length; ++i) {
+					this.mPassNodes[i].initialize(wgCtx);
+				}
 			}
-		}
-		if (this.mPassNodes.length == 0 && param) {
-			const passNode = new WGRenderPassNode();
-			passNode.initialize(wgCtx, param);
-			this.mPassNodes.push(passNode);
-			this.mRPassNodes.push(passNode);
+			if (this.mPassNodes.length == 0 && param) {
+				const passNode = new WGRenderPassNode();
+				passNode.initialize(wgCtx, param);
+				this.mPassNodes.push(passNode);
+				this.mRPassNodes.push(passNode);
+			}
 		}
 	}
 	addRUnit(unit: IWGRUnit): void {

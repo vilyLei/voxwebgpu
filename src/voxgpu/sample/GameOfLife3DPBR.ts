@@ -82,8 +82,7 @@ export class GameOfLife3DPBR {
 		new RenderStatusDisplay(this.mRscene, true);
 		new MouseInteraction().initialize(rc, 0, false).setAutoRunning(true);
 	}
-	private mFlag = 6;
-	private mouseDown = (evt: MouseEvent): void => { this.mFlag = 1; };
+	private mouseDown = (evt: MouseEvent): void => {};
 
 	private createUniformValues(): { ufvs0: WGRUniformValue[], ufvs1: WGRUniformValue[] }[] {
 

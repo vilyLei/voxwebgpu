@@ -169,34 +169,22 @@ class WGRenderer implements IRenderer {
 	appendRendererPass(processIndex = 0, param?: WGRPassParam): IWGRPassRef {
 		this.intDefaultBlock();
 		const len = this.mRPBlocks.length;
-		if (len > 0) {
-			if (processIndex >= 0 && processIndex < len) {
-				return this.mRPBlocks[processIndex].appendRendererPass(param);
-			}
-			return { index: -1 };
+		if (processIndex >= 0 && processIndex < len) {
+			return this.mRPBlocks[processIndex].appendRendererPass(param);
 		}
 		throw Error("Illegal operations !!!");
+		return { index: -1 };
 	}
 	getRPBlockAt(i: number): WGRenderPassBlock {
 		this.intDefaultBlock();
 		return this.mRPBlocks[i];
 	}
 	createRenderBlock(param?: WGRPassParam): WGRenderPassBlock {
-		if (this.mWGCtx) {
-			const rb = new WGRenderPassBlock(this.mUid, this.mWGCtx, param);
-			rb.camera = this.camera;
-			this.mRPBlocks.push(rb);
-			return rb;
-		}
-		throw Error("Illegal operations !!!");
+		const rb = new WGRenderPassBlock(this.mUid, this.mWGCtx, param);
+		rb.camera = this.camera;
+		this.mRPBlocks.push(rb);
+		return rb;
 	}
-	// bindMaterial(material: WGMaterial, block: WGRenderPassBlock): WGMaterial {
-	// 	if (this.mWGCtx) {
-	// 		const p = block.createRenderPipelineCtxWithMaterial(material);
-	// 		material.initialize(p.ctx);
-	// 	}
-	// 	return material;
-	// }
 	isEnabled(): boolean {
 		return this.enabled && this.mWGCtx && this.mWGCtx.enabled;
 	}

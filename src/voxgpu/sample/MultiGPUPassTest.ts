@@ -23,15 +23,12 @@ export class MultiGPUPassTest {
 	initialize(): void {
 		console.log("MultiGPUPassTest::initialize() ...");
 
-		let callback = (): void => {
-			this.initEvent();
-			this.initScene();
-		}
 		this.mRscene.initialize({
 			rpassparam: {multisampleEnabled: true, depthTestEnabled: true},
 			camera: {eye: new Vector3(600.0, 600.0, 0.0)},
-			callback
 		});
+		this.initEvent();
+		this.initScene();
 	}
 	private initEvent(): void {
 		const rc = this.mRscene;
@@ -82,6 +79,7 @@ export class MultiGPUPassTest {
 
 	private mouseDown = (evt: MouseEvent): void => {
 		let node = this.mRPass1.node;
+		// node = this.mRPass0.node;
 		console.log("mousedown evt call this.mRPass1: ", this.mRPass1);
 		console.log("mousedown evt call AAAA node: ", node);
 		console.log("mousedown evt call node.enabled: ", node.enabled);
