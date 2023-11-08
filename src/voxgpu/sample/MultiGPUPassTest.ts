@@ -36,10 +36,10 @@ export class MultiGPUPassTest {
 		new MouseInteraction().initialize(rc, 0, false).setAutoRunning(true);
 	}
 
-	private createMaterial(shdSrc: WGRShderSrcType, texs?: WGTextureDataDescriptor[], color?: Color4, blendModes: string[] = ["solid"], faceCullMode = "back"): WGMaterial {
+	private createMaterial(shdSrc: WGRShderSrcType, texs?: WGTextureDataDescriptor[], param?: ColorDataType, blendModes: string[] = ["solid"], faceCullMode = "back"): WGMaterial {
 
-		color = color ? color : new Color4();
-
+		let color =  new Color4().setParam(param);
+	
 		let pipelineDefParam = {
 			depthWriteEnabled: true,
 			faceCullMode,
@@ -99,11 +99,10 @@ export class MultiGPUPassTest {
 
 		const diffuseTex = {diffuse: {url:"static/assets/box.jpg"}};
 
-		let materials0 = [this.createMaterial(shdSrc, [diffuseTex], new Color4(1.0, 0.0, 0.0))];
-		let materials1 = [this.createMaterial(shdSrc, [diffuseTex], new Color4(0.0, 1.0, 0.0))];
+		let materials0 = [this.createMaterial(shdSrc, [diffuseTex], [1.0, 0.0, 0.0])];
+		let materials1 = [this.createMaterial(shdSrc, [diffuseTex], [0.0, 1.0, 0.0])];
 
 		this.mRPass0 = rc.renderer.getRPBlockAt(0).getRenderPassAt(0);
-		console.log("this.mRPass0: ", this.mRPass0);
 
 		this.mRPass1 = rc.renderer.appendRendererPass();
 		materials1[0].rpass = {rpass: this.mRPass1};
