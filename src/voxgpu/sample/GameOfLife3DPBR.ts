@@ -67,13 +67,13 @@ fn compMain(@builtin(global_invocation_id) cell: vec3u) {
 			lifeState[i] -= 0.05;
 		}
 	}
-	if(lifeState[i] < 0.01) { lifeState[i] = 0.01; }
+	lifeState[i] = max(lifeState[i], 0.01);
 }`;
-export class GameOfLifeSpherePBR {
+export class GameOfLife3DPBR {
 	private mRscene = new RendererScene();
 
 	initialize(): void {
-		console.log("GameOfLifeSpherePBR::initialize() ...");
+		console.log("GameOfLife3DPBR::initialize() ...");
 
 		const rc = this.mRscene;
 		rc.initialize();

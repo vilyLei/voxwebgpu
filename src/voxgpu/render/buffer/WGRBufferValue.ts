@@ -1,28 +1,15 @@
-// import BitConst from "../../utils/BitConst";
-// import { WGRShaderVisibility } from "./WGRShaderVisibility";
-// import { WGRUniformSharedData, WGRUniformValueParam } from "./WGRUniformValueParam";
-import { WGRBufferValueParam, WGRBufferValue } from "../buffer/WGRBufferValue";
-import { WGRBufferVisibility } from "../buffer/WGRBufferVisibility";
-// import { WGRBufferData, WGRBufferValueParam } from "./WGRBufferValueParam";
-interface WGRUniformValueParam extends WGRBufferValueParam {
-	label?: string;
-}
-class WGRUniformValue extends WGRBufferValue {
-	constructor(param: WGRUniformValueParam) {
-		super(param);
-		if(!this.visibility) {
-			this.visibility = new WGRBufferVisibility();
-		}
-		this.toUniform();
-	}
-}
-/*
-class WGRUniformValue {
+import BitConst from "../../utils/BitConst";
+import { WGRBufferVisibility } from "./WGRBufferVisibility";
+import { WGRBufferData, WGRBufferValueParam } from "./WGRBufferValueParam";
+
+class WGRBufferValue {
 	private static sUid = 0;
-	private mUid = WGRUniformValue.sUid++;
+	private mUid = WGRBufferValue.sUid++;
 
 	name?: string;
-
+	/**
+	 * Uniform index of RUnit instance uniforms array
+	 */
 	index = 0;
 
 	version = -1;
@@ -32,16 +19,15 @@ class WGRUniformValue {
 	arrayStride = 1;
 	usage = GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST;
 	shared = false;
-	sharedData?: WGRUniformSharedData;
+	sharedData?: WGRBufferData;
 
 	shdVarName?: string;
 
-	visibility = new WGRShaderVisibility();
+	visibility: WGRBufferVisibility;
 
-	constructor(param: WGRUniformValueParam) {
+	constructor(param: WGRBufferValueParam) {
 		let d = param.data;
 		this.data = d;
-		// this.bufferIndex = param.bufferIndex !== undefined ? param.bufferIndex : 0;
 		this.index = param.index !== undefined ? param.index : 0;
 		if (param.usage !== undefined) this.usage = param.usage;
 		if (param.shared !== undefined) this.shared = param.shared;
@@ -66,37 +52,40 @@ class WGRUniformValue {
 	getUid(): number {
 		return this.mUid;
 	}
-	toShared(): WGRUniformValue {
+	toShared(): WGRBufferValue {
 		this.shared = true;
 		return this;
 	}
-	toVisibleAll(): WGRUniformValue {
+	toVisibleAll(): WGRBufferValue {
 		this.visibility.toVisibleAll();
 		return this;
 	}
-	toVisibleVertComp(): WGRUniformValue {
+	toVisibleVertComp(): WGRBufferValue {
 		this.visibility.toVisibleVertComp();
 		return this;
 	}
-	toVisibleComp(): WGRUniformValue {
+	toVisibleComp(): WGRBufferValue {
 		this.visibility.toVisibleComp();
 		return this;
 	}
-	toBufferForStorage(): WGRUniformValue {
+	toBufferForStorage(): WGRBufferValue {
 		this.visibility.toBufferForStorage();
 		return this;
 	}
-	toBufferForReadOnlyStorage(): WGRUniformValue {
+	toBufferForReadOnlyStorage(): WGRBufferValue {
 		this.visibility.toBufferForReadOnlyStorage();
 		return this;
 	}
 
-	toUniform(): WGRUniformValue {
+	toUniform(): WGRBufferValue {
 		this.usage = GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST;
 		return this;
 	}
 	toStorage(): void {
 		this.usage = GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST;
+	}
+	toVertex(): void {
+		this.usage = GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST;
 	}
 	isUniform(): boolean {
 		return BitConst.containsBit(this.usage, GPUBufferUsage.UNIFORM);
@@ -104,11 +93,15 @@ class WGRUniformValue {
 	isStorage(): boolean {
 		return BitConst.containsBit(this.usage, GPUBufferUsage.STORAGE);
 	}
+	isVertex(): boolean {
+		return BitConst.containsBit(this.usage, GPUBufferUsage.VERTEX);
+	}
 	upate(): void {
 		this.version++;
 	}
-	clone(data: NumberArrayDataType): WGRUniformValue {
-		const u = new WGRUniformValue({ data: data, index: this.index });
+
+	clone(data: NumberArrayDataType): WGRBufferValue {
+		const u = new WGRBufferValue({ data: data, index: this.index });
 		u.name = this.name;
 		u.byteOffset = this.byteOffset;
 		u.arrayStride = this.arrayStride;
@@ -122,5 +115,4 @@ class WGRUniformValue {
 		this.visibility = null;
 	}
 }
-//*/
-export { WGRUniformValueParam, WGRUniformValue };
+export { WGRBufferData, WGRBufferValueParam, WGRBufferValue };
