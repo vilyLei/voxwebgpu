@@ -7,7 +7,7 @@ import { WGRUniformValue } from "./WGRUniformValue";
 import { WGRUniformBufObj, WGRUniformParam, WGRUniformWrapper } from "./IWGRUniformContext";
 import { GPUBindGroupDescriptor } from "../../gpu/GPUBindGroupDescriptor";
 import { WGHBufferStore } from "../buffer/WGHBufferStore";
-import { WGRShaderVisibility } from "./WGRShaderVisibility";
+import { WGRBufferVisibility } from "../buffer/WGRBufferVisibility";
 import { GPUBindGroupLayout } from "../../gpu/GPUBindGroupLayout";
 import { WGRBindGroupContext } from "../pipeline/WGRBindGroupContext";
 
@@ -48,7 +48,7 @@ class WGRUniformCtxInstance {
 	getBindGroupLayout(multisampled?: boolean): GPUBindGroupLayout {
 		const ls = this.mList;
 		const wp = ls[0];
-		const ets: WGRShaderVisibility[] = [];
+		const ets: WGRBufferVisibility[] = [];
 		if (wp.bufDataParams) {
 			const dps = wp.bufDataParams;
 			for (let i = 0; i < dps.length; ++i) {
@@ -64,10 +64,10 @@ class WGRUniformCtxInstance {
 			const tps = wp.texParams;
 			for (let i = 0; i < tps.length; ++i) {
 				const p = tps[i];
-				let v = new WGRShaderVisibility().toSamplerFiltering();
+				let v = new WGRBufferVisibility().toSamplerFiltering();
 				v.binding = ets.length;
 				ets.push(v);
-				v = new WGRShaderVisibility().toTextureFloat(p.texView.dimension);
+				v = new WGRBufferVisibility().toTextureFloat(p.texView.dimension);
 				v.texture.multisampled = multisampled === true ? true : false;
 				v.binding = ets.length;
 				ets.push(v);

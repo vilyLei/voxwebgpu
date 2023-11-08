@@ -4,7 +4,7 @@ import { GPURenderPipeline } from "../../gpu/GPURenderPipeline";
 import { GPUComputePipeline } from "../../gpu/GPUComputePipeline";
 import { IWGRUniformContext } from "../uniform/IWGRUniformContext";
 import { IWGRendererPass } from "./IWGRendererPass";
-import { WGRShaderVisibility } from "../uniform/WGRShaderVisibility";
+import { WGRBufferVisibility } from "../buffer/WGRBufferVisibility";
 import { WGRUniformValue } from "../uniform/WGRUniformValue";
 import { WGRBindGroupContext } from "./WGRBindGroupContext";
 
@@ -16,7 +16,7 @@ interface BufDataParamType {
 	vuid?: number;
 	usageType?: number;
 	arrayStride?: number;
-	visibility?: WGRShaderVisibility,
+	visibility?: WGRBufferVisibility,
 	ufvalue?: WGRUniformValue
 };
 type VtxDescParam = { vertex: { arrayStride: number, params: { offset: number, format: string }[] } };
