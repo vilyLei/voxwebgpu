@@ -1,7 +1,7 @@
 import { GPUSampler } from "../../gpu/GPUSampler";
 import { GPUTextureView } from "../../gpu/GPUTextureView";
 import { WGRUniform } from "./WGRUniform";
-import { BufDataParamType, IWGRPipelineContext } from "../pipeline/IWGRPipelineContext";
+import { BufDataParamType } from "../pipeline/IWGRPipelineContext";
 import { WGRUniformValue } from "./WGRUniformValue";
 import { WGRUniformParam, WGRUniformTexParam, IWGRUniformContext } from "./IWGRUniformContext";
 import { GPUBindGroupLayout } from "../../gpu/GPUBindGroupLayout";
@@ -87,7 +87,7 @@ class WGRUniformContext implements IWGRUniformContext {
 			for (let i = 0; i < values.length; ++i) {
 				const v = values[i];
 				const usageType = v.isStorage() ? 1 : 0;
-				const vuid = v.getUid();
+				const vuid = v.uid;
 				const arrayStride = v.arrayStride;
 				const visibility = v.visibility.clone();
 				bufDataParams.push({

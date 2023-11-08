@@ -101,7 +101,7 @@ export class MultiGPUPassTest {
 		let materials1 = [this.createMaterial(shdSrc, [diffuseTex], new Color4(0.0, 1.0, 0.0))];
 
 		this.mRPass = rc.renderer.appendRendererPass();
-		materials1[0].rpass = this.mRPass;
+		materials1[0].rpass = {rpass: this.mRPass};
 
 		let entity = new Entity3D();
 		entity.materials = materials0;

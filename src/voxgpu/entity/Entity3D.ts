@@ -12,6 +12,7 @@ import AABB from "../cgeom/AABB";
 import { WGRUnitState } from "../render/WGRUnitState";
 import { WGRShderSrcType } from "../material/WGMaterialDescripter";
 import { WGRUniformValue } from "../render/uniform/WGRUniformValue";
+import { IWGRMaterialPassView } from "../render/pipeline/IWGRMaterialPassView";
 
 interface Entity3DParam {
 	transformEnabled?: boolean;
@@ -28,6 +29,7 @@ interface Entity3DParam {
 	uniformValueMap?: { [key: string]: WGRUniformValue }
 	shadinguuid?: string;
 	instanceCount?: number;
+	rpasses?: IWGRMaterialPassView[];
 }
 function getUniformValueFromParam(key: string, param: Entity3DParam, defaultV?: WGRUniformValue ): WGRUniformValue {
 	if(param.uniformValueMap) {

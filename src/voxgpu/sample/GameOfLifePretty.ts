@@ -90,28 +90,28 @@ export class GameOfLifePretty {
 		}
 
 		let shared = true;
-		let sharedData0 = { data: cellStateArray0 };
-		let sharedData1 = { data: cellStateArray1 };
-		let sharedData3 = { data: lifeStateArray3 };
+		let sharedData0 = { data: cellStateArray0, shared };
+		let sharedData1 = { data: cellStateArray1, shared };
+		let sharedData3 = { data: lifeStateArray3, shared };
 
 		const v0 = new WGRUniformValue({ data: gridsSizesArray, stride: 2, shared });
 		v0.toVisibleAll();
 
 		// build rendering uniforms
-		const va1 = new WGRStorageValue({ sharedData: sharedData0, stride: 1, shared }).toVisibleVertComp();
-		const vb1 = new WGRStorageValue({ sharedData: sharedData1, stride: 1, shared }).toVisibleVertComp();
-		const vc1 = new WGRStorageValue({ sharedData: sharedData3, stride: 1, shared }).toVisibleAll();
+		const va1 = new WGRStorageValue({ bufData: sharedData0, stride: 1, shared }).toVisibleVertComp();
+		const vb1 = new WGRStorageValue({ bufData: sharedData1, stride: 1, shared }).toVisibleVertComp();
+		const vc1 = new WGRStorageValue({ bufData: sharedData3, stride: 1, shared }).toVisibleAll();
 
 		// build computing uniforms
-		const compva1 = new WGRStorageValue({ sharedData: sharedData0, stride: 1, shared }).toVisibleVertComp();
-		const compva2 = new WGRStorageValue({ sharedData: sharedData1, stride: 1, shared }).toVisibleComp();
+		const compva1 = new WGRStorageValue({ bufData: sharedData0, stride: 1, shared }).toVisibleVertComp();
+		const compva2 = new WGRStorageValue({ bufData: sharedData1, stride: 1, shared }).toVisibleComp();
 		compva2.toBufferForStorage();
 
-		const compvb1 = new WGRStorageValue({ sharedData: sharedData1, stride: 1, shared }).toVisibleVertComp();
-		const compvb2 = new WGRStorageValue({ sharedData: sharedData0, stride: 1, shared }).toVisibleComp();
+		const compvb1 = new WGRStorageValue({ bufData: sharedData1, stride: 1, shared }).toVisibleVertComp();
+		const compvb2 = new WGRStorageValue({ bufData: sharedData0, stride: 1, shared }).toVisibleComp();
 		compvb2.toBufferForStorage();
 
-		const compv3 = new WGRStorageValue({ sharedData: sharedData3, stride: 1, shared }).toVisibleComp();
+		const compv3 = new WGRStorageValue({ bufData: sharedData3, stride: 1, shared }).toVisibleComp();
 		compv3.toBufferForStorage();
 
 		return [

@@ -86,7 +86,7 @@ class WGRenderPassBlock {
 		return node;
 	}
 	createRenderPipelineCtxWithMaterial(material: WGMaterialDescripter): { ctx: WGRPipelineContext, rpass: IWGRendererPass } {
-		let node = this.getPassNode(material.rpass);
+		let node = this.getPassNode(material.rpass ? material.rpass.rpass : null);
 		if (material.shaderCodeSrc.compShaderSrc) {
 			if (this.mCompPassNodes.length < 1) {
 				this.appendRendererPass({ computeEnabled: true });

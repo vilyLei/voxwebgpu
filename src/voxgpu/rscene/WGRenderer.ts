@@ -176,12 +176,6 @@ class WGRenderer implements IRenderer {
 			return { index: -1 };
 		}
 		throw Error("Illegal operations !!!");
-		// let info = new RPassInfoParam();
-		// info.blockIndex = processIndex;
-		// info.rparam = param;
-		// info.ref = { index: -1 };
-		// this.mRPassInfos.push(info);
-		// return info.ref;
 	}
 	getRPBlockAt(i: number): WGRenderPassBlock {
 		return this.mRPBlocks[i];

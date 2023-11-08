@@ -39,7 +39,10 @@
 // import { GameOfLifePretty as Demo } from "./voxgpu/sample/GameOfLifePretty";
 // import { GameOfLifeSphere as Demo } from "./voxgpu/sample/GameOfLifeSphere";
 // import { GameOfLifeSpherePBR as Demo } from "./voxgpu/sample/GameOfLifeSpherePBR";
-import { GameOfLife3DPBR as Demo } from "./voxgpu/sample/GameOfLife3DPBR";
+// import { GameOfLife3DPBR as Demo } from "./voxgpu/sample/GameOfLife3DPBR";
+
+import { RTTTest as Demo } from "./voxgpu/sample/RTTTest";
+
 
 let demoIns = new Demo();
 function main(): void {

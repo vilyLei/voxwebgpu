@@ -253,7 +253,7 @@ class WGRBindGroupContext {
 		if (desc.entries.length < 1) {
 			throw Error("Illegal operation !!!");
 		}
-		console.log("createBindGroupObj(), desc: ", desc);
+		// console.log("createBindGroupObj(), desc: ", desc);
 		const p = device.createBindGroup(desc);
 		p.uid = WGRBindGroupContext.sBindGroupUid ++;
 		return p;

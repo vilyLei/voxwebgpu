@@ -1,10 +1,9 @@
 import BitConst from "../../utils/BitConst";
+import { WGRBufferView } from "./WGRBufferView";
 import { WGRBufferVisibility } from "./WGRBufferVisibility";
 import { WGRBufferData, WGRBufferValueParam } from "./WGRBufferValueParam";
 
-class WGRBufferValue {
-	private static sUid = 0;
-	private mUid = WGRBufferValue.sUid++;
+class WGRBufferValue extends WGRBufferView {
 
 	name?: string;
 	/**
@@ -12,28 +11,28 @@ class WGRBufferValue {
 	 */
 	index = 0;
 
-	version = -1;
-	data: NumberArrayDataType;
-
 	byteOffset = 0;
 	arrayStride = 1;
 	usage = GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST;
-	shared = false;
-	sharedData?: WGRBufferData;
+
+	bufData?: WGRBufferData;
 
 	shdVarName?: string;
 
 	visibility: WGRBufferVisibility;
 
 	constructor(param: WGRBufferValueParam) {
+		super();
+		this.shared = false;
 		let d = param.data;
 		this.data = d;
 		this.index = param.index !== undefined ? param.index : 0;
 		if (param.usage !== undefined) this.usage = param.usage;
 		if (param.shared !== undefined) this.shared = param.shared;
-		if (param.sharedData !== undefined) {
-			this.sharedData = param.sharedData;
-			d = this.sharedData.data;
+		if (param.bufData) {
+			const bd = param.bufData;
+			this.bufData = bd;
+			d = bd.data;
 			this.data = d;
 		}
 		if (param.shdVarName !== undefined) this.shdVarName = param.shdVarName;
@@ -45,12 +44,6 @@ class WGRBufferValue {
 			if (d.byteLength <= 64) this.arrayStride = d.byteLength;
 		}
 		this.upate();
-	}
-	get byteLength(): number {
-		return this.data.byteLength;
-	}
-	getUid(): number {
-		return this.mUid;
 	}
 	toShared(): WGRBufferValue {
 		this.shared = true;
@@ -110,9 +103,12 @@ class WGRBufferValue {
 	}
 	destroy(): void {
 		this.data = null;
-		this.sharedData = null;
+		this.bufData = null;
 		this.shared = null;
 		this.visibility = null;
+		if(this.buffer) {
+			this.buffer = null;
+		}
 	}
 }
 export { WGRBufferData, WGRBufferValueParam, WGRBufferValue };

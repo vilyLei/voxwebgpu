@@ -1,7 +1,7 @@
 import Color4 from "../../material/Color4";
 import { GPUCommandBuffer } from "../../gpu/GPUCommandBuffer";
 import { GPUCommandEncoder } from "../../gpu/GPUCommandEncoder";
-import { GPURenderPassColorAttachment } from "../../gpu/GPURenderPassColorAttachment";
+// import { GPURenderPassColorAttachment } from "../../gpu/GPURenderPassColorAttachment";
 import { GPURenderPassDescriptor } from "../../gpu/GPURenderPassDescriptor";
 import { GPURenderPassEncoder } from "../../gpu/GPURenderPassEncoder";
 import { GPUComputePassEncoder } from "../../gpu/GPUComputePassEncoder";
@@ -10,7 +10,9 @@ import { GPUTextureDescriptor } from "../../gpu/GPUTextureDescriptor";
 import { GPUTextureView } from "../../gpu/GPUTextureView";
 import { WebGPUContext } from "../../gpu/WebGPUContext";
 import { WGRPassParams, IWGRendererPass } from "./IWGRendererPass";
-import { GPURenderPassDepthStencilAttachment } from "../../gpu/GPURenderPassDepthStencilAttachment";
+// import { GPURenderPassDepthStencilAttachment } from "../../gpu/GPURenderPassDepthStencilAttachment";
+import { WGRPColorAttachment } from "./WGRPColorAttachment";
+import { WGRPDepthStencilAttachment } from "./WGRPDepthStencilAttachment";
 
 class WGRendererPass implements IWGRendererPass {
 
@@ -30,17 +32,12 @@ class WGRendererPass implements IWGRendererPass {
 	resolveTarget: GPUTextureView;
 	resolveView: GPUTextureView;
 
-	colorAttachment: GPURenderPassColorAttachment = {
-		clearValue: null,
-		loadOp: "clear",
-		storeOp: "store"
-	};
-	depStcAttachment: GPURenderPassDepthStencilAttachment = {
-		view: null,
-		depthClearValue: 1.0,
-		depthLoadOp: "clear",
-		depthStoreOp: "store"
-	};
+	colorAttachment = new WGRPColorAttachment();
+	depStcAttachment = new WGRPDepthStencilAttachment();
+
+	passColors = [new WGRPColorAttachment()];
+	// passDepthStencils = [new WGRPDepthStencilAttachment()];
+
 	prevPass: WGRendererPass;
 
 	enabled = true;
@@ -115,8 +112,15 @@ class WGRendererPass implements IWGRendererPass {
 			this.commandEncoder = device.createCommandEncoder();
 			const cmdEncoder = this.commandEncoder;
 			if (this.mDrawing) {
+
+				let pcs = this.passColors;
+				if(pcs.length == 1) {
+					pcs[0].clearValue.copyFrom( this.clearColor );
+				}
+
 				const colorAtt = this.colorAttachment;
-				colorAtt.clearValue = this.clearColor;
+				colorAtt.clearValue.copyFrom( this.clearColor );
+
 				const prev = this.prevPass;
 				if (prev) {
 					if (param.multisampleEnabled) {
@@ -141,7 +145,7 @@ class WGRendererPass implements IWGRendererPass {
 					depStcAtt.view = this.mDepthTexture.createView();
 				}
 
-				let colorAttachments: GPURenderPassColorAttachment[] = [colorAtt];
+				let colorAttachments = [colorAtt];
 				const renderPassDescriptor: GPURenderPassDescriptor = {
 					colorAttachments: colorAttachments,
 					depthStencilAttachment: depStcAtt

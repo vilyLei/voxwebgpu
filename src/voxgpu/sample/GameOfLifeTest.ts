@@ -97,15 +97,15 @@ export class GameOfLifeTest {
 		v0.toVisibleAll();
 
 		// build rendering uniforms
-		const va1 = new WGRStorageValue({ sharedData: sharedData0, stride: 1, shared }).toVisibleVertComp();
-		const vb1 = new WGRStorageValue({ sharedData: sharedData1, stride: 1, shared }).toVisibleVertComp();
+		const va1 = new WGRStorageValue({ bufData: sharedData0, stride: 1, shared }).toVisibleVertComp();
+		const vb1 = new WGRStorageValue({ bufData: sharedData1, stride: 1, shared }).toVisibleVertComp();
 
 		// build computing uniforms
-		const compva1 = new WGRStorageValue({ sharedData: sharedData0, stride: 1, shared }).toVisibleVertComp();
-		const compva2 = new WGRStorageValue({ sharedData: sharedData1, stride: 1, shared }).toVisibleComp();
+		const compva1 = new WGRStorageValue({ bufData: sharedData0, stride: 1, shared }).toVisibleVertComp();
+		const compva2 = new WGRStorageValue({ bufData: sharedData1, stride: 1, shared }).toVisibleComp();
 		compva2.toBufferForStorage();
-		const compvb1 = new WGRStorageValue({ sharedData: sharedData1, stride: 1, shared }).toVisibleVertComp();
-		const compvb2 = new WGRStorageValue({ sharedData: sharedData0, stride: 1, shared }).toVisibleComp();
+		const compvb1 = new WGRStorageValue({ bufData: sharedData1, stride: 1, shared }).toVisibleVertComp();
+		const compvb2 = new WGRStorageValue({ bufData: sharedData0, stride: 1, shared }).toVisibleComp();
 		compvb2.toBufferForStorage();
 
 		let objs = [

@@ -1,4 +1,3 @@
-import { GPUBuffer } from "../../gpu/GPUBuffer";
 import { GPUSampler } from "../../gpu/GPUSampler";
 import { GPUTextureView } from "../../gpu/GPUTextureView";
 import { UniformVerType, WGRUniform } from "./WGRUniform";
@@ -10,6 +9,7 @@ import { WGHBufferStore } from "../buffer/WGHBufferStore";
 import { WGRBufferVisibility } from "../buffer/WGRBufferVisibility";
 import { GPUBindGroupLayout } from "../../gpu/GPUBindGroupLayout";
 import { WGRBindGroupContext } from "../pipeline/WGRBindGroupContext";
+import { WGRBufferView } from "../buffer/WGRBufferView";
 
 class SharedUniformObj {
 	map: Map<number, UniformVerType> = new Map();
@@ -111,10 +111,7 @@ class WGRUniformCtxInstance {
 					}
 					this.buildBufs(wp);
 				} else {
-					// console.log("VVVVVVVVVVVVVVVVV 01 ...");
-					// console.log("ls: ", ls);
 					this.buildBufs(wp);
-					// console.log("VVVVVVVVVVVVVVVVV 02 ...");
 					for (let i = 1; i < ls.length; ++i) {
 						let tbo = ls[i].bufObj;
 						if (tbo) {
@@ -131,16 +128,13 @@ class WGRUniformCtxInstance {
 						tbo.buffers = [];
 						tbo.oldBufs = [];
 
-						// console.log("VVVVVVVVVVVVVVVVV 03 ...");
 						this.buildBufs(ls[i]);
-						// console.log("VVVVVVVVVVVVVVVVV 04 ...");
 					}
 				}
-				// console.log("XXX XXX this.mBuffers: ", this.mBuffers);
+				// console.log("XXX XXX bo.buffers: ", bo.buffers);
 				for (let i = 0; i < ls.length; ++i) {
 					this.createUniformWithWP(ls[i], i, true);
 				}
-				// console.log("WGRUniformCtxInstance::runBegin(), this.mList: ", this.mList);
 			}
 		}
 	}
@@ -152,7 +146,7 @@ class WGRUniformCtxInstance {
 			const wgctx = this.mBindGCtx.getWGCtx();
 			const store = WGHBufferStore.getStore(wgctx);
 			const append = wp.uniformAppend;
-			// console.log("XXXXX A-0 append: ", append);
+
 			const dps = wp.bufDataParams;
 			for (let i = 0; i < dps.length; ++i) {
 				const dp = dps[i];
@@ -160,45 +154,67 @@ class WGRUniformCtxInstance {
 
 				const sizes = new Array(dp.shared || !append ? 1 : ls.length);
 				const uniformParam = { sizes, usage: dp.usage, arrayStride: dp.arrayStride } as UniformBufferParam;
-				let buf: GPUBuffer;
-				const sharedData = dp.ufvalue.sharedData;
-				if (sharedData) {
-					buf = sharedData.buffer;
+				const ufv = dp.ufvalue;
+				let buf = ufv.buffer;
+
+				const bufData = ufv.bufData;
+				if (!buf && bufData) {
+					buf = bufData.buffer;
 				}
 				if (!buf) {
-					if (dp.shared) {
-						if (store.hasWithUid(dp.vuid)) {
-							buf = store.getWithUid(dp.vuid);
-							// console.log("apply old shared uniform gpu buffer...");
+					let bufDataShared = (bufData !== undefined && bufData.shared === true);
+					// console.log("VVVVVVVVVVVV bufDataShared: ", bufDataShared, ", dp.shared: ", dp.shared);
+					if (ufv.shared || bufDataShared) {
+						let bufuid = (bufDataShared && bufData.uid !== undefined ? bufData.uid : -1);
+						let vuid = ufv.shared ? ufv.uid : bufuid;
+						// console.log("VVVVVVVVVVVV shared: ", dp.shared,", vuid: ", vuid, ", bufuid: ", bufuid);
+						if (store.hasWithUid(vuid)) {
+							buf = store.getBufWithUid(vuid);
+							// console.log("apply old shared uniform gpu buffer..., bufDataShared: ", bufDataShared, buf);
 						} else {
-							// console.log("create new shared uniform gpu buffer...");
-							uniformParam.sizes[0] = ls[0].bufDataParams[i].size;
-							buf = this.mBindGCtx.createUniformsBuffer(uniformParam);
-							store.addWithUid(dp.vuid, buf);
+							if (store.hasWithUid(bufuid)) {
+								buf = store.getBufWithUid(bufuid);
+							}else {
+								// console.log("create new shared uniform gpu buffer...");
+								uniformParam.sizes[0] = ls[0].bufDataParams[i].size;
+								buf = this.mBindGCtx.createUniformsBuffer(uniformParam);
+							}
+							if(vuid < 0 || (bufDataShared && !store.hasWithUid(bufuid))) {
+								// console.log("create a new shared uniform gpu buffer and buf a view object...");
+								const bufView = new WGRBufferView().setParam(bufData);
+								bufView.buffer = buf;
+								ufv.bufData = bufView;
+								bufData.uid = bufView.uid;
+								store.addWithUid(bufView.uid, bufView);
+							}
+							if(dp.shared) {
+								ufv.buffer = buf;
+								if(bufData && bufData.uid ===  undefined) {
+									bufData.uid = ufv.uid;
+								}
+								store.addWithUid(ufv.uid, ufv);
+							}
 						}
 						buf.shared = true;
 					} else {
-						// console.log("XXXXX A-1 append: ", append);
 						if (append) {
 							for (let j = 0; j < ls.length; ++j) {
 								uniformParam.sizes[j] = ls[j].bufDataParams[i].size;
 							}
 							buf = this.mBindGCtx.createUniformsBuffer(uniformParam);
 						} else {
-							// console.log("XXXXX A-2 append: ", append);
-							// console.log("XXXXX A-2 uniformParam.sizes: ", uniformParam.sizes);
 							uniformParam.sizes[0] = ls[i].bufDataParams[i].size;
 							buf = this.mBindGCtx.createUniformsBuffer(uniformParam);
 						}
 					}
 				}
-				if (!dp.shared && !sharedData) {
+				if (!dp.shared && (!bufData || !(bufData.shared === true))) {
 					bo.oldBufs.push(buf);
 				}
-				if (sharedData && !sharedData.buffer) {
-					sharedData.buffer = buf;
+				if (bufData && !bufData.buffer) {
+					// console.log("XXXXX A-3 buf: ", buf);
+					bufData.buffer = buf;
 				}
-				// this.mBuffers.push(buf);
 				bo.buffers.push(buf);
 				// console.log("PPP PPP PPP ,i: ",i," buf.size: ", buf.size);
 			}
@@ -212,13 +228,13 @@ class WGRUniformCtxInstance {
 		for (let i = 0; i < dps.length; ++i) {
 			const ufv = dps[i].ufvalue;
 			if (ufv.shared === true) {
-				const vid = ufv.getUid();
+				const vid = ufv.uid;
 				if (!map.has(vid)) {
-					map.set(vid, { vid: ufv.getUid(), ver: -1, shared: true, shdVarName: ufv.shdVarName });
+					map.set(vid, { vid: ufv.uid, ver: -1, shared: true, shdVarName: ufv.shdVarName });
 				}
 				versions[i] = map.get(vid);
 			} else {
-				versions[i] = { vid: ufv.getUid(), ver: -1, shared: false, shdVarName: ufv.shdVarName };
+				versions[i] = { vid: ufv.uid, ver: -1, shared: false, shdVarName: ufv.shdVarName };
 			}
 		}
 		return versions;

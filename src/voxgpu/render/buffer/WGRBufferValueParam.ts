@@ -1,8 +1,12 @@
 import { GPUBuffer } from "../../gpu/GPUBuffer";
 interface WGRBufferData {
-	data: NumberArrayDataType;
+	data?: NumberArrayDataType;
 	buffer?: GPUBuffer;
+	mappedAtCreation?: boolean;
+	shared?: boolean;
+	version?: number;
 	uid?: number;
+	byteLength?: number;
 }
 interface WGRBufferValueParam {
 	/**
@@ -22,7 +26,7 @@ interface WGRBufferValueParam {
 	/**
 	 * uniform value shared data object
 	 */
-	sharedData?: WGRBufferData;
+	bufData?: WGRBufferData;
 	shdVarName?: string;
 	arrayStride?: number;
 	/**

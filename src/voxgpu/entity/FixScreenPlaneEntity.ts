@@ -88,6 +88,20 @@ class FixScreenPlaneEntity extends FixScreenEntity {
 				this.colorV = material.uniformValues[0];
 			}
 			this.materials = [material];
+			const rpasses = param.rpasses;
+			if(rpasses) {
+				const ms = this.materials;
+				// 这里的实现需要优化, 因为一个material实际上可以加入到多个rpass中去
+				let len = Math.min(rpasses.length, ms.length);
+				// console.log("apply rpasses element, rpasses.length, ms.length: ", rpasses.length, ms.length);
+				for(let i = 0; i < len; ++i) {
+					const rpass = ms[i].rpass;
+					if(!rpass || !rpass.rpass.node) {
+						ms[i].rpass = rpasses[i];
+						// console.log("apply rpasses element, rpasses[i]: ", rpasses[i]);
+					}
+				}
+			}
 		}
 	}
 	destroy(): void {
