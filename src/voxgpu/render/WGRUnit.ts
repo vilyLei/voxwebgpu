@@ -46,7 +46,6 @@ class WGRUnit implements IWGRUnit {
 
 		const r = new WGRUnit();
 
-		// r.mUfValues			= this.mUfValues;
 		r.uniforms			= this.uniforms;
 		r.pipelinectx		= this.pipelinectx;
 		r.geometry			= this.geometry;
@@ -109,20 +108,6 @@ class WGRUnit implements IWGRUnit {
 							rf = false;
 						}
 					}
-					// if (rf) {
-					// 	// first, apply shared uniform
-					// 	const ufvs = this.mUfValues;
-					// 	if (ufvs) {
-					// 		// console.log("ufvs.length: ", ufvs.length);
-					// 		console.log("################## set value begin.");
-					// 		console.log("################## ufs: ", ufs);
-					// 		for (let i = 0, ln = ufvs.length; i < ln; i++) {
-					// 			console.log("ruint ufs setValue(), i: ", i);
-					// 			ufs[ufvs[i].index].setValue(ufvs[i]);
-					// 		}
-					// 		console.log("################## set value end.");
-					// 	}
-					// }
 				}
 			} else {
 				rf = false;

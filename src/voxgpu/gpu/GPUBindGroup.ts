@@ -1,6 +1,6 @@
 interface GPUBindGroup {
 	label?: string;
-	index?: number;
+	// index?: number;
 	uid?: number;
 }
 export { GPUBindGroup };

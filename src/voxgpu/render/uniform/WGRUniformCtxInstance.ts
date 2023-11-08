@@ -21,14 +21,13 @@ class WGRUniformCtxInstance {
 	private mList: WGRUniformWrapper[] = [];
 	private mBuildTotal = 0;
 	private mBindGCtx: WGRBindGroupContext;
-	// private mBuffers: GPUBuffer[] = [];
 	private mBufObj = new WGRUniformBufObj();
 
 	private mFreeIds: number[] = [];
 	private mBindGroupDesc: GPUBindGroupDescriptor;
 	private mBufDataDescs: BindGroupDataParamType[];
-	// private mOldPrivateBufs: GPUBuffer[] = [];
 	private mBindGroupLayout: GPUBindGroupLayout;
+
 
 	ready = false;
 	shdUniform: SharedUniformObj;
@@ -82,20 +81,12 @@ class WGRUniformCtxInstance {
 		return this.mBindGroupLayout;
 	}
 	runBegin(): void {
-		// console.log("WGRUniformCtxInstance::runBegin(), XXX XXX runBegin(), this.isEnabled(): ", this.isEnabled());
 		const ls = this.mList;
 		if (this.ready && this.mBuildTotal < ls.length) {
 			this.mBuildTotal = ls.length;
 			// console.log("WGRUniformCtxInstance::runBegin(), XXX XXX XXX runBegin(), this.mList.length: ", this.mList.length);
 			if (ls.length > 0) {
-				// let bufs = this.mOldPrivateBufs;
-				// for (let i = 0; i < bufs.length; ++i) {
-				// 	bufs[i].destroy();
-				// 	// console.log("destroy a private separate gpu buffer...");
-				// }
-				// this.mOldPrivateBufs = [];
 
-				// this.mBuffers = [];
 				this.mBindGroupDesc = null;
 				this.mBufDataDescs = null;
 
@@ -153,7 +144,6 @@ class WGRUniformCtxInstance {
 			}
 		}
 	}
-	private static sBindGroupIndex = 0;
 
 	private buildBufs(wp: WGRUniformWrapper): void {
 		if (wp.bufDataParams) {
@@ -282,7 +272,6 @@ class WGRUniformCtxInstance {
 			} else {
 				uf.bindGroup = this.mBindGCtx.createBindGroup(wp.groupIndex, null, wp.texParams);
 			}
-			uf.bindGroup.index = WGRUniformCtxInstance.sBindGroupIndex++;
 			// console.log("XXX XXX createUniformWithWP(), create a bindGroup: ", uf.bindGroup);
 			uf.__$$updateSubUniforms();
 		}

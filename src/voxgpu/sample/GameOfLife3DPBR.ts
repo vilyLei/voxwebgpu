@@ -186,7 +186,6 @@ export class GameOfLife3DPBR {
 				code: vertWGSL,
 				uuid: "vert-gameOfLife",
 				vertEntryPoint: "vertMain",
-				fragEntryPoint: "fragMain"
 			},
 			fragShaderSrc: {
 				code: fragWGSL,

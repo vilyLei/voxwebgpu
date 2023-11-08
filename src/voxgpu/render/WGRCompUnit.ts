@@ -14,8 +14,6 @@ import { GPUComputePipeline } from "../gpu/GPUComputePipeline";
 class WGRCompUnitRunSt {
 	pipeline: GPUComputePipeline;
 	rc: GPUComputePassEncoder;
-	gt: WGRPrimitive;
-	ibuf: GPUBuffer;
 	unfsuuid: string;
 }
 
@@ -58,9 +56,6 @@ class WGRCompUnit implements IWGRUnit {
 	getRF(): boolean {
 		return this.enabled && this.st.isDrawable();
 	}
-	// setUniformValues(values: WGRUniformValue[]): void {
-	// 	this.mUfValues = values;
-	// }
 	runBegin(): void {
 		const rc = this.rp.compPassEncoder;
 		const mt = this.material;
@@ -74,8 +69,6 @@ class WGRCompUnit implements IWGRUnit {
 				const st = __$urst;
 				if (st.rc != rc) {
 					st.pipeline = null;
-					st.ibuf = null;
-					st.gt = null;
 					st.rc = rc;
 					st.unfsuuid = "";
 				}
