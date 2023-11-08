@@ -44,7 +44,7 @@ class WGRenderPassNode implements IWGRenderPassNodeRef {
 			if (this.prevNode) {
 				this.rpass.prevPass = this.prevNode.rpass;
 			}
-			this.rpass.initialize(wgCtx);
+			this.rpass.initialize( wgCtx );
 			this.checkRPassParam( this.param );
 			this.rpass.build( this.param );
 		}
@@ -115,10 +115,8 @@ class WGRenderPassNode implements IWGRenderPassNodeRef {
 
 		if (this.mDrawing) {
 			if(this.rpass.depthTexture) {
-				console.log("### ### ### 启用深度及模板测试功能 !!!");
 				pipelineParams.setDepthStencilFormat(this.rpass.depthTexture.format);
 			}else {
-				console.log("### ### ### 没有启用深度及模板测试功能 !!!");
 				pipelineParams.depthStencilEnabled = false;
 				pipelineParams.depthStencil = undefined;
 			}
@@ -144,8 +142,8 @@ class WGRenderPassNode implements IWGRenderPassNodeRef {
 	runBegin(): void {
 		this.rpass.enabled = this.enabled;
 		this.rcommands = [];
+		this.rpass.runBegin();
 		if (this.enabled) {
-			this.rpass.runBegin();
 			for (let i = 0; i < this.pipelineCtxs.length;) {
 				this.pipelineCtxs[i++].runBegin();
 			}
@@ -156,7 +154,10 @@ class WGRenderPassNode implements IWGRenderPassNodeRef {
 			for (let i = 0; i < this.pipelineCtxs.length;) {
 				this.pipelineCtxs[i++].runEnd();
 			}
-			this.rcommands = [this.rpass.runEnd()];
+		}
+		let cmd = this.rpass.runEnd();
+		if(cmd) {
+			this.rcommands = [cmd];
 		}
 	}
 }

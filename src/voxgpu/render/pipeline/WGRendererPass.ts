@@ -140,6 +140,11 @@ class WGRendererPass implements IWGRendererPass {
 	}
 	runBegin(): void {
 		const ctx = this.mWGCtx;
+		const prev = this.prevPass;
+		if (prev) {
+			this.enabled = prev.enabled;
+		}
+
 		if (this.enabled && ctx.enabled) {
 			const device = ctx.device;
 			const param = this.mParam;
@@ -153,7 +158,6 @@ class WGRendererPass implements IWGRendererPass {
 
 				let dsAtt = this.passDepthStencil;
 
-				const prev = this.prevPass;
 				if (prev) {
 					const prevColorAtt = prev.passColors[0];
 					const prevDSAtt = prev.passDepthStencil;
