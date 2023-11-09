@@ -10,6 +10,7 @@ import { WGRBufferVisibility } from "../buffer/WGRBufferVisibility";
 import { GPUBindGroupLayout } from "../../gpu/GPUBindGroupLayout";
 import { WGRBindGroupContext } from "../pipeline/WGRBindGroupContext";
 import { WGRBufferView } from "../buffer/WGRBufferView";
+import { WebGPUContext } from "../../gpu/WebGPUContext";
 
 class SharedUniformObj {
 	map: Map<number, UniformVerType> = new Map();
@@ -37,6 +38,9 @@ class WGRUniformCtxInstance {
 	private getFreeIndex(): number {
 		if (this.mFreeIds.length > 0) return this.mFreeIds.pop();
 		return -1;
+	}
+	getWGCtx(): WebGPUContext {
+		return this.mBindGCtx.getWGCtx();
 	}
 	initialize(bindGCtx: WGRBindGroupContext): void {
 		this.mBindGCtx = bindGCtx;
@@ -309,7 +313,7 @@ class WGRUniformCtxInstance {
 		// if (this.mBuffers.length > 0) {
 		// 	console.warn("need build other many append new uniforms...");
 		// }
-		const u = new WGRUniform(this.mBindGCtx, this);
+		const u = new WGRUniform( this );
 		u.layoutName = layoutName;
 		u.groupIndex = groupIndex;
 		let wp: WGRUniformWrapper;

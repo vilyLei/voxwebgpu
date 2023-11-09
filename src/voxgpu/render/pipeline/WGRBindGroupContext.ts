@@ -116,13 +116,13 @@ class WGRBindGroupContext {
 		}
 		return null;
 	}
-	updateUniformBufferAt(buffer: GPUBuffer, td: NumberArrayDataType, index: number, offset = 0): void {
-		// console.log("updateUniformBufferAt() index: ", index,",segs: ", buffer.segs);
-		// console.log("updateUniformBufferAt() buffer.size: ", buffer.size);
-		// console.log("updateUniformBufferAt() buffer.segs[index].index + offset: ", buffer.segs[index].index + offset);
-		// console.log("updateUniformBufferAt() td: ", td);
-		this.queue.writeBuffer(buffer, buffer.segs[index].index + offset, td.buffer, td.byteOffset, td.byteLength);
-	}
+	// updateUniformBufferAt(buffer: GPUBuffer, td: NumberArrayDataType, index: number, offset = 0): void {
+	// 	// console.log("updateUniformBufferAt() index: ", index,",segs: ", buffer.segs);
+	// 	// console.log("updateUniformBufferAt() buffer.size: ", buffer.size);
+	// 	// console.log("updateUniformBufferAt() buffer.segs[index].index + offset: ", buffer.segs[index].index + offset);
+	// 	// console.log("updateUniformBufferAt() td: ", td);
+	// 	this.queue.writeBuffer(buffer, buffer.segs[index].index + offset, td.buffer, td.byteOffset, td.byteLength);
+	// }
 	createBindGroupLayout(descriptor: GPUBindGroupLayoutDescriptor): GPUBindGroupLayout {
 		const device = this.mWGCtx.device;
 		return device.createBindGroupLayout(descriptor);

@@ -7,6 +7,7 @@ import { WGRUniformParam, WGRUniformTexParam, IWGRUniformContext } from "./IWGRU
 import { GPUBindGroupLayout } from "../../gpu/GPUBindGroupLayout";
 import { SharedUniformObj, WGRUniformCtxInstance } from "./WGRUniformCtxInstance";
 import { WGRBindGroupContext } from "../pipeline/WGRBindGroupContext";
+import { WebGPUContext } from "../../gpu/WebGPUContext";
 
 class WGRUniformContext implements IWGRUniformContext {
 	private mMap: Map<string, WGRUniformCtxInstance> = new Map();
@@ -21,6 +22,9 @@ class WGRUniformContext implements IWGRUniformContext {
 	}
 	isLayoutAuto(): boolean {
 		return this.mLayoutAuto;
+	}
+	getWGCtx(): WebGPUContext {
+		return this.mBindGCtx.getWGCtx();
 	}
 	private getUCtx(layoutName: string, creation = true): WGRUniformCtxInstance | null {
 		let uctx: WGRUniformCtxInstance = null;

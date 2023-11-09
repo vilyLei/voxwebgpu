@@ -1,19 +1,9 @@
-import { GPUBuffer } from "../../gpu/GPUBuffer";
-interface WGRBufferData {
-	data?: NumberArrayDataType;
-	buffer?: GPUBuffer;
-	mappedAtCreation?: boolean;
-	shared?: boolean;
-	version?: number;
-	uid?: number;
-	byteLength?: number;
-}
+import { WGRBufferData } from "./WGRBufferData";
 interface WGRBufferValueParam {
 	/**
 	 * uniform value data object
 	 */
 	data?: NumberArrayDataType;
-	// bufferIndex?: number;
 	// /**
 	//  * uniform index in RUnit instance
 	//  */

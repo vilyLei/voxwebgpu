@@ -6,19 +6,12 @@ import { WGRBufferData, WGRBufferValueParam } from "./WGRBufferValueParam";
 class WGRBufferValue extends WGRBufferView {
 
 	name?: string;
-	// /**
-	//  * Uniform index of RUnit instance uniforms array
-	//  */
-	// index = 0;
 
 	byteOffset = 0;
 	arrayStride = 1;
 	usage = GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST;
-
 	bufData?: WGRBufferData;
-
 	shdVarName?: string;
-
 	visibility: WGRBufferVisibility;
 
 	constructor(param: WGRBufferValueParam) {
@@ -26,7 +19,6 @@ class WGRBufferValue extends WGRBufferView {
 		this.shared = false;
 		let d = param.data;
 		this.data = d;
-		// this.index = param.index !== undefined ? param.index : 0;
 		if (param.usage !== undefined) this.usage = param.usage;
 		if (param.shared !== undefined) this.shared = param.shared;
 		if (param.bufData) {
@@ -35,13 +27,16 @@ class WGRBufferValue extends WGRBufferView {
 			d = bd.data;
 			this.data = d;
 		}
+		if (param.stride !== undefined) this.stride = param.stride;
 		if (param.shdVarName !== undefined) this.shdVarName = param.shdVarName;
-		this.arrayStride = param.arrayStride !== undefined ? param.arrayStride : 1;
-		const bpe = (d as Float32Array).BYTES_PER_ELEMENT;
-		if (this.arrayStride < 2 && param.stride !== undefined && bpe !== undefined) {
-			this.arrayStride = bpe * param.stride;
-		} else if (d && this.arrayStride < 2) {
-			if (d.byteLength <= 64) this.arrayStride = d.byteLength;
+		if (param.arrayStride !== undefined) this.arrayStride = param.arrayStride;
+		if(this.arrayStride < 2) {
+			const bpe = (d as Float32Array).BYTES_PER_ELEMENT;
+			if (this.stride !== undefined && bpe !== undefined) {
+				this.arrayStride = bpe * this.stride;
+			} else if (d) {
+				if (d.byteLength <= 64) this.arrayStride = d.byteLength;
+			}
 		}
 		this.upate();
 	}

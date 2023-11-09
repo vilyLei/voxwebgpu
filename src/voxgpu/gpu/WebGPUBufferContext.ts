@@ -1,10 +1,12 @@
 import { GPUBuffer } from "./GPUBuffer";
 import { GPUBufferDescriptor } from "./GPUBufferDescriptor";
+import { GPUQueue } from "./GPUQueue";
 import { WebGPUContextImpl } from "./WebGPUContextImpl";
 
 class WebGPUBufferContext {
 	private static sVtxUid = 0;
 	private mWGCtx: WebGPUContextImpl;
+	private queue: GPUQueue;
 	constructor(wgCtx?: WebGPUContextImpl) {
 		if (wgCtx) {
 			this.initialize(wgCtx);
@@ -13,6 +15,7 @@ class WebGPUBufferContext {
 	initialize(wgCtx: WebGPUContextImpl): void {
 		if (!this.mWGCtx && wgCtx) {
 			this.mWGCtx = wgCtx;
+			this.queue = wgCtx.queue;
 		}
 	}
 
@@ -121,6 +124,14 @@ class WebGPUBufferContext {
 		const buf = this.mWGCtx.device.createBuffer(desc);
 		buf.uid = WebGPUBufferContext.sVtxUid++;
 		return buf;
+	}
+
+	updateUniformBuffer(buffer: GPUBuffer, td: NumberArrayDataType, index: number, offset = 0): void {
+		// console.log("WebGPUBufferContext::updateUniformBuffer() index: ", index,",segs: ", buffer.segs);
+		// console.log("WebGPUBufferContext::updateUniformBuffer() buffer.size: ", buffer.size);
+		// console.log("WebGPUBufferContext::updateUniformBuffer() buffer.segs[index].index + offset: ", buffer.segs[index].index + offset);
+		// console.log("WebGPUBufferContext::updateUniformBuffer() td: ", td);
+		this.queue.writeBuffer(buffer, buffer.segs[index].index + offset, td.buffer, td.byteOffset, td.byteLength);
 	}
 }
 export { WebGPUBufferContext };

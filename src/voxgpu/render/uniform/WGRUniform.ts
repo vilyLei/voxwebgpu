@@ -1,18 +1,19 @@
 import { GPUBindGroup } from "../../gpu/GPUBindGroup";
 import { GPUBuffer } from "../../gpu/GPUBuffer";
 import { WGRUniformValue } from "./WGRUniformValue";
-import { WGRBindGroupContext } from "../pipeline/WGRBindGroupContext";
+import { WebGPUContext } from "../../gpu/WebGPUContext";
 
 type UniformVerType = { vid: number, ver: number, shared: boolean, shdVarName?: string };
 interface WGRUniformCtx {
 	removeUniform(u: WGRUniform): void;
+	getWGCtx(): WebGPUContext;
 }
 class WGRUniform {
 	private static sUid = 0;
 	private mUid = WGRUniform.sUid++;
 	private mCloned = false;
 	private mCtx: WGRUniformCtx;
-    private mBindGCtx: WGRBindGroupContext;
+	private mWGC: WebGPUContext;
 
 	private mSubUfs: WGRUniform[] = [];
 
@@ -29,9 +30,9 @@ class WGRUniform {
 	 */
 	groupIndex = -1;
 
-	constructor(bindGCtx: WGRBindGroupContext, ctx: WGRUniformCtx){
-		this.mBindGCtx = bindGCtx;
+	constructor(ctx: WGRUniformCtx){
 		this.mCtx = ctx;
+		this.mWGC = ctx.getWGCtx();
 	}
 
 	getUid(): number {
@@ -42,7 +43,8 @@ class WGRUniform {
 		if(v.ver != value.version) {
 			v.ver = value.version;
 			// console.log("WGRUniform::setValue(), shared: ", v.shared, ', shdVarName: ',v.shdVarName);
-			this.mBindGCtx.updateUniformBufferAt(this.buffers[index], value.data, this.ivs[index], value.byteOffset);
+			// this.mBindGCtx.updateUniformBufferAt(this.buffers[index], value.data, this.ivs[index], value.byteOffset);
+			this.mWGC.buffer.updateUniformBuffer(this.buffers[index], value.data, this.ivs[index], value.byteOffset);
 		}
 	}
 	isEnabled(): boolean {
@@ -70,7 +72,7 @@ class WGRUniform {
 	}
 	clone(): WGRUniform {
 
-		const u = new WGRUniform(this.mBindGCtx, this.mCtx);
+		const u = new WGRUniform(this.mCtx);
 		u.index = this.index;
 		u.layoutName = this.layoutName;
 		u.buffers = this.buffers;
@@ -110,7 +112,7 @@ class WGRUniform {
 
 		this.groupIndex = -1;
 		this.index = -1;
-		this.mBindGCtx = null;
+		this.mWGC = null;
 		this.buffers = null;
 	}
 }

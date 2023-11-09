@@ -10,6 +10,7 @@ class WGRBufferView implements WGRBufferData {
 	mappedAtCreation?: boolean;
 	shared?: boolean;
 	version = -1;
+	stride?: number;
 
 	get byteLength(): number {
 		return this.data.byteLength;
