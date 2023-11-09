@@ -12,5 +12,8 @@ interface WGRBufferData {
 	visibility?: WGRBufferVisibility;
 	arrayStride?: number;
 	usage?: number;
+	bufData?: WGRBufferData;
+	stride?: number;
+	shdVarName?: string;
 }
 export { WGRBufferData };

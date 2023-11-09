@@ -1,37 +1,35 @@
 import BitConst from "../../utils/BitConst";
 import { WGRBufferView } from "./WGRBufferView";
-import { WGRBufferData, WGRBufferValueParam } from "./WGRBufferValueParam";
+import { applyParamBufferData, WGRBufferData, WGRBufferValueParam } from "./WGRBufferValueParam";
 
 class WGRBufferValue extends WGRBufferView {
 
 	name?: string;
-
-	bufData?: WGRBufferData;
-
 	constructor(param: WGRBufferValueParam) {
 		super();
-		this.shared = false;
-		let d = param.data;
-		this.data = d;
-		if (param.usage !== undefined) this.usage = param.usage;
-		if (param.shared !== undefined) this.shared = param.shared;
-		if (param.bufData) {
-			const bd = param.bufData;
-			this.bufData = bd;
-			d = bd.data;
-			this.data = d;
-		}
-		if (param.stride !== undefined) this.stride = param.stride;
-		if (param.shdVarName !== undefined) this.shdVarName = param.shdVarName;
-		if (param.arrayStride !== undefined) this.arrayStride = param.arrayStride;
-		if(this.arrayStride < 2) {
-			const bpe = (d as Float32Array).BYTES_PER_ELEMENT;
-			if (this.stride !== undefined && bpe !== undefined) {
-				this.arrayStride = bpe * this.stride;
-			} else if (d) {
-				if (d.byteLength <= 64) this.arrayStride = d.byteLength;
-			}
-		}
+		// this.shared = false;
+		// let d = param.data;
+		// this.data = d;
+		// if (param.usage !== undefined) this.usage = param.usage;
+		// if (param.shared !== undefined) this.shared = param.shared;
+		// if (param.bufData) {
+		// 	const bd = param.bufData;
+		// 	this.bufData = bd;
+		// 	d = bd.data;
+		// 	this.data = d;
+		// }
+		// if (param.stride !== undefined) this.stride = param.stride;
+		// if (param.shdVarName !== undefined) this.shdVarName = param.shdVarName;
+		// if (param.arrayStride !== undefined) this.arrayStride = param.arrayStride;
+		// if(this.arrayStride < 2) {
+		// 	const bpe = (d as Float32Array).BYTES_PER_ELEMENT;
+		// 	if (this.stride !== undefined && bpe !== undefined) {
+		// 		this.arrayStride = bpe * this.stride;
+		// 	} else if (d) {
+		// 		if (d.byteLength <= 64) this.arrayStride = d.byteLength;
+		// 	}
+		// }
+		applyParamBufferData(this, param);
 		this.upate();
 	}
 	toShared(): WGRBufferValue {
@@ -83,7 +81,6 @@ class WGRBufferValue extends WGRBufferView {
 	}
 
 	clone(data: NumberArrayDataType): WGRBufferValue {
-		// const u = new WGRBufferValue({ data: data, index: this.index });
 		const u = new WGRBufferValue({ data: data});
 		u.name = this.name;
 		u.byteOffset = this.byteOffset;

@@ -18,9 +18,11 @@ class WGRBufferView implements WGRBufferData {
 	version = -1;
 	stride?: number;
 	visibility?: WGRBufferVisibility;
-	
+
 	shdVarName?: string;
 
+	bufData?: WGRBufferData;
+	
 	get byteLength(): number {
 		return this.data.byteLength;
 	}
