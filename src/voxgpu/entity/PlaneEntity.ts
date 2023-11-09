@@ -1,6 +1,7 @@
 import { Entity3DParam, PrimitiveEntity } from "./PrimitiveEntity";
 import GeometryBase from "../geometry/primitive/GeometryBase";
 import RectPlaneGeometry from "../geometry/primitive/RectPlaneGeometry";
+import Extent2 from "../math/Extent2";
 
 interface PlaneEntityParam extends Entity3DParam {
 	x?: number;
@@ -8,20 +9,28 @@ interface PlaneEntityParam extends Entity3DParam {
 	width?: number;
 	height?: number;
 	axisType?: number;
+	extent?: Extent2DataType;
 }
 class PlaneEntity extends PrimitiveEntity {
+	private mExtent = new Extent2();
 	constructor(param?: PlaneEntityParam) {
 		super(param);
 	}
 	protected getGeometryData(param: PlaneEntityParam): GeometryBase {
 		let geom = new RectPlaneGeometry();
 		geom.axisType = param.axisType === undefined ? 0 : param.axisType;
-		geom.initialize(
-			param.x === undefined ? -50 : param.x,
-			param.y === undefined ? -50 : param.y,
-			param.width === undefined ? 100 : param.width,
-			param.height === undefined ? 100 : param.height,
+		if(param.extent !== undefined) {
+			const t = this.mExtent;
+			t.setExtent(param.extent);
+			geom.initialize( t.x, t.y, t.width, t.height);
+		}else {
+			geom.initialize(
+				param.x === undefined ? -50 : param.x,
+				param.y === undefined ? -50 : param.y,
+				param.width === undefined ? 100 : param.width,
+				param.height === undefined ? 100 : param.height,
 			);
+		}
 		return geom;
 	}
 }

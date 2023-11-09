@@ -25,7 +25,7 @@
 // import { RSceneEntityManagement as Demo } from "./voxgpu/sample/RSceneEntityManagement";
 // import { SimplePBRTest as Demo } from "./voxgpu/sample/SimplePBRTest";
 // import { FixScreenPlaneTest as Demo } from "./voxgpu/sample/FixScreenPlaneTest";
-// import { PrimitiveEntityTest as Demo } from "./voxgpu/sample/PrimitiveEntityTest";
+import { PrimitiveEntityTest as Demo } from "./voxgpu/sample/PrimitiveEntityTest";
 
 // import { ScreenPostEffect as Demo } from "./voxgpu/sample/ScreenPostEffect";
 // import { ModelLoadTest as Demo } from "./voxgpu/sample/ModelLoadTest";
@@ -42,7 +42,7 @@
 
 // import { MultiGPUPassTest as Demo } from "./voxgpu/sample/MultiGPUPassTest";
 // import { RTTFixScreenTest as Demo } from "./voxgpu/sample/RTTFixScreenTest";
-import { RTTTest as Demo } from "./voxgpu/sample/RTTTest";
+// import { RTTTest as Demo } from "./voxgpu/sample/RTTTest";
 
 
 let demoIns = new Demo();
