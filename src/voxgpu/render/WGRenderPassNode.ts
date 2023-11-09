@@ -88,7 +88,7 @@ class WGRenderPassNode implements IWGRenderPassNodeRef {
 		this.unitBlock.addRUnit(runit);
 	}
 	addEntity(entity: Entity3D): void {
-		// console.log("Renderer::addEntity(), entity.isInRenderer(): ", entity.isInRenderer());
+		// console.log("WGRenderPassNode::addEntity(), entity.isInRenderer(): ", entity.isInRenderer());
 		if (entity && !entity.isInRenderer()) {
 			if(!this.unitBlock) {
 				this.unitBlock = WGRenderUnitBlock.createBlock();
@@ -103,6 +103,7 @@ class WGRenderPassNode implements IWGRenderPassNodeRef {
 					this.addEntityToBlock(entity);
 				}
 			}
+			// console.log("WGRenderPassNode::addEntity(), flag: ", flag);
 			if (flag) {
 				entity.rstate.__$rever++;
 				this.mRBParam.entityMana.addEntity({ entity: entity, rever: entity.rstate.__$rever, dst: this });
@@ -116,6 +117,7 @@ class WGRenderPassNode implements IWGRenderPassNodeRef {
 		// if (unit) {
 		// 	this.mUnits.push(unit);
 		// }
+		// console.log("add an unit to a passNode.");
 		this.unitBlock.addRUnit(unit);
 	}
 

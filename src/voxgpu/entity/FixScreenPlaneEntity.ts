@@ -8,15 +8,23 @@ import Color4 from "../material/Color4";
 import vertWGSL from "../material/shader/wgsl/fixScreenPlane.vert.wgsl";
 import fragWGSL from "../material/shader/wgsl/fixScreenPlane.frag.wgsl";
 import texFragWGSL from "../material/shader/wgsl/fixScreenPlaneTex.frag.wgsl";
+import Extent2 from "../math/Extent2";
 
 interface FixScreenPlaneEntityParam extends Entity3DParam {
 	x?: number;
 	y?: number;
 	width?: number;
 	height?: number;
+	extent?: Extent2DataType;
+	/**
+	 * flip vertical uv value
+	 */
+	flipY?: boolean;
 }
 class FixScreenPlaneEntity extends FixScreenEntity {
-	private colorV: WGRUniformValue;
+	private mColorV: WGRUniformValue;
+	private mColor = new Color4();
+	private mExtent = new Extent2();
 	constructor(param?: FixScreenPlaneEntityParam) {
 		super(param);
 		if (!param) {
@@ -25,10 +33,10 @@ class FixScreenPlaneEntity extends FixScreenEntity {
 		this.createGeometry(param);
 		this.createMaterial(param);
 	}
-	setColor(c: Color4): FixScreenPlaneEntity {
+	setColor(c: ColorDataType): FixScreenPlaneEntity {
 		if (c) {
-			c.toArray4(this.colorV.data as Float32Array);
-			this.colorV.upate();
+			this.mColor.setColor(c).toArray4(this.mColorV.data as Float32Array);
+			this.mColorV.upate();
 		}
 		return this;
 	}
@@ -39,12 +47,19 @@ class FixScreenPlaneEntity extends FixScreenEntity {
 
 			let geom = new RectPlaneGeometry();
 			geom.axisType = 0;
-			geom.initialize(
-				param.x === undefined ? -1 : param.x,
-				param.y === undefined ? -1 : param.y,
-				param.width === undefined ? 2 : param.width,
-				param.height === undefined ? 2 : param.height
-			);
+			geom.flipY = param.flipY === true;
+			if(param.extent !== undefined) {
+				const t = this.mExtent;
+				t.setExtent(param.extent);
+				geom.initialize( t.x, t.y, t.width, t.height);
+			}else {
+				geom.initialize(
+					param.x === undefined ? -1 : param.x,
+					param.y === undefined ? -1 : param.y,
+					param.width === undefined ? 2 : param.width,
+					param.height === undefined ? 2 : param.height
+				);
+			}
 			this.geometry = new WGGeometry()
 				.addAttribute({ position: geom.getVS() })
 				.addAttribute({ uv: geom.getUVS() })
@@ -56,7 +71,7 @@ class FixScreenPlaneEntity extends FixScreenEntity {
 			this.materials = param.materials;
 		} else {
 			if (!param.uniformValues) {
-				this.colorV = getUniformValueFromParam('color', param, new WGRUniformValue({ data: new Float32Array([0.5, 0.5, 0.5, 1]), shdVarName: 'color' }));
+				this.mColorV = getUniformValueFromParam('color', param, new WGRUniformValue({ data: new Float32Array([0.5, 0.5, 0.5, 1]), shdVarName: 'color' }));
 			}
 			const texs = param.textures;
 			const texTotal = texs ? texs.length : 0;
@@ -83,9 +98,9 @@ class FixScreenPlaneEntity extends FixScreenEntity {
 			if(param.instanceCount !== undefined) {
 				material.instanceCount = param.instanceCount;
 			}
-			material.uniformValues = param.uniformValues ? param.uniformValues : [this.colorV];
+			material.uniformValues = param.uniformValues ? param.uniformValues : [this.mColorV];
 			if (material.uniformValues) {
-				this.colorV = material.uniformValues[0];
+				this.mColorV = material.uniformValues[0];
 			}
 			this.materials = [material];
 		}

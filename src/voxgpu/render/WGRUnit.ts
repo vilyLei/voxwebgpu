@@ -116,6 +116,7 @@ class WGRUnit implements IWGRUnit {
 		this.rf = rf;
 	}
 	run(): void {
+		// console.log("rnit::run(), rf: ", this.rf);
 		if (this.rf) {
 			const rc = this.rp.passEncoder;
 			const gt = this.geometry;
@@ -125,7 +126,7 @@ class WGRUnit implements IWGRUnit {
 					st.ibuf = gt.ibuf;
 					rc.setIndexBuffer(gt.ibuf, gt.ibuf.dataFormat);
 				}
-				// console.log("runit drawIndexed this.etuuid: ", this.etuuid);
+				// console.log("runit drawIndexed this.etuuid: ", this.etuuid, gt.indexCount, gt.instanceCount);
 				// console.log("runit drawIndexed indexCount: ", gt.indexCount, ", gt.instanceCount: ", gt.instanceCount);
 				rc.drawIndexed(gt.indexCount, gt.instanceCount);
 			} else {

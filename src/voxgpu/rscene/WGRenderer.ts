@@ -60,6 +60,9 @@ class WGRenderer implements IRenderer {
 	get uid(): number {
 		return 0;
 	}
+	getWGCtx(): WebGPUContext {
+		return this.mWGCtx;
+	}
 	getStage3D(): IRenderStage3D {
 		return this.stage;
 	}
@@ -76,7 +79,6 @@ class WGRenderer implements IRenderer {
 		if (this.mInit && !this.mWGCtx) {
 			this.mInit = false;
 			let wgCtx = config ? config.ctx : null;
-
 			if (wgCtx) {
 				// console.log("WGRenderer::initialize(), a 01");
 
@@ -101,6 +103,7 @@ class WGRenderer implements IRenderer {
 				this.mWGCtx = wgCtx;
 			}
 			this.mConfig = config;
+			// this.intDefaultBlock();
 		}
 	}
 	private receiveNode = (node: WGWaitEntityNode): void => {
@@ -129,13 +132,12 @@ class WGRenderer implements IRenderer {
 		}
 	}
 
-	getWGCtx(): WebGPUContext {
-		return this.mWGCtx;
-	}
 	private addEntityToBlock(entity: Entity3D, rb: any): void {
+		console.log("addEntityToBlock() ...., rb: ", rb);
 		entity.update();
 		entity.rstate.__$rever++;
 		const runit = this.mROBuilder.createRUnit(entity, rb);
+		runit.etuuid = entity.uuid;
 		rb.addRUnit(runit);
 	}
 	addEntity(entity: Entity3D, blockIndex = 0): void {
@@ -179,7 +181,7 @@ class WGRenderer implements IRenderer {
 			}
 		}
 	}
-	appendRendererPass(blockIndex = 0, param?: WGRPassParam): IWGRPassRef {
+	appendRenderPass(param?: WGRPassParam, blockIndex = 0): IWGRPassRef {
 		this.initialize();
 		this.intDefaultBlock();
 		const len = this.mRPBlocks.length;
@@ -188,6 +190,9 @@ class WGRenderer implements IRenderer {
 		}
 		throw Error("Illegal operations !!!");
 		return { index: -1 };
+	}
+	createRenderPass(param?: WGRPassParam, blockIndex = 0): IWGRPassRef {
+		return this.appendRenderPass(param, blockIndex);
 	}
 	getRPBlockAt(i: number): WGRenderPassBlock {
 		this.initialize();

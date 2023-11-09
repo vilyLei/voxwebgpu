@@ -1,10 +1,5 @@
-import MouseEvent from "../event/MouseEvent";
 import { RendererScene } from "../rscene/RendererScene";
-import { MouseInteraction } from "../ui/MouseInteraction";
-import Color4 from "../material/Color4";
 import { FixScreenPlaneEntity } from "../entity/FixScreenPlaneEntity";
-import { IWGRPassRef } from "../render/pipeline/IWGRPassRef";
-import { WGRenderPassBlock } from "../render/WGRenderPassBlock";
 
 export class RTTTest {
 	private mRscene = new RendererScene();
@@ -12,59 +7,49 @@ export class RTTTest {
 	initialize(): void {
 		console.log("RTTTest::initialize() ...");
 
-		this.mRscene.initialize({rpassparam: {multisampleEnabled: true, depthTestEnabled: false}});
-		this.initEvent();
+		this.applyRTT();
 		this.initScene();
 	}
-	private initEvent(): void {
-		const rc = this.mRscene;
-		rc.addEventListener(MouseEvent.MOUSE_DOWN, this.mouseDown);
-		new MouseInteraction().initialize(rc, 0, false).setAutoRunning(true);
-	}
-	private mRPass: IWGRPassRef;
-	private mRBlock: WGRenderPassBlock;
-	private mouseDown = (evt: MouseEvent): void => {
-		let node = this.mRPass.node;
-		console.log("mousedown evt call this.mRPass: ", this.mRPass);
-		console.log("mousedown evt call AAAA node: ", node);
-		console.log("mousedown evt call node.enabled: ", node.enabled);
-		node.enabled = !node.enabled;
-		console.log("mousedown evt call BBBB node: ", node);
+	private applyRTT(): void {
+
+		let rc = this.mRscene;
+
+		// rtt texture proxy descriptor
+		let rttTex = { uuid: "rtt0", rttTexture: {} };
+		// define a rtt pass color colorAttachment0
+		let colorAttachments = [
+			{
+				texture: rttTex,
+				// green clear background color
+				clearValue: { r: 0.1, g: 0.9, b: 0.1, a: 1.0 },
+				loadOp: "clear",
+				storeOp: "store"
+			}
+		];
+		// create a separate rtt rendering pass
+		let rPass = rc.createRTTPass({ colorAttachments });
+
+		// 使用rtt纹理
+		let extent = [0.3, 0.3, 0.6, 0.6];
+		let entity = new FixScreenPlaneEntity({ extent, flipY: true, textures: [{ diffuse: rttTex }] });
+		rc.addEntity(entity);
+
+		const diffuseTex = { diffuse: { url: "static/assets/default.jpg", flipY: true } };
+		extent = [-0.5, -0.5, 0.8, 0.8];
+		let rttEntity = new FixScreenPlaneEntity({ extent, textures: [diffuseTex] }).setColor([1.0, 0.0, 0.0]);
+		rPass.addEntity(rttEntity);
 	}
 	private initScene(): void {
-
 		const rc = this.mRscene;
 
 		const diffuseTex = { diffuse: { url: "static/assets/default.jpg", flipY: true } };
-
-
-		let x = -0.6;
-		let y = -0.6;
-		let width = 1.2;
-		let height = 1.2;
-		let entity = new FixScreenPlaneEntity({x, y, width, height});
-		entity.setColor(new Color4(0.2,0.5,0.7));
+		let extent = [-0.9, 0.0, 0.5, 0.5];
+		let entity = new FixScreenPlaneEntity({ extent }).setColor([0.2, 0.5, 0.7]);
 		rc.addEntity(entity);
 
-		///*
-		let rPass = rc.renderer.appendRendererPass();
-		this.mRPass = rPass;
-		// x = -0.8;
-		// y = 0.1;
-		// width = 0.5;
-		// height = 0.5;
-		// entity = new FixScreenPlaneEntity({x, y, width, height});
-		// entity.setColor(new Color4(0.2,0.8,0.3));
-		// rc.addEntity(entity);
-
-		x = -0.8;
-		y = -0.8;
-		width = 0.8;
-		height = 0.8;
-		entity = new FixScreenPlaneEntity({x, y, width, height, textures: [diffuseTex], rpasses:[{rpass: rPass}]});
-		entity.setColor(new Color4(0.1,0.3,0.9));
+		extent = [-0.8, -0.8, 0.8, 0.8];
+		entity = new FixScreenPlaneEntity({ extent, textures: [diffuseTex] }).setColor([0.1, 0.3, 0.9]);
 		rc.addEntity(entity);
-		//*/
 	}
 
 	run(): void {

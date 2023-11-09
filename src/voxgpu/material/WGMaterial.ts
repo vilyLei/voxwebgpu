@@ -1,7 +1,7 @@
 import {
 	WGTextureDataDescriptor,
 	createDataWithDescriptor,
-	WGImageTextureData,
+	WGTextureData,
 	WGTextureWrapperParam,
 	WGTextureWrapper
 } from "../texture/WGTextureWrapper";
@@ -47,7 +47,7 @@ class WGMaterial implements IWGMaterial {
 		this.setDescriptor(descriptor);
 	}
 
-	addTextureWithDatas(datas: WGImageTextureData[], shdVarNames?: string[]): void {
+	addTextureWithDatas(datas: WGTextureData[], shdVarNames?: string[]): void {
 		if (datas) {
 			if (shdVarNames) {
 				for (let i = 0; i < datas.length; ++i) {
@@ -60,7 +60,7 @@ class WGMaterial implements IWGMaterial {
 			}
 		}
 	}
-	addTextureWithData(data: WGImageTextureData, shdVarName = ""): void {
+	addTextureWithData(data: WGTextureData, shdVarName = ""): void {
 		if (shdVarName === "") {
 			shdVarName = "texture" + (this.textures ? this.textures.length : 0);
 		}

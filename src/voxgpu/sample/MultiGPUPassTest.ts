@@ -55,7 +55,7 @@ export class MultiGPUPassTest {
 			pipelineDefParam
 		});
 
-		let ufv = new WGRStorageValue({data: new Float32Array(new Color4().setParam(param).getArray4())});
+		let ufv = new WGRStorageValue({data: new Float32Array(new Color4().setColor(param).getArray4())});
 		material.uniformValues = [ufv];
 		material.addTextures(texs);
 
@@ -144,7 +144,7 @@ export class MultiGPUPassTest {
 
 		this.mRPass0 = rc.renderer.getRPBlockAt(0).getRenderPassAt(0);
 
-		this.mRPass1 = rc.renderer.appendRendererPass();
+		this.mRPass1 = rc.renderer.appendRenderPass();
 		materials1[0].rpass = {rpass: this.mRPass1};
 
 		let entity = new Entity3D();

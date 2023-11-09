@@ -5,7 +5,7 @@ import { GPUComputePassEncoder } from "../../gpu/GPUComputePassEncoder";
 import { GPUTexture } from "../../gpu/GPUTexture";
 import { GPUTextureView } from "../../gpu/GPUTextureView";
 import { IWGRPassRef } from "./IWGRPassRef";
-import { GPURenderPassColorAttachment } from "../../gpu/GPURenderPassColorAttachment";
+import { WGRPassColorAttachment } from "./WGRPassColorAttachment";
 import { GPURenderPassDepthStencilAttachment } from "../../gpu/GPURenderPassDepthStencilAttachment";
 
 interface WGRPassParam {
@@ -23,7 +23,7 @@ interface WGRPassParam {
 	separate?: boolean;
 	depthTestEnabled?: boolean;
 	stecilTestEnabled?: boolean;
-	colorAttachments?: GPURenderPassColorAttachment[];
+	colorAttachments?: WGRPassColorAttachment[];
 	depthStencilAttachment?: GPURenderPassDepthStencilAttachment;
 }
 interface IWGRendererPass {

@@ -2,8 +2,7 @@ import { WebGPUContext } from "../gpu/WebGPUContext";
 import { GPUSampler } from "../gpu/GPUSampler";
 import { GPUTexture } from "../gpu/GPUTexture";
 import { GPUTextureView } from "../gpu/GPUTextureView";
-import { TextureDataDescriptor, WGTextureDataDescriptor } from "./WGTextureDataDescriptor";
-import { map } from "jquery";
+import { textDescriptorFilter, RTTTextureDataDescriptor, TextureDataDescriptor, WGTextureDataDescriptor } from "./WGTextureDataDescriptor";
 
 interface WGTextureDataType {
 	generateMipmaps?: boolean;
@@ -13,11 +12,8 @@ interface WGTextureDataType {
 	build(ctx: WebGPUContext): GPUTexture;
 	destroy(): void;
 }
-
-class WGImageTextureData implements WGTextureDataType {
-	protected mImgs: WebImageType[];
+class WGTextureData implements WGTextureDataType {
 	protected mTex: GPUTexture;
-	protected mUrl: string;
 
 	generateMipmaps = true;
 	flipY = false;
@@ -25,13 +21,35 @@ class WGImageTextureData implements WGTextureDataType {
 	dimension = "2d";
 	constructor() {}
 
-	setDescripter(descriptor: TextureDataDescriptor): WGImageTextureData {
+	setDescripter(descriptor: TextureDataDescriptor): WGTextureData {
 		if (descriptor.generateMipmaps) this.generateMipmaps = descriptor.generateMipmaps;
 		if (descriptor.flipY) this.flipY = descriptor.flipY;
 		if (descriptor.format) this.format = descriptor.format;
 		if (descriptor.dimension) this.dimension = descriptor.dimension;
 		return this;
 	}
+	build(ctx: WebGPUContext): GPUTexture {
+		return this.mTex;
+	}
+	destroy(): void {}
+}
+class WGImageTextureData extends WGTextureData {
+	protected mImgs: WebImageType[];
+	protected mUrl: string;
+
+	// generateMipmaps = true;
+	// flipY = false;
+	// format = "rgba8unorm";
+	// dimension = "2d";
+	constructor() {super();}
+
+	// setDescripter(descriptor: TextureDataDescriptor): WGImageTextureData {
+	// 	if (descriptor.generateMipmaps) this.generateMipmaps = descriptor.generateMipmaps;
+	// 	if (descriptor.flipY) this.flipY = descriptor.flipY;
+	// 	if (descriptor.format) this.format = descriptor.format;
+	// 	if (descriptor.dimension) this.dimension = descriptor.dimension;
+	// 	return this;
+	// }
 	build(ctx: WebGPUContext): GPUTexture {
 		if (this.mImgs && !this.mTex) {
 			// console.log("this.mImgs: ", this.mImgs, this.dimension);
@@ -50,7 +68,27 @@ class WGImageTextureData implements WGTextureDataType {
 		}
 		return this.mTex;
 	}
-	destroy(): void {}
+}
+class WGRTTTextureData extends WGTextureData {
+	private mTexData: RTTTextureDataDescriptor;
+	constructor() {
+		super();
+	}
+	setDescripter(descriptor: TextureDataDescriptor): WGRTTTextureData {
+		super.setDescripter( descriptor );
+		this.mTexData = descriptor.rttTexture;
+		return this;
+	}
+	build(ctx: WebGPUContext): GPUTexture {
+		const td = this.mTexData;
+		if (td && !this.mTex) {
+			if(td.texture) {
+				console.log("apply a rtt texture into a WGRTTTextureData instance.");
+				this.mTex = td.texture;
+			}
+		}
+		return this.mTex;
+	}
 }
 class WGImage2DTextureData extends WGImageTextureData {
 	constructor(url?: string) {
@@ -211,71 +249,10 @@ class WGTextureWrapper {
 	destroy(): void {}
 }
 
-function textDescriptorFilter(d: WGTextureDataDescriptor): TextureDataDescriptor {
-	let rd = d;
-	if (d.diffuse) {
-		rd = d.diffuse;
-		rd.shdVarName = "diffuse";
-	}
-	if (d.color) {
-		rd = d.color;
-		rd.shdVarName = "color";
-	}
-	if (d.albedo) {
-		rd = d.albedo;
-		rd.shdVarName = "albedo";
-	}
-
-	if (d.normal) {
-		rd = d.normal;
-		rd.shdVarName = "normal";
-	}
-	if (d.ao) {
-		rd = d.ao;
-		rd.shdVarName = "ao";
-	}
-	if (d.metallic) {
-		rd = d.metallic;
-		rd.shdVarName = "metallic";
-	}
-
-	if (d.roughness) {
-		rd = d.roughness;
-		rd.shdVarName = "roughness";
-	}
-	if (d.specularEnv) {
-		rd = d.specularEnv;
-		rd.shdVarName = "specularEnv";
-	}
-	if (d.arm) {
-		rd = d.arm;
-		rd.shdVarName = "arm";
-	}
-
-	if (d.parallax) {
-		rd = d.parallax;
-		rd.shdVarName = "parallax";
-	}
-	if (d.height) {
-		rd = d.height;
-		rd.shdVarName = "height";
-	}
-	if (d.displacement) {
-		rd = d.displacement;
-		rd.shdVarName = "displacement";
-	}
-
-	if (d.specular) {
-		rd = d.specular;
-		rd.shdVarName = "specular";
-	}
-
-	return rd;
-}
-const __$texDataMap: Map<string, WGImageTextureData> = new Map();
-function createDataWithDescriptor(descriptor: WGTextureDataDescriptor): WGImageTextureData {
+const __$texDataMap: Map<string, WGTextureData> = new Map();
+function createDataWithDescriptor(descriptor: WGTextureDataDescriptor): WGTextureData {
 	let dimension = descriptor.dimension ? descriptor.dimension : "2d";
-	let td: WGImageTextureData;
+	let td: WGTextureData;
 	const dpt = textDescriptorFilter(descriptor);
 	const map = __$texDataMap;
 	let key = "";
@@ -283,6 +260,11 @@ function createDataWithDescriptor(descriptor: WGTextureDataDescriptor): WGImageT
 		key = dpt.url;
 	} else if (dpt.urls !== undefined) {
 		key = dpt.urls[0];
+	}
+	if(key === "") {
+		if (dpt.uuid !== undefined) {
+			key = dpt.uuid;
+		}
 	}
 	if (key !== "") {
 		if (map.has(key)) {
@@ -292,7 +274,11 @@ function createDataWithDescriptor(descriptor: WGTextureDataDescriptor): WGImageT
 
 	switch (dimension) {
 		case "2d":
-			td = new WGImage2DTextureData().setDescripter(dpt);
+			if(dpt.rttTexture) {
+				td = new WGRTTTextureData().setDescripter(dpt);
+			}else {
+				td = new WGImage2DTextureData().setDescripter(dpt);
+			}
 			break;
 		case "cube":
 			td = new WGImageCubeTextureData().setDescripter(dpt);
@@ -309,9 +295,12 @@ function createDataWithDescriptor(descriptor: WGTextureDataDescriptor): WGImageT
 	return td;
 }
 export {
+	textDescriptorFilter,
 	createDataWithDescriptor,
+	WGTextureData,
 	WGTextureDataDescriptor,
 	WGImageTextureData,
+	WGRTTTextureData,
 	WGImage2DTextureData,
 	WGImageCubeTextureData,
 	WGTextureDataType,

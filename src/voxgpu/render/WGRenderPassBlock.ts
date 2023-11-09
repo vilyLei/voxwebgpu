@@ -1,10 +1,11 @@
-import { IWGRendererPass, WGRPassParam } from "./pipeline/WGRendererPass";
+import { WGRPassParam } from "./pipeline/WGRendererPass";
 import { WGRPipelineContextDefParam, WGRShderSrcType, WGRPipelineCtxParams } from "./pipeline/WGRPipelineCtxParams";
 import { VtxPipelinDescParam, WGRPipelineContext } from "./pipeline/WGRPipelineContext";
 import { WebGPUContext } from "../gpu/WebGPUContext";
 import { GPUCommandBuffer } from "../gpu/GPUCommandBuffer";
 import { IWGRUnit } from "./IWGRUnit";
 import { IWGRPassRef } from "./pipeline/IWGRPassRef";
+import { WGRPassRef } from "./pipeline/WGRPassRef";
 
 import { WGMaterialDescripter } from "../material/WGMaterialDescripter";
 import Camera from "../view/Camera";
@@ -22,7 +23,6 @@ class WGRenderPassBlock implements IWGRPassNodeBuilder {
 	private mRPassNodes: WGRenderPassNode[] = [];
 	private mRSeparatePassNodes: WGRenderPassNode[] = [];
 	private mPassNodes: WGRenderPassNode[] = [];
-	// private mUnits: IWGRUnit[] = [];
 	private mRBParam: BlockParam;
 
 	camera: Camera;
@@ -67,6 +67,7 @@ class WGRenderPassBlock implements IWGRPassNodeBuilder {
 		entity.update();
 		entity.rstate.__$rever++;
 		const runit = this.mRBParam.roBuilder.createRUnit(entity, this);
+		runit.etuuid = entity.uuid;
 		this.unitBlock.addRUnit(runit);
 	}
 	addEntity(entity: Entity3D): void {
@@ -96,6 +97,7 @@ class WGRenderPassBlock implements IWGRPassNodeBuilder {
 		// if (unit) {
 		// 	this.mUnits.push(unit);
 		// }
+		// console.log("add an unit to a block.");
 		this.unitBlock.addRUnit(unit);
 	}
 	getRenderPassAt(index: number): IWGRPassRef {
@@ -121,6 +123,7 @@ class WGRenderPassBlock implements IWGRPassNodeBuilder {
 		let index = -1;
 		const passNode = new WGRenderPassNode(this.mRBParam, !computing);
 		passNode.camera = this.camera;
+		console.log("appendRendererPass(), create a new render pass, param: ", param);
 		if (computing) {
 			passNode.builder = this;
 			passNode.name = "newcomppassnode-" + this.mPassNodes.length;
@@ -151,7 +154,7 @@ class WGRenderPassBlock implements IWGRPassNodeBuilder {
 				this.mRPassNodes.push(passNode);
 				index = this.mRPassNodes.length - 1;
 
-			}else if(!(param.separate === false)) {
+			}else if(!(param.separate === true)) {
 
 				prevNode = this.mRPassNodes[this.mRPassNodes.length - 1];
 				prevNodeParam = prevNode.param;
@@ -165,16 +168,22 @@ class WGRenderPassBlock implements IWGRPassNodeBuilder {
 				this.mRPassNodes.push(passNode);
 				index = this.mRPassNodes.length - 1;
 			}else {
-				passNode.initialize(this.mWGCtx, param ? param : prevNode.param);
+				console.log("create a separate render pass.");
 				const rpass = passNode.rpass;
-				passNode.separate = rpass.separate = true;
 				rpass.name = "newpass_type03(separate)";
+				passNode.separate = rpass.separate = true;
+				passNode.initialize(this.mWGCtx, param ? param : prevNode.param);
 				this.mRSeparatePassNodes.push(passNode);
 				index = -1;
 			}
 		}
 		this.mPassNodes.push(passNode);
-		return { index, node: passNode };
+
+		const ref = new WGRPassRef();
+		ref.index = index
+		ref.node = passNode;
+		return ref;
+		// return { index, node: passNode };
 	}
 	private getPassNode(ref: IWGRPassRef): WGRenderPassNode {
 		const nodes = this.mRPassNodes;

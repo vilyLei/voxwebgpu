@@ -20,14 +20,16 @@ export default class RectPlaneGeometry extends GeometryBase {
     offsetV = 0.0;
     uScale = 1.0;
     vScale = 1.0;
-
-    flipVerticalUV = false;
+	/**
+	 * flip vertical uv value
+	 */
+    flipY = false;
     /**
      * axisType = 0 is XOY plane,
      * axisType = 1 is XOZ plane,
      * axisType = 2 is YOZ plane
      */
-    axisType: number = 0;
+    axisType = 0;
 
     private m_polyhedralBoo = true;
     private m_vs: Float32Array = null
@@ -99,7 +101,7 @@ export default class RectPlaneGeometry extends GeometryBase {
         this.bounds.updateFast();
 
         if (!this.m_uvs) {
-            if (this.flipVerticalUV) {
+            if (this.flipY) {
                 this.m_uvs = new Float32Array([
                     this.offsetU + 0.0 * this.uScale, this.offsetV + 1.0 * this.vScale,
                     this.offsetU + 1.0 * this.uScale, this.offsetV + 1.0 * this.vScale,

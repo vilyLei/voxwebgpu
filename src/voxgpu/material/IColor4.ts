@@ -34,7 +34,7 @@ interface IColor4 {
     k: number;
 
     clone(): IColor4;
-    setParam(param: ColorDataType): IColor4;
+    setColor(color: ColorDataType): IColor4;
 	gammaCorrect(): IColor4;
     /**
      * example: [0],[1],[2],[3] => r,g,b,a

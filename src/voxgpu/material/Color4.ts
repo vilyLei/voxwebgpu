@@ -71,8 +71,8 @@ export default class Color4 implements IColor4 {
 	clone(): Color4 {
 		return new Color4(this.r, this.g, this.b, this.a);
 	}
-	setParam(param: ColorDataType): Color4 {
-		let v = param;
+	setColor(color: ColorDataType): Color4 {
+		let v = color;
 		if (v) {
 			const c = this;
 			const vs = v as number[];
@@ -442,8 +442,5 @@ export default class Color4 implements IColor4 {
 		str += getHexStr(this.g);
 		str += getHexStr(this.b);
 		return str;
-	}
-	toString(): string {
-		return "[Color4(r=" + this.r + ", g=" + this.g + ",b=" + this.b + ",a=" + this.a + ")]";
 	}
 }

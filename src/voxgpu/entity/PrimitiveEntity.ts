@@ -11,6 +11,7 @@ import GeometryBase from "../geometry/primitive/GeometryBase";
 import { WGGeometry } from "../geometry/WGGeometry";
 
 class PrimitiveEntity extends Entity3D {
+	private mColor = new Color4();
 	protected albedoV: WGRUniformValue;
 	protected armV: WGRUniformValue;
 	constructor(param?: Entity3DParam) {
@@ -18,10 +19,10 @@ class PrimitiveEntity extends Entity3D {
 		this.createGeometry(param);
 		this.createMaterial(param);
 	}
-	setAlbedo(c: Color4): PrimitiveEntity {
+	setAlbedo(c: ColorDataType): PrimitiveEntity {
 		if (this.albedoV) {
 			if (c) {
-				c.toArray4(this.albedoV.data as Float32Array);
+				this.mColor.setColor(c).toArray4(this.albedoV.data as Float32Array);
 				this.albedoV.upate();
 			}
 		}

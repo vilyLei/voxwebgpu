@@ -11,6 +11,7 @@ import { WebGPUContext } from "../../gpu/WebGPUContext";
 import { WGRPassParam, IWGRendererPass } from "./IWGRendererPass";
 import { WGRPColorAttachment } from "./WGRPColorAttachment";
 import { WGRPDepthStencilAttachment } from "./WGRPDepthStencilAttachment";
+import { textDescriptorFilter } from "../../texture/WGTextureDataDescriptor";
 
 class WGRendererPass implements IWGRendererPass {
 	private mWGCtx: WebGPUContext;
@@ -70,6 +71,7 @@ class WGRendererPass implements IWGRendererPass {
 
 		let sampleCount = 1;
 		const multisampled = param.multisampleEnabled === true;
+		param.multisampleEnabled = multisampled;
 		if (multisampled) {
 			sampleCount = param.sampleCount;
 		}
@@ -77,15 +79,32 @@ class WGRendererPass implements IWGRendererPass {
 
 		let pcs = this.passColors;
 		let colorAtt = pcs[0];
-		if (this.separate) {
+		console.log("createRenderPassTexture(), this.separate: ", this.separate);
+		// console.log("createRenderPassTexture(), sampleCount: ", sampleCount, ", multisampled: ", multisampled);
+		if (separate) {
 			let ls = param.colorAttachments;
 			if (ls && ls.length > 0) {
 				for (let i = 1; i < ls.length; ++i) {
 					pcs.push(new WGRPColorAttachment());
 				}
 				for (let i = 0; i < ls.length; ++i) {
-					colorAtt = pcs[i].setParam(ls[i]);
+					const t = ls[i];
+					colorAtt = pcs[i].setParam(t);
+					if(!colorAtt.view) {
+						let td = textDescriptorFilter(t.texture);
+						if(td) {
+							const rttData = td.rttTexture;
+							if(rttData && !rttData.texture) {
+								const rtt = ctx.texture.createColorRTTTexture();
+								colorAtt.view = rtt.createView();
+								rttData.texture = rtt;
+								// console.log("动态创建一个 color rtt gpu texture instance.");
+							}
+						}
+					}
 				}
+				this.clearColor.setColor(pcs[0].clearValue);
+				// console.log("xxx xxx pcs: ", pcs);
 			} else {
 				const texture = ctx.texture.createRTTTexture({
 					size,
@@ -117,7 +136,8 @@ class WGRendererPass implements IWGRendererPass {
 			if (!dsAtt) dsAtt = new WGRPDepthStencilAttachment().setParam(dsp);
 			this.passDepthStencil = dsAtt;
 
-			if (!dsAtt.view && !separate) {
+			// if (!dsAtt.view && !separate) {
+			if (!dsAtt.view) {
 				size = [ctx.canvasWidth, ctx.canvasHeight];
 				let format = "depth24plus";
 				if (param.depthFormat !== undefined) format = param.depthFormat;
@@ -157,14 +177,14 @@ class WGRendererPass implements IWGRendererPass {
 				const colorT = pcs[0];
 
 				let dsAtt = this.passDepthStencil;
-
+				const multisampleEnabled = param.multisampleEnabled;
 				if (prev) {
 					const prevColorAtt = prev.passColors[0];
 					const prevDSAtt = prev.passDepthStencil;
 
 					colorT.loadOp = "load";
 
-					if (param.multisampleEnabled) {
+					if (multisampleEnabled) {
 						colorT.view = prevColorAtt.view;
 						colorT.resolveTarget = prevColorAtt.resolveTarget;
 					} else {
@@ -180,19 +200,26 @@ class WGRendererPass implements IWGRendererPass {
 						dsAtt.view = prevDSAtt.view;
 					}
 				} else {
+					if (pcs.length == 1) {
+						pcs[0].clearValue.copyFrom(this.clearColor);
+					}
 					if (this.separate) {
-					} else {
-						if (pcs.length == 1) {
-							pcs[0].clearValue.copyFrom(this.clearColor);
+						// console.log("run a rpass, this.separate: ", this.separate,", multisampleEnabled: ", multisampleEnabled);
+						if (multisampleEnabled) {
+							colorT.resolveTarget = colorT.resolveTarget;
 						}
-						if (param.multisampleEnabled) {
+					} else {
+						if (multisampleEnabled) {
 							colorT.resolveTarget = colorT.resolveTargetTexture ? colorT.resolveTarget : ctx.createCurrentView();
 						} else {
 							colorT.view = colorT.viewTexture ? colorT.view : ctx.createCurrentView();
 						}
 					}
 				}
-
+				// console.log("xxx xxx xxx xxx this.separate: ",this.separate,", dsAtt: ", dsAtt);
+				// if(this.separate) {
+				// 	// console.log("xxx xxx xxx xxx this.passColors: ",this.passColors);
+				// }
 				let colorAttachments = this.passColors;
 				let renderPassDescriptor: GPURenderPassDescriptor;
 				if (dsAtt) {

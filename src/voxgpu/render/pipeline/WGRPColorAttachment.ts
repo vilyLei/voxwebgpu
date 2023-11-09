@@ -24,7 +24,7 @@ class WGRPColorAttachment implements GPURenderPassColorAttachment {
 		if (param) {
 			let c = this.clearValue;
 			copyFromObjectValueWithKey(param, this);
-			c.setParam( this.clearValue );
+			c.setColor( this.clearValue );
 			this.clearValue = c;
 		}
 		return this;

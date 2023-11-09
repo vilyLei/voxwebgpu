@@ -1,4 +1,3 @@
-import { GPUShaderModule } from "./GPUShaderModule";
 import { GPUTextureView } from "./GPUTextureView";
 
 interface GPURenderPassColorAttachment {
@@ -31,6 +30,6 @@ interface GPURenderPassColorAttachment {
 	 * This value is ignored if loadOp is not set to "clear".
 	 * clearValue takes an array or object representing the four color components r, g, b, and a as decimals.
 	 */
-	clearValue?: { r: number, g: number,b: number, a: number } | number[] | Float32Array;
+	clearValue?: ColorDataType;
 }
 export { GPURenderPassColorAttachment };

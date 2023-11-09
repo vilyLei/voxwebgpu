@@ -9,6 +9,9 @@ import { WGRenderer } from "./WGRenderer";
 import { Entity3D } from "../entity/Entity3D";
 import { IRenderableObject } from "../render/IRenderableObject";
 import { IRenderableEntityContainer } from "../render/IRenderableEntityContainer";
+import { WebGPUContext } from "../gpu/WebGPUContext";
+import { WGRPassParam } from "../render/WGRenderPassBlock";
+import { IWGRPassRef } from "../render/pipeline/IWGRPassRef";
 
 class RendererScene implements IRendererScene {
 	private static sUid = 0;
@@ -49,6 +52,20 @@ class RendererScene implements IRendererScene {
 			this.camera = renderer.camera;
 		}
 	}
+
+	createRTTPass(param?: WGRPassParam, blockIndex = 0): IWGRPassRef {
+		this.initialize();
+		if(!param) param = {};
+		param.separate = true;
+		return this.renderer.appendRenderPass(param, blockIndex);
+	}
+	createRenderPass(param?: WGRPassParam, blockIndex = 0): IWGRPassRef {
+		this.initialize();
+		return this.renderer.appendRenderPass(param, blockIndex);
+	}
+	getWGCtx(): WebGPUContext {
+		return this.renderer.getWGCtx();
+	}
 	getStage3D(): IRenderStage3D {
 		return this.racontext.getStage();
 	}
@@ -81,13 +98,14 @@ class RendererScene implements IRendererScene {
 			throw Error("illegal operation !!!");
 		}
 	}
-	addEntity(entity: IRenderableObject, processIndex = 0): void {
+	addEntity(entity: IRenderableObject, processIndex = 0): RendererScene {
 		this.initialize();
 		if (entity.isContainer()) {
 			this.addContainer(entity as IRenderableEntityContainer, processIndex);
 		} else {
 			this.mRenderer.addEntity(entity as Entity3D, processIndex);
 		}
+		return this;
 	}
 	removeEntity(entity: IRenderableObject): void {
 		if (entity.isContainer()) {
