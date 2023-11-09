@@ -1,6 +1,6 @@
 import { GPUBindGroup } from "../../gpu/GPUBindGroup";
 import { GPUBuffer } from "../../gpu/GPUBuffer";
-import { WGRUniformValue } from "./WGRUniformValue";
+import { WGRBufferData } from "../buffer/WGRBufferData";
 import { WebGPUContext } from "../../gpu/WebGPUContext";
 
 type UniformVerType = { vid: number, ver: number, shared: boolean, shdVarName?: string };
@@ -23,7 +23,7 @@ class WGRUniform {
 	buffers: GPUBuffer[];
 	versions: UniformVerType[];
 	bindGroup: GPUBindGroup;
-	uvfs: WGRUniformValue[];
+	uvfs: WGRBufferData[];
 	ivs: number[];
 	/**
 	 * bind group index
@@ -38,7 +38,7 @@ class WGRUniform {
 	getUid(): number {
 		return this.mUid;
 	}
-	setValue(value: WGRUniformValue, index = 0): void {
+	setValue(value: WGRBufferData, index = 0): void {
 		const v = this.versions[index];
 		if(v.ver != value.version) {
 			v.ver = value.version;

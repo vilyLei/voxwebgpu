@@ -1,5 +1,6 @@
 import { GPUBuffer } from "../../gpu/GPUBuffer";
 import { WGRBufferData } from "./WGRBufferValueParam";
+import { WGRBufferVisibility } from "./WGRBufferVisibility";
 
 const __$RID = {uid:0};
 class WGRBufferView implements WGRBufferData {
@@ -9,8 +10,16 @@ class WGRBufferView implements WGRBufferData {
 	buffer?: GPUBuffer;
 	mappedAtCreation?: boolean;
 	shared?: boolean;
+	
+	arrayStride = 1;
+	usage = GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST;
+
+	byteOffset = 0;
 	version = -1;
 	stride?: number;
+	visibility?: WGRBufferVisibility;
+	
+	shdVarName?: string;
 
 	get byteLength(): number {
 		return this.data.byteLength;

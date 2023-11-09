@@ -1,18 +1,12 @@
 import BitConst from "../../utils/BitConst";
 import { WGRBufferView } from "./WGRBufferView";
-import { WGRBufferVisibility } from "./WGRBufferVisibility";
 import { WGRBufferData, WGRBufferValueParam } from "./WGRBufferValueParam";
 
 class WGRBufferValue extends WGRBufferView {
 
 	name?: string;
 
-	byteOffset = 0;
-	arrayStride = 1;
-	usage = GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST;
 	bufData?: WGRBufferData;
-	shdVarName?: string;
-	visibility: WGRBufferVisibility;
 
 	constructor(param: WGRBufferValueParam) {
 		super();
