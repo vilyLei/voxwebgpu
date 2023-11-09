@@ -4,6 +4,7 @@ import { MouseInteraction } from "../ui/MouseInteraction";
 import Color4 from "../material/Color4";
 import { FixScreenPlaneEntity } from "../entity/FixScreenPlaneEntity";
 import { IWGRPassRef } from "../render/pipeline/IWGRPassRef";
+import { WGRenderPassBlock } from "../render/WGRenderPassBlock";
 
 export class RTTTest {
 	private mRscene = new RendererScene();
@@ -21,6 +22,7 @@ export class RTTTest {
 		new MouseInteraction().initialize(rc, 0, false).setAutoRunning(true);
 	}
 	private mRPass: IWGRPassRef;
+	private mRBlock: WGRenderPassBlock;
 	private mouseDown = (evt: MouseEvent): void => {
 		let node = this.mRPass.node;
 		console.log("mousedown evt call this.mRPass: ", this.mRPass);
@@ -34,6 +36,7 @@ export class RTTTest {
 		const rc = this.mRscene;
 
 		const diffuseTex = { diffuse: { url: "static/assets/default.jpg", flipY: true } };
+
 
 		let x = -0.6;
 		let y = -0.6;

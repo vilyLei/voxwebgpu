@@ -81,12 +81,12 @@ class RendererScene implements IRendererScene {
 			throw Error("illegal operation !!!");
 		}
 	}
-	addEntity(entity: IRenderableObject, processIndex = 0, deferred = true): void {
+	addEntity(entity: IRenderableObject, processIndex = 0): void {
 		this.initialize();
 		if (entity.isContainer()) {
 			this.addContainer(entity as IRenderableEntityContainer, processIndex);
 		} else {
-			this.mRenderer.addEntity(entity as Entity3D, processIndex, deferred);
+			this.mRenderer.addEntity(entity as Entity3D, processIndex);
 		}
 	}
 	removeEntity(entity: IRenderableObject): void {

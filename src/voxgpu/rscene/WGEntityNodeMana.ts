@@ -1,18 +1,19 @@
 import { WebGPUContext } from "../gpu/WebGPUContext";
-import { Entity3D } from "../entity/Entity3D";
+// import { Entity3D } from "../entity/Entity3D";
 import { WGMaterial } from "../material/WGMaterial";
 import { WGWaitEntityNode } from "./WGEntityNode";
 
-interface NodeManaTarget {
-	addEntity(entity: Entity3D, processIndex?: number, deferred?: boolean): void;
-	getWGCtx(): WebGPUContext;
-	isEnabled(): boolean;
-}
+// interface NodeManaTarget {
+// 	addEntity(entity: Entity3D, processIndex?: number, deferred?: boolean): void;
+// 	getWGCtx(): WebGPUContext;
+// 	isEnabled(): boolean;
+// }
 class WGEntityNodeMana {
 	private mNodes: WGWaitEntityNode[] = [];
 	private mEnabled = false;
-	target: NodeManaTarget;
-
+	// target: NodeManaTarget;
+	callback : (entity: WGWaitEntityNode) => void;
+	wgCtx: WebGPUContext;
 	addEntity(node: WGWaitEntityNode): void {
 		// console.log("WGEntityNodeMana::addEntity(), this.mNodes.length: ", this.mNodes.length);
 		this.mNodes.push(node);
@@ -40,7 +41,8 @@ class WGEntityNodeMana {
 						ls.splice(i, 1);
 						--i;
 						entity.rstate.__$inRenderer = false;
-						this.target.addEntity(entity, node.processIndex, node.deferred);
+						// this.target.addEntity(entity, node.processIndex, node.deferred);
+						this.callback( node );
 						// entity.rstate.__$inRenderer = true;
 					}
 				} else {
@@ -54,7 +56,9 @@ class WGEntityNodeMana {
 	private updateMaterial(m: WGMaterial): void {
 		if (!m.isREnabled()) {
 			// console.log("ppp b 03 b");
-			const ctx = this.target.getWGCtx();
+			// const ctx = this.target.getWGCtx();
+			// const ctx = this.target.getWGCtx();
+			const ctx = this.wgCtx;
 			const texs = m.textures;
 			for (let i = 0; i < texs.length; ++i) {
 				const tex = texs[i];
@@ -69,4 +73,4 @@ class WGEntityNodeMana {
 		this.mEnabled = true;
 	}
 }
-export { WGEntityNodeMana };
+export { WGWaitEntityNode, WGEntityNodeMana };

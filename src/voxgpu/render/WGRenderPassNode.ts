@@ -4,13 +4,22 @@ import { VtxPipelinDescParam, WGRPipelineContext } from "./pipeline/WGRPipelineC
 import { WebGPUContext } from "../gpu/WebGPUContext";
 import { GPUCommandBuffer } from "../gpu/GPUCommandBuffer";
 import { WGMaterialDescripter } from "../material/WGMaterialDescripter";
+import { IWGRPassNodeBuilder } from "./IWGRPassNodeBuilder";
 import { IWGRenderPassNodeRef } from "./IWGRenderPassNodeRef";
+import Color4 from "../material/Color4";
+import Camera from "../view/Camera";
+import { BlockParam, WGRenderUnitBlock } from "./WGRenderUnitBlock";
+import { IWGRUnit } from "./IWGRUnit";
+import { Entity3D } from "../entity/Entity3D";
 class WGRenderPassNode implements IWGRenderPassNodeRef {
-
 	private static sUid = 0;
 	private mUid = WGRenderPassNode.sUid++;
 	private mWGCtx: WebGPUContext;
+	private mRBParam: BlockParam;
 	private mDrawing = true;
+
+	camera: Camera;
+	clearColor = new Color4(0.0, 0.0, 0.0, 1.0);
 
 	name = "";
 
@@ -22,21 +31,43 @@ class WGRenderPassNode implements IWGRenderPassNodeRef {
 
 	enabled = true;
 	prevNode: WGRenderPassNode;
+	builder: IWGRPassNodeBuilder;
 
-	constructor(drawing = true) {
+	unitBlock: WGRenderUnitBlock;
+
+	separate = false;
+	constructor(bp: BlockParam, drawing = true) {
+		this.mRBParam = bp;
+		this.camera = bp.camera;
 		this.mDrawing = drawing;
 		this.rpass = new WGRendererPass(null, drawing);
+		this.rpass.clearColor = this.clearColor;
 	}
-	destroy(): void {
-		this.prevNode = null;
+	isDrawing(): boolean {
+		return this.mDrawing;
 	}
-	getUid(): number {
+	get uid(): number {
 		return this.mUid;
 	}
+	getWGCtx(): WebGPUContext {
+		return this.mWGCtx;
+	}
+	destroy(): void {
+		if(this.rpass) {
+			this.mRBParam = null;
+			this.prevNode = null;
+		}
+	}
+	getPassNodeWithMaterial(material: WGMaterialDescripter): WGRenderPassNode {
+		const b = this.builder;
+		if(b) {
+			return b.getPassNodeWithMaterial(material);
+		}
+		return this;
+	}
 	initialize(wgCtx: WebGPUContext, param?: WGRPassParam): void {
-
 		this.param = param ? param : this.param;
-		if(!this.param) this.param = {};
+		if (!this.param) this.param = {};
 
 		if (!this.mWGCtx && wgCtx && wgCtx.enabled) {
 			this.mWGCtx = wgCtx;
@@ -44,27 +75,64 @@ class WGRenderPassNode implements IWGRenderPassNodeRef {
 			if (this.prevNode) {
 				this.rpass.prevPass = this.prevNode.rpass;
 			}
-			this.rpass.initialize( wgCtx );
-			this.checkRPassParam( this.param );
-			this.rpass.build( this.param );
+			this.rpass.initialize(wgCtx);
+			this.checkRPassParam(this.param);
+			this.rpass.build(this.param);
 		}
 	}
-	private checkRPassParam(param: WGRPassParam): void {
 
-		if(param.sampleCount !== undefined && param.sampleCount > 1) {
+	private addEntityToBlock(entity: Entity3D): void {
+		entity.update();
+		entity.rstate.__$rever++;
+		const runit = this.mRBParam.roBuilder.createRUnit(entity, this);
+		this.unitBlock.addRUnit(runit);
+	}
+	addEntity(entity: Entity3D): void {
+		// console.log("Renderer::addEntity(), entity.isInRenderer(): ", entity.isInRenderer());
+		if (entity && !entity.isInRenderer()) {
+			if(!this.unitBlock) {
+				this.unitBlock = WGRenderUnitBlock.createBlock();
+			}
+			entity.update();
+			entity.rstate.__$inRenderer = true;
+
+			let flag = true;
+			if (this.mWGCtx && this.mWGCtx.enabled) {
+				if (entity.isREnabled()) {
+					flag = false;
+					this.addEntityToBlock(entity);
+				}
+			}
+			if (flag) {
+				entity.rstate.__$rever++;
+				this.mRBParam.entityMana.addEntity({ entity: entity, rever: entity.rstate.__$rever, dst: this });
+			}
+		}
+	}
+	addRUnit(unit: IWGRUnit): void {
+		// /**
+		//  * 正式加入渲染器之前，对shader等的分析已经做好了
+		//  */
+		// if (unit) {
+		// 	this.mUnits.push(unit);
+		// }
+		this.unitBlock.addRUnit(unit);
+	}
+
+	private checkRPassParam(param: WGRPassParam): void {
+		if (param.sampleCount !== undefined && param.sampleCount > 1) {
 			param.multisampleEnabled = true;
-		}else if(param.multisampleEnabled === true) {
+		} else if (param.multisampleEnabled === true) {
 			param.sampleCount = 4;
-		}else {
+		} else {
 			param.multisampleEnabled = false;
 		}
-		if(param.depthFormat == undefined) {
-			param.depthFormat = 'depth24plus';
+		if (param.depthFormat == undefined) {
+			param.depthFormat = "depth24plus";
 		}
 	}
 
 	createRenderPipelineCtxWithMaterial(material: WGMaterialDescripter): WGRPipelineContext {
-
 		const flag = material.shadinguuid && material.shadinguuid !== "";
 		const map = this.pctxMap;
 		if (flag) {
@@ -114,9 +182,9 @@ class WGRenderPassNode implements IWGRenderPassNodeRef {
 		this.pipelineCtxs.push(pipelineCtx);
 
 		if (this.mDrawing) {
-			if(this.rpass.depthTexture) {
+			if (this.rpass.depthTexture) {
 				pipelineParams.setDepthStencilFormat(this.rpass.depthTexture.format);
-			}else {
+			} else {
 				pipelineParams.depthStencilEnabled = false;
 				pipelineParams.depthStencil = undefined;
 			}
@@ -144,20 +212,29 @@ class WGRenderPassNode implements IWGRenderPassNodeRef {
 		this.rcommands = [];
 		this.rpass.runBegin();
 		if (this.enabled) {
-			for (let i = 0; i < this.pipelineCtxs.length;) {
+			for (let i = 0; i < this.pipelineCtxs.length; ) {
 				this.pipelineCtxs[i++].runBegin();
 			}
 		}
 	}
 	runEnd(): void {
 		if (this.enabled) {
-			for (let i = 0; i < this.pipelineCtxs.length;) {
+			for (let i = 0; i < this.pipelineCtxs.length; ) {
 				this.pipelineCtxs[i++].runEnd();
 			}
 		}
 		let cmd = this.rpass.runEnd();
-		if(cmd) {
+		if (cmd) {
 			this.rcommands = [cmd];
+		}
+	}
+	run(): void {
+		if(this.enabled) {
+			const b = this.unitBlock;
+			if(b) {
+				// console.log("node b: ", b);
+				b.run();
+			}
 		}
 	}
 }

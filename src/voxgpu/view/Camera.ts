@@ -15,7 +15,7 @@ import {IRenderCamera} from "../render/IRenderCamera";
 import { WGRUniformValue } from "../render/uniform/WGRUniformValue";
 
 const pmin = MathConst.MATH_MIN_POSITIVE;
-class CameraBase implements IRenderCamera {
+class Camera implements IRenderCamera {
 
     version = 0;
     viewUniformV: WGRUniformValue;
@@ -114,10 +114,10 @@ class CameraBase implements IRenderCamera {
         }
     }
 
-    getLookAtLHToCamera(camera: CameraBase): void {
+    getLookAtLHToCamera(camera: Camera): void {
         camera.lookAtLH(this.m_camPos, this.m_lookAtPos, this.m_up);
     }
-    getLookAtRHToCamera(camera: CameraBase): void {
+    getLookAtRHToCamera(camera: Camera): void {
         camera.lookAtRH(this.m_camPos, this.m_lookAtPos, this.m_up);
     }
     /**
@@ -505,7 +505,7 @@ class CameraBase implements IRenderCamera {
             this.m_changed = true;
         }
     }
-    copyFrom(tarCam: CameraBase): void {
+    copyFrom(tarCam: Camera): void {
         let pv = tarCam.getPosition();
         this.m_camPos.copyFrom(pv);
         pv = tarCam.getLookAtPosition();
@@ -735,7 +735,7 @@ class CameraBase implements IRenderCamera {
 
 		const wfva = this.m_wFrustumVS;
 		const wfpa = this.m_wFruPlanes;
-        //console.log("CameraBase::__calcTestParam(), (halfMinW, halfMinH): "+halfMinW+", "+halfMinH);
+        //console.log("Camera::__calcTestParam(), (halfMinW, halfMinH): "+halfMinW+", "+halfMinH);
         this.m_nearPlaneHalfW = halfMinW;
         this.m_nearPlaneHalfH = halfMinH;
         // inner view space
@@ -1093,4 +1093,4 @@ class CameraBase implements IRenderCamera {
         return this.mProjMat;
     }
 }
-export default CameraBase;
+export default Camera;

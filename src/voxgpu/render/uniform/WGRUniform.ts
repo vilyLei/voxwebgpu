@@ -43,7 +43,6 @@ class WGRUniform {
 		if(v.ver != value.version) {
 			v.ver = value.version;
 			// console.log("WGRUniform::setValue(), shared: ", v.shared, ', shdVarName: ',v.shdVarName);
-			// this.mBindGCtx.updateUniformBufferAt(this.buffers[index], value.data, this.ivs[index], value.byteOffset);
 			this.mWGC.buffer.updateUniformBuffer(this.buffers[index], value.data, this.ivs[index], value.byteOffset);
 		}
 	}

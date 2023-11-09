@@ -14,6 +14,7 @@ import { MouseInteraction } from "../ui/MouseInteraction";
 import Color4 from "../material/Color4";
 import { IWGRPassRef } from "../render/pipeline/IWGRPassRef";
 import Vector3 from "../math/Vector3";
+import { WGRenderPassBlock } from "../render/WGRenderPassBlock";
 
 export class MultiGPUPassTest {
 
@@ -74,8 +75,14 @@ export class MultiGPUPassTest {
 	}
 	private mRPass0: IWGRPassRef;
 	private mRPass1: IWGRPassRef;
-
+	private mRBlock: WGRenderPassBlock;
+	private mIndex = 0;
 	private mouseDown = (evt: MouseEvent): void => {
+
+		// this.testAddEntityToBlock();
+		this.testAddEntityToPassNode();
+
+		return;
 		let node = this.mRPass1.node;
 		// node = this.mRPass0.node;
 		console.log("mousedown evt call this.mRPass1: ", this.mRPass1);
@@ -84,9 +91,44 @@ export class MultiGPUPassTest {
 		node.enabled = !node.enabled;
 		console.log("mousedown evt call BBBB node: ", node);
 	}
+	private testAddEntityToBlock(): void {
+
+		const shdSrc = {
+			vertShaderSrc: { code: vertWGSL, uuid: "vertShdCode" },
+			fragShaderSrc: { code: fragWGSL, uuid: "fragShdCode" }
+		};
+		const geometry = this.createGeom(this.geomData.createSphere(50));
+		const diffuseTex = {diffuse: {url:"static/assets/box.jpg"}};
+		let materials = [this.createMaterial(shdSrc, [diffuseTex], [1.0, 0.0, 1.0])];
+		let entity = new Entity3D();
+		entity.materials = materials;
+		entity.geometry = geometry;
+		entity.transform.setXYZ(0,0, 180 + this.mIndex * 110);
+		this.mRBlock.addEntity(entity);
+		this.mIndex++;
+	}
+	private testAddEntityToPassNode(): void {
+
+		const shdSrc = {
+			vertShaderSrc: { code: vertWGSL, uuid: "vertShdCode" },
+			fragShaderSrc: { code: fragWGSL, uuid: "fragShdCode" }
+		};
+		const geometry = this.createGeom(this.geomData.createSphere(50));
+		const diffuseTex = {diffuse: {url:"static/assets/box.jpg"}};
+		let materials = [this.createMaterial(shdSrc, [diffuseTex], [1.0, 0.0, 1.0])];
+		let entity = new Entity3D();
+		entity.materials = materials;
+		entity.geometry = geometry;
+		entity.transform.setXYZ(0,0, -(180 + this.mIndex * 110));
+		this.mRPass0.node.addEntity(entity);
+		this.mIndex++;
+	}
 	private initScene(): void {
 
 		const rc = this.mRscene;
+
+
+		this.mRBlock = rc.renderer.getRPBlockAt(0);
 
 		const geometry = this.createGeom(this.geomData.createCube(80));
 

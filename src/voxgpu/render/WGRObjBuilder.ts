@@ -3,7 +3,9 @@ import { WGRPrimitive } from "./WGRPrimitive";
 import { IWGRUnit } from "./IWGRUnit";
 import { WGRUnit } from "./WGRUnit";
 import { GPUBuffer } from "../gpu/GPUBuffer";
-import { WGRenderPassBlock } from "../render/WGRenderPassBlock";
+// import { WGRenderPassBlock } from "../render/WGRenderPassBlock";
+
+import { IWGRPassNodeBuilder } from "./IWGRPassNodeBuilder";
 import { WGRUniformValue } from "./uniform/WGRUniformValue";
 import { GPUTextureView } from "../gpu/GPUTextureView";
 import { WGRCompUnit } from "./WGRCompUnit";
@@ -26,7 +28,7 @@ class WGRObjBuilder {
 		}
 		return g;
 	}
-	createRPass(entity: Entity3D, block: WGRenderPassBlock, primitive: WGRPrimitive, materialIndex = 0): IWGRUnit {
+	createRPass(entity: Entity3D, builder: IWGRPassNodeBuilder, primitive: WGRPrimitive, materialIndex = 0): IWGRUnit {
 
 		const material = entity.materials[materialIndex];
 
@@ -43,9 +45,9 @@ class WGRObjBuilder {
 					}
 				}
 			}
-			const rpparam = block.createRenderPipelineCtxWithMaterial(material);
-			pctx = rpparam.ctx;
-			material.initialize(rpparam.ctx);
+			const node = builder.getPassNodeWithMaterial(material);
+			pctx = node.createRenderPipelineCtxWithMaterial(material);
+			material.initialize(pctx);
 		}
 
 		// console.log("createRUnit(), utexes: ", utexes);
@@ -76,7 +78,7 @@ class WGRObjBuilder {
 		const uniformCtx = pctx.uniformCtx;
 		let uvalues: WGRUniformValue[] = [];
 
-		const cam = block.camera;
+		const cam = builder.camera;
 		if (!isComputing) {
 			if (entity.transform) {
 				uvalues.push(entity.transform.uniformv);
@@ -120,13 +122,12 @@ class WGRObjBuilder {
 				}
 			], material.uniformAppend);
 		}
-		// ru.unfsuuid = material.shadinguuid + material.name;
 		ru.material = material;
 		return ru;
 	}
-	createRUnit(entity: Entity3D, block: WGRenderPassBlock): IWGRUnit {
+	createRUnit(entity: Entity3D, builder: IWGRPassNodeBuilder): IWGRUnit {
 
-		const wgctx = block.getWGCtx();
+		const wgctx = builder.getWGCtx();
 
 		let primitive: WGRPrimitive;
 		if (entity.geometry) {
@@ -162,13 +163,13 @@ class WGRObjBuilder {
 		if (mts.length > 1) {
 			const passes: IWGRUnit[] = new Array(mts.length);
 			for (let i = 0; i < mts.length; ++i) {
-				passes[i] = this.createRPass(entity, block, primitive, i);
+				passes[i] = this.createRPass(entity, builder, primitive, i);
 			}
 			ru = new WGRUnit();
 			// console.log("xxxxxxxxx passes: ", passes);
 			ru.passes = passes;
 		} else {
-			ru = this.createRPass(entity, block, primitive);
+			ru = this.createRPass(entity, builder, primitive);
 		}
 		ru.bounds = entity.getGlobalBounds();
 		ru.st = entity.rstate;
@@ -176,7 +177,6 @@ class WGRObjBuilder {
 		ru.__$rever = ru.st.__$rever;
 
 		ru.etuuid = entity.uuid;
-		block.addRUnit(ru);
 		return ru;
 	}
 }

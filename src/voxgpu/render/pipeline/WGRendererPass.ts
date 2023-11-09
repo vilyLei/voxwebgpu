@@ -24,7 +24,7 @@ class WGRendererPass implements IWGRendererPass {
 	passEncoder?: GPURenderPassEncoder;
 	compPassEncoder?: GPUComputePassEncoder;
 	commandEncoder: GPUCommandEncoder;
-	clearColor = new Color4(0.0, 0.0, 0.0, 1.0);
+	clearColor: Color4;
 
 	passColors = [new WGRPColorAttachment()];
 	passDepthStencil: WGRPDepthStencilAttachment;
@@ -142,7 +142,7 @@ class WGRendererPass implements IWGRendererPass {
 		const ctx = this.mWGCtx;
 		const prev = this.prevPass;
 		if (prev) {
-			this.enabled = prev.enabled;
+			this.enabled = this.enabled && prev.enabled;
 		}
 
 		if (this.enabled && ctx.enabled) {
