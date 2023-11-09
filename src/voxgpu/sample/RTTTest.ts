@@ -29,15 +29,16 @@ export class RTTTest {
 		// create a separate rtt rendering pass
 		let rPass = rc.createRTTPass({ colorAttachments });
 
+		const diffuseTex = { diffuse: { url: "static/assets/default.jpg", flipY: true } };
+		let extent = [-0.5, -0.5, 0.8, 0.8];
+		let rttEntity = new FixScreenPlaneEntity({ extent, textures: [diffuseTex] }).setColor([1.0, 0.0, 0.0]);
+		// 往pass中添加可渲染对象
+		rPass.addEntity(rttEntity);
+
 		// 使用rtt纹理
-		let extent = [0.3, 0.3, 0.6, 0.6];
+		extent = [0.3, 0.3, 0.6, 0.6];
 		let entity = new FixScreenPlaneEntity({ extent, flipY: true, textures: [{ diffuse: rttTex }] });
 		rc.addEntity(entity);
-
-		const diffuseTex = { diffuse: { url: "static/assets/default.jpg", flipY: true } };
-		extent = [-0.5, -0.5, 0.8, 0.8];
-		let rttEntity = new FixScreenPlaneEntity({ extent, textures: [diffuseTex] }).setColor([1.0, 0.0, 0.0]);
-		rPass.addEntity(rttEntity);
 	}
 	private initScene(): void {
 		const rc = this.mRscene;

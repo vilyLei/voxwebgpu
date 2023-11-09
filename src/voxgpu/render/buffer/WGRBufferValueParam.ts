@@ -21,31 +21,32 @@ interface WGRBufferValueParam {
 	 */
 	stride?: number;
 }
-function applyParamBufferData(data: WGRBufferData, param: WGRBufferValueParam) {
-	
-	if (data !== param) {
-		data.shared = false;
-		let d = param.data;
-		data.data = d;
-		if (param.usage !== undefined) data.usage = param.usage;
-		if (param.shared !== undefined) data.shared = param.shared;
-		if (param.bufData) {
-			const bd = param.bufData;
-			data.bufData = bd;
-			d = bd.data;
-			data.data = d;
-		}
-		if (param.stride !== undefined) data.stride = param.stride;
-		if (param.shdVarName !== undefined) data.shdVarName = param.shdVarName;
+function applyParamBufferData(bufData: WGRBufferData, param: WGRBufferValueParam) {
 
-		if (param.arrayStride !== undefined) data.arrayStride = param.arrayStride;
-		if (data.arrayStride < 2) {
-			const bpe = (d as Float32Array).BYTES_PER_ELEMENT;
-			if (data.stride !== undefined && bpe !== undefined) {
-				data.arrayStride = bpe * data.stride;
-			} else if (d) {
-				if (d.byteLength <= 64) data.arrayStride = d.byteLength;
-			}
+	let d = param.data;
+	bufData.data = d;
+	if (param.bufData) {
+		const bd = param.bufData;
+		bufData.bufData = bd;
+		d = bd.data;
+		bufData.data = d;
+	}
+	if(bufData.shared === undefined) bufData.shared = false;
+	if (bufData !== param) {
+		if (param.usage !== undefined) bufData.usage = param.usage;
+		if (param.shared !== undefined) bufData.shared = param.shared;
+		
+		if (param.stride !== undefined) bufData.stride = param.stride;
+		if (param.shdVarName !== undefined) bufData.shdVarName = param.shdVarName;
+		if (param.arrayStride !== undefined) bufData.arrayStride = param.arrayStride;
+	}
+	if(bufData.arrayStride === undefined) bufData.arrayStride = 1;
+	if (bufData.arrayStride < 2) {
+		const bpe = (d as Float32Array).BYTES_PER_ELEMENT;
+		if (bufData.stride !== undefined && bpe !== undefined) {
+			bufData.arrayStride = bpe * bufData.stride;
+		} else if (d) {
+			if (d.byteLength <= 64) bufData.arrayStride = d.byteLength;
 		}
 	}
 }
