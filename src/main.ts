@@ -16,7 +16,7 @@
 
 // import { MultiUniformTest as Demo } from "./voxgpu/sample/MultiUniformTest";
 // import { UniformTest as Demo } from "./voxgpu/sample/UniformTest";
-import { StorageTest as Demo } from "./voxgpu/sample/StorageTest";
+// import { StorageTest as Demo } from "./voxgpu/sample/StorageTest";
 
 // import { RSceneTest as Demo } from "./voxgpu/sample/RSceneTest";
 // import { SimpleLightTest as Demo } from "./voxgpu/sample/SimpleLightTest";
@@ -34,7 +34,7 @@ import { StorageTest as Demo } from "./voxgpu/sample/StorageTest";
 
 // import { ComputeEntityTest as Demo } from "./voxgpu/sample/ComputeEntityTest";
 // import { GameOfLifeTest as Demo } from "./voxgpu/sample/GameOfLifeTest";
-// import { ComputeMaterialTest as Demo } from "./voxgpu/sample/ComputeMaterialTest";
+import { ComputeMaterialTest as Demo } from "./voxgpu/sample/ComputeMaterialTest";
 // import { GameOfLifeMultiMaterialPass as Demo } from "./voxgpu/sample/GameOfLifeMultiMaterialPass";
 // import { GameOfLifePretty as Demo } from "./voxgpu/sample/GameOfLifePretty";
 // import { GameOfLifeSphere as Demo } from "./voxgpu/sample/GameOfLifeSphere";

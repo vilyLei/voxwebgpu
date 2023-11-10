@@ -2,11 +2,13 @@ import MouseEvent from "../event/MouseEvent";
 import { RendererScene } from "../rscene/RendererScene";
 import { MouseInteraction } from "../ui/MouseInteraction";
 
+import { WGRBufferData } from "../render/buffer/WGRBufferData";
 import { WGRUniformValue } from "../render/uniform/WGRUniformValue";
 import { WGRStorageValue } from "../render/buffer/WGRStorageValue";
 import { ComputeEntity } from "../entity/ComputeEntity";
 import { WGCompMaterial } from "../material/WGCompMaterial";
 import { WGRShderSrcType } from "../material/WGMaterialDescripter";
+import { WGRBufferVisibility } from "../render/buffer/WGRBufferVisibility";
 
 const gridSize = 32;
 const shdWorkGroupSize = 8;
@@ -65,7 +67,7 @@ export class ComputeMaterialTest {
 
 	private mouseDown = (evt: MouseEvent): void => {};
 
-	private createUniformValues(): WGRUniformValue[] {
+	private createUniformValues(): WGRBufferData[] {
 		const gridsSizesArray = new Float32Array([gridSize, gridSize]);
 		const cellStateArray0 = new Uint32Array(gridSize * gridSize);
 		for (let i = 0; i < cellStateArray0.length; i += 3) {
@@ -75,10 +77,16 @@ export class ComputeMaterialTest {
 		for (let i = 0; i < cellStateArray1.length; i++) {
 			cellStateArray1[i] = i % 2;
 		}
-		const v0 = new WGRUniformValue({ data: gridsSizesArray, stride: 2 }).toVisibleAll();
-		const v1 = new WGRStorageValue({ data: cellStateArray0, stride: 1 }).toVisibleVertComp();
-		const v2 = new WGRStorageValue({ data: cellStateArray1, stride: 1 }).toVisibleComp();
-		v2.toBufferForStorage();
+		// const v0 = new WGRUniformValue({ data: gridsSizesArray, stride: 2 }).toVisibleAll();
+		// const v1 = new WGRStorageValue({ data: cellStateArray0, stride: 1 }).toVisibleVertComp();
+		// const v2 = new WGRStorageValue({ data: cellStateArray1, stride: 1 }).toVisibleComp();
+
+		let visibility = new WGRBufferVisibility().toVisibleAll();
+		const v0 = { data: gridsSizesArray, stride: 2, visibility };
+		visibility = new WGRBufferVisibility().toVisibleVertComp();
+		const v1 = {storage: { data: cellStateArray0, stride: 1, visibility }};
+		visibility = new WGRBufferVisibility().toVisibleComp().toBufferForStorage();
+		const v2 = {storage: { data: cellStateArray1, stride: 1, visibility }};
 
 		return [v0, v1, v2];
 	}

@@ -106,36 +106,57 @@ function bufferDataFilter(d: WGRBufferData): WGRBufferData {
 	}
 	const v = __$ubv;
 	let rd = d;
-	v.toUniform();
-	if(d.uniform) {
-		rd = d.uniform;
-		if(!rd.visibility) {
-			rd.visibility = new WGRBufferVisibility();
-		}
-	}
+	let vi = rd.visibility;
+	
 	if(d.storage) {
-		console.log("uuuuuuu storage ...");
 		rd = d.storage;
 		v.toStorage();
+		// console.log("uuuuuuu storage ... !rd.visibility: ", (!rd.visibility));
 		if(!rd.visibility) {
 			rd.visibility = new WGRBufferVisibility();
 		}
-		rd.visibility.toBufferForReadOnlyStorage();
+		vi = rd.visibility;
+		let b = vi.buffer;
+		// console.log("dfdfdfd AAA b: ", b, (!b));
+		if(!b || b.type.indexOf('storage') < 0) {
+			vi.toBufferForReadOnlyStorage();
+			b = vi.buffer;
+		}
+		rd.usage = v.usage;
+		// console.log("dfdfdfd BBB b: ", b, (!b));
 	}
 	if(d.vertex) {
 		rd = d.vertex;
 		v.toVertex();
-	}
-	if(rd.usage === undefined){
 		rd.usage = v.usage;
 	}
+	if(rd.usage === undefined || d.uniform) {
+		if(d.uniform) {
+			rd = d.uniform;
+		}
+		v.toUniform();
+		rd.usage = v.usage;
+		if(!rd.visibility) {
+			rd.visibility = new WGRBufferVisibility();
+		}
+		let b = vi.buffer;
+		// console.log("dfdfdfd AAA000 b: ", b, (!b));
+		if(!b || b.type.indexOf('uniform') < 1) {
+			vi.toBufferForUniform();
+			b = vi.buffer;
+		}
+		// console.log("dfdfdfd AAA111 b: ", b, (!b), ", vi: ", vi);
+	}
+	// if(rd.usage === undefined){
+	// 	rd.usage = v.usage;
+	// }
 	return rd;
 }
 function checkBufferData(bufData: WGRBufferData): WGRBufferData {
 	let isBV = bufData instanceof WGRBufferValue;
-	console.log("checkBufferData(), isBV: ", isBV);
+	// console.log("checkBufferData(), isBV: ", isBV);
 	if(!isBV) {
-		console.log("checkBufferData(), building data ...");
+		// console.log("checkBufferData(), building data ...");
 		bufData = bufferDataFilter(bufData);
 		const v = __$ubv;
 
