@@ -11,7 +11,7 @@ import { IRenderableEntityContainer } from "../render/IRenderableEntityContainer
 import AABB from "../cgeom/AABB";
 import { WGRUnitState } from "../render/WGRUnitState";
 import { WGRShderSrcType } from "../material/WGMaterialDescripter";
-import { WGRUniformValue } from "../render/uniform/WGRUniformValue";
+import { WGRBufferData } from "../render/buffer/WGRBufferData";
 import { IWGRMaterialPassView } from "../render/pipeline/IWGRMaterialPassView";
 
 interface Entity3DParam {
@@ -26,19 +26,19 @@ interface Entity3DParam {
 	faceCullMode?: string;
 	depthWriteEnabled?: boolean;
 	shaderSrc?: WGRShderSrcType;
-	uniformValues?: WGRUniformValue[];
-	uniformValueMap?: { [key: string]: WGRUniformValue }
+	uniformValues?: WGRBufferData[];
+	// uniformValueMap?: { [key: string]: WGRUniformValue }
 	shadinguuid?: string;
 	instanceCount?: number;
 	rpasses?: IWGRMaterialPassView[];
 }
-function getUniformValueFromParam(key: string, param: Entity3DParam, defaultV?: WGRUniformValue ): WGRUniformValue {
-	if(param.uniformValueMap) {
-		const v = param.uniformValueMap[key];
-		if(v) {
-			return v;
-		}
-	}
+function getUniformValueFromParam(key: string, param: Entity3DParam, defaultV?: WGRBufferData ): WGRBufferData {
+	// if(param.uniformValueMap) {
+	// 	const v = param.uniformValueMap[key];
+	// 	if(v) {
+	// 		return v;
+	// 	}
+	// }
 	const ufvs = param.uniformValues;
 	if(param.uniformValues) {
 		for(let i = 0; i < ufvs.length; ++i) {

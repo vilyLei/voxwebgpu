@@ -1,7 +1,7 @@
 import { GeomDataBuilder } from "../geometry/GeomDataBuilder";
 
 import vertWGSL from "./shaders/defaultEntity.vert.wgsl";
-import fragWGSL from "./shaders/sampleTextureColorParam.frag.wgsl";
+import fragWGSL from "./shaders/sampleTextureColorUniform.frag.wgsl";
 
 import { WGMaterial } from "../material/WGMaterial";
 import { WGGeometry } from "../geometry/WGGeometry";
@@ -13,7 +13,7 @@ import Vector3 from "../math/Vector3";
 import { WGRStorageValue } from "../render/buffer/WGRStorageValue";
 import { WGRUniformValue } from "../render/uniform/WGRUniformValue";
 
-export class StorageTest {
+export class UniformTest {
 
 	private mEntity: Entity3D;
 
@@ -22,7 +22,7 @@ export class StorageTest {
 
 	initialize(): void {
 
-		console.log("StorageTest::initialize() ...");
+		console.log("UniformTest::initialize() ...");
 
 		let rsv = new WGRStorageValue({data: new Float32Array(16)});
 		console.log("xxxxxx rsv.isStorage(): ", rsv.isStorage());
@@ -58,8 +58,8 @@ export class StorageTest {
 			pipelineDefParam
 		});
 
-		// let ufv = new WGRStorageValue({data: new Float32Array([1,0,0,1])});
-		let ufv = {storage: {data: new Float32Array([1,0,0,1])}};
+		// let ufv = new WGRUniformValue({data: new Float32Array([1,0,0,1])});
+		let ufv = {data: new Float32Array([1,0,0,1])};
 		material.uniformValues = [ufv];
 		material.addTextureWithDatas( texDatas );
 

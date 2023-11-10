@@ -5,6 +5,7 @@ import { MouseInteraction } from "../ui/MouseInteraction";
 import { WGRUniformValue } from "../render/uniform/WGRUniformValue";
 import { WGRStorageValue } from "../render/buffer/WGRStorageValue";
 import { ComputeEntity } from "../entity/ComputeEntity";
+import { WGRBufferData } from "../render/buffer/WGRBufferData";
 
 const gridSize = 32;
 const shdWorkGroupSize = 8;
@@ -43,7 +44,7 @@ export class ComputeEntityTest {
 
 	private mouseDown = (evt: MouseEvent): void => {};
 
-	private createUniformValues(): WGRUniformValue[] {
+	private createUniformValues(): WGRBufferData[] {
 
 		const gridsSizesArray = new Float32Array([gridSize, gridSize]);
 		const cellStateArray0 = new Uint32Array(gridSize * gridSize);
@@ -55,6 +56,7 @@ export class ComputeEntityTest {
 			cellStateArray1[i] = i % 2;
 		}
 		const v0 = new WGRUniformValue({data: gridsSizesArray, stride: 2}).toVisibleAll();
+		// const v0 = {data: gridsSizesArray, stride: 2};
 		const v1 = new WGRStorageValue({data: cellStateArray0, stride: 1}).toVisibleVertComp();
 		const v2 = new WGRStorageValue({data: cellStateArray1, stride: 1}).toVisibleComp();
 		v2.toBufferForStorage();

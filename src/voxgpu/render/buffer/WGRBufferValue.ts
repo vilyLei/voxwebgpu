@@ -1,6 +1,7 @@
 import BitConst from "../../utils/BitConst";
 import { WGRBufferView } from "./WGRBufferView";
 import { applyParamToBufferData, WGRBufferData, WGRBufferValueParam } from "./WGRBufferValueParam";
+import { WGRBufferVisibility } from "./WGRBufferVisibility";
 
 class WGRBufferValue extends WGRBufferView {
 
@@ -108,10 +109,18 @@ function bufferDataFilter(d: WGRBufferData): WGRBufferData {
 	v.toUniform();
 	if(d.uniform) {
 		rd = d.uniform;
+		if(!rd.visibility) {
+			rd.visibility = new WGRBufferVisibility();
+		}
 	}
 	if(d.storage) {
+		console.log("uuuuuuu storage ...");
 		rd = d.storage;
 		v.toStorage();
+		if(!rd.visibility) {
+			rd.visibility = new WGRBufferVisibility();
+		}
+		rd.visibility.toBufferForReadOnlyStorage();
 	}
 	if(d.vertex) {
 		rd = d.vertex;
@@ -122,19 +131,32 @@ function bufferDataFilter(d: WGRBufferData): WGRBufferData {
 	}
 	return rd;
 }
-function checkBufferData(bufData: WGRBufferData): void {
-	let isView = bufData.__$getType !== undefined;
-	if(!isView) {
+function checkBufferData(bufData: WGRBufferData): WGRBufferData {
+	let isBV = bufData instanceof WGRBufferValue;
+	console.log("checkBufferData(), isBV: ", isBV);
+	if(!isBV) {
+		console.log("checkBufferData(), building data ...");
 		bufData = bufferDataFilter(bufData);
 		const v = __$ubv;
-		v.toUniform();
-		if(bufData.usage === undefined) bufData.usage = v.usage;
+
+		// if(bufData.usage === undefined) {
+		// 	console.log(">>>>>> sdsds >>>>>>>>>>")
+		// 	v.toUniform();
+		// 	bufData.usage = v.usage;
+		// 	bufData.visibility;
+		// }
 		bufData.shared = bufData.shared === true ? true : false;
 		bufData.byteLength = bufData.data.byteLength;
+		applyParamToBufferData(bufData, bufData);
+		// const vi = bufData.visibility;
+		// vi.toBufferForUniform();
+		// vi.toVisibleAll();
+		console.log("checkBufferData(), XXXXXXXX bufDatd: ", bufData);
 	}
 	// let typeNS = typeof bufData;
 	// console.log("checkBufferData(), typeNS: ", typeNS);
 	// console.log("checkBufferData(), bufData: ", bufData);
+	return bufData;
 }
 
 export { checkBufferData, WGRBufferData, WGRBufferValueParam, WGRBufferValue };

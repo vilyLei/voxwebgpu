@@ -8,7 +8,7 @@ import { SharedUniformObj, WGRUniformCtxInstance } from "./WGRUniformCtxInstance
 import { WGRBindGroupContext } from "../pipeline/WGRBindGroupContext";
 import { WebGPUContext } from "../../gpu/WebGPUContext";
 import { WGRBufferData } from "../buffer/WGRBufferData";
-import { checkBufferData } from "../buffer/WGRBufferValue";
+import { WGRBufferValue, checkBufferData } from "../buffer/WGRBufferValue";
 
 class WGRUniformContext implements IWGRUniformContext {
 	private mMap: Map<string, WGRUniformCtxInstance> = new Map();
@@ -90,12 +90,15 @@ class WGRUniformContext implements IWGRUniformContext {
 			}
 			const bufDataParams: BufDataParamType[] = [];
 			for (let i = 0; i < values.length; ++i) {
-				const v = values[i];
-				checkBufferData(v);
+
+				let v = values[i];
+				v = checkBufferData(v);
+
 				const vuid = v.uid;
 				const arrayStride = v.arrayStride;
 				const visibility = v.visibility.clone();
-				// console.log(v, ", v instanceof WGRUniformValue: ", v instanceof WGRUniformValue);
+				console.log(v, ", v instanceof WGRBufferValue: ", v instanceof WGRBufferValue);
+
 				bufDataParams.push({
 					arrayStride,
 					size: v.byteLength,
