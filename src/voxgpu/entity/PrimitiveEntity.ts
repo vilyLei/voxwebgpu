@@ -1,6 +1,7 @@
 import { Entity3DParam, getUniformValueFromParam, Entity3D } from "./Entity3D";
 import { WGMaterial } from "../material/WGMaterial";
 import { WGRUniformValue } from "../render/uniform/WGRUniformValue";
+import { WGRBufferData } from "../render/buffer/WGRBufferData";
 import Color4 from "../material/Color4";
 
 import vertWGSL from "../material/shader/wgsl/primitive.vert.wgsl";
@@ -12,8 +13,8 @@ import { WGGeometry } from "../geometry/WGGeometry";
 
 class PrimitiveEntity extends Entity3D {
 	private mColor = new Color4();
-	protected albedoV: WGRUniformValue;
-	protected armV: WGRUniformValue;
+	protected albedoV: WGRBufferData;
+	protected armV: WGRBufferData;
 	constructor(param?: Entity3DParam) {
 		super(param);
 		this.createGeometry(param);
@@ -23,7 +24,7 @@ class PrimitiveEntity extends Entity3D {
 		if (this.albedoV) {
 			if (c) {
 				this.mColor.setColor(c).toArray4(this.albedoV.data as Float32Array);
-				this.albedoV.upate();
+				this.albedoV.version ++;
 			}
 		}
 		return this;
@@ -34,6 +35,7 @@ class PrimitiveEntity extends Entity3D {
 			vs[0] = ao;
 			vs[1] = roughness;
 			vs[2] = metallic;
+			this.armV.version ++;
 		}
 		return this;
 	}

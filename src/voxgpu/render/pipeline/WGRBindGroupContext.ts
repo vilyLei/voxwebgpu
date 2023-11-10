@@ -209,8 +209,7 @@ class WGRBindGroupContext {
 							offset, // 实际应用中的计算不在这里
 							buffer: dp.buffer,
 							size: dp.bufferSize,
-							shared: dp.shared,
-							usageType: dp.usageType,
+							shared: dp.shared
 						}
 					};
 					desc.entries.push(ed);

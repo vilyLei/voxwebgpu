@@ -7,7 +7,7 @@ import { WGMaterial } from "../material/WGMaterial";
 import { WGGeometry } from "../geometry/WGGeometry";
 import { Entity3D } from "../entity/Entity3D";
 import { WGRShderSrcType } from "../material/WGMaterialDescripter";
-import { WGRStorageValue } from "../render/uniform/WGRStorageValue";
+import { WGRStorageValue } from "../render/buffer/WGRStorageValue";
 import MouseEvent from "../event/MouseEvent";
 import { RendererScene } from "../rscene/RendererScene";
 import { MouseInteraction } from "../ui/MouseInteraction";
@@ -69,8 +69,8 @@ export class SimplePBRTest {
 		const geometry = this.createGeom(this.geomData.createSphere(50), true);
 
 		const shdSrc = {
-			vertShaderSrc: { code: vertWGSL, uuid: "vertShdCode" },
-			fragShaderSrc: { code: fragWGSL, uuid: "fragShdCode" }
+			vert: { code: vertWGSL, uuid: "vertShdCode" },
+			frag: { code: fragWGSL, uuid: "fragShdCode" }
 		};
 
 		let tot = 7;

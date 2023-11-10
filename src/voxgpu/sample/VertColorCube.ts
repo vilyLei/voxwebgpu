@@ -19,24 +19,21 @@ export class VertColorCube {
 		const renderer = this.renderer;
 		const rgd = this.geomData.createCube(200);
 
-		const shdSrc = {
-			vertShaderSrc: { code: vertWGSL, uuid: "vertShdCode" },
-			fragShaderSrc: { code: fragWGSL, uuid: "fragShdCode" }
+		const shaderCodeSrc = {
+			vert: { code: vertWGSL },
+			frag: { code: fragWGSL }
 		};
 
-		const material = new WGMaterial({
+		const materials = [new WGMaterial({
 			shadinguuid: "shapeMaterial",
-			shaderCodeSrc: shdSrc
-		});
+			shaderCodeSrc
+		})];
 
 		const geometry = new WGGeometry()
-			.addAttribute({ shdVarName: "position", data: rgd.vs, strides: [3] })
-			.setIndexBuffer({ name: "geomIndex", data: rgd.ivs });
+			.addAttribute({ position: rgd.vs })
+			.setIndices( rgd.ivs );
 
-		const entity = new Entity3D();
-		entity.materials = [material];
-		entity.geometry = geometry;
-		renderer.addEntity(entity);
+		renderer.addEntity( new Entity3D({geometry, materials}) );
 	}
 
 	run(): void {

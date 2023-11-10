@@ -5,7 +5,7 @@ import vertWGSL from "./shaders/gameOfLifeSpherePBR.vert.wgsl";
 import fragWGSL from "./shaders/gameOfLifeSpherePBR.frag.wgsl";
 
 import { WGRUniformValue } from "../render/uniform/WGRUniformValue";
-import { WGRStorageValue } from "../render/uniform/WGRStorageValue";
+import { WGRStorageValue } from "../render/buffer/WGRStorageValue";
 import { WGRShderSrcType } from "../material/WGMaterialDescripter";
 import { WGCompMaterial } from "../material/WGCompMaterial";
 import { WGMaterial } from "../material/WGMaterial";
@@ -152,18 +152,16 @@ export class GameOfLife3DPBR {
 	private mStep = 0;
 
 	private createMaterial(uniformValues: WGRUniformValue[]): WGMaterial {
-		
+
 		const instanceCount = gridSize * gridSize;
 		let shaderCodeSrc = {
-			vertShaderSrc: {
+			vert: {
 				code: vertWGSL,
 				uuid: "vert-gameOfLife",
-				vertEntryPoint: "vertMain",
 			},
-			fragShaderSrc: {
+			frag: {
 				code: fragWGSL,
 				uuid: "frag-gameOfLife",
-				fragEntryPoint: "fragMain"
 			}
 		} as WGRShderSrcType;
 		return new WGMaterial({
@@ -175,14 +173,11 @@ export class GameOfLife3DPBR {
 		});
 	}
 	private createCompMaterial(uniformValues: WGRUniformValue[]): WGCompMaterial {
-		
+
 		const workgroupCount = Math.ceil(gridSize / shdWorkGroupSize);
 		let shaderCodeSrc = {
-			compShaderSrc: {
-				code: compShdCode,
-				uuid: "shader-computing",
-				compEntryPoint: "compMain"
-			}
+			code: compShdCode,
+			uuid: "shader-computing",
 		};
 		return new WGCompMaterial({
 			shadinguuid: 'computing',

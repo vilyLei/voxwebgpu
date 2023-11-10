@@ -9,7 +9,7 @@ import { Entity3D } from "../entity/Entity3D";
 import { WGImage2DTextureData } from "../texture/WGTextureWrapper";
 import { WGRShderSrcType } from "../material/WGMaterialDescripter";
 import Vector3 from "../math/Vector3";
-import { WGRStorageValue } from "../render/uniform/WGRStorageValue";
+import { WGRStorageValue } from "../render/buffer/WGRStorageValue";
 import MouseEvent from "../event/MouseEvent";
 import { RendererScene } from "../rscene/RendererScene";
 import { MouseInteraction } from "../ui/MouseInteraction";

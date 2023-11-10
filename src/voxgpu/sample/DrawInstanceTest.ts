@@ -9,7 +9,7 @@ import { PrimitiveEntity } from "../entity/PrimitiveEntity";
 import vertWGSL from "./shaders/primitiveIns.vert.wgsl";
 import fragWGSL from "./shaders/primitiveIns.frag.wgsl";
 import { WGRUniformValue } from "../render/uniform/WGRUniformValue";
-import { WGRStorageValue } from "../render/uniform/WGRStorageValue";
+import { WGRStorageValue } from "../render/buffer/WGRStorageValue";
 import Vector3 from "../math/Vector3";
 
 export class DrawInstanceTest {

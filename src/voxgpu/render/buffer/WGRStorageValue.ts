@@ -1,4 +1,4 @@
-import { WGRUniformValueParam, WGRUniformValue } from "./WGRUniformValue";
+import { WGRUniformValueParam, WGRUniformValue } from "../uniform/WGRUniformValue";
 
 class WGRStorageValue extends WGRUniformValue {
 

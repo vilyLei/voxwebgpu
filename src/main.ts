@@ -1,5 +1,5 @@
 //////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////           WEB-GPU               /////////////////////////////
+////////////////////////////           WebGPU               /////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////
 
 // import { VertColorTriangle as Demo } from "./voxgpu/sample/VertColorTriangle";
@@ -31,7 +31,7 @@
 // import { ModelLoadTest as Demo } from "./voxgpu/sample/ModelLoadTest";
 // import { DrawInstanceTest as Demo } from "./voxgpu/sample/DrawInstanceTest";
 
-// import { ComputeEntityTest as Demo } from "./voxgpu/sample/ComputeEntityTest";
+import { ComputeEntityTest as Demo } from "./voxgpu/sample/ComputeEntityTest";
 // import { GameOfLifeTest as Demo } from "./voxgpu/sample/GameOfLifeTest";
 // import { ComputeMaterialTest as Demo } from "./voxgpu/sample/ComputeMaterialTest";
 // import { GameOfLifeMultiMaterialPass as Demo } from "./voxgpu/sample/GameOfLifeMultiMaterialPass";
@@ -42,7 +42,7 @@
 
 // import { MultiGPUPassTest as Demo } from "./voxgpu/sample/MultiGPUPassTest";
 // import { RTTFixScreenTest as Demo } from "./voxgpu/sample/RTTFixScreenTest";
-import { RTTTest as Demo } from "./voxgpu/sample/RTTTest";
+// import { RTTTest as Demo } from "./voxgpu/sample/RTTTest";
 
 
 let demoIns = new Demo();

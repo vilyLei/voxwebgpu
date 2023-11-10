@@ -5,7 +5,7 @@ import { GPUComputePipeline } from "../../gpu/GPUComputePipeline";
 import { IWGRUniformContext } from "../uniform/IWGRUniformContext";
 import { IWGRendererPass } from "./IWGRendererPass";
 import { WGRBufferVisibility } from "../buffer/WGRBufferVisibility";
-import { WGRUniformValue } from "../uniform/WGRUniformValue";
+import { WGRBufferData } from "../buffer/WGRBufferData";
 import { WGRBindGroupContext } from "./WGRBindGroupContext";
 
 interface BufDataParamType {
@@ -14,13 +14,12 @@ interface BufDataParamType {
 	defaultData?: NumberArrayDataType;
 	shared: boolean;
 	vuid?: number;
-	usageType?: number;
 	arrayStride?: number;
 	visibility?: WGRBufferVisibility,
-	ufvalue?: WGRUniformValue
+	ufvalue?: WGRBufferData
 };
 type VtxDescParam = { vertex: { arrayStride: number, params: { offset: number, format: string }[] } };
-type BindGroupDataParamType = { index: number, buffer: GPUBuffer, bufferSize: number, shared: boolean, usageType?: number };
+type BindGroupDataParamType = { index: number, buffer: GPUBuffer, bufferSize: number, shared: boolean};
 type VtxPipelinDescParam = { vertex: { buffers?: GPUBuffer[], attributeIndicesArray: number[][] } };
 type UniformBufferParam = { sizes: number[], usage: number, arrayStride?:number };
 

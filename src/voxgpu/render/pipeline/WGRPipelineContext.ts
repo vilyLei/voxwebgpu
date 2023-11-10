@@ -53,13 +53,19 @@ class WGRPipelineContext implements IWGRPipelineContext {
 				let pipeGLayout: GPUPipelineLayout;
 				if (!this.uniformCtx.isLayoutAuto()) {
 					const bindGLayout = this.uniformCtx.getBindGroupLayout(p.multisampleEnabled);
+					const bindGroupLayouts = bindGLayout ? [bindGLayout] : [];
 					pipeGLayout = ctx.device.createPipelineLayout({
 						label: p.label,
-						bindGroupLayouts: [bindGLayout]
+						bindGroupLayouts
 					});
 					// console.log("CCCCCCCCCC 01 bindGLayout: ", bindGLayout);
 					// console.log("CCCCCCCCCC 02 pipeGLayout: ", pipeGLayout);
 					// console.log("CCCCCCCCCC 03 pipeline use spec layout !!!");
+				}else {
+					pipeGLayout = ctx.device.createPipelineLayout({
+						label: p.label,
+						bindGroupLayouts: []
+					});
 				}
 				this.bindGroupCtx.rpass = this.rpass;
 				if (p.compShaderSrc) {

@@ -8,7 +8,7 @@ import fragWGSL from "./shaders/screenPostEffect.frag.wgsl";
 import frag1WGSL from "./shaders/screenPostEffect1.frag.wgsl";
 
 import { WGRUniformValue } from "../render/uniform/WGRUniformValue";
-import { WGRStorageValue } from "../render/uniform/WGRStorageValue";
+import { WGRStorageValue } from "../render/buffer/WGRStorageValue";
 
 export class ScreenPostEffect {
 	private mRscene = new RendererScene();

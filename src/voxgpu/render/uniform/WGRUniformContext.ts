@@ -8,6 +8,7 @@ import { GPUBindGroupLayout } from "../../gpu/GPUBindGroupLayout";
 import { SharedUniformObj, WGRUniformCtxInstance } from "./WGRUniformCtxInstance";
 import { WGRBindGroupContext } from "../pipeline/WGRBindGroupContext";
 import { WebGPUContext } from "../../gpu/WebGPUContext";
+import { WGRBufferData } from "../buffer/WGRBufferData";
 
 class WGRUniformContext implements IWGRUniformContext {
 	private mMap: Map<string, WGRUniformCtxInstance> = new Map();
@@ -79,7 +80,7 @@ class WGRUniformContext implements IWGRUniformContext {
 		}
 		return uniforms;
 	}
-	createUniformWithValues(layoutName: string, groupIndex: number, values: WGRUniformValue[], texParams?: WGRUniformTexParam[], uniformAppend?: boolean): WGRUniform {
+	createUniformWithValues(layoutName: string, groupIndex: number, values: WGRBufferData[], texParams?: WGRUniformTexParam[], uniformAppend?: boolean): WGRUniform {
 		if (this.mBindGCtx) {
 			const uctx = this.getUCtx(layoutName);
 			if (!uctx.ready) {
@@ -90,16 +91,15 @@ class WGRUniformContext implements IWGRUniformContext {
 			const bufDataParams: BufDataParamType[] = [];
 			for (let i = 0; i < values.length; ++i) {
 				const v = values[i];
-				const usageType = v.isStorage() ? 1 : 0;
 				const vuid = v.uid;
 				const arrayStride = v.arrayStride;
 				const visibility = v.visibility.clone();
+				// console.log(v, ", v instanceof WGRUniformValue: ", v instanceof WGRUniformValue);
 				bufDataParams.push({
 					arrayStride,
 					size: v.byteLength,
 					usage: v.usage,
 					shared: v.shared,
-					usageType,
 					vuid,
 					visibility,
 					ufvalue: v
@@ -114,7 +114,7 @@ class WGRUniformContext implements IWGRUniformContext {
 		layoutName: string,
 		groupIndex: number,
 		bufDataParams?: BufDataParamType[],
-		texParams?: { texView: GPUTextureView; sampler?: GPUSampler }[],
+		texParams?: { texView: GPUTextureView, sampler?: GPUSampler }[],
 		uniformAppend?: boolean
 	): WGRUniform | null {
 		if (this.mBindGCtx) {

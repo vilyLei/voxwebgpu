@@ -4,9 +4,10 @@ import { WGRUniform } from "./WGRUniform";
 import { BindGroupDataParamType, BufDataParamType } from "../pipeline/IWGRPipelineContext";
 import { WGRUniformValue } from "./WGRUniformValue";
 import { GPUBuffer } from "../../gpu/GPUBuffer";
+import { WGRBufferData } from "../../render/buffer/WGRBufferData";
 
-type WGRUniformTexParam = { texView: GPUTextureView; sampler?: GPUSampler };
-type WGRUniformParam = { layoutName: string; groupIndex: number; values: WGRUniformValue[]; texParams?: WGRUniformTexParam[] };
+type WGRUniformTexParam = { texView: GPUTextureView, sampler?: GPUSampler };
+type WGRUniformParam = { layoutName: string, groupIndex: number, values: WGRBufferData[], texParams?: WGRUniformTexParam[] };
 class WGRUniformWrapper {
 	uniform: WGRUniform;
 	bufDataParams?: BufDataParamType[];

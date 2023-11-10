@@ -1,7 +1,7 @@
 import { GPUShaderModule } from "../../gpu/GPUShaderModule";
 import { WebGPUContext } from "../../gpu/WebGPUContext";
 import { WGRShadeSrcParam, WGRPipelineCtxParams } from "./WGRPipelineCtxParams";
-import { createFragmentState, createComputeState } from "./WGRShaderParams";
+import { findShaderEntryPoint, createFragmentState, createComputeState } from "./WGRShaderParams";
 
 class WGRPipelineShader {
 	private mWGCtx: WebGPUContext;
@@ -42,19 +42,28 @@ class WGRPipelineShader {
 		return null;
 	}
 	build(params: WGRPipelineCtxParams): void {
-		
+
 		let shdModule = params.shaderSrc ? this.createShaderModule("Shader", params.shaderSrc) : null;
 		let vertShdModule = params.vertShaderSrc ? this.createShaderModule("VertShader", params.vertShaderSrc) : shdModule;
 		let fragShdModule = params.fragShaderSrc ? this.createShaderModule("FragShader", params.fragShaderSrc) : shdModule;
 		let compShdModule = params.compShaderSrc ? this.createShaderModule("CompShader", params.compShaderSrc) : shdModule;
 
+		let entryPoint = "";
 		const vert = params.vertex;
 		let shdSrc = params.shaderSrc ? params.shaderSrc : params.vertShaderSrc;
 		if(shdSrc) {
-			vert.module = vertShdModule;
-			if (shdSrc.vertEntryPoint !== undefined) {
-				vert.entryPoint = shdSrc.vertEntryPoint;
+			entryPoint = shdSrc.vertEntryPoint !== undefined ? shdSrc.vertEntryPoint : findShaderEntryPoint('@vertex', shdSrc.code);
+			if(entryPoint !== '') {
+				vert.module = vertShdModule;
+				vert.entryPoint = entryPoint;
 			}
+			// entryPoint = this.findShaderEntryPoint('@vertex', shdSrc.code);
+			// console.log("vert entryPoint: >"+entryPoint+"<");
+			// if (shdSrc.vertEntryPoint !== undefined) {
+			// 	vert.entryPoint = shdSrc.vertEntryPoint;
+			// }else {
+			// 	shdSrc.vertEntryPoint = vert.entryPoint = this.findShaderEntryPoint('@vertex', shdSrc.code);
+			// }
 		}else {
 			params.vertex = null;
 		}
@@ -62,13 +71,23 @@ class WGRPipelineShader {
 		let frag = params.fragment;
 		shdSrc = params.shaderSrc ? params.shaderSrc : params.fragShaderSrc;
 		if(shdSrc) {
-			if(!frag) {
-				frag = params.fragment = createFragmentState();
+			entryPoint = shdSrc.fragEntryPoint !== undefined ? shdSrc.fragEntryPoint : findShaderEntryPoint('@fragment', shdSrc.code);
+			if(entryPoint !== '') {
+				if(!frag) {
+					frag = params.fragment = createFragmentState();
+				}
+				frag.module = fragShdModule;
+				frag.entryPoint = entryPoint;
 			}
-			frag.module = fragShdModule;
-			if (shdSrc.fragEntryPoint !== undefined) {
-				frag.entryPoint = shdSrc.fragEntryPoint;
-			}
+			// if(!frag) {
+			// 	frag = params.fragment = createFragmentState();
+			// }
+			// frag.module = fragShdModule;
+			// if (shdSrc.fragEntryPoint !== undefined) {
+			// 	frag.entryPoint = shdSrc.fragEntryPoint;
+			// }else {
+			// 	shdSrc.fragEntryPoint = frag.entryPoint = this.findShaderEntryPoint('@fragment', shdSrc.code);
+			// }
 		}else {
 			params.fragment = null;
 		}
@@ -78,6 +97,15 @@ class WGRPipelineShader {
 			params.compute = createComputeState( compShdModule );
 			if (shdSrc.compEntryPoint !== undefined) {
 				params.compute.entryPoint = shdSrc.compEntryPoint;
+			}else {
+				shdSrc.compEntryPoint = params.compute.entryPoint = findShaderEntryPoint('@compute', shdSrc.code);
+			}
+		}else if(compShdModule){
+			shdSrc = params.shaderSrc;
+			entryPoint = findShaderEntryPoint('@compute', shdSrc.code);
+			if(entryPoint != '') {
+				params.compute = createComputeState( compShdModule );
+				params.compute.entryPoint = entryPoint;
 			}
 		}
 	}

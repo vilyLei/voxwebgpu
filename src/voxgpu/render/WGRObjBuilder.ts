@@ -3,16 +3,16 @@ import { WGRPrimitive } from "./WGRPrimitive";
 import { IWGRUnit } from "./IWGRUnit";
 import { WGRUnit } from "./WGRUnit";
 import { GPUBuffer } from "../gpu/GPUBuffer";
-// import { WGRenderPassBlock } from "../render/WGRenderPassBlock";
 
 import { IWGRPassNodeBuilder } from "./IWGRPassNodeBuilder";
-import { WGRUniformValue } from "./uniform/WGRUniformValue";
 import { GPUTextureView } from "../gpu/GPUTextureView";
 import { WGRCompUnit } from "./WGRCompUnit";
 import { IRenderableObject } from "./IRenderableObject";
 import { WGCompMaterial } from "../material/WGCompMaterial";
+import { WGRBufferData } from "../render/buffer/WGRBufferData";
+import { findShaderEntryPoint, WGRShderSrcType } from "../render/pipeline/WGRPipelineCtxParams";
 
-type GeomType = { indexBuffer?: GPUBuffer; vertexBuffers: GPUBuffer[]; indexCount?: number; vertexCount?: number };
+type GeomType = { indexBuffer?: GPUBuffer, vertexBuffers: GPUBuffer[], indexCount?: number, vertexCount?: number };
 
 class WGRObjBuilder {
 	constructor() { }
@@ -27,6 +27,29 @@ class WGRObjBuilder {
 			g.vertexCount = geomParam.vertexCount;
 		}
 		return g;
+	}
+	private testShaderSrc(shdSrc: WGRShderSrcType): void {
+		if(shdSrc) {
+			if (shdSrc.code !== undefined && !shdSrc.shaderSrc) {
+				const obj = { code: shdSrc.code, uuid: shdSrc.uuid };
+				if(findShaderEntryPoint('@compute', shdSrc.code) != '') {
+					// console.log(">>>>>>>>>>> find comp shader >>>>>>>>>>>>>>>>>>>>>");
+					shdSrc.compShaderSrc = shdSrc.compShaderSrc ? shdSrc.compShaderSrc : obj;
+				}else {
+					// console.log(">>>>>>>>>>> find curr shader >>>>>>>>>>>>>>>>>>>>>");
+					shdSrc.shaderSrc = shdSrc.shaderSrc ? shdSrc.shaderSrc : obj;
+				}
+			}
+			if(shdSrc.vert) {
+				shdSrc.vertShaderSrc = shdSrc.vert;
+			}
+			if(shdSrc.frag) {
+				shdSrc.fragShaderSrc = shdSrc.frag;
+			}
+			if(shdSrc.comp) {
+				shdSrc.compShaderSrc = shdSrc.comp;
+			}
+		}
 	}
 	createRPass(entity: Entity3D, builder: IWGRPassNodeBuilder, primitive: WGRPrimitive, materialIndex = 0): IWGRUnit {
 
@@ -45,6 +68,7 @@ class WGRObjBuilder {
 					}
 				}
 			}
+			this.testShaderSrc(material.shaderCodeSrc);
 			const node = builder.getPassNodeWithMaterial(material);
 			pctx = node.createRenderPipelineCtxWithMaterial(material);
 			material.initialize(pctx);
@@ -65,6 +89,9 @@ class WGRObjBuilder {
 			if (compMat && compMat.workcounts) {
 				rcompunit.workcounts = compMat.workcounts;
 			}
+			if(!rcompunit.workcounts) {
+				rcompunit.workcounts = new Uint16Array([1, 1, 0, 0]);
+			}
 			rcompunit.rp = pctx.rpass;
 			ru = rcompunit;
 		} else {
@@ -76,7 +103,7 @@ class WGRObjBuilder {
 
 		ru.pipelinectx = pctx;
 		const uniformCtx = pctx.uniformCtx;
-		let uvalues: WGRUniformValue[] = [];
+		let uvalues: WGRBufferData[] = [];
 
 		const cam = builder.camera;
 		if (!isComputing) {

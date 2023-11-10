@@ -76,6 +76,9 @@ class WGRUniformCtxInstance {
 				ets.push(v);
 			}
 		}
+		if(ets.length < 1) {
+			return undefined;
+		}
 		// console.log("WGRUniformCtxInstance:: getBindGroupLayout(), CCCCCCC ets: ", ets);
 		const desc = {
 			label: "(BindGroupLayout)WGRUniformCtxInstance" + this.mUid,
@@ -272,7 +275,7 @@ class WGRUniformCtxInstance {
 						ps = new Array( dps.length );
 						for (let j = 0; j < dps.length; ++j) {
 							const dp = dps[j];
-							ps[j] = { index: index, buffer: uf.buffers[j], bufferSize: dp.size, shared: dp.shared, usageType: dp.usageType };
+							ps[j] = { index: index, buffer: uf.buffers[j], bufferSize: dp.size, shared: dp.shared };
 						}
 						this.mBufDataDescs = ps;
 					}
@@ -364,12 +367,6 @@ class WGRUniformCtxInstance {
 	destroy(): void {
 		if (this.mBindGCtx) {
 			this.shdUniform = null;
-			// if (this.mBuffers) {
-			// 	for (let i = 0; i < this.mBuffers.length; ++i) {
-			// 		this.mBuffers[i].destroy();
-			// 	}
-			// 	this.mBuffers = null;
-			// }
 			if (this.mBufObj) {
 				this.mBufObj.destroy();
 				this.mBufObj = null;

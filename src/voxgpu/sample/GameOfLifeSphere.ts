@@ -5,7 +5,7 @@ import { MouseInteraction } from "../ui/MouseInteraction";
 import shaderWGSL from "./shaders/gameOfLifeSphere.wgsl";
 
 import { WGRUniformValue } from "../render/uniform/WGRUniformValue";
-import { WGRStorageValue } from "../render/uniform/WGRStorageValue";
+import { WGRStorageValue } from "../render/buffer/WGRStorageValue";
 import { WGRShderSrcType } from "../material/WGMaterialDescripter";
 import { WGCompMaterial } from "../material/WGCompMaterial";
 import { WGMaterial } from "../material/WGMaterial";
@@ -89,13 +89,6 @@ export class GameOfLifeSphere {
 		const gridsSizesArray = new Float32Array([gridSize, gridSize]);
 		const cellStateArray0 = new Uint32Array(gridSize * gridSize);
 		for (let i = 0; i < cellStateArray0.length; i++) {
-
-			// if(i % 22 == 0) {
-			// 	cellStateArray0[i] = 1;
-			// }
-			// let t = (Date.now()/12345.34347);
-			// t = t - Math.floor(t);
-			// cellStateArray0[i] = Math.min(Math.random(), t) > 0.5 ? 1 : 0;
 			cellStateArray0[i] = Math.random() > 0.6 ? 1 : 0;
 		}
 		const cellStateArray1 = new Uint32Array(gridSize * gridSize);
@@ -182,19 +175,12 @@ export class GameOfLifeSphere {
 		const workgroupCount = Math.ceil(gridSize / shdWorkGroupSize);
 
 		let shaderSrc = {
-			shaderSrc: {
-				code: shaderWGSL,
-				uuid: "shader-gameOfLife",
-				vertEntryPoint: "vertMain",
-				fragEntryPoint: "fragMain"
-			}
-		} as WGRShderSrcType;
+			code: shaderWGSL,
+			uuid: "shader-gameOfLife",
+		};
 		let compShaderSrc = {
-			compShaderSrc: {
-				code: compShdCode,
-				uuid: "shader-computing",
-				compEntryPoint: "compMain"
-			}
+			code: compShdCode,
+			uuid: "shader-computing"
 		};
 		const materials = [
 			// build ping-pong rendering process
@@ -211,8 +197,6 @@ export class GameOfLifeSphere {
 			materials
 		});
 		rc.addEntity(entity);
-		materials[0].visible = false;
-		materials[2].visible = false;
 
 		this.mEntity = entity;
 	}

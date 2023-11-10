@@ -2,7 +2,7 @@
 import { WGRPipelineContextDefParam, WGRShderSrcType } from "../render/pipeline/WGRPipelineCtxParams";
 import { VtxPipelinDescParam } from "../render/pipeline/IWGRPipelineContext";
 import { IWGRMaterialPassView } from "../render/pipeline/IWGRMaterialPassView";
-import { WGRUniformValue } from "../render/uniform/WGRUniformValue";
+import { WGRBufferData } from "../render/buffer/WGRBufferValueParam";
 
 interface WGMaterialDescripter {
 	shadinguuid: string;
@@ -15,6 +15,6 @@ interface WGMaterialDescripter {
 	 */
 	uniformAppend?: boolean;
 	instanceCount?: number;
-	uniformValues?: WGRUniformValue[];
+	uniformValues?: WGRBufferData[];
 }
 export { WGRShderSrcType, VtxPipelinDescParam, WGRPipelineContextDefParam, WGMaterialDescripter };

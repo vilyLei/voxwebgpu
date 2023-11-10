@@ -6,7 +6,7 @@ import { FixScreenPlaneEntity } from "../entity/FixScreenPlaneEntity";
 import shaderWGSL from "./shaders/gameOfLife.wgsl";
 
 import { WGRUniformValue } from "../render/uniform/WGRUniformValue";
-import { WGRStorageValue } from "../render/uniform/WGRStorageValue";
+import { WGRStorageValue } from "../render/buffer/WGRStorageValue";
 import { ComputeEntity } from "../entity/ComputeEntity";
 import { WGRShderSrcType } from "../material/WGMaterialDescripter";
 
@@ -120,13 +120,10 @@ export class GameOfLifeTest {
 
 		// build ping-pong rendering process
 		let shaderSrc = {
-			shaderSrc: {
-				code: shaderWGSL,
-				uuid: "shader-gameOfLife",
-				vertEntryPoint: "vertMain",
-				fragEntryPoint: "fragMain"
-			}
-		} as WGRShderSrcType;
+			code: shaderWGSL,
+			uuid: "shader-gameOfLife"
+		};
+
 		let instanceCount = gridSize * gridSize;
 		let uniformValues = ufvsObjs[0].ufvs0;
 		let entity = new FixScreenPlaneEntity({
@@ -144,11 +141,8 @@ export class GameOfLifeTest {
 
 		// build ping-pong computing process
 		shaderSrc = {
-			compShaderSrc: {
-				code: compShdCode,
-				uuid: "shader-computing",
-				compEntryPoint: "compMain"
-			}
+			code: compShdCode,
+			uuid: "shader-computing",
 		};
 
 		const workgroupCount = Math.ceil(gridSize / shdWorkGroupSize);

@@ -3,19 +3,34 @@ import { GPUComputeState } from "../../gpu/GPUComputeState";
 import { GPUShaderModule } from "../../gpu/GPUShaderModule";
 
 interface WGRShadeSrcParam {
-	code: string;
+	code?: string;
 	uuid?: string;
 	vertEntryPoint?: string;
 	fragEntryPoint?: string;
 	compEntryPoint?: string
 }
-interface WGRShderSrcType {
+interface WGRShderSrcType extends WGRShadeSrcParam {
 	shaderSrc?: WGRShadeSrcParam;
 	vertShaderSrc?: WGRShadeSrcParam;
 	fragShaderSrc?: WGRShadeSrcParam;
 	compShaderSrc?: WGRShadeSrcParam;
+
+	vert?: WGRShadeSrcParam;
+	frag?: WGRShadeSrcParam;
+	comp?: WGRShadeSrcParam;
 }
 
+function findShaderEntryPoint(keyStr: string, src: string): string {
+	let i = src.indexOf(keyStr);
+	if(i < 0) {
+		// throw Error("Illegal Operation !!!");
+		return "";
+	}
+	i = src.indexOf('fn',i + keyStr.length) + 2;
+	let j = src.indexOf('(',i);
+
+	return src.slice(i, j).trim();
+}
 function createFragmentState(shaderModule?: GPUShaderModule): GPUFragmentState {
 	const st = {
 		module: shaderModule,
@@ -36,4 +51,4 @@ function createComputeState(shaderModule?: GPUShaderModule): GPUComputeState {
 	return st;
 }
 
-export { WGRShderSrcType, WGRShadeSrcParam, createFragmentState, createComputeState };
+export { WGRShderSrcType, WGRShadeSrcParam, findShaderEntryPoint, createFragmentState, createComputeState };

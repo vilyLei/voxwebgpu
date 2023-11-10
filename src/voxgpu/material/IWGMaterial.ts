@@ -18,7 +18,8 @@ interface IWGMaterial extends WGMaterialDescripter {
 	pipelineVtxParam?: VtxPipelinDescParam;
 	pipelineDefParam?: WGRPipelineContextDefParam;
 
-	uniformValues: WGRUniformValue[];
+	// uniformValues: WGRUniformValue[];
+	// uniformValues: WGRBufferData[];
 
 	// textures: { [key: string]: WGTextureWrapper } = {};
 	textures: WGTextureWrapper[];

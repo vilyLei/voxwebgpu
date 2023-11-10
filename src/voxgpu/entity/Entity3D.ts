@@ -15,6 +15,7 @@ import { WGRUniformValue } from "../render/uniform/WGRUniformValue";
 import { IWGRMaterialPassView } from "../render/pipeline/IWGRMaterialPassView";
 
 interface Entity3DParam {
+	cameraViewing?: boolean;
 	transformEnabled?: boolean;
 	transform?: ROTransform | IMatrix4 | Float32Array;
 	transufvShared?: boolean;
@@ -87,9 +88,11 @@ class Entity3D implements IRenderableEntity {
 	mouseEnabled = false;
 
 	constructor(param?: Entity3DParam) {
+		if(!param) param = {};
 		this.init(param);
 	}
 	protected init(param?: Entity3DParam): void {
+		this.cameraViewing = param.cameraViewing === false ? false : true;
 		let transformEnabled = !param || param.transformEnabled === undefined || param.transformEnabled === true;
 		let transform: ROTransform | IMatrix4 | Float32Array;
 		if (param) {

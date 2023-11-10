@@ -1,14 +1,14 @@
 import { GPUBuffer } from "../../gpu/GPUBuffer";
 import { WebGPUContextImpl } from "../../gpu/WebGPUContextImpl";
-import { WGRBufferView } from "./WGRBufferView";
+import { WGRBufferData } from "./WGRBufferData";
 
 /**
  * 用于统一的gpu端buf资源管理
  * WGH(Web GPU Hardware)
  */
 class WGHBufferStoreIns {
-	private mBufMap: Map<number, WGRBufferView> = new Map();
-	addWithUid(uid: number, buf: WGRBufferView): void {
+	private mBufMap: Map<number, WGRBufferData> = new Map();
+	addWithUid(uid: number, buf: WGRBufferData): void {
 		if (buf) {
 			const map = this.mBufMap;
 			if (!map.has(uid)) {
@@ -22,7 +22,7 @@ class WGHBufferStoreIns {
 			map.delete(uid);
 		}
 	}
-	getWithUid(uid: number): WGRBufferView {
+	getWithUid(uid: number): WGRBufferData {
 		return this.mBufMap.get(uid);
 	}
 	getBufWithUid(uid: number): GPUBuffer {

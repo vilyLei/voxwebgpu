@@ -10,7 +10,7 @@ import { WGRenderer } from "../rscene/WGRenderer";
 import { WGImage2DTextureData } from "../texture/WGTextureWrapper";
 import { WGRShderSrcType } from "../material/WGMaterialDescripter";
 import Vector3 from "../math/Vector3";
-import { WGRStorageValue } from "../render/uniform/WGRStorageValue";
+import { WGRStorageValue } from "../render/buffer/WGRStorageValue";
 import { WGRUniformValue } from "../render/uniform/WGRUniformValue";
 
 class MixValue extends WGRUniformValue {

@@ -19,8 +19,8 @@ export class MultiTexturedCube {
 		console.log("MultiTexturedCube::initialize() ...");
 
 		const shdSrc = {
-			vertShaderSrc: { code: vertWGSL, uuid: "vertShdCode" },
-			fragShaderSrc: { code: fragWGSL, uuid: "fragShdCode" }
+			vert: { code: vertWGSL, uuid: "vertShdCode" },
+			frag: { code: fragWGSL, uuid: "fragShdCode" }
 		};
 		const texDataList = [new WGImage2DTextureData("static/assets/box.jpg"), new WGImage2DTextureData("static/assets/default.jpg")];
 		const material = this.createMaterial(shdSrc, texDataList);
@@ -28,19 +28,15 @@ export class MultiTexturedCube {
 	}
 
 	private createMaterial(
-		shdSrc: WGRShderSrcType,
+		shaderCodeSrc: WGRShderSrcType,
 		texDatas?: WGImage2DTextureData[]
 	): WGMaterial {
 
-		let pipelineDefParam = {
-			faceCullMode: "back"
-		};
 		const texTotal = texDatas ? texDatas.length : 0;
 
 		const material = new WGMaterial({
 			shadinguuid: "base-material-tex" + texTotal,
-			shaderCodeSrc: shdSrc,
-			pipelineDefParam
+			shaderCodeSrc
 		});
 		material.addTextureWithDatas(texDatas);
 		return material;
@@ -51,14 +47,11 @@ export class MultiTexturedCube {
 		const rgd = this.geomData.createCube(200);
 
 		const geometry = new WGGeometry()
-			.addAttribute({ shdVarName: "position", data: rgd.vs, strides: [3] })
-			.addAttribute({ shdVarName: "uv", data: rgd.uvs, strides: [2] })
-			.setIndexBuffer({ name: "geomIndex", data: rgd.ivs });
+			.addAttribute({ position: rgd.vs})
+			.addAttribute({ uv: rgd.uvs})
+			.setIndices( rgd.ivs );
 
-		const entity = new Entity3D();
-		entity.materials = materials;
-		entity.geometry = geometry;
-
+		const entity = new Entity3D({geometry, materials});
 		renderer.addEntity(entity);
 		return entity;
 	}

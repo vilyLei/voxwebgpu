@@ -4,7 +4,7 @@ import { FixScreenPlaneEntity } from "../entity/FixScreenPlaneEntity";
 import shaderWGSL from "./shaders/gameOfLifePretty.wgsl";
 
 import { WGRUniformValue } from "../render/uniform/WGRUniformValue";
-import { WGRStorageValue } from "../render/uniform/WGRStorageValue";
+import { WGRStorageValue } from "../render/buffer/WGRStorageValue";
 import { WGRShderSrcType } from "../material/WGMaterialDescripter";
 import { WGCompMaterial } from "../material/WGCompMaterial";
 import { WGMaterial } from "../material/WGMaterial";
@@ -143,19 +143,12 @@ export class GameOfLifePretty {
 		const workgroupCount = Math.ceil(gridSize / shdWorkGroupSize);
 
 		let shaderSrc = {
-			shaderSrc: {
-				code: shaderWGSL,
-				uuid: "shader-gameOfLife",
-				vertEntryPoint: "vertMain",
-				fragEntryPoint: "fragMain"
-			}
+			code: shaderWGSL,
+			uuid: "shader-gameOfLife"
 		};
 		let compShaderSrc = {
-			compShaderSrc: {
-				code: compShdCode,
-				uuid: "shader-computing",
-				compEntryPoint: "compMain"
-			}
+			code: compShdCode,
+			uuid: "shader-computing",
 		};
 		const materials: WGMaterial[] = [
 			// build ping-pong rendering process
@@ -167,13 +160,10 @@ export class GameOfLifePretty {
 		];
 
 		let entity = new FixScreenPlaneEntity({
-			x: -0.8, y: -0.8, width: 1.6, height: 1.6,
+			extent: [-0.8, -0.8, 1.6, 1.6],
 			materials
 		});
 		rc.addEntity(entity);
-		materials[0].visible = false;
-		materials[2].visible = false;
-
 		this.mEntity = entity;
 	}
 

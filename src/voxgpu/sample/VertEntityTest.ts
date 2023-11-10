@@ -9,7 +9,6 @@ import { Entity3D } from "../entity/Entity3D";
 import { WGRenderer } from "../rscene/WGRenderer";
 import { WGImage2DTextureData } from "../texture/WGTextureWrapper";
 import { WGRShderSrcType } from "../material/WGMaterialDescripter";
-import Vector3 from "../math/Vector3";
 
 export class VertEntityTest {
 
@@ -23,15 +22,14 @@ export class VertEntityTest {
 		console.log("VertEntityTest::initialize() ...");
 
 		const shdSrc = {
-			vertShaderSrc: { code: vertWGSL, uuid: "vertShdCode" },
-			fragShaderSrc: { code: fragWGSL, uuid: "fragShdCode" }
+			vert: { code: vertWGSL, uuid: "vertShdCode" },
+			frag: { code: fragWGSL, uuid: "fragShdCode" }
 		};
-		// let material = this.createMaterial(shdSrc, [new WGImage2DTextureData("static/assets/box.jpg")], ["solid"], "back");
-		let material = this.createMaterial( shdSrc );
+		const material = this.createMaterial( shdSrc );
 		this.mEntity = this.createEntity( [material] );
 	}
 
-	private createMaterial(shdSrc: WGRShderSrcType, texDatas?: WGImage2DTextureData[], blendModes: string[] = [], faceCullMode = "back"): WGMaterial {
+	private createMaterial(shaderCodeSrc: WGRShderSrcType, texDatas?: WGImage2DTextureData[], blendModes: string[] = [], faceCullMode = "back"): WGMaterial {
 
 		let pipelineDefParam = {
 			depthWriteEnabled: true,
@@ -45,7 +43,7 @@ export class VertEntityTest {
 
 		const material = new WGMaterial({
 			shadinguuid: "base-material-tex" + texTotal,
-			shaderCodeSrc: shdSrc,
+			shaderCodeSrc,
 			pipelineDefParam
 		});
 
@@ -54,7 +52,7 @@ export class VertEntityTest {
 		return material;
 	}
 
-	private createEntity(materials: WGMaterial[], pv?: Vector3): Entity3D {
+	private createEntity(materials: WGMaterial[]): Entity3D {
 
 		const renderer = this.renderer;
 
@@ -64,11 +62,7 @@ export class VertEntityTest {
 			.addAttribute({ shdVarName: "uv", data: rgd.uvs, strides: [2] })
 			.setIndexBuffer({ name: "geomIndex", data: rgd.ivs });
 
-		const entity = new Entity3D();
-		entity.materials = materials;
-		entity.geometry = geometry;
-		entity.transform.setPosition(pv ? pv : new Vector3());
-
+		const entity = new Entity3D({geometry, materials});
 		renderer.addEntity(entity);
 		return entity;
 	}

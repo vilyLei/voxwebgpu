@@ -31,7 +31,7 @@ interface GPUBuffer {
 	 * Bitwise flags value, come from GPUBufferUsage set.
 	 */
 	usage: number;
-	// usageType?: string;
+
 	unmap(): void;
 	/**
 	 * Returns an ArrayBuffer containing the mapped contents of the GPUBuffer in the specified range.

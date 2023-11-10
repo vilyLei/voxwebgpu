@@ -3,7 +3,7 @@ import { RendererScene } from "../rscene/RendererScene";
 import { MouseInteraction } from "../ui/MouseInteraction";
 
 import { WGRUniformValue } from "../render/uniform/WGRUniformValue";
-import { WGRStorageValue } from "../render/uniform/WGRStorageValue";
+import { WGRStorageValue } from "../render/buffer/WGRStorageValue";
 import { ComputeEntity } from "../entity/ComputeEntity";
 import { WGCompMaterial } from "../material/WGCompMaterial";
 import { WGRShderSrcType } from "../material/WGMaterialDescripter";
@@ -66,7 +66,6 @@ export class ComputeMaterialTest {
 	private mouseDown = (evt: MouseEvent): void => {};
 
 	private createUniformValues(): WGRUniformValue[] {
-
 		const gridsSizesArray = new Float32Array([gridSize, gridSize]);
 		const cellStateArray0 = new Uint32Array(gridSize * gridSize);
 		for (let i = 0; i < cellStateArray0.length; i += 3) {
@@ -83,22 +82,18 @@ export class ComputeMaterialTest {
 
 		return [v0, v1, v2];
 	}
-	private createMaterial(shaderCodeSrc: WGRShderSrcType, shadinguuid: string, workgroupCountX = 2, workgroupCountY = 2): WGCompMaterial {
+	private createMaterial(shaderCodeSrc: WGRShderSrcType, shadinguuid: string): WGCompMaterial {
 		const uniformValues = this.createUniformValues();
-		return new WGCompMaterial({ shadinguuid, shaderCodeSrc, uniformValues
-		}).setWorkcounts(workgroupCountX, workgroupCountY);
+		const workcounts = [4, 4];
+		return new WGCompMaterial({ shadinguuid, shaderCodeSrc, uniformValues, workcounts });
 	}
 	private initScene(): void {
 		const rc = this.mRscene;
 
-		let shaderCodeSrc0 = {
-			compShaderSrc: { code: compShdCode0, uuid: "computing-0", compEntryPoint: "compMain" }
-		};
-		let shaderCodeSrc1 = {
-			compShaderSrc: { code: compShdCode1, uuid: "computing-1", compEntryPoint: "compMain" }
-		};
-		let materials = [this.createMaterial(shaderCodeSrc0, "comp-1"), this.createMaterial(shaderCodeSrc1, "comp-2", 4, 4)];
-		rc.addEntity( new ComputeEntity({ materials }) );
+		let shaderCodeSrc0 = { code: compShdCode0, uuid: "computing-0" };
+		let shaderCodeSrc1 = { code: compShdCode1, uuid: "computing-1" };
+		let materials = [this.createMaterial(shaderCodeSrc0, "comp-1"), this.createMaterial(shaderCodeSrc1, "comp-2")];
+		rc.addEntity(new ComputeEntity({ materials }));
 	}
 
 	run(): void {

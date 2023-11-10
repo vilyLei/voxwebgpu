@@ -1,7 +1,6 @@
 import MouseEvent from "../event/MouseEvent";
 import { RendererScene } from "../rscene/RendererScene";
 import { MouseInteraction } from "../ui/MouseInteraction";
-import Color4 from "../material/Color4";
 import { FixScreenPlaneEntity } from "../entity/FixScreenPlaneEntity";
 
 export class FixScreenPlaneTest {
@@ -25,24 +24,14 @@ export class FixScreenPlaneTest {
 
 		const diffuseTex = { diffuse: { url: "static/assets/default.jpg", flipY: true } };
 
-		let entity = new FixScreenPlaneEntity();
-		entity.setColor(new Color4(0.2,0.5,0.7));
+		let entity = new FixScreenPlaneEntity().setColor([0.2,0.5,0.7]);
 		rc.addEntity(entity);
 
-		let x = -0.8;
-		let y = 0.1;
-		let width = 0.5;
-		let height = 0.5;
-		entity = new FixScreenPlaneEntity({x, y, width, height});
-		entity.setColor(new Color4(0.2,0.8,0.3));
+		entity = new FixScreenPlaneEntity({extent: [-0.8, 0.1, 0.5, 0.5]}).setColor([0.2,0.8,0.3]);
 		rc.addEntity(entity);
 
-		x = -0.8;
-		y = -0.8;
-		width = 0.8;
-		height = 0.8;
-		entity = new FixScreenPlaneEntity({x, y, width, height, textures: [diffuseTex]});
-		entity.setColor(new Color4(0.1,0.3,0.9));
+		entity = new FixScreenPlaneEntity({extent: [-0.8, -0.8, 0.8, 0.8], textures: [diffuseTex]});
+		entity.setColor([0.1,0.3,0.9]);
 		rc.addEntity(entity);
 	}
 

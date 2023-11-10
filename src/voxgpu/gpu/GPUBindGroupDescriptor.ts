@@ -8,7 +8,6 @@ interface GPUBindGroupDescriptorEntityResource {
 	size?: number;
 	shared?: boolean;
 	uniformAppend?: boolean;
-	usageType?: number;
 }
 interface GPUBindGroupDescriptorEntity {
 	binding: number;

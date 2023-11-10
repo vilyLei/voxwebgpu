@@ -3,7 +3,7 @@ import { RendererScene } from "../rscene/RendererScene";
 import { MouseInteraction } from "../ui/MouseInteraction";
 
 import { WGRUniformValue } from "../render/uniform/WGRUniformValue";
-import { WGRStorageValue } from "../render/uniform/WGRStorageValue";
+import { WGRStorageValue } from "../render/buffer/WGRStorageValue";
 import { ComputeEntity } from "../entity/ComputeEntity";
 
 const gridSize = 32;
@@ -66,11 +66,8 @@ export class ComputeEntityTest {
 		const rc = this.mRscene;
 
 		let shaderSrc = {
-			compShaderSrc: {
-				code: compShdCode,
-				uuid: 'shader-computing',
-				compEntryPoint: 'compMain'
-			}
+			code: compShdCode,
+			uuid: 'shader-computing'
 		};
 		let uniformValues = this.createUniformValues();
 		let entity = new ComputeEntity({ shaderSrc, uniformValues });

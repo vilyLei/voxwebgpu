@@ -7,7 +7,7 @@ import { WGTextureDataDescriptor, WGMaterial } from "../material/WGMaterial";
 import { WGGeometry } from "../geometry/WGGeometry";
 import { Entity3D } from "../entity/Entity3D";
 import { WGRShderSrcType } from "../material/WGMaterialDescripter";
-import { WGRStorageValue } from "../render/uniform/WGRStorageValue";
+import { WGRStorageValue } from "../render/buffer/WGRStorageValue";
 import MouseEvent from "../event/MouseEvent";
 import { RendererScene } from "../rscene/RendererScene";
 import { MouseInteraction } from "../ui/MouseInteraction";
@@ -79,10 +79,9 @@ export class MultiGPUPassTest {
 	private mIndex = 0;
 	private mouseDown = (evt: MouseEvent): void => {
 
-		// this.testAddEntityToBlock();
-		this.testAddEntityToPassNode();
-
-		return;
+		// // this.testAddEntityToBlock();
+		// this.testAddEntityToPassNode();
+		// return;
 		let node = this.mRPass1.node;
 		// node = this.mRPass0.node;
 		console.log("mousedown evt call this.mRPass1: ", this.mRPass1);
@@ -94,8 +93,8 @@ export class MultiGPUPassTest {
 	private testAddEntityToBlock(): void {
 
 		const shdSrc = {
-			vertShaderSrc: { code: vertWGSL, uuid: "vertShdCode" },
-			fragShaderSrc: { code: fragWGSL, uuid: "fragShdCode" }
+			vert: { code: vertWGSL, uuid: "vertShdCode" },
+			frag: { code: fragWGSL, uuid: "fragShdCode" }
 		};
 		const geometry = this.createGeom(this.geomData.createSphere(50));
 		const diffuseTex = {diffuse: {url:"static/assets/box.jpg"}};
@@ -127,14 +126,13 @@ export class MultiGPUPassTest {
 
 		const rc = this.mRscene;
 
-
 		this.mRBlock = rc.renderer.getRPBlockAt(0);
 
 		const geometry = this.createGeom(this.geomData.createCube(80));
 
 		const shdSrc = {
-			vertShaderSrc: { code: vertWGSL, uuid: "vertShdCode" },
-			fragShaderSrc: { code: fragWGSL, uuid: "fragShdCode" }
+			vert: { code: vertWGSL, uuid: "vertShdCode" },
+			frag: { code: fragWGSL, uuid: "fragShdCode" }
 		};
 
 		const diffuseTex = {diffuse: {url:"static/assets/box.jpg"}};
@@ -147,14 +145,10 @@ export class MultiGPUPassTest {
 		this.mRPass1 = rc.renderer.appendRenderPass();
 		materials1[0].rpass = {rpass: this.mRPass1};
 
-		let entity = new Entity3D();
-		entity.materials = materials0;
-		entity.geometry = geometry;
+		let entity = new Entity3D({geometry, materials: materials0});
 		rc.addEntity(entity);
 
-		entity = new Entity3D();
-		entity.materials = materials1;
-		entity.geometry = geometry;
+		entity = new Entity3D({geometry, materials: materials1});
 		entity.transform.setXYZ(200, 0, 0);
 		rc.addEntity(entity);
 	}

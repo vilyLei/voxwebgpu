@@ -9,7 +9,7 @@ import { GPUPipelineLayout, GPURenderPipelineDescriptor } from "../../gpu/GPURen
 import { GPUVertexAttribute } from "../../gpu/GPUVertexAttribute";
 import { GPUVertexBufferLayout } from "../../gpu/GPUVertexBufferLayout";
 import { GPUVertexState } from "../../gpu/GPUVertexState";
-import { createFragmentState, WGRShadeSrcParam, WGRShderSrcType } from "./WGRShaderParams";
+import { createFragmentState, findShaderEntryPoint, WGRShadeSrcParam, WGRShderSrcType } from "./WGRShaderParams";
 
 interface WGRPipelineContextDefParam {
 	blendMode?: string;
@@ -271,4 +271,4 @@ class WGRPipelineCtxParams implements GPURenderPipelineDescriptor {
 		vert.buffers.push(vtxBufLayout);
 	}
 }
-export { WGRShadeSrcParam, WGRPipelineContextDefParam, WGRShderSrcType, WGRPipelineParamType, WGRPipelineCtxParams };
+export { findShaderEntryPoint, WGRShadeSrcParam, WGRPipelineContextDefParam, WGRShderSrcType, WGRPipelineParamType, WGRPipelineCtxParams };

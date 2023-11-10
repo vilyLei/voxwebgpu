@@ -9,7 +9,7 @@ import { Entity3D } from "../entity/Entity3D";
 import { WGImage2DTextureData } from "../texture/WGTextureWrapper";
 import { WGRShderSrcType } from "../material/WGMaterialDescripter";
 import Vector3 from "../math/Vector3";
-import { WGRStorageValue } from "../render/uniform/WGRStorageValue";
+import { WGRStorageValue } from "../render/buffer/WGRStorageValue";
 import MouseEvent from "../event/MouseEvent";
 import { RendererScene } from "../rscene/RendererScene";
 import { MouseInteraction } from "../ui/MouseInteraction";
@@ -30,11 +30,11 @@ export class SimpleLightTest {
 		this.initEvent();
 
 		const shdSrc = {
-			vertShaderSrc: { code: vertWGSL, uuid: "vertShdCode" },
-			fragShaderSrc: { code: fragWGSL, uuid: "fragShdCode" }
+			vert: { code: vertWGSL, uuid: "vertShdCode" },
+			frag: { code: fragWGSL, uuid: "fragShdCode" }
 		};
 
-		let geom = this.createGeom(this.geomData.createCube(100), true);
+		let geometry = this.createGeom(this.geomData.createCube(100), true);
 
 		let texList = [new WGImage2DTextureData("static/assets/white.jpg")];
 		let tot = 4;
@@ -46,7 +46,7 @@ export class SimpleLightTest {
 				for (let k = 0; k < tot; ++k) {
 					let material = this.createMaterial(shdSrc, texList, new Color4().randomRGB(1.0, 0.2));
 					let scale = Math.random() * 0.2 + 0.3;
-					const entity = this.createEntity(geom, [material]);
+					const entity = this.createEntity(geometry, [material]);
 					const obj = new TransObject();
 					obj.entity = entity;
 					obj.scale.setXYZ(scale, scale, scale);
@@ -108,14 +108,10 @@ export class SimpleLightTest {
 		}
 		return geometry;
 	}
-	private createEntity(geometry: WGGeometry, materials: WGMaterial[], pv?: Vector3): Entity3D {
+	private createEntity(geometry: WGGeometry, materials: WGMaterial[]): Entity3D {
 
 		const rc = this.mRscene;
-		const entity = new Entity3D();
-		entity.materials = materials;
-		entity.geometry = geometry;
-		if (pv) entity.transform.setPosition(pv);
-
+		const entity = new Entity3D({geometry, materials});
 		rc.addEntity(entity);
 		return entity;
 	}

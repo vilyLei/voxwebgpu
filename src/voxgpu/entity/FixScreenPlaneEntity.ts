@@ -3,6 +3,7 @@ import RectPlaneGeometry from "../geometry/primitive/RectPlaneGeometry";
 import { WGGeometry } from "../geometry/WGGeometry";
 import { WGMaterial } from "../material/WGMaterial";
 import { WGRUniformValue } from "../render/uniform/WGRUniformValue";
+import { WGRBufferData } from "../render/buffer/WGRBufferData";
 import Color4 from "../material/Color4";
 
 import vertWGSL from "../material/shader/wgsl/fixScreenPlane.vert.wgsl";
@@ -22,7 +23,7 @@ interface FixScreenPlaneEntityParam extends Entity3DParam {
 	flipY?: boolean;
 }
 class FixScreenPlaneEntity extends FixScreenEntity {
-	private mColorV: WGRUniformValue;
+	private mColorV: WGRBufferData;
 	private mColor = new Color4();
 	private mExtent = new Extent2();
 	constructor(param?: FixScreenPlaneEntityParam) {
@@ -34,9 +35,9 @@ class FixScreenPlaneEntity extends FixScreenEntity {
 		this.createMaterial(param);
 	}
 	setColor(c: ColorDataType): FixScreenPlaneEntity {
-		if (c) {
+		if (c && this.mColorV) {
 			this.mColor.setColor(c).toArray4(this.mColorV.data as Float32Array);
-			this.mColorV.upate();
+			this.mColorV.version ++;
 		}
 		return this;
 	}
@@ -99,7 +100,7 @@ class FixScreenPlaneEntity extends FixScreenEntity {
 				material.instanceCount = param.instanceCount;
 			}
 			material.uniformValues = param.uniformValues ? param.uniformValues : [this.mColorV];
-			if (material.uniformValues) {
+			if (material.uniformValues && material.uniformValues.length > 0) {
 				this.mColorV = material.uniformValues[0];
 			}
 			this.materials = [material];

@@ -14,6 +14,7 @@ import { WGMaterialDescripter } from "./WGMaterialDescripter";
 import { WGRUniformValue } from "../render/uniform/WGRUniformValue";
 import { IWGMaterial } from "./IWGMaterial";
 import { IWGMaterialGraph } from "./IWGMaterialGraph";
+import { WGRBufferData } from "../render/buffer/WGRBufferValueParam";
 
 class WGMaterial implements IWGMaterial {
 	private mRCtx: IWGRPipelineContext;
@@ -33,7 +34,8 @@ class WGMaterial implements IWGMaterial {
 	 * material uniforms append to pipeline, or not
 	 */
 	uniformAppend?: boolean;
-	uniformValues: WGRUniformValue[];
+	// uniformValues: WGRUniformValue[];
+	uniformValues: WGRBufferData[];
 
 	instanceCount = 1;
 
@@ -47,7 +49,7 @@ class WGMaterial implements IWGMaterial {
 		this.setDescriptor(descriptor);
 	}
 
-	addTextureWithDatas(datas: WGTextureData[], shdVarNames?: string[]): void {
+	addTextureWithDatas(datas: WGTextureData[], shdVarNames?: string[]): WGMaterial {
 		if (datas) {
 			if (shdVarNames) {
 				for (let i = 0; i < datas.length; ++i) {
@@ -59,6 +61,7 @@ class WGMaterial implements IWGMaterial {
 				}
 			}
 		}
+		return this;
 	}
 	addTextureWithData(data: WGTextureData, shdVarName = ""): void {
 		if (shdVarName === "") {

@@ -7,7 +7,7 @@ import { WGTextureDataDescriptor, WGMaterial } from "../material/WGMaterial";
 import { WGGeometry } from "../geometry/WGGeometry";
 import { Entity3D } from "../entity/Entity3D";
 import { WGRShderSrcType } from "../material/WGMaterialDescripter";
-import { WGRStorageValue } from "../render/uniform/WGRStorageValue";
+import { WGRStorageValue } from "../render/buffer/WGRStorageValue";
 import MouseEvent from "../event/MouseEvent";
 import { RendererScene } from "../rscene/RendererScene";
 import { MouseInteraction } from "../ui/MouseInteraction";
@@ -83,22 +83,18 @@ export class Entity3DVisibilityTest {
 		const geometry = this.createGeom(this.geomData.createCube(80));
 
 		const shdSrc = {
-			vertShaderSrc: { code: vertWGSL, uuid: "vertShdCode" },
-			fragShaderSrc: { code: fragWGSL, uuid: "fragShdCode" }
+			vert: { code: vertWGSL, uuid: "vertShdCode" },
+			frag: { code: fragWGSL, uuid: "fragShdCode" }
 		};
 
 		let materials0 = [this.createMaterial(shdSrc, [{diffuse: {url:"static/assets/box.jpg"}}], new Color4(1.0))];
 		let materials1 = [this.createMaterial(shdSrc, [{diffuse: {url:"static/assets/default.jpg"}}], new Color4(0.0, 1.0))];
 
-		let entity = new Entity3D();
-		entity.materials = materials0;
-		entity.geometry = geometry;
+		let entity = new Entity3D({geometry, materials: materials0});
 		rc.addEntity(entity);
 		this.mEntities.push( entity );
 
-		entity = new Entity3D();
-		entity.materials = materials1;
-		entity.geometry = geometry;
+		entity = new Entity3D({geometry, materials: materials1});
 		entity.transform.setXYZ(200, 0, 0);
 		rc.addEntity(entity);
 		this.mEntities.push( entity );

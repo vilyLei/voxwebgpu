@@ -1,5 +1,5 @@
 import { WGRPassParam, WGRendererPass } from "./pipeline/WGRendererPass";
-import { WGRPipelineContextDefParam, WGRShderSrcType, WGRPipelineCtxParams } from "./pipeline/WGRPipelineCtxParams";
+import { WGRPipelineContextDefParam, findShaderEntryPoint, WGRShadeSrcParam, WGRShderSrcType, WGRPipelineCtxParams } from "./pipeline/WGRPipelineCtxParams";
 import { VtxPipelinDescParam, WGRPipelineContext } from "./pipeline/WGRPipelineContext";
 import { WebGPUContext } from "../gpu/WebGPUContext";
 import { GPUCommandBuffer } from "../gpu/GPUCommandBuffer";
@@ -53,14 +53,14 @@ class WGRenderPassNode implements IWGRenderPassNodeRef {
 		return this.mWGCtx;
 	}
 	destroy(): void {
-		if(this.rpass) {
+		if (this.rpass) {
 			this.mRBParam = null;
 			this.prevNode = null;
 		}
 	}
 	getPassNodeWithMaterial(material: WGMaterialDescripter): WGRenderPassNode {
 		const b = this.builder;
-		if(b) {
+		if (b) {
 			return b.getPassNodeWithMaterial(material);
 		}
 		return this;
@@ -90,7 +90,7 @@ class WGRenderPassNode implements IWGRenderPassNodeRef {
 	addEntity(entity: Entity3D): void {
 		// console.log("WGRenderPassNode::addEntity(), entity.isInRenderer(): ", entity.isInRenderer());
 		if (entity && !entity.isInRenderer()) {
-			if(!this.unitBlock) {
+			if (!this.unitBlock) {
 				this.unitBlock = WGRenderUnitBlock.createBlock();
 			}
 			entity.update();
@@ -157,13 +157,16 @@ class WGRenderPassNode implements IWGRenderPassNodeRef {
 		pipelineVtxParam: VtxPipelinDescParam,
 		pipelineParam?: WGRPipelineContextDefParam
 	): WGRPipelineContext {
+
 		const plp = pipelineParam;
+
+		let depthStencilEnabled = plp ? (plp.depthStencilEnabled === false ? false : true) : true;
 		const pipeParams = new WGRPipelineCtxParams({
 			shaderSrc: shdSrc.shaderSrc,
 			vertShaderSrc: shdSrc.vertShaderSrc,
 			fragShaderSrc: shdSrc.fragShaderSrc,
 			compShaderSrc: shdSrc.compShaderSrc,
-			depthStencilEnabled: plp ? (plp.depthStencilEnabled === false ? false : true) : true
+			depthStencilEnabled
 		});
 		if (plp) {
 			if (plp.blendModes) {
@@ -231,9 +234,9 @@ class WGRenderPassNode implements IWGRenderPassNodeRef {
 		}
 	}
 	run(): void {
-		if(this.enabled) {
+		if (this.enabled) {
 			const b = this.unitBlock;
-			if(b) {
+			if (b) {
 				// console.log("node b: ", b);
 				b.run();
 			}

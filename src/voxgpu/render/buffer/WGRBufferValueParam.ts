@@ -1,4 +1,5 @@
 import { WGRBufferData } from "./WGRBufferData";
+import { WGRBufferVisibility } from "./WGRBufferVisibility";
 interface WGRBufferValueParam {
 	/**
 	 * uniform value data object
@@ -35,7 +36,7 @@ function applyParamBufferData(bufData: WGRBufferData, param: WGRBufferValueParam
 	if (bufData !== param) {
 		if (param.usage !== undefined) bufData.usage = param.usage;
 		if (param.shared !== undefined) bufData.shared = param.shared;
-		
+
 		if (param.stride !== undefined) bufData.stride = param.stride;
 		if (param.shdVarName !== undefined) bufData.shdVarName = param.shdVarName;
 		if (param.arrayStride !== undefined) bufData.arrayStride = param.arrayStride;
@@ -48,6 +49,9 @@ function applyParamBufferData(bufData: WGRBufferData, param: WGRBufferValueParam
 		} else if (d) {
 			if (d.byteLength <= 64) bufData.arrayStride = d.byteLength;
 		}
+	}
+	if(!bufData.visibility) {
+		bufData.visibility = new WGRBufferVisibility();
 	}
 }
 export { applyParamBufferData, WGRBufferData, WGRBufferValueParam };
