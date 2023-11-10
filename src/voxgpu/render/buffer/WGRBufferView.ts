@@ -17,6 +17,9 @@ class WGRBufferView implements WGRBufferData {
 	byteOffset = 0;
 	version = -1;
 	stride?: number;
+	/**
+	 * 可以从shader源码中分析获得
+	 */
 	visibility?: WGRBufferVisibility;
 
 	shdVarName?: string;

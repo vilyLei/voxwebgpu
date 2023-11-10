@@ -77,7 +77,7 @@ interface GPUBindGroupLayoutEntity {
 	 * A unique identifier for a resource binding within the GPUBindGroupLayout, corresponding to a GPUBindGroupEntry.
 	 * binding and a @binding attribute in the GPUShaderModule.
 	 */
-	binding: number;
+	binding?: number;
 	/**
 	 * A bitset of the members of GPUShaderStage.
 	 * Each set bit indicates that a GPUBindGroupLayoutEntry's resource will be accessible from the associated shader stage.

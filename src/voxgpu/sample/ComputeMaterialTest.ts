@@ -80,7 +80,7 @@ export class ComputeMaterialTest {
 		// const v0 = new WGRUniformValue({ data: gridsSizesArray, stride: 2 }).toVisibleAll();
 		// const v1 = new WGRStorageValue({ data: cellStateArray0, stride: 1 }).toVisibleVertComp();
 		// const v2 = new WGRStorageValue({ data: cellStateArray1, stride: 1 }).toVisibleComp();
-
+		// all
 		let visibility = new WGRBufferVisibility().toVisibleAll();
 		const v0 = { data: gridsSizesArray, stride: 2, visibility };
 		visibility = new WGRBufferVisibility().toVisibleVertComp();
