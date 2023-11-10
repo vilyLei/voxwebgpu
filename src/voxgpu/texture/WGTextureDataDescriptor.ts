@@ -36,7 +36,7 @@ interface WGTextureDataDescriptor extends TextureDataDescriptor {
 	specular?: TextureDataDescriptor;
 }
 
-function textDescriptorFilter(d: WGTextureDataDescriptor): TextureDataDescriptor {
+function texDescriptorFilter(d: WGTextureDataDescriptor): TextureDataDescriptor {
 	if(!d) {
 		return d;
 	}
@@ -101,7 +101,7 @@ function textDescriptorFilter(d: WGTextureDataDescriptor): TextureDataDescriptor
 	return rd;
 }
 export {
-	textDescriptorFilter,
+	texDescriptorFilter,
 	RTTTextureDataDescriptor,
 	TextureDataDescriptor,
 	WGTextureDataDescriptor

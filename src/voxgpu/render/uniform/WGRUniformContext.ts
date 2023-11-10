@@ -2,13 +2,13 @@ import { GPUSampler } from "../../gpu/GPUSampler";
 import { GPUTextureView } from "../../gpu/GPUTextureView";
 import { WGRUniform } from "./WGRUniform";
 import { BufDataParamType } from "../pipeline/IWGRPipelineContext";
-import { WGRUniformValue } from "./WGRUniformValue";
 import { WGRUniformParam, WGRUniformTexParam, IWGRUniformContext } from "./IWGRUniformContext";
 import { GPUBindGroupLayout } from "../../gpu/GPUBindGroupLayout";
 import { SharedUniformObj, WGRUniformCtxInstance } from "./WGRUniformCtxInstance";
 import { WGRBindGroupContext } from "../pipeline/WGRBindGroupContext";
 import { WebGPUContext } from "../../gpu/WebGPUContext";
 import { WGRBufferData } from "../buffer/WGRBufferData";
+import { checkBufferData } from "../buffer/WGRBufferValue";
 
 class WGRUniformContext implements IWGRUniformContext {
 	private mMap: Map<string, WGRUniformCtxInstance> = new Map();
@@ -91,6 +91,7 @@ class WGRUniformContext implements IWGRUniformContext {
 			const bufDataParams: BufDataParamType[] = [];
 			for (let i = 0; i < values.length; ++i) {
 				const v = values[i];
+				checkBufferData(v);
 				const vuid = v.uid;
 				const arrayStride = v.arrayStride;
 				const visibility = v.visibility.clone();
@@ -136,7 +137,7 @@ class WGRUniformContext implements IWGRUniformContext {
 	removeUniform(u: WGRUniform): void {
 		if (this.mBindGCtx) {
 			// console.log("WGRUniformContext::removeUniform(), u: ", u);
-			if (u.layoutName) {
+			if (u.layoutName !== undefined) {
 				const m = this.mMap;
 				if (m.has(u.layoutName)) {
 					const uctx = m.get(u.layoutName);

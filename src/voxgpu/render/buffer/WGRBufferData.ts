@@ -1,6 +1,7 @@
 import { GPUBuffer } from "../../gpu/GPUBuffer";
 import { WGRBufferVisibility } from "./WGRBufferVisibility";
 interface WGRBufferData {
+	__$getType?: string;
 	data?: NumberArrayDataType;
 	buffer?: GPUBuffer;
 	mappedAtCreation?: boolean;

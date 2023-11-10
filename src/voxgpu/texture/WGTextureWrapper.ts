@@ -2,7 +2,7 @@ import { WebGPUContext } from "../gpu/WebGPUContext";
 import { GPUSampler } from "../gpu/GPUSampler";
 import { GPUTexture } from "../gpu/GPUTexture";
 import { GPUTextureView } from "../gpu/GPUTextureView";
-import { textDescriptorFilter, RTTTextureDataDescriptor, TextureDataDescriptor, WGTextureDataDescriptor } from "./WGTextureDataDescriptor";
+import { texDescriptorFilter, RTTTextureDataDescriptor, TextureDataDescriptor, WGTextureDataDescriptor } from "./WGTextureDataDescriptor";
 
 interface WGTextureDataType {
 	generateMipmaps?: boolean;
@@ -19,7 +19,7 @@ class WGTextureData implements WGTextureDataType {
 	flipY = false;
 	format = "rgba8unorm";
 	dimension = "2d";
-	constructor() {}
+	constructor() { }
 
 	setDescripter(descriptor: TextureDataDescriptor): WGTextureData {
 		if (descriptor.generateMipmaps) this.generateMipmaps = descriptor.generateMipmaps;
@@ -31,25 +31,14 @@ class WGTextureData implements WGTextureDataType {
 	build(ctx: WebGPUContext): GPUTexture {
 		return this.mTex;
 	}
-	destroy(): void {}
+	destroy(): void { }
 }
 class WGImageTextureData extends WGTextureData {
 	protected mImgs: WebImageType[];
 	protected mUrl: string;
 
-	// generateMipmaps = true;
-	// flipY = false;
-	// format = "rgba8unorm";
-	// dimension = "2d";
-	constructor() {super();}
+	constructor() { super(); }
 
-	// setDescripter(descriptor: TextureDataDescriptor): WGImageTextureData {
-	// 	if (descriptor.generateMipmaps) this.generateMipmaps = descriptor.generateMipmaps;
-	// 	if (descriptor.flipY) this.flipY = descriptor.flipY;
-	// 	if (descriptor.format) this.format = descriptor.format;
-	// 	if (descriptor.dimension) this.dimension = descriptor.dimension;
-	// 	return this;
-	// }
 	build(ctx: WebGPUContext): GPUTexture {
 		if (this.mImgs && !this.mTex) {
 			// console.log("this.mImgs: ", this.mImgs, this.dimension);
@@ -75,14 +64,14 @@ class WGRTTTextureData extends WGTextureData {
 		super();
 	}
 	setDescripter(descriptor: TextureDataDescriptor): WGRTTTextureData {
-		super.setDescripter( descriptor );
+		super.setDescripter(descriptor);
 		this.mTexData = descriptor.rttTexture;
 		return this;
 	}
 	build(ctx: WebGPUContext): GPUTexture {
 		const td = this.mTexData;
 		if (td && !this.mTex) {
-			if(td.texture) {
+			if (td.texture) {
 				console.log("apply a rtt texture into a WGRTTTextureData instance.");
 				this.mTex = td.texture;
 			}
@@ -246,14 +235,14 @@ class WGTextureWrapper {
 			}
 		}
 	}
-	destroy(): void {}
+	destroy(): void { }
 }
 
 const __$texDataMap: Map<string, WGTextureData> = new Map();
 function createDataWithDescriptor(descriptor: WGTextureDataDescriptor): WGTextureData {
 	let dimension = descriptor.dimension ? descriptor.dimension : "2d";
 	let td: WGTextureData;
-	const dpt = textDescriptorFilter(descriptor);
+	const dpt = texDescriptorFilter(descriptor);
 	const map = __$texDataMap;
 	let key = "";
 	if (dpt.url !== undefined) {
@@ -261,7 +250,7 @@ function createDataWithDescriptor(descriptor: WGTextureDataDescriptor): WGTextur
 	} else if (dpt.urls !== undefined) {
 		key = dpt.urls[0];
 	}
-	if(key === "") {
+	if (key === "") {
 		if (dpt.uuid !== undefined) {
 			key = dpt.uuid;
 		}
@@ -274,9 +263,9 @@ function createDataWithDescriptor(descriptor: WGTextureDataDescriptor): WGTextur
 
 	switch (dimension) {
 		case "2d":
-			if(dpt.rttTexture) {
+			if (dpt.rttTexture) {
 				td = new WGRTTTextureData().setDescripter(dpt);
-			}else {
+			} else {
 				td = new WGImage2DTextureData().setDescripter(dpt);
 			}
 			break;
@@ -295,7 +284,7 @@ function createDataWithDescriptor(descriptor: WGTextureDataDescriptor): WGTextur
 	return td;
 }
 export {
-	textDescriptorFilter,
+	texDescriptorFilter,
 	createDataWithDescriptor,
 	WGTextureData,
 	WGTextureDataDescriptor,

@@ -1,6 +1,6 @@
 import BitConst from "../../utils/BitConst";
 import { WGRBufferView } from "./WGRBufferView";
-import { applyParamBufferData, WGRBufferData, WGRBufferValueParam } from "./WGRBufferValueParam";
+import { applyParamToBufferData, WGRBufferData, WGRBufferValueParam } from "./WGRBufferValueParam";
 
 class WGRBufferValue extends WGRBufferView {
 
@@ -29,7 +29,7 @@ class WGRBufferValue extends WGRBufferView {
 		// 		if (d.byteLength <= 64) this.arrayStride = d.byteLength;
 		// 	}
 		// }
-		applyParamBufferData(this, param);
+		applyParamToBufferData(this, param);
 		this.upate();
 	}
 	toShared(): WGRBufferValue {
@@ -98,4 +98,43 @@ class WGRBufferValue extends WGRBufferView {
 		}
 	}
 }
-export { WGRBufferData, WGRBufferValueParam, WGRBufferValue };
+const __$ubv = new WGRBufferValue({data: new Float32Array(4)});
+function bufferDataFilter(d: WGRBufferData): WGRBufferData {
+	if(!d) {
+		return d;
+	}
+	const v = __$ubv;
+	let rd = d;
+	v.toUniform();
+	if(d.uniform) {
+		rd = d.uniform;
+	}
+	if(d.storage) {
+		rd = d.storage;
+		v.toStorage();
+	}
+	if(d.vertex) {
+		rd = d.vertex;
+		v.toVertex();
+	}
+	if(rd.usage === undefined){
+		rd.usage = v.usage;
+	}
+	return rd;
+}
+function checkBufferData(bufData: WGRBufferData): void {
+	let isView = bufData.__$getType !== undefined;
+	if(!isView) {
+		bufData = bufferDataFilter(bufData);
+		const v = __$ubv;
+		v.toUniform();
+		if(bufData.usage === undefined) bufData.usage = v.usage;
+		bufData.shared = bufData.shared === true ? true : false;
+		bufData.byteLength = bufData.data.byteLength;
+	}
+	// let typeNS = typeof bufData;
+	// console.log("checkBufferData(), typeNS: ", typeNS);
+	// console.log("checkBufferData(), bufData: ", bufData);
+}
+
+export { checkBufferData, WGRBufferData, WGRBufferValueParam, WGRBufferValue };

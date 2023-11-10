@@ -23,6 +23,9 @@ class WGRBufferView implements WGRBufferData {
 
 	bufData?: WGRBufferData;
 	
+	get __$getType(): string {
+		return  'WGRBufferView';
+	}
 	get byteLength(): number {
 		return this.data.byteLength;
 	}

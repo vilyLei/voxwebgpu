@@ -11,7 +11,7 @@ import { WebGPUContext } from "../../gpu/WebGPUContext";
 import { WGRPassParam, IWGRendererPass } from "./IWGRendererPass";
 import { WGRPColorAttachment } from "./WGRPColorAttachment";
 import { WGRPDepthStencilAttachment } from "./WGRPDepthStencilAttachment";
-import { textDescriptorFilter } from "../../texture/WGTextureDataDescriptor";
+import { texDescriptorFilter } from "../../texture/WGTextureDataDescriptor";
 
 class WGRendererPass implements IWGRendererPass {
 	private mWGCtx: WebGPUContext;
@@ -91,7 +91,7 @@ class WGRendererPass implements IWGRendererPass {
 					const t = ls[i];
 					colorAtt = pcs[i].setParam(t);
 					if(!colorAtt.view) {
-						let td = textDescriptorFilter(t.texture);
+						let td = texDescriptorFilter(t.texture);
 						if(td) {
 							const rttData = td.rttTexture;
 							if(rttData && !rttData.texture) {

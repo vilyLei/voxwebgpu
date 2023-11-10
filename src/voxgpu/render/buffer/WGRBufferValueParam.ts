@@ -22,7 +22,7 @@ interface WGRBufferValueParam {
 	 */
 	stride?: number;
 }
-function applyParamBufferData(bufData: WGRBufferData, param: WGRBufferValueParam) {
+function applyParamToBufferData(bufData: WGRBufferData, param: WGRBufferValueParam) {
 
 	let d = param.data;
 	bufData.data = d;
@@ -54,4 +54,4 @@ function applyParamBufferData(bufData: WGRBufferData, param: WGRBufferValueParam
 		bufData.visibility = new WGRBufferVisibility();
 	}
 }
-export { applyParamBufferData, WGRBufferData, WGRBufferValueParam };
+export { applyParamToBufferData, WGRBufferData, WGRBufferValueParam };
