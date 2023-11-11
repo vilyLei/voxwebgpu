@@ -1,6 +1,9 @@
-import { WGRBufferData } from "./WGRBufferData";
+import { WGRBufferLayout, WGRBufferData } from "./WGRBufferData";
 import { WGRBufferVisibility } from "./WGRBufferVisibility";
 interface WGRBufferValueParam {
+
+	uuid?: string;
+
 	/**
 	 * uniform value data object
 	 */
@@ -23,7 +26,7 @@ interface WGRBufferValueParam {
 	stride?: number;
 }
 function applyParamToBufferData(bufData: WGRBufferData, param: WGRBufferValueParam) {
-
+	if(param.uuid !== undefined) bufData.uuid = param.uuid;
 	let d = param.data;
 	bufData.data = d;
 	if (param.bufData) {
@@ -54,4 +57,4 @@ function applyParamToBufferData(bufData: WGRBufferData, param: WGRBufferValuePar
 		bufData.visibility = new WGRBufferVisibility();
 	}
 }
-export { applyParamToBufferData, WGRBufferData, WGRBufferValueParam };
+export { applyParamToBufferData, WGRBufferLayout, WGRBufferData, WGRBufferValueParam };

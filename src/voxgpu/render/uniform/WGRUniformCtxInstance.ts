@@ -173,8 +173,10 @@ class WGRUniformCtxInstance {
 					// console.log("VVVVVVVVVVVV bufDataShared: ", bufDataShared, ", dp.shared: ", dp.shared);
 					if (ufv.shared || bufDataShared) {
 						let bufuid = (bufDataShared && bufData.uid !== undefined ? bufData.uid : -1);
+						if(ufv.uid === undefined) ufv.uid = -1;
+						
 						let vuid = ufv.shared ? ufv.uid : bufuid;
-						// console.log("VVVVVVVVVVVV shared: ", dp.shared,", vuid: ", vuid, ", bufuid: ", bufuid);
+						console.log("VVVVVVVVVVVV shared: ", dp.shared,", vuid: ", vuid, ", bufuid: ", bufuid, ", byteLength: ", ufv.byteLength);
 						if (store.hasWithUid(vuid)) {
 							buf = store.getBufWithUid(vuid);
 							// console.log("apply old shared uniform gpu buffer..., bufDataShared: ", bufDataShared, buf);
@@ -186,7 +188,10 @@ class WGRUniformCtxInstance {
 								uniformParam.sizes[0] = ls[0].bufDataParams[i].size;
 								buf = this.mBindGCtx.createUniformsBuffer(uniformParam);
 							}
-							if(vuid < 0 || (bufDataShared && !store.hasWithUid(bufuid))) {
+							if(ufv.uid < 0) {
+								let view = new WGRBufferView();
+								ufv.uid = view.uid;
+							}else if(vuid < 0 || (bufDataShared && !store.hasWithUid(bufuid))) {
 								// console.log("create a new shared uniform gpu buffer and buf a view object...");
 								const bufView = new WGRBufferView().setParam(bufData);
 								bufView.buffer = buf;
@@ -194,7 +199,7 @@ class WGRUniformCtxInstance {
 								bufData.uid = bufView.uid;
 								store.addWithUid(bufView.uid, bufView);
 							}
-							if(dp.shared) {
+							if(ufv.shared) {
 								ufv.buffer = buf;
 								if(bufData && bufData.uid ===  undefined) {
 									bufData.uid = ufv.uid;

@@ -9,6 +9,7 @@ import { Entity3D } from "../entity/Entity3D";
 import { WGRShderSrcType } from "../material/WGMaterialDescripter";
 import Vector3 from "../math/Vector3";
 import { WGRStorageValue } from "../render/buffer/WGRStorageValue";
+import { WGRBufferData } from "../render/buffer/WGRBufferData";
 import MouseEvent from "../event/MouseEvent";
 import { RendererScene } from "../rscene/RendererScene";
 import { MouseInteraction } from "../ui/MouseInteraction";
@@ -58,7 +59,8 @@ export class REntity3DContainerTest {
 			pipelineDefParam
 		});
 
-		let ufv = new WGRStorageValue({data: new Float32Array([color.r, color.g, color.b, 1])});
+		// let ufv = new WGRStorageValue({data: new Float32Array([color.r, color.g, color.b, 1])});
+		let ufv = {storage: {data: new Float32Array([color.r, color.g, color.b, 1])}};
 		material.uniformValues = [ufv];
 		material.addTextures(texDatas);
 

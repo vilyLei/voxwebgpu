@@ -98,8 +98,7 @@ class WGRUniformContext implements IWGRUniformContext {
 				const arrayStride = v.arrayStride;
 				const visibility = v.visibility.clone();
 				console.log(v, ", v instanceof WGRBufferValue: ", v instanceof WGRBufferValue);
-
-				bufDataParams.push({
+				let param = {
 					arrayStride,
 					size: v.byteLength,
 					usage: v.usage,
@@ -107,7 +106,9 @@ class WGRUniformContext implements IWGRUniformContext {
 					vuid,
 					visibility,
 					ufvalue: v
-				});
+				} as BufDataParamType;
+				console.log("XXX XXX param: ", param);
+				bufDataParams.push(param);
 			}
 			return uctx.createUniform(layoutName, groupIndex, bufDataParams, texParams, uniformAppend);
 		}

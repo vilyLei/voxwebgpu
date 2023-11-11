@@ -5,7 +5,7 @@ import { WGRBufferVisibility } from "./WGRBufferVisibility";
 const __$RID = {uid:0};
 class WGRBufferView implements WGRBufferData {
 	private mUid = __$RID.uid++;
-
+	uuid?: string;
 	data?: NumberArrayDataType;
 	buffer?: GPUBuffer;
 	mappedAtCreation?: boolean;

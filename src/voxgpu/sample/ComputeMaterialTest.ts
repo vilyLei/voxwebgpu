@@ -3,12 +3,9 @@ import { RendererScene } from "../rscene/RendererScene";
 import { MouseInteraction } from "../ui/MouseInteraction";
 
 import { WGRBufferData } from "../render/buffer/WGRBufferData";
-import { WGRUniformValue } from "../render/uniform/WGRUniformValue";
-import { WGRStorageValue } from "../render/buffer/WGRStorageValue";
 import { ComputeEntity } from "../entity/ComputeEntity";
 import { WGCompMaterial } from "../material/WGCompMaterial";
 import { WGRShderSrcType } from "../material/WGMaterialDescripter";
-import { WGRBufferVisibility } from "../render/buffer/WGRBufferVisibility";
 
 const gridSize = 32;
 const shdWorkGroupSize = 8;
@@ -65,7 +62,7 @@ export class ComputeMaterialTest {
 		new MouseInteraction().initialize(rc, 0, false).setAutoRunning(true);
 	}
 
-	private mouseDown = (evt: MouseEvent): void => {};
+	private mouseDown = (evt: MouseEvent): void => { };
 
 	private createUniformValues(): WGRBufferData[] {
 		const gridsSizesArray = new Float32Array([gridSize, gridSize]);
@@ -81,26 +78,36 @@ export class ComputeMaterialTest {
 		// const v1 = new WGRStorageValue({ data: cellStateArray0, stride: 1 }).toVisibleVertComp();
 		// const v2 = new WGRStorageValue({ data: cellStateArray1, stride: 1 }).toVisibleComp();
 		// all
-		let visibility = new WGRBufferVisibility().toVisibleAll();
-		const v0 = { data: gridsSizesArray, stride: 2, visibility };
-		visibility = new WGRBufferVisibility().toVisibleVertComp();
-		const v1 = {storage: { data: cellStateArray0, stride: 1, visibility }};
-		visibility = new WGRBufferVisibility().toVisibleComp().toBufferForStorage();
-		const v2 = {storage: { data: cellStateArray1, stride: 1, visibility }};
+		// let layout = {visibility:'vert_comp', access:'read_write'};
 
+		// let visibility = new WGRBufferVisibility().toVisibleAll();
+		// const v0 = { data: gridsSizesArray, stride: 2, visibility };
+		// visibility = new WGRBufferVisibility().toVisibleVertComp();
+		// const v1 = {uuid:"v1", storage: { data: cellStateArray0, stride: 1, visibility }};
+		// visibility = new WGRBufferVisibility().toVisibleComp().toBufferForStorage();
+		// const v2 = {uuid:"v2", storage: { data: cellStateArray1, stride: 1, visibility }};
+
+		const v0 = { data: gridsSizesArray, stride: 2, layout: { visibility: 'all' } };
+		const v1 = { storage: { data: cellStateArray0, stride: 1, layout: { visibility: 'vert_comp' } } };
+		const v2 = { storage: { data: cellStateArray1, stride: 1, layout: { visibility: 'comp', access: 'read_write' } } };
 		return [v0, v1, v2];
 	}
-	private createMaterial(shaderCodeSrc: WGRShderSrcType, shadinguuid: string): WGCompMaterial {
-		const uniformValues = this.createUniformValues();
+	private createMaterial(shaderCodeSrc: WGRShderSrcType, shadinguuid: string, uniformValues: WGRBufferData[]): WGCompMaterial {
+
 		const workcounts = [4, 4];
 		return new WGCompMaterial({ shadinguuid, shaderCodeSrc, uniformValues, workcounts });
 	}
 	private initScene(): void {
 		const rc = this.mRscene;
 
+		const uniformValues = this.createUniformValues();
+
 		let shaderCodeSrc0 = { code: compShdCode0, uuid: "computing-0" };
 		let shaderCodeSrc1 = { code: compShdCode1, uuid: "computing-1" };
-		let materials = [this.createMaterial(shaderCodeSrc0, "comp-1"), this.createMaterial(shaderCodeSrc1, "comp-2")];
+		let materials = [
+			this.createMaterial(shaderCodeSrc0, "comp-1", uniformValues),
+			this.createMaterial(shaderCodeSrc1, "comp-2", uniformValues)
+		];
 		rc.addEntity(new ComputeEntity({ materials }));
 	}
 
