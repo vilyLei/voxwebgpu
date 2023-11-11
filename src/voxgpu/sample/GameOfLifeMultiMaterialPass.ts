@@ -88,12 +88,18 @@ export class GameOfLifeMultiMaterialPass {
 		const vb1 = {storage: { bufData: sharedData1, stride: 1, shared }, layout:{visibility:'vert_comp'}};
 
 		// build computing uniforms
-		const compva1 = new WGRStorageValue({ bufData: sharedData0, stride: 1, shared }).toVisibleVertComp();
-		const compva2 = new WGRStorageValue({ bufData: sharedData1, stride: 1, shared }).toVisibleComp();
-		compva2.toBufferForStorage();
+		// const compva1 = new WGRStorageValue({ bufData: sharedData0, stride: 1, shared }).toVisibleVertComp();
+		const compva1 = {storage: { bufData: sharedData0, stride: 1, shared, layout:{visibility:'vert_comp'}}};
+		// const compva2 = new WGRStorageValue({ bufData: sharedData1, stride: 1, shared }).toVisibleComp();
+		// compva2.toBufferForStorage();
+		const compva2 = {storage: { bufData: sharedData1, stride: 1, shared, layout:{visibility:'comp', access:"read_write"}}};
+
 		const compvb1 = new WGRStorageValue({ bufData: sharedData1, stride: 1, shared }).toVisibleVertComp();
+		// const compvb1 = {storage: { bufData: sharedData1, stride: 1, shared}, layout:{visibility:'vert_comp'}};
+
 		const compvb2 = new WGRStorageValue({ bufData: sharedData0, stride: 1, shared }).toVisibleComp();
 		compvb2.toBufferForStorage();
+		// const compvb2 = {storage: { bufData: sharedData0, stride: 1, shared, layout:{visibility:'comp', access:"read_write"}}};
 
 		return [
 			{ ufvs0: [v0, va1], ufvs1: [v0, vb1] },
