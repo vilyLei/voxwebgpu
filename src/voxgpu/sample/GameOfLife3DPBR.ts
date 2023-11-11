@@ -124,38 +124,22 @@ export class GameOfLife3DPBR {
 		let sharedData3 = { data: lifeStateArray3, shared };
 		let sharedData4 = { data: posisitonArray4, shared };
 
-		// const v0 = new WGRUniformValue({ data: gridsSizesArray, stride: 2, shared, shdVarName: 'v0' }).toVisibleAll();
-		const v0 = { data: gridsSizesArray, stride: 2, shared, shdVarName: 'v0', layout: { visibility: 'all' } };
+		const v0 = { data: gridsSizesArray, stride: 2, shared, layout: { visibility: 'all' } };
 
 		// build rendering uniforms
-		// const va1 = new WGRStorageValue({ bufData: sharedData0, stride: 1, shared, shdVarName: 'va1' }).toVisibleVertComp();
-		// const vb1 = new WGRStorageValue({ bufData: sharedData1, stride: 1, shared, shdVarName: 'vb1' }).toVisibleVertComp();
-		const va1 = {storage: { bufData: sharedData0, stride: 1, shared, shdVarName: 'va1' }, layout: { visibility: 'vert_comp' }};
-		const vb1 = {storage: { bufData: sharedData1, stride: 1, shared, shdVarName: 'vb1' }, layout: { visibility: 'vert_comp' }};
-		// const vc1 = new WGRStorageValue({ bufData: sharedData3, stride: 1, shared, shdVarName: 'vc1' }).toVisibleAll();
-		// const v4 = new WGRStorageValue({ bufData: sharedData4, stride: 3, shared, shdVarName: 'v4' }).toVisibleVertComp();
-		const vc1 = {storage: { bufData: sharedData3, stride: 1, shared, shdVarName: 'vc1', layout: { visibility: 'all' }  }};
-		const v4 = {storage: { bufData: sharedData4, stride: 3, shared, shdVarName: 'v4', layout: { visibility: 'vert_comp' }  }};
+		const va1 = {storage: { bufData: sharedData0, stride: 1, shared }, layout: { visibility: 'vert_comp' }};
+		const vb1 = {storage: { bufData: sharedData1, stride: 1, shared }, layout: { visibility: 'vert_comp' }};
+		const vc1 = {storage: { bufData: sharedData3, stride: 1, shared, layout: { visibility: 'all' }  }};
+		const v4 = {storage: { bufData: sharedData4, stride: 3, shared, layout: { visibility: 'vert_comp' }  }};
 
 		// build computing uniforms
-		// const compva1 = new WGRStorageValue({ bufData: sharedData0, stride: 1, shared, shdVarName: 'compva1' }).toVisibleVertComp();
-		// const compva2 = new WGRStorageValue({ bufData: sharedData1, stride: 1, shared, shdVarName: 'compva2' }).toVisibleComp();
-		// compva2.toBufferForStorage();
-		const compva1 = {storage: { bufData: sharedData0, stride: 1, shared, shdVarName: 'compva1', layout: { visibility: 'vert_comp' } }};
-		const compva2 = {storage: { bufData: sharedData1, stride: 1, shared, shdVarName: 'compva2', layout: { visibility: 'comp' } }};
-		// compva2.toBufferForStorage();
+		const compva1 = {storage: { bufData: sharedData0, stride: 1, shared, layout: { visibility: 'vert_comp' } }};
+		const compva2 = {storage: { bufData: sharedData1, stride: 1, shared, layout: { visibility: 'comp' } }};
 
-		// const compvb1 = new WGRStorageValue({ bufData: sharedData1, stride: 1, shared, shdVarName: 'compvb1' }).toVisibleVertComp();
-		// const compvb2 = new WGRStorageValue({ bufData: sharedData0, stride: 1, shared, shdVarName: 'compvb2' }).toVisibleComp();
-		// compvb2.toBufferForStorage();
+		const compvb1 = {storage: { bufData: sharedData1, stride: 1, shared, layout: { visibility: 'vert_comp' } }};
+		const compvb2 = {storage: { bufData: sharedData0, stride: 1, shared, layout: { visibility: 'comp', access: "read_write" } }};
 		
-		const compvb1 = {storage: { bufData: sharedData1, stride: 1, shared, shdVarName: 'compvb1', layout: { visibility: 'vert_comp' } }};
-		const compvb2 = {storage: { bufData: sharedData0, stride: 1, shared, shdVarName: 'compvb2', layout: { visibility: 'comp', access: "read_write" } }};
-
-		// const compv3 = new WGRStorageValue({ bufData: sharedData3, stride: 1, shared, shdVarName: 'compv3' }).toVisibleComp();
-		// compv3.toBufferForStorage();
-		
-		const compv3 = {storage: { bufData: sharedData3, stride: 1, shared, shdVarName: 'compv3', layout: { visibility: 'comp', access: "read_write" }  }};
+		const compv3 = {storage: { bufData: sharedData3, stride: 1, shared, layout: { visibility: 'comp', access: "read_write" }  }};
 
 		return [
 			{ ufvs0: [v0, va1, vc1, v4], ufvs1: [v0, vb1, vc1, v4] },
