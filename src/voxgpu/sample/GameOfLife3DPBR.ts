@@ -6,6 +6,7 @@ import fragWGSL from "./shaders/gameOfLifeSpherePBR.frag.wgsl";
 
 import { WGRUniformValue } from "../render/uniform/WGRUniformValue";
 import { WGRStorageValue } from "../render/buffer/WGRStorageValue";
+import { WGRBufferData } from "../render/buffer/WGRBufferData";
 import { WGRShderSrcType } from "../material/WGMaterialDescripter";
 import { WGCompMaterial } from "../material/WGCompMaterial";
 import { WGMaterial } from "../material/WGMaterial";
@@ -84,7 +85,7 @@ export class GameOfLife3DPBR {
 	}
 	private mouseDown = (evt: MouseEvent): void => {};
 
-	private createUniformValues(): { ufvs0: WGRUniformValue[], ufvs1: WGRUniformValue[] }[] {
+	private createUniformValues(): { ufvs0: WGRBufferData[], ufvs1: WGRBufferData[] }[] {
 
 		const gridsSizesArray = new Float32Array([gridSize, gridSize]);
 		const cellStateArray0 = new Uint32Array(gridSize * gridSize);
@@ -123,25 +124,38 @@ export class GameOfLife3DPBR {
 		let sharedData3 = { data: lifeStateArray3, shared };
 		let sharedData4 = { data: posisitonArray4, shared };
 
-		const v0 = new WGRUniformValue({ data: gridsSizesArray, stride: 2, shared, shdVarName: 'v0' }).toVisibleAll();
+		// const v0 = new WGRUniformValue({ data: gridsSizesArray, stride: 2, shared, shdVarName: 'v0' }).toVisibleAll();
+		const v0 = { data: gridsSizesArray, stride: 2, shared, shdVarName: 'v0', layout: { visibility: 'all' } };
 
 		// build rendering uniforms
-		const va1 = new WGRStorageValue({ bufData: sharedData0, stride: 1, shared, shdVarName: 'va1' }).toVisibleVertComp();
-		const vb1 = new WGRStorageValue({ bufData: sharedData1, stride: 1, shared, shdVarName: 'vb1' }).toVisibleVertComp();
-		const vc1 = new WGRStorageValue({ bufData: sharedData3, stride: 1, shared, shdVarName: 'vc1' }).toVisibleAll();
-		const v4 = new WGRStorageValue({ bufData: sharedData4, stride: 3, shared, shdVarName: 'v4' }).toVisibleVertComp();
+		// const va1 = new WGRStorageValue({ bufData: sharedData0, stride: 1, shared, shdVarName: 'va1' }).toVisibleVertComp();
+		// const vb1 = new WGRStorageValue({ bufData: sharedData1, stride: 1, shared, shdVarName: 'vb1' }).toVisibleVertComp();
+		const va1 = {storage: { bufData: sharedData0, stride: 1, shared, shdVarName: 'va1' }, layout: { visibility: 'vert_comp' }};
+		const vb1 = {storage: { bufData: sharedData1, stride: 1, shared, shdVarName: 'vb1' }, layout: { visibility: 'vert_comp' }};
+		// const vc1 = new WGRStorageValue({ bufData: sharedData3, stride: 1, shared, shdVarName: 'vc1' }).toVisibleAll();
+		// const v4 = new WGRStorageValue({ bufData: sharedData4, stride: 3, shared, shdVarName: 'v4' }).toVisibleVertComp();
+		const vc1 = {storage: { bufData: sharedData3, stride: 1, shared, shdVarName: 'vc1', layout: { visibility: 'all' }  }};
+		const v4 = {storage: { bufData: sharedData4, stride: 3, shared, shdVarName: 'v4', layout: { visibility: 'vert_comp' }  }};
 
 		// build computing uniforms
-		const compva1 = new WGRStorageValue({ bufData: sharedData0, stride: 1, shared, shdVarName: 'compva1' }).toVisibleVertComp();
-		const compva2 = new WGRStorageValue({ bufData: sharedData1, stride: 1, shared, shdVarName: 'compva2' }).toVisibleComp();
-		compva2.toBufferForStorage();
+		// const compva1 = new WGRStorageValue({ bufData: sharedData0, stride: 1, shared, shdVarName: 'compva1' }).toVisibleVertComp();
+		// const compva2 = new WGRStorageValue({ bufData: sharedData1, stride: 1, shared, shdVarName: 'compva2' }).toVisibleComp();
+		// compva2.toBufferForStorage();
+		const compva1 = {storage: { bufData: sharedData0, stride: 1, shared, shdVarName: 'compva1', layout: { visibility: 'vert_comp' } }};
+		const compva2 = {storage: { bufData: sharedData1, stride: 1, shared, shdVarName: 'compva2', layout: { visibility: 'comp' } }};
+		// compva2.toBufferForStorage();
 
-		const compvb1 = new WGRStorageValue({ bufData: sharedData1, stride: 1, shared, shdVarName: 'compvb1' }).toVisibleVertComp();
-		const compvb2 = new WGRStorageValue({ bufData: sharedData0, stride: 1, shared, shdVarName: 'compvb2' }).toVisibleComp();
-		compvb2.toBufferForStorage();
+		// const compvb1 = new WGRStorageValue({ bufData: sharedData1, stride: 1, shared, shdVarName: 'compvb1' }).toVisibleVertComp();
+		// const compvb2 = new WGRStorageValue({ bufData: sharedData0, stride: 1, shared, shdVarName: 'compvb2' }).toVisibleComp();
+		// compvb2.toBufferForStorage();
+		
+		const compvb1 = {storage: { bufData: sharedData1, stride: 1, shared, shdVarName: 'compvb1', layout: { visibility: 'vert_comp' } }};
+		const compvb2 = {storage: { bufData: sharedData0, stride: 1, shared, shdVarName: 'compvb2', layout: { visibility: 'comp', access: "read_write" } }};
 
-		const compv3 = new WGRStorageValue({ bufData: sharedData3, stride: 1, shared, shdVarName: 'compv3' }).toVisibleComp();
-		compv3.toBufferForStorage();
+		// const compv3 = new WGRStorageValue({ bufData: sharedData3, stride: 1, shared, shdVarName: 'compv3' }).toVisibleComp();
+		// compv3.toBufferForStorage();
+		
+		const compv3 = {storage: { bufData: sharedData3, stride: 1, shared, shdVarName: 'compv3', layout: { visibility: 'comp', access: "read_write" }  }};
 
 		return [
 			{ ufvs0: [v0, va1, vc1, v4], ufvs1: [v0, vb1, vc1, v4] },
@@ -151,7 +165,7 @@ export class GameOfLife3DPBR {
 	private mEntity: Entity3D;
 	private mStep = 0;
 
-	private createMaterial(uniformValues: WGRUniformValue[]): WGMaterial {
+	private createMaterial(uniformValues: WGRBufferData[]): WGMaterial {
 
 		const instanceCount = gridSize * gridSize;
 		let shaderCodeSrc = {
@@ -172,7 +186,7 @@ export class GameOfLife3DPBR {
 			uniformAppend: false
 		});
 	}
-	private createCompMaterial(uniformValues: WGRUniformValue[]): WGCompMaterial {
+	private createCompMaterial(uniformValues: WGRBufferData[]): WGCompMaterial {
 
 		const workgroupCount = Math.ceil(gridSize / shdWorkGroupSize);
 		let shaderCodeSrc = {

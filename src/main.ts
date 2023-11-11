@@ -35,11 +35,11 @@
 // import { ComputeEntityTest as Demo } from "./voxgpu/sample/ComputeEntityTest";
 // import { GameOfLifeTest as Demo } from "./voxgpu/sample/GameOfLifeTest";
 // import { ComputeMaterialTest as Demo } from "./voxgpu/sample/ComputeMaterialTest";
-import { GameOfLifeMultiMaterialPass as Demo } from "./voxgpu/sample/GameOfLifeMultiMaterialPass";
+// import { GameOfLifeMultiMaterialPass as Demo } from "./voxgpu/sample/GameOfLifeMultiMaterialPass";
 // import { GameOfLifePretty as Demo } from "./voxgpu/sample/GameOfLifePretty";
 // import { GameOfLifeSphere as Demo } from "./voxgpu/sample/GameOfLifeSphere";
 // import { GameOfLifeSpherePBR as Demo } from "./voxgpu/sample/GameOfLifeSpherePBR";
-// import { GameOfLife3DPBR as Demo } from "./voxgpu/sample/GameOfLife3DPBR";
+import { GameOfLife3DPBR as Demo } from "./voxgpu/sample/GameOfLife3DPBR";
 
 // import { MultiGPUPassTest as Demo } from "./voxgpu/sample/MultiGPUPassTest";
 // import { RTTFixScreenTest as Demo } from "./voxgpu/sample/RTTFixScreenTest";
