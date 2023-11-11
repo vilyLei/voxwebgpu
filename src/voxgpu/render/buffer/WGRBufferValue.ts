@@ -154,9 +154,12 @@ function bufferDataFilter(d: WGRBufferData): WGRBufferData {
 		rd.usage = v.usage;
 		// console.log("uuuuuuu storage ... !rd.visibility: ", (!rd.visibility));
 		let flag = !rd.visibility;
+		// flag = true;
+		// rd.visibility = new WGRBufferVisibility();
 		if(flag) {
 			rd.visibility = new WGRBufferVisibility();
 		}
+
 		vi = rd.visibility;
 		if(!layout) layout = rd.layout;
 		if(flag && layout !== undefined) {
@@ -184,6 +187,8 @@ function bufferDataFilter(d: WGRBufferData): WGRBufferData {
 		rd.usage = v.usage;
 		// console.log("rd.visibility .......: ", rd.visibility);
 		let flag = !rd.visibility;
+		// flag = true;
+		// rd.visibility = new WGRBufferVisibility();
 		if(flag) {
 			rd.visibility = new WGRBufferVisibility();
 		}
@@ -200,7 +205,8 @@ function bufferDataFilter(d: WGRBufferData): WGRBufferData {
 		}
 		// console.log("dfdfdfd AAA111 b: ", b, (!b), ", vi: ", vi);
 	}
-	if(rd.byteOffset === undefined) rd.byteOffset = 0; 
+	if(rd.byteOffset === undefined) rd.byteOffset = 0;
+	if(rd.version === undefined) rd.version = -1;
 	return rd;
 }
 function checkBufferData(bufData: WGRBufferData): WGRBufferData {
@@ -225,9 +231,9 @@ function checkBufferData(bufData: WGRBufferData): WGRBufferData {
 		// vi.toVisibleAll();
 		console.log("checkBufferData(), XXXXXXXX bufDatd: ", bufData);
 	}
-	if(bufData.uuid === 'v0') {
-		console.log("checkBufferData(), >>>>>>>> v0 bufDatd: ", bufData);
-	}
+	// if(bufData.uuid === 'v0') {
+	// 	console.log("checkBufferData(), >>>>>>>> v0 bufDatd: ", bufData);
+	// }
 	// let typeNS = typeof bufData;
 	// console.log("checkBufferData(), typeNS: ", typeNS);
 	// console.log("checkBufferData(), bufData: ", bufData);

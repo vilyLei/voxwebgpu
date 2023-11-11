@@ -75,7 +75,7 @@ export class GameOfLifeMultiMaterialPass {
 
 		let shared = true;
 		let sharedData0 = { data: cellStateArray0, shared };
-		let sharedData1 = { data: cellStateArray1, shared };
+		let sharedData1 = {uuid: 'sharedData1', data: cellStateArray1, shared };
 
 		// const v0 = new WGRUniformValue({uuid: 'v0', data: gridsSizesArray, stride: 2, shared });
 		// v0.toVisibleAll();
@@ -94,12 +94,12 @@ export class GameOfLifeMultiMaterialPass {
 		// compva2.toBufferForStorage();
 		const compva2 = {storage: { bufData: sharedData1, stride: 1, shared}, layout:{visibility:'comp', access:"read_write"}};
 
-		const compvb1 = new WGRStorageValue({ bufData: sharedData1, stride: 1, shared }).toVisibleVertComp();
-		// const compvb1 = {storage: { bufData: sharedData1, stride: 1, shared}, layout:{visibility:'vert_comp'}};
+		// const compvb1 = new WGRStorageValue({uuid: 'compvb1',  bufData: sharedData1, stride: 1, shared }).toVisibleVertComp();
+		const compvb1 = {storage: {uuid: 'compvb1', bufData: sharedData1, stride: 1, shared}, layout:{visibility:'vert_comp'}};
 
-		const compvb2 = new WGRStorageValue({ bufData: sharedData0, stride: 1, shared }).toVisibleComp();
-		compvb2.toBufferForStorage();
-		// const compvb2 = {storage: { bufData: sharedData0, stride: 1, shared, layout:{visibility:'comp', access:"read_write"}}};
+		// const compvb2 = new WGRStorageValue({ bufData: sharedData0, stride: 1, shared }).toVisibleComp();
+		// compvb2.toBufferForStorage();
+		const compvb2 = {storage: { bufData: sharedData0, stride: 1, shared, layout:{visibility:'comp', access:"read_write"}}};
 
 		return [
 			{ ufvs0: [v0, va1], ufvs1: [v0, vb1] },

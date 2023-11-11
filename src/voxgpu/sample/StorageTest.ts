@@ -59,14 +59,14 @@ export class StorageTest {
 		});
 
 		// let ufv = new WGRStorageValue({data: new Float32Array([1,0,0,1])});
-		let ufv = {storage: {data: new Float32Array([1,0,0,1])}};
+		let ufv = {storage: {data: new Float32Array([1,0,0,1]), shdVarName:'param'}};
 		material.uniformValues = [ufv];
 		material.addTextureWithDatas( texDatas );
 
 		return material;
 	}
 
-	private createEntity(materials: WGMaterial[], pv?: Vector3): Entity3D {
+	private createEntity(materials: WGMaterial[]): Entity3D {
 
 		const renderer = this.renderer;
 
@@ -79,7 +79,6 @@ export class StorageTest {
 		const entity = new Entity3D();
 		entity.materials = materials;
 		entity.geometry = geometry;
-		entity.transform.setPosition(pv ? pv : new Vector3());
 
 		renderer.addEntity(entity);
 		return entity;

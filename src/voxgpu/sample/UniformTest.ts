@@ -9,7 +9,6 @@ import { Entity3D } from "../entity/Entity3D";
 import { WGRenderer } from "../rscene/WGRenderer";
 import { WGImage2DTextureData } from "../texture/WGTextureWrapper";
 import { WGRShderSrcType } from "../material/WGMaterialDescripter";
-import Vector3 from "../math/Vector3";
 import { WGRStorageValue } from "../render/buffer/WGRStorageValue";
 import { WGRUniformValue } from "../render/uniform/WGRUniformValue";
 
@@ -59,14 +58,14 @@ export class UniformTest {
 		});
 
 		// let ufv = new WGRUniformValue({data: new Float32Array([1,0,0,1])});
-		let ufv = {data: new Float32Array([1,0,0,1])};
+		let ufv = {data: new Float32Array([1,0,0,1]), shdVarName:'param'};
 		material.uniformValues = [ufv];
 		material.addTextureWithDatas( texDatas );
 
 		return material;
 	}
 
-	private createEntity(materials: WGMaterial[], pv?: Vector3): Entity3D {
+	private createEntity(materials: WGMaterial[]): Entity3D {
 
 		const renderer = this.renderer;
 
@@ -79,7 +78,6 @@ export class UniformTest {
 		const entity = new Entity3D();
 		entity.materials = materials;
 		entity.geometry = geometry;
-		entity.transform.setPosition(pv ? pv : new Vector3());
 
 		renderer.addEntity(entity);
 		return entity;
