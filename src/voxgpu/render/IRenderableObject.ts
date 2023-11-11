@@ -52,7 +52,7 @@ interface IRenderableObject {
 	getREType(): number;
 	isContainer(): boolean;
 
-	getUid(): number;
+	uid: number;
 	setVisible(boo: boolean): IRenderableObject;
 	isVisible(): boolean;
 	getTransform(): IROTransform;

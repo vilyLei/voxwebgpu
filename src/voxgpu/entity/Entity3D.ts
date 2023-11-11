@@ -33,12 +33,6 @@ interface Entity3DParam {
 	rpasses?: IWGRMaterialPassView[];
 }
 function getUniformValueFromParam(key: string, param: Entity3DParam, defaultV?: WGRBufferData ): WGRBufferData {
-	// if(param.uniformValueMap) {
-	// 	const v = param.uniformValueMap[key];
-	// 	if(v) {
-	// 		return v;
-	// 	}
-	// }
 	const ufvs = param.uniformValues;
 	if(param.uniformValues) {
 		for(let i = 0; i < ufvs.length; ++i) {
@@ -152,7 +146,7 @@ class Entity3D implements IRenderableEntity {
 		return REF.GetRendererUid(this.__$rseFlag);
 	}
 
-	getUid(): number {
+	get uid(): number {
 		return this.mUid;
 	}
 

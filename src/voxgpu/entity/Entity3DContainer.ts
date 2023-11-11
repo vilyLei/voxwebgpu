@@ -270,7 +270,7 @@ class Entity3DContainer implements IRenderableEntityContainer {
 	removeChildByUid(uid: number): void {
 		if (uid > -1) {
 			for (let i = 0; i < this.m_childrenTotal; ++i) {
-				if (this.m_children[i].getUid() == uid) {
+				if (this.m_children[i].uid == uid) {
 					this.m_children[i].__$contId = 0;
 					this.m_children.splice(i, 1);
 					if (this.m_cbvers != null) {
@@ -291,7 +291,7 @@ class Entity3DContainer implements IRenderableEntityContainer {
 	getChildByUid(uid: number): ITransformEntity {
 		if (uid > -1) {
 			for (let i = 0; i < this.m_entitiesTotal; ++i) {
-				if (this.m_entities[i].getUid() == uid) {
+				if (this.m_entities[i].uid == uid) {
 					return this.m_entities[i];
 				}
 			}
@@ -368,7 +368,7 @@ class Entity3DContainer implements IRenderableEntityContainer {
 	removeEntityByUid(uid: number): void {
 		if (uid > -1) {
 			for (let i = 0; i < this.m_entitiesTotal; ++i) {
-				if (this.m_entities[i].getUid() == uid) {
+				if (this.m_entities[i].uid == uid) {
 					// this.m_entities[i].__$rseFlag = REF.RemoveContainerFlag(this.m_entities[i].__$rseFlag);
 					this.m_entities[i].__$setParent(null);
 					if (this.__$renderer != null) {
@@ -406,7 +406,7 @@ class Entity3DContainer implements IRenderableEntityContainer {
 	getEntityByUid(uid: number): ITransformEntity {
 		if (uid > -1) {
 			for (let i = 0; i < this.m_entitiesTotal; ++i) {
-				if (this.m_entities[i].getUid() == uid) {
+				if (this.m_entities[i].uid == uid) {
 					return this.m_entities[i];
 				}
 			}
@@ -460,7 +460,7 @@ class Entity3DContainer implements IRenderableEntityContainer {
 	isFree(): boolean {
 		return this.__$rseFlag == REF.DEFAULT;
 	}
-	getUid(): number {
+	get uid(): number {
 		return this.mUid;
 	}
 	getX(): number {
