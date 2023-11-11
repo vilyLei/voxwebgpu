@@ -83,7 +83,6 @@ class WGRenderPassNode implements IWGRenderPassNodeRef {
 
 	private addEntityToBlock(entity: Entity3D): void {
 		entity.update();
-		entity.rstate.__$rever++;
 		const runit = this.mRBParam.roBuilder.createRUnit(entity, this);
 		this.unitBlock.addRUnit(runit);
 	}
@@ -105,7 +104,6 @@ class WGRenderPassNode implements IWGRenderPassNodeRef {
 			}
 			// console.log("WGRenderPassNode::addEntity(), flag: ", flag);
 			if (flag) {
-				entity.rstate.__$rever++;
 				this.mRBParam.entityMana.addEntity({ entity: entity, rever: entity.rstate.__$rever, dst: this });
 			}
 		}

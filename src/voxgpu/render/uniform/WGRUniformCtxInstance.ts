@@ -316,10 +316,7 @@ class WGRUniformCtxInstance {
 		}
 		const index = this.getFreeIndex();
 		// console.log("WGRUniformCtxInstance::createUniform(), index: ", index, ", mUid: ", this.mUid);
-
-		// if (this.mBuffers.length > 0) {
-		// 	console.warn("need build other many append new uniforms...");
-		// }
+		
 		const u = new WGRUniform( this );
 		u.layoutName = layoutName;
 		u.groupIndex = groupIndex;

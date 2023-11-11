@@ -82,12 +82,12 @@ function getVisibility(str: string, value: number): number {
 	switch(str) {
 		case 'vert':
 		case 'vertex':
-			console.log("getVisibility() XXXX Vert");
+			// console.log("getVisibility() XXXX Vert");
 			return value | GPUShaderStage.VERTEX;
 			break;
 		case 'frag':
 		case 'fragment':
-			console.log("getVisibility() XXXX Frag");
+			// console.log("getVisibility() XXXX Frag");
 			return value | GPUShaderStage.FRAGMENT;
 			break;
 		case 'comp':
@@ -212,7 +212,7 @@ function checkBufferData(bufData: WGRBufferData): WGRBufferData {
 		bufData.shared = bufData.shared === true ? true : false;
 		applyParamToBufferData(bufData, bufData);
 		bufData.byteLength = bufData.data.byteLength;
-		console.log("checkBufferData(), XXXXXXXX bufDatd: ", bufData);
+		// console.log("checkBufferData(), XXXXXXXX bufDatd: ", bufData);
 	}
 	return bufData;
 }

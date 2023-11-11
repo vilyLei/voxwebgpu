@@ -65,7 +65,6 @@ class WGRenderPassBlock implements IWGRPassNodeBuilder {
 
 	private addEntityToBlock(entity: Entity3D): void {
 		entity.update();
-		entity.rstate.__$rever++;
 		const runit = this.mRBParam.roBuilder.createRUnit(entity, this);
 		runit.etuuid = entity.uuid;
 		this.unitBlock.addRUnit(runit);
@@ -85,7 +84,6 @@ class WGRenderPassBlock implements IWGRPassNodeBuilder {
 				}
 			}
 			if (flag) {
-				entity.rstate.__$rever++;
 				this.mRBParam.entityMana.addEntity({ entity: entity, rever: entity.rstate.__$rever, dst: this });
 			}
 		}

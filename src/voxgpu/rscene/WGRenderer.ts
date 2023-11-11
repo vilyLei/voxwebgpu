@@ -151,32 +151,18 @@ class WGRenderer implements IRenderer {
 			if (blockIndex < 0 || blockIndex >= this.mRPBlocks.length) {
 				throw Error("Illegal operation !!!");
 			}
-
-			// entity.update();
-			// entity.rstate.__$inRenderer = true;
-
-			// let flag = true;
 			const rb = this.mRPBlocks[blockIndex];
 			rb.addEntity( entity );
-			// if (this.mWGCtx && this.mWGCtx.enabled) {
-			// 	if (entity.isREnabled()) {
-			// 		flag = false;
-			// 		this.addEntityToBlock(entity, rb);
-			// 	}
-			// }
-			// if (flag) {
-			// 	entity.rstate.__$rever++;
-			// 	this.mEntityMana.addEntity({ entity: entity, rever: entity.rstate.__$rever, dst: rb });
-			// }
 		}
 	}
 
 	removeEntity(entity: Entity3D): void {
 		if (entity) {
 			if (entity.isInRenderer()) {
-				entity.rstate.__$rever++;
-				entity.rstate.__$inRenderer = false;
-				entity.rstate.__$rendering = false;
+				const st = entity.rstate;
+				st.__$rever++;
+				st.__$inRenderer = false;
+				st.__$rendering = false;
 				console.log("Renderer::removeEntity(), entity.isInRenderer(): ", entity.isInRenderer());
 			}
 		}
