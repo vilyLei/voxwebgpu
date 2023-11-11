@@ -89,10 +89,10 @@ export class GameOfLifeMultiMaterialPass {
 
 		// build computing uniforms
 		// const compva1 = new WGRStorageValue({ bufData: sharedData0, stride: 1, shared }).toVisibleVertComp();
-		const compva1 = {storage: { bufData: sharedData0, stride: 1, shared, layout:{visibility:'vert_comp'}}};
+		const compva1 = {storage: { bufData: sharedData0, stride: 1, shared}, layout:{visibility:'vert_comp'}};
 		// const compva2 = new WGRStorageValue({ bufData: sharedData1, stride: 1, shared }).toVisibleComp();
 		// compva2.toBufferForStorage();
-		const compva2 = {storage: { bufData: sharedData1, stride: 1, shared, layout:{visibility:'comp', access:"read_write"}}};
+		const compva2 = {storage: { bufData: sharedData1, stride: 1, shared}, layout:{visibility:'comp', access:"read_write"}};
 
 		const compvb1 = new WGRStorageValue({ bufData: sharedData1, stride: 1, shared }).toVisibleVertComp();
 		// const compvb1 = {storage: { bufData: sharedData1, stride: 1, shared}, layout:{visibility:'vert_comp'}};
