@@ -215,28 +215,12 @@ function checkBufferData(bufData: WGRBufferData): WGRBufferData {
 	if(!isBV) {
 		// console.log("checkBufferData(), building data ...");
 		bufData = bufferDataFilter(bufData);
-		const v = __$ubv;
 
-		// if(bufData.usage === undefined) {
-		// 	console.log(">>>>>> sdsds >>>>>>>>>>")
-		// 	v.toUniform();
-		// 	bufData.usage = v.usage;
-		// 	bufData.visibility;
-		// }
 		bufData.shared = bufData.shared === true ? true : false;
 		applyParamToBufferData(bufData, bufData);
 		bufData.byteLength = bufData.data.byteLength;
-		// const vi = bufData.visibility;
-		// vi.toBufferForUniform();
-		// vi.toVisibleAll();
 		console.log("checkBufferData(), XXXXXXXX bufDatd: ", bufData);
 	}
-	// if(bufData.uuid === 'v0') {
-	// 	console.log("checkBufferData(), >>>>>>>> v0 bufDatd: ", bufData);
-	// }
-	// let typeNS = typeof bufData;
-	// console.log("checkBufferData(), typeNS: ", typeNS);
-	// console.log("checkBufferData(), bufData: ", bufData);
 	return bufData;
 }
 

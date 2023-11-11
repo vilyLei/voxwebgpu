@@ -175,7 +175,7 @@ class WGRUniformCtxInstance {
 						let bufuid = (bufDataShared && bufData.uid !== undefined ? bufData.uid : -1);
 												
 						let vuid = ufv.shared ? ufv.uid : bufuid;
-						console.log("VVVVVVVVVVVV shared: ", dp.shared,", vuid: ", vuid, ", bufuid: ", bufuid, ", byteLength: ", ufv.byteLength);
+						// console.log("VVVVVVVVVVVV shared: ", dp.shared,", vuid: ", vuid, ", bufuid: ", bufuid, ", byteLength: ", ufv.byteLength);
 						if (store.hasWithUid(vuid)) {
 							buf = store.getBufWithUid(vuid);
 							// console.log("apply old shared uniform gpu buffer..., bufDataShared: ", bufDataShared, buf);
@@ -187,27 +187,8 @@ class WGRUniformCtxInstance {
 								uniformParam.sizes[0] = ls[0].bufDataParams[i].size;
 								buf = this.mBindGCtx.createUniformsBuffer(uniformParam);
 							}
-							// if(ufv.uid < 0) {
-							// 	let view = new WGRBufferView();
-							// 	ufv.uid = view.uid;
-							// }else if(vuid < 0 || (bufDataShared && !store.hasWithUid(bufuid))) {
-							// 	// console.log("create a new shared uniform gpu buffer and buf a view object...");
-							// 	const bufView = new WGRBufferView().setParam(bufData);
-							// 	bufView.buffer = buf;
-							// 	ufv.bufData = bufView;
-							// 	bufData.uid = bufView.uid;
-							// 	store.addWithUid(bufView.uid, bufView);
-							// }
-							if(ufv.uuid === 'compvb1') {
-								console.log("compvb1 XXX AAAAA use a TTTT bufData ", ufv.uid,", store.hasWithUid(",bufuid,"): ", store.hasWithUid(bufuid));
-							}
-							// if(ufv.uid < 0) {
-							// 	let view = new WGRBufferView();
-							// 	ufv.uid = view.uid;
-							// 	vuid = ufv.shared ? ufv.uid : bufuid;		
-							// }
 							if(vuid < 0 || (bufDataShared && !store.hasWithUid(bufuid))) {
-								console.log("bufData.uuid: ", bufData.uuid, ", create a new shared uniform gpu buffer and buf a view object...");
+								// console.log("bufData.uuid: ", bufData.uuid, ", create a new shared uniform gpu buffer and buf a view object...");
 								const bufView = new WGRBufferView().setParam(bufData);
 								bufView.buffer = buf;
 								ufv.bufData = bufView;
@@ -221,9 +202,6 @@ class WGRUniformCtxInstance {
 									bufData.uid = ufv.uid;
 								}
 								store.addWithUid(ufv.uid, ufv);
-							}
-							if(ufv.uuid === 'compvb1') {
-								console.log("compvb1 XXX BBBBB use a TTTT bufData OK ....");
 							}
 						}
 						buf.shared = true;
@@ -286,7 +264,7 @@ class WGRUniformCtxInstance {
 			uf.buffers = wp.bufObj.buffers.slice(0);
 			uf.versions = this.createVers(wp);
 			uf.uvfs = this.createUvfs(wp);
-			console.log("uf.versions: ", uf.versions);
+			// console.log("uf.versions: ", uf.versions);
 			let ivs: number[] = new Array(uf.uvfs.length);
 			for(let i = 0; i < ivs.length; ++i) {
 				ivs[i] = (uf.uvfs[i].shared || !wp.uniformAppend) ? 0 : uf.index;

@@ -3,8 +3,11 @@ import { WGRBufferData } from "./WGRBufferValueParam";
 import { WGRBufferVisibility } from "./WGRBufferVisibility";
 
 const __$RID = {uid:0};
+function createNewWRGBufferViewUid(): number {
+	return __$RID.uid++;
+}
 class WGRBufferView implements WGRBufferData {
-	private mUid = __$RID.uid++;
+	private mUid = createNewWRGBufferViewUid();
 	uuid?: string;
 	data?: NumberArrayDataType;
 	buffer?: GPUBuffer;
@@ -26,9 +29,6 @@ class WGRBufferView implements WGRBufferData {
 
 	bufData?: WGRBufferData;
 	
-	get __$getType(): string {
-		return  'WGRBufferView';
-	}
 	get byteLength(): number {
 		return this.data.byteLength;
 	}
@@ -45,4 +45,4 @@ class WGRBufferView implements WGRBufferData {
 		return this;
 	}
 }
-export { WGRBufferView };
+export { createNewWRGBufferViewUid, WGRBufferView };
