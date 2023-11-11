@@ -109,7 +109,6 @@ function applyLayout(layout: WGRBufferLayout, vi: WGRBufferVisibility, type: str
 		if(vs[i] === 'all') {			
 			bv.toVisibleAll();
 			v = bv.visibility;
-			console.log("applyLayout() all");
 			break;
 		}
 		v = v | getVisibility(vs[i], v);
@@ -152,10 +151,7 @@ function bufferDataFilter(d: WGRBufferData): WGRBufferData {
 		rd = d.storage;
 		v.toStorage();
 		rd.usage = v.usage;
-		// console.log("uuuuuuu storage ... !rd.visibility: ", (!rd.visibility));
 		let flag = !rd.visibility;
-		// flag = true;
-		// rd.visibility = new WGRBufferVisibility();
 		if(flag) {
 			rd.visibility = new WGRBufferVisibility();
 		}
@@ -185,10 +181,7 @@ function bufferDataFilter(d: WGRBufferData): WGRBufferData {
 		}
 		v.toUniform();
 		rd.usage = v.usage;
-		// console.log("rd.visibility .......: ", rd.visibility);
 		let flag = !rd.visibility;
-		// flag = true;
-		// rd.visibility = new WGRBufferVisibility();
 		if(flag) {
 			rd.visibility = new WGRBufferVisibility();
 		}
