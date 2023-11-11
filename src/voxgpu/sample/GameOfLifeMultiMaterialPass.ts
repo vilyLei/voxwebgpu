@@ -4,8 +4,6 @@ import { FixScreenPlaneEntity } from "../entity/FixScreenPlaneEntity";
 import shaderWGSL from "./shaders/gameOfLife.wgsl";
 
 import { WGRBufferData } from "../render/buffer/WGRBufferData";
-import { WGRUniformValue } from "../render/uniform/WGRUniformValue";
-import { WGRStorageValue } from "../render/buffer/WGRStorageValue";
 import { WGRShderSrcType } from "../material/WGMaterialDescripter";
 import { WGCompMaterial } from "../material/WGCompMaterial";
 import { WGMaterial } from "../material/WGMaterial";
@@ -75,31 +73,19 @@ export class GameOfLifeMultiMaterialPass {
 
 		let shared = true;
 		let sharedData0 = { data: cellStateArray0, shared };
-		let sharedData1 = {uuid: 'sharedData1', data: cellStateArray1, shared };
+		let sharedData1 = { data: cellStateArray1, shared };
 
-		// const v0 = new WGRUniformValue({uuid: 'v0', data: gridsSizesArray, stride: 2, shared });
-		// v0.toVisibleAll();
-		const v0 = {uuid: 'v0', data: gridsSizesArray, stride: 2, shared, layout:{visibility:'all'} };
-
+		const v0 = { data: gridsSizesArray, stride: 2, shared, layout: { visibility: 'all' } };
 		// build rendering uniforms
-		// const va1 = new WGRStorageValue({ bufData: sharedData0, stride: 1, shared }).toVisibleVertComp();
-		const va1 = {storage: { bufData: sharedData0, stride: 1, shared }, layout:{visibility:'vert_comp'}};
-		// const vb1 = new WGRStorageValue({ bufData: sharedData1, stride: 1, shared }).toVisibleVertComp();
-		const vb1 = {storage: { bufData: sharedData1, stride: 1, shared }, layout:{visibility:'vert_comp'}};
+		const va1 = { storage: { bufData: sharedData0, stride: 1, shared }, layout: { visibility: 'vert_comp' } };
+		const vb1 = { storage: { bufData: sharedData1, stride: 1, shared }, layout: { visibility: 'vert_comp' } };
 
 		// build computing uniforms
-		// const compva1 = new WGRStorageValue({ bufData: sharedData0, stride: 1, shared }).toVisibleVertComp();
-		const compva1 = {storage: { bufData: sharedData0, stride: 1, shared}, layout:{visibility:'vert_comp'}};
-		// const compva2 = new WGRStorageValue({ bufData: sharedData1, stride: 1, shared }).toVisibleComp();
-		// compva2.toBufferForStorage();
-		const compva2 = {storage: { bufData: sharedData1, stride: 1, shared}, layout:{visibility:'comp', access:"read_write"}};
+		const compva1 = { storage: { bufData: sharedData0, stride: 1, shared }, layout: { visibility: 'vert_comp' } };
+		const compva2 = { storage: { bufData: sharedData1, stride: 1, shared }, layout: { visibility: 'comp', access: "read_write" } };
 
-		// const compvb1 = new WGRStorageValue({uuid: 'compvb1',  bufData: sharedData1, stride: 1, shared }).toVisibleVertComp();
-		const compvb1 = {storage: {uuid: 'compvb1', bufData: sharedData1, stride: 1, shared}, layout:{visibility:'vert_comp'}};
-
-		// const compvb2 = new WGRStorageValue({ bufData: sharedData0, stride: 1, shared }).toVisibleComp();
-		// compvb2.toBufferForStorage();
-		const compvb2 = {storage: { bufData: sharedData0, stride: 1, shared, layout:{visibility:'comp', access:"read_write"}}};
+		const compvb1 = { storage: { bufData: sharedData1, stride: 1, shared }, layout: { visibility: 'vert_comp' } };
+		const compvb2 = { storage: { bufData: sharedData0, stride: 1, shared, layout: { visibility: 'comp', access: "read_write" } } };
 
 		return [
 			{ ufvs0: [v0, va1], ufvs1: [v0, vb1] },
@@ -110,12 +96,12 @@ export class GameOfLifeMultiMaterialPass {
 	private mStep = 0;
 
 	private createMaterial(shaderCodeSrc: WGRShderSrcType, uniformValues: WGRBufferData[], shadinguuid: string, instanceCount: number): WGMaterial {
-			return new WGMaterial({
-				shadinguuid,
-				shaderCodeSrc,
-				instanceCount,
-				uniformValues
-			});
+		return new WGMaterial({
+			shadinguuid,
+			shaderCodeSrc,
+			instanceCount,
+			uniformValues
+		});
 	}
 	private createCompMaterial(shaderCodeSrc: WGRShderSrcType, uniformValues: WGRBufferData[], shadinguuid: string, workgroupCount = 2): WGCompMaterial {
 		return new WGCompMaterial({
