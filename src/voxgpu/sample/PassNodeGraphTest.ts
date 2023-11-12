@@ -10,7 +10,7 @@ class PassGraph extends WGRPassNodeGraph {
 	}
 	run(): void {
 		let pass = this.passes[0];
-		for (let i = 0; i < 15; ++i) {
+		for (let i = 0; i < 16; ++i) {
 			pass.colorAttachments[0].clearEnabled = i < 1;
 			pass.render();
 		}
@@ -48,14 +48,11 @@ export class PassNodeGraphTest {
 			rPass.addEntity(entities[i]);
 		}
 
-
 		let graph = new PassGraph();
 		graph.passes = [rPass];
 		rs.setPassNodeGraph(graph);
 
 		let entity = new FixScreenPlaneEntity({ extent, flipY: true, textures: [rttTex] });
-		// entity.setColor([0.7, 0.5, 0.5]);
-		entity.uuid = 'apply-rtt-entity';
 		rs.addEntity(entity);
 	}
 	private initEvent(): void {
@@ -67,8 +64,6 @@ export class PassNodeGraphTest {
 		const rs = this.mRscene;
 		let entity: FixScreenPlaneEntity;
 
-		// const diffuseTex = { diffuse: { url: "static/assets/blueTransparent.png", flipY: true } };
-		// const diffuseTex = { diffuse: { url: "static/assets/redTransparent.png", flipY: true } };
 		const diffuseTex = { diffuse: { url: "static/assets/guangyun_40.png", flipY: true } };
 
 		let blendModes = ['add'];
@@ -79,15 +74,7 @@ export class PassNodeGraphTest {
 		rs.addEntity(entity);
 		entities.push(entity);
 
-		// entity = new FixScreenPlaneEntity({ extent: [-0.2, -0.2, 0.4, 0.4], textures: [diffuseTex] });
-		// entity.setColor([0.2, 0.9, 0.9]);
-		// entity.uuid = "pl-1";
-		// rs.addEntity(entity);
-		// entities.push(entity);
-
 		this.applyNewRPass('rtt0', entities, [0.2, 0.2, 0.2, 1.0], [-0.2, 0.1, 0.8, 0.8]);
-		// this.applyNewRPass( 'rtt1', entities, [0.3, 0.5, 0.1, 1.0], [-0.2, 0.3, 0.5, 0.5] );
-		// this.applyNewRPass( 'rtt2', entities, [0.3, 0.5, 0.7, 1.0], [-0.8, 0.3, 0.5, 0.5] );
 	}
 
 	run(): void {
