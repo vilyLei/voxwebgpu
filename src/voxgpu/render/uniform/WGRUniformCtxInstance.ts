@@ -112,6 +112,8 @@ class WGRUniformCtxInstance {
 				}
 				bo.buffers = [];
 				bo.oldBufs = [];
+				// console.log("WGRUniformCtxInstance::runBegin(), XXX wp.uniformAppend: ", wp.uniformAppend);
+				// console.log("WGRUniformCtxInstance::runBegin(), XXX wp.bufObj: ", wp.bufObj);
 				if (wp.uniformAppend) {
 					for (let i = 1; i < ls.length; ++i) {
 						ls[i].bufObj = wp.bufObj;
@@ -336,7 +338,13 @@ class WGRUniformCtxInstance {
 		wp.enabled = true;
 
 		if (index >= 0) {
-			this.createUniformWithWP(wp, index);
+			if(wp.uniformAppend) {
+				const bo = wp.uniformAppend ? this.mBufObj : wp.bufObj;
+				wp.bufObj = bo;
+				this.createUniformWithWP(wp, index);
+			}else {
+				this.mBuildTotal = 0;
+			}
 		}
 		// console.log("WGRUniformCtxInstance::createUniform(), this.mList.length: ", this.mList.length);
 		return u;

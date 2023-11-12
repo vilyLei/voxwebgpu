@@ -38,7 +38,8 @@ export class RSceneEntityManagement {
 	private mouseDown = (evt: MouseEvent): void => {
 
 		const rc = this.mRscene;
-		let visibleTest = true;
+
+		let visibleTest = false;
 		if(visibleTest) {
 			// let et = this.mEntitices[Math.round(Math.random() * (this.mEntitices.length - 1))];
 			let et = this.mEntitices[0];

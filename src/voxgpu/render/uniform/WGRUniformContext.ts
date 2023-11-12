@@ -8,8 +8,8 @@ import { SharedUniformObj, WGRUniformCtxInstance } from "./WGRUniformCtxInstance
 import { WGRBindGroupContext } from "../pipeline/WGRBindGroupContext";
 import { WebGPUContext } from "../../gpu/WebGPUContext";
 import { WGRBufferData } from "../buffer/WGRBufferData";
-import { WGRBufferValue, checkBufferData } from "../buffer/WGRBufferValue";
-import { createNewWRGBufferViewUid, WGRBufferView } from "../buffer/WGRBufferView";
+import { checkBufferData } from "../buffer/WGRBufferValue";
+import { createNewWRGBufferViewUid } from "../buffer/WGRBufferView";
 
 class WGRUniformContext implements IWGRUniformContext {
 	private mMap: Map<string, WGRUniformCtxInstance> = new Map();
