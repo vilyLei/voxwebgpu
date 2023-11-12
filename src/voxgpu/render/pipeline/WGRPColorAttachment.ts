@@ -27,6 +27,8 @@ class WGRPColorAttachment implements WGRPColorAttachmentImpl {
 	 */
 	storeOp = "store";
 
+	param: GPURenderPassColorAttachment;
+	
 	set clearEnabled(enabled: boolean) {
 		this.loadOp = enabled ? "clear" : "load";
 	}
@@ -35,6 +37,7 @@ class WGRPColorAttachment implements WGRPColorAttachmentImpl {
 	}
 	setParam(param: GPURenderPassColorAttachment): WGRPColorAttachment {
 		if (param) {
+			this.param = param;
 			let c = this.clearValue;
 			copyFromObjectValueWithKey(param, this);
 			c.setColor( this.clearValue );

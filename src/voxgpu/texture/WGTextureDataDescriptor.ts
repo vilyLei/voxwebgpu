@@ -1,10 +1,12 @@
 import { GPUTexture } from "../gpu/GPUTexture";
+import { GPUTextureView } from "../gpu/GPUTextureView";
 
 interface RTTTextureDataDescriptor {
 	uuid?: string;
 	width?: number;
 	height?: number;
 	texture?: GPUTexture;
+	textureView?: GPUTextureView;
 	type?: string;
 }
 interface TextureDataDescriptor {

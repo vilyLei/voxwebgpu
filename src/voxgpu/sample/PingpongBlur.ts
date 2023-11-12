@@ -36,18 +36,21 @@ export class PingpongBlur {
 		this.initScene();
 	}
 
-	private applyBlurPass(texUUID: string, clearColor: ColorDataType, extent = [0.4, 0.3, 0.5, 0.5]): void {
+	private rttTex0 = { diffuse: { uuid: 'rtt0', rttTexture: {} } };
+	private rttTex1 = { diffuse: { uuid: 'rtt1', rttTexture: {} } };
+	private colorAttachments = [
+		{
+			texture: this.rttTex0,
+			clearValue: [] as ColorDataType,
+			loadOp: "clear",
+			storeOp: "store"
+		}
+	];
+	private applyBlurPass(clearColor: ColorDataType, extent = [0.4, 0.3, 0.5, 0.5]): void {
 
+		this.colorAttachments[0].clearValue = clearColor;
+		const colorAttachments = this.colorAttachments;
 		let rs = this.mRscene;
-		let rttTex = { diffuse: { uuid: texUUID, rttTexture: {} } };
-		let colorAttachments = [
-			{
-				texture: rttTex,
-				clearValue: clearColor,
-				loadOp: "clear",
-				storeOp: "store"
-			}
-		];
 		let rPass = rs.renderer.appendRenderPass({ separate: true, colorAttachments });
 
 		const diffuseTex = { diffuse: { url: "static/assets/huluwa.jpg", flipY: true } };
@@ -66,8 +69,12 @@ export class PingpongBlur {
 		graph.passes = [rPass];
 		rs.setPassNodeGraph(graph);
 
-		let entity = new FixScreenPlaneEntity({ extent, flipY: true, textures: [rttTex] });
+		let entity = new FixScreenPlaneEntity({ extent, flipY: true, textures: [this.rttTex0] });
 		rs.addEntity(entity);
+
+		// extent = [-0.9, -0.9, 1.5, 1.5];
+		// entity = new FixScreenPlaneEntity({ extent, flipY: true, textures: [this.rttTex1] });
+		// rs.addEntity(entity);
 	}
 	private initEvent(): void {
 		const rs = this.mRscene;
@@ -75,7 +82,7 @@ export class PingpongBlur {
 	}
 	private initScene(): void {
 
-		this.applyBlurPass('rtt0', [0.1, 0.1, 0.1, 1.0], [-0.8, -0.8, 1.6, 1.6]);
+		this.applyBlurPass([0.1, 0.1, 0.1, 1.0], [-0.8, -0.8, 1.6, 1.6]);
 	}
 
 	run(): void {

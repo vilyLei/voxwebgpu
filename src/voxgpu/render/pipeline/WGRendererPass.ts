@@ -71,16 +71,19 @@ class WGRendererPass implements IWGRendererPass {
 		if (!colorAtt.view) {
 			colorAtt.setParam(t);
 			if (!colorAtt.view) {
-				console.log(">>> updateColorAttachmentView() ... ... ...");
 				let td = texDescriptorFilter(t.texture);
 				if (td) {
-					const ctx = this.mWGCtx;
 					const rttData = td.rttTexture;
-					if (rttData && !rttData.texture) {
-						const rtt = ctx.texture.createColorRTTTexture();
-						colorAtt.view = rtt.createView();
-						rttData.texture = rtt;
-						// console.log("动态创建一个 color rtt gpu texture instance.");
+					if(rttData) {
+						const ctx = this.mWGCtx;
+						if (rttData.texture === undefined) {
+							const rtt = ctx.texture.createColorRTTTexture();
+							rttData.texture = rtt;
+							rttData.textureView = rtt.createView();							
+							colorAtt.view = rttData.textureView;
+							// console.log("动态创建一个 color rtt gpu texture instance.");
+						}
+						colorAtt.view = rttData.textureView;
 					}
 				}
 			}
@@ -229,8 +232,10 @@ class WGRendererPass implements IWGRendererPass {
 					}
 					if (this.separate) {
 						// console.log("run a rpass, this.separate: ", this.separate,", multisampleEnabled: ", multisampleEnabled);
-						if (!colorT.view && this.mColorAttachments !== undefined) {
-							this.updateColorAttachmentView( colorT, this.mColorAttachments[0]);							
+						const cts = this.mColorAttachments;
+						if (cts !== undefined && (!colorT.view || colorT.param != cts[0])) {
+							console.log("BBBBB --- BBBBBBBBBBBB");
+							this.updateColorAttachmentView( colorT, cts[0]);							
 							this.clearColor.setColor(colorT.clearValue);
 						}
 					} else {
