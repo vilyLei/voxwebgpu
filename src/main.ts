@@ -12,7 +12,7 @@
 
 // import { MultiTexturedCube as Demo } from "./voxgpu/sample/MultiTexturedCube";
 // import { BlendTest as Demo } from "./voxgpu/sample/BlendTest";
-// import { MultiMaterialPass as Demo } from "./voxgpu/sample/MultiMaterialPass";
+import { MultiMaterialPass as Demo } from "./voxgpu/sample/MultiMaterialPass";
 
 // import { MultiUniformTest as Demo } from "./voxgpu/sample/MultiUniformTest";
 // import { UniformTest as Demo } from "./voxgpu/sample/UniformTest";
@@ -41,7 +41,7 @@
 // import { GameOfLifeSpherePBR as Demo } from "./voxgpu/sample/GameOfLifeSpherePBR";
 // import { GameOfLife3DPBR as Demo } from "./voxgpu/sample/GameOfLife3DPBR";
 
-import { MultiGPUPassTest as Demo } from "./voxgpu/sample/MultiGPUPassTest";
+// import { MultiGPUPassTest as Demo } from "./voxgpu/sample/MultiGPUPassTest";
 // import { RTTFixScreenTest as Demo } from "./voxgpu/sample/RTTFixScreenTest";
 // import { RTTTest as Demo } from "./voxgpu/sample/RTTTest";
 

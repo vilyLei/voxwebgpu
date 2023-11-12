@@ -17,10 +17,10 @@ Features:
 
    7. 异步并行的场景/模型载入。
 
-   8. computing与rendering用法机制一致性。
+   8. 保持computing与rendering机制一致性。
          1). 构造过程一致性。
-         2). 启用过程一致性。
-         3). 自动兼容到material多pass以及material graph机制中。
+         2). 使用过程一致性。
+         3). 自动兼容到materialmulti-pass、material graph、pass graph机制中。
 
 
 Installation and running:

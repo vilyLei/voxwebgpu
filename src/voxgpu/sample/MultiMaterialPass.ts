@@ -9,7 +9,6 @@ import { Entity3D } from "../entity/Entity3D";
 import { WGRenderer } from "../rscene/WGRenderer";
 import { WGImage2DTextureData } from "../texture/WGTextureWrapper";
 import { WGRShderSrcType } from "../material/WGMaterialDescripter";
-import Vector3 from "../math/Vector3";
 
 export class MultiMaterialPass {
 
@@ -22,15 +21,16 @@ export class MultiMaterialPass {
 		console.log("MultiMaterialPass::initialize() ...");
 
 		const shdSrc = {
-			vertShaderSrc: { code: vertWGSL, uuid: "vertShdCode" },
-			fragShaderSrc: { code: fragWGSL, uuid: "fragShdCode" }
+			vert: { code: vertWGSL },
+			frag: { code: fragWGSL }
 		};
-		let material0 = this.createMaterial(shdSrc, [new WGImage2DTextureData("static/assets/blueTransparent.png")], ["transparent"], "front");
-		let material1 = this.createMaterial(shdSrc, [new WGImage2DTextureData("static/assets/blueTransparent.png")], ["transparent"], "back");
+		const tds = [new WGImage2DTextureData("static/assets/blueTransparent.png")];
+		let material0 = this.createMaterial(shdSrc, tds, ["transparent"], "front");
+		let material1 = this.createMaterial(shdSrc, tds, ["transparent"], "back");
 		this.mEntity = this.createEntity([material0, material1]);
 	}
 
-	private createMaterial(shdSrc: WGRShderSrcType, texDatas?: WGImage2DTextureData[], blendModes: string[] = [], faceCullMode = "back"): WGMaterial {
+	private createMaterial(shaderCodeSrc: WGRShderSrcType, texDatas?: WGImage2DTextureData[], blendModes: string[] = [], faceCullMode = "back"): WGMaterial {
 		let pipelineDefParam = {
 			depthWriteEnabled: true,
 			faceCullMode: faceCullMode,
@@ -43,27 +43,23 @@ export class MultiMaterialPass {
 
 		const material = new WGMaterial({
 			shadinguuid: "base-material-tex" + texTotal + faceCullMode,
-			shaderCodeSrc: shdSrc,
+			shaderCodeSrc,
 			pipelineDefParam
 		});
 		material.addTextureWithDatas(texDatas);
 		return material;
 	}
-	private createEntity(materials: WGMaterial[], pv?: Vector3): Entity3D {
+	private createEntity(materials: WGMaterial[]): Entity3D {
 		const renderer = this.renderer;
 
 		const rgd = this.geomData.createSphere(150, 30, 30);
 		const geometry = new WGGeometry()
-			.addAttribute({ shdVarName: "position", data: rgd.vs, strides: [3] })
-			.addAttribute({ shdVarName: "uv", data: rgd.uvs, strides: [2] })
-			.setIndexBuffer({ name: "geomIndex", data: rgd.ivs });
+			.addAttribute({ position: rgd.vs })
+			.addAttribute({ uv: rgd.uvs })
+			.setIndices( rgd.ivs );
 
-		const entity = new Entity3D();
-		entity.materials = materials;
-		entity.geometry = geometry;
-		entity.transform.setPosition(pv ? pv : new Vector3());
-
-		renderer.addEntity(entity);
+		const entity = new Entity3D({geometry, materials});
+		renderer.addEntity( entity );
 		return entity;
 	}
 	private mRotY = 0.0;
