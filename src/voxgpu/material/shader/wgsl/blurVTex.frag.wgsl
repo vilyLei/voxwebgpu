@@ -4,7 +4,7 @@
 
 const weight = array<f32, 5>(0.227027, 0.1945946, 0.1216216, 0.054054, 0.016216);
 fn calcBlurColor(uv: vec2f) -> vec4f {
-    var tex_offset = vec2f(0.0, param.w) / param.xy;
+    var tex_offset = vec2f(0.0, param.z) / param.xy;
     let dx = tex_offset.x;
 	
     var result = textureSample(texture0, sampler0, uv) * weight[0];

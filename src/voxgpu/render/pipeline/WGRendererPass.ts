@@ -229,14 +229,9 @@ class WGRendererPass implements IWGRendererPass {
 					}
 					if (this.separate) {
 						// console.log("run a rpass, this.separate: ", this.separate,", multisampleEnabled: ", multisampleEnabled);
-						// if (multisampleEnabled) {
-						// 	colorT.resolveTarget = colorT.resolveTarget;
-						// }
-						// this.updateColorAttachmentView( colorT );
-						// console.log("colorT.resolveTarget: ", colorT.resolveTarget, ', multisampleEnabled: ', multisampleEnabled);
-						// console.log('dff >>> >>> >>> fff, !colorT.view: ', !colorT.view, this.mColorAttachments !== undefined);
 						if (!colorT.view && this.mColorAttachments !== undefined) {
-							this.updateColorAttachmentView( colorT, this.mColorAttachments[0]);
+							this.updateColorAttachmentView( colorT, this.mColorAttachments[0]);							
+							this.clearColor.setColor(colorT.clearValue);
 						}
 					} else {
 						if (multisampleEnabled) {

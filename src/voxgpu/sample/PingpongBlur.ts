@@ -56,8 +56,9 @@ export class PingpongBlur {
 			frag: {code: blurHWGSL, uuid: "frag"}
 		};
 		let rttEntity = new FixScreenPlaneEntity({ extent: [-0.8, -0.8, 1.6, 1.6], shaderSrc, textures: [diffuseTex] });
+		// let rttEntity = new FixScreenPlaneEntity({ extent: [-0.8, -0.8, 1.6, 1.6], textures: [diffuseTex] });
 		// rttEntity.setColor([0.9, 0.3, 0.9]);
-		rttEntity.setColor([512, 512, 1, 1]);
+		rttEntity.setColor([512, 512, 2]);
 		rPass.addEntity( rttEntity );
 
 
