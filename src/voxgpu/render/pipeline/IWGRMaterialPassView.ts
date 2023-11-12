@@ -1,8 +1,8 @@
-import { IWGRPassRef } from "./IWGRPassRef";
+import { IWGRPassWrapper } from "./IWGRPassWrapper";
 /**
  * render pass reference view
  */
 interface IWGRMaterialPassView {
-	rpass?: IWGRPassRef;
+	rpass?: IWGRPassWrapper;
 }
 export { IWGRMaterialPassView };

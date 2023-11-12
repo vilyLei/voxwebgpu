@@ -11,7 +11,7 @@ import { IRenderableObject } from "../render/IRenderableObject";
 import { IRenderableEntityContainer } from "../render/IRenderableEntityContainer";
 import { WebGPUContext } from "../gpu/WebGPUContext";
 import { WGRPassParam } from "../render/WGRenderPassBlock";
-import { IWGRPassRef } from "../render/pipeline/IWGRPassRef";
+import { IWGRPassWrapper } from "../render/pipeline/IWGRPassWrapper";
 
 class RendererScene implements IRendererScene {
 	private static sUid = 0;
@@ -53,13 +53,13 @@ class RendererScene implements IRendererScene {
 		}
 	}
 
-	createRTTPass(param?: WGRPassParam, blockIndex = 0): IWGRPassRef {
+	createRTTPass(param?: WGRPassParam, blockIndex = 0): IWGRPassWrapper {
 		this.initialize();
 		if(!param) param = {};
 		param.separate = true;
 		return this.renderer.appendRenderPass(param, blockIndex);
 	}
-	createRenderPass(param?: WGRPassParam, blockIndex = 0): IWGRPassRef {
+	createRenderPass(param?: WGRPassParam, blockIndex = 0): IWGRPassWrapper {
 		this.initialize();
 		return this.renderer.appendRenderPass(param, blockIndex);
 	}

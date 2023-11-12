@@ -139,11 +139,11 @@ export class RTTFixScreenTest {
 	}
 
 	run(): void {
+		// console.log(">>> >>> >>> begin ...");
 		// if(this.mFlag < 0) {
 		// 	return;
 		// }
-		// console.log(">>> >>> >>> begin ...");
-		this.mFlag --;
+		// this.mFlag --;
 		this.mRscene.run();
 		// console.log(">>> >>> >>> end ...");
 	}

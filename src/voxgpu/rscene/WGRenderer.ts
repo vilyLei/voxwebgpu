@@ -9,7 +9,7 @@ import IRenderStage3D from "../render/IRenderStage3D";
 import { IRenderCamera } from "../render/IRenderCamera";
 
 import IRenderer from "./IRenderer";
-import { IWGRPassRef } from "../render/pipeline/IWGRPassRef";
+import { IWGRPassWrapper } from "../render/pipeline/IWGRPassWrapper";
 import { WGRendererConfig, checkConfig } from "./WGRendererParam";
 import { WGRenderUnitBlock } from "../render/WGRenderUnitBlock";
 
@@ -179,7 +179,7 @@ class WGRenderer implements IRenderer {
 			}
 		}
 	}
-	appendRenderPass(param?: WGRPassParam, blockIndex = 0): IWGRPassRef {
+	appendRenderPass(param?: WGRPassParam, blockIndex = 0): IWGRPassWrapper {
 		this.initialize();
 		this.intDefaultBlock();
 		const len = this.mRPBlocks.length;
@@ -189,7 +189,7 @@ class WGRenderer implements IRenderer {
 		throw Error("Illegal operations !!!");
 		return { index: -1 };
 	}
-	createRenderPass(param?: WGRPassParam, blockIndex = 0): IWGRPassRef {
+	createRenderPass(param?: WGRPassParam, blockIndex = 0): IWGRPassWrapper {
 		return this.appendRenderPass(param, blockIndex);
 	}
 	getRPBlockAt(i: number): WGRenderPassBlock {

@@ -12,7 +12,6 @@ import MouseEvent from "../event/MouseEvent";
 import { RendererScene } from "../rscene/RendererScene";
 import { MouseInteraction } from "../ui/MouseInteraction";
 import Color4 from "../material/Color4";
-import { IWGRPassRef } from "../render/pipeline/IWGRPassRef";
 
 export class Entity3DVisibilityTest {
 

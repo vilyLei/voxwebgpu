@@ -23,7 +23,7 @@
 // import { REntity3DContainerTest as Demo } from "./voxgpu/sample/REntity3DContainerTest";
 
 // import { Entity3DVisibilityTest as Demo } from "./voxgpu/sample/Entity3DVisibilityTest";
-import { RSceneEntityManagement as Demo } from "./voxgpu/sample/RSceneEntityManagement";
+// import { RSceneEntityManagement as Demo } from "./voxgpu/sample/RSceneEntityManagement";
 // import { SimplePBRTest as Demo } from "./voxgpu/sample/SimplePBRTest";
 // import { FixScreenPlaneTest as Demo } from "./voxgpu/sample/FixScreenPlaneTest";
 // import { PrimitiveEntityTest as Demo } from "./voxgpu/sample/PrimitiveEntityTest";
@@ -42,7 +42,7 @@ import { RSceneEntityManagement as Demo } from "./voxgpu/sample/RSceneEntityMana
 // import { GameOfLife3DPBR as Demo } from "./voxgpu/sample/GameOfLife3DPBR";
 
 // import { MultiGPUPassTest as Demo } from "./voxgpu/sample/MultiGPUPassTest";
-// import { RTTFixScreenTest as Demo } from "./voxgpu/sample/RTTFixScreenTest";
+import { RTTFixScreenTest as Demo } from "./voxgpu/sample/RTTFixScreenTest";
 // import { RTTTest as Demo } from "./voxgpu/sample/RTTTest";
 
 

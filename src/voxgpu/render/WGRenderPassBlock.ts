@@ -4,7 +4,7 @@ import { VtxPipelinDescParam, WGRPipelineContext } from "./pipeline/WGRPipelineC
 import { WebGPUContext } from "../gpu/WebGPUContext";
 import { GPUCommandBuffer } from "../gpu/GPUCommandBuffer";
 import { IWGRUnit } from "./IWGRUnit";
-import { IWGRPassRef } from "./pipeline/IWGRPassRef";
+import { IWGRPassWrapper } from "./pipeline/IWGRPassWrapper";
 import { WGRPassRef } from "./pipeline/WGRPassRef";
 
 import { WGMaterialDescripter } from "../material/WGMaterialDescripter";
@@ -74,7 +74,7 @@ class WGRenderPassBlock implements IWGRPassNodeBuilder {
 			ub.addEntity( entity );
 		}
 	}
-	getRenderPassAt(index: number): IWGRPassRef {
+	getRenderPassAt(index: number): IWGRPassWrapper {
 
 		const ls = this.mRPassNodes;
 		const ln = ls.length;
@@ -82,7 +82,7 @@ class WGRenderPassBlock implements IWGRPassNodeBuilder {
 		else if(index >= ln) index = ln;
 		return { index, node: ls[index] };
 	}
-	getComptePassAt(index: number): IWGRPassRef {
+	getComptePassAt(index: number): IWGRPassWrapper {
 
 		const ls = this.mCompPassNodes;
 		const ln = ls.length;
@@ -90,7 +90,7 @@ class WGRenderPassBlock implements IWGRPassNodeBuilder {
 		else if(index >= ln) index = ln;
 		return { index, node: ls[index] };
 	}
-	appendRendererPass(param?: WGRPassParam): IWGRPassRef {
+	appendRendererPass(param?: WGRPassParam): IWGRPassWrapper {
 
 		if(!param) param = {};
 		const computing = param && param.computeEnabled === true;
@@ -158,7 +158,7 @@ class WGRenderPassBlock implements IWGRPassNodeBuilder {
 		ref.node = passNode;
 		return ref;
 	}
-	private getPassNode(ref: IWGRPassRef): WGRenderPassNode {
+	private getPassNode(ref: IWGRPassWrapper): WGRenderPassNode {
 		const nodes = this.mRPassNodes;
 		let node = nodes[nodes.length - 1];
 		if (ref) {
@@ -192,12 +192,12 @@ class WGRenderPassBlock implements IWGRPassNodeBuilder {
 		shdSrc: WGRShderSrcType,
 		pipelineVtxParam: VtxPipelinDescParam,
 		pipelineParam?: WGRPipelineContextDefParam,
-		renderPassConfig?: IWGRPassRef
+		renderPassConfig?: IWGRPassWrapper
 	): WGRPipelineContext {
 		const node = this.getPassNode(renderPassConfig);
 		return node.createRenderPipelineCtx(shdSrc, pipelineVtxParam, pipelineParam);
 	}
-	createRenderPipeline(pipelineParams: WGRPipelineCtxParams, vtxDesc: VtxPipelinDescParam, renderPassConfig?: IWGRPassRef): WGRPipelineContext {
+	createRenderPipeline(pipelineParams: WGRPipelineCtxParams, vtxDesc: VtxPipelinDescParam, renderPassConfig?: IWGRPassWrapper): WGRPipelineContext {
 		const node = this.getPassNode(renderPassConfig);
 		return node.createRenderPipeline(pipelineParams, vtxDesc);
 	}

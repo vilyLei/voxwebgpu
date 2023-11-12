@@ -12,7 +12,7 @@ import MouseEvent from "../event/MouseEvent";
 import { RendererScene } from "../rscene/RendererScene";
 import { MouseInteraction } from "../ui/MouseInteraction";
 import Color4 from "../material/Color4";
-import { IWGRPassRef } from "../render/pipeline/IWGRPassRef";
+import { IWGRPassWrapper } from "../render/pipeline/IWGRPassWrapper";
 import Vector3 from "../math/Vector3";
 import { WGRenderPassBlock } from "../render/WGRenderPassBlock";
 
@@ -73,8 +73,8 @@ export class MultiGPUPassTest {
 		}
 		return geometry;
 	}
-	private mRPass0: IWGRPassRef;
-	private mRPass1: IWGRPassRef;
+	private mRPass0: IWGRPassWrapper;
+	private mRPass1: IWGRPassWrapper;
 	private mRBlock: WGRenderPassBlock;
 	private mIndex = 0;
 	private mouseDown = (evt: MouseEvent): void => {

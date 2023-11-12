@@ -4,10 +4,10 @@ import { IWGRenderPassNodeRef } from "../IWGRenderPassNodeRef";
 /**
  * render pass reference
  */
-interface IWGRPassRef {
+interface IWGRPassWrapper {
 	index?: number;
 	name?: string;
 	node?: IWGRenderPassNodeRef;
-	addEntity?(entity: Entity3D): IWGRPassRef;
+	addEntity?(entity: Entity3D): IWGRPassWrapper;
 }
-export { IWGRPassRef };
+export { IWGRPassWrapper };

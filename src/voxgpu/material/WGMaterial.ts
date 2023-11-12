@@ -8,7 +8,7 @@ import {
 
 import { WGRPipelineContextDefParam, WGRShderSrcType } from "../render/pipeline/WGRPipelineCtxParams";
 import { VtxPipelinDescParam, IWGRPipelineContext } from "../render/pipeline/IWGRPipelineContext";
-// import { IWGRPassRef } from "../render/pipeline/IWGRPassRef";
+// import { IWGRPassWrapper } from "../render/pipeline/IWGRPassWrapper";
 import { IWGRMaterialPassView } from "../render/pipeline/IWGRMaterialPassView";
 import { WGMaterialDescripter } from "./WGMaterialDescripter";
 import { WGRUniformValue } from "../render/uniform/WGRUniformValue";
