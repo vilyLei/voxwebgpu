@@ -28,8 +28,11 @@ class PassGraph extends WGRPassNodeGraph {
 	}
 	run(): void {
 		this.mTimes ++;
-		if(this.mTimes == 50) {
+		if(this.mTimes == 50) {			
+			// replace color attachment
 			colorAttachments[0] = attachment1;
+			// replace texture
+			// colorAttachments[0].texture = rttTex1;
 		}
 		let pass = this.passes[0];
 		for (let i = 0; i < 1; ++i) {
