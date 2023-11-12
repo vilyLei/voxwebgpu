@@ -18,7 +18,7 @@ const attachment1 = {
 	loadOp: "clear",
 	storeOp: "store"
 };
-const colorAttachments = [ attachment0 ];
+const colorAttachments = [attachment0];
 
 class PassGraph extends WGRPassNodeGraph {
 	private mTimes = 0;
@@ -27,12 +27,17 @@ class PassGraph extends WGRPassNodeGraph {
 		super.runBegin();
 	}
 	run(): void {
-		this.mTimes ++;
-		if(this.mTimes == 50) {			
-			// replace color attachment
-			colorAttachments[0] = attachment1;
-			// replace texture
-			// colorAttachments[0].texture = rttTex1;
+		this.mTimes++;
+		if (this.mTimes == 50) {
+			const replaceColorAttachment = true;
+			if (replaceColorAttachment) {
+				// replace color attachment
+				attachment1.clearValue = [0.2, 0.5, 0.2];
+				colorAttachments[0] = attachment1;
+			} else {
+				// replace texture
+				colorAttachments[0].texture = rttTex1;
+			}
 		}
 		let pass = this.passes[0];
 		for (let i = 0; i < 1; ++i) {
@@ -76,11 +81,11 @@ export class ColorAttachmentReplace {
 		graph.passes = [rPass];
 		rs.setPassNodeGraph(graph);
 
-		let entity = new FixScreenPlaneEntity({ extent, flipY: true, textures: [ rttTex0 ] });
+		let entity = new FixScreenPlaneEntity({ extent, flipY: true, textures: [rttTex0] });
 		rs.addEntity(entity);
 
 		extent = [-0.9, -0.9, 1.2, 1.2];
-		entity = new FixScreenPlaneEntity({ extent, flipY: true, textures: [ rttTex1 ] });
+		entity = new FixScreenPlaneEntity({ extent, flipY: true, textures: [rttTex1] });
 		rs.addEntity(entity);
 	}
 	private initEvent(): void {

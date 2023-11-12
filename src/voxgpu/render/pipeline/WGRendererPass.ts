@@ -103,7 +103,7 @@ class WGRendererPass implements IWGRendererPass {
 
 		let pcs = this.passColors;
 		let colorAtt = pcs[0];
-		console.log("createRenderPassTexture(), this.separate: ", this.separate);
+		// console.log("createRenderPassTexture(), this.separate: ", this.separate);
 		// console.log("createRenderPassTexture(), sampleCount: ", sampleCount, ", multisampled: ", multisampled);
 		if (separate) {
 			let ls = param.colorAttachments;
@@ -115,21 +115,6 @@ class WGRendererPass implements IWGRendererPass {
 				for (let i = 0; i < ls.length; ++i) {
 					
 					// this.updateColorAttachmentView(colorAtt, ls[i]);
-
-					// const t = ls[i];
-					// colorAtt = pcs[i].setParam(t)
-					// if(!colorAtt.view) {
-					// 	let td = texDescriptorFilter(t.texture);
-					// 	if(td) {
-					// 		const rttData = td.rttTexture;
-					// 		if(rttData && !rttData.texture) {
-					// 			const rtt = ctx.texture.createColorRTTTexture();
-					// 			colorAtt.view = rtt.createView();
-					// 			rttData.texture = rtt;
-					// 			// console.log("动态创建一个 color rtt gpu texture instance.");
-					// 		}
-					// 	}
-					// }
 				}
 				this.clearColor.setColor(pcs[0].clearValue);
 				// console.log("xxx xxx pcs: ", pcs);
@@ -252,10 +237,7 @@ class WGRendererPass implements IWGRendererPass {
 						}
 					}
 				}
-				// console.log("xxx xxx xxx xxx this.separate: ",this.separate,", dsAtt: ", dsAtt);
-				// if(this.separate) {
-				// 	// console.log("xxx xxx xxx xxx this.passColors: ",this.passColors);
-				// }
+
 				let colorAttachments = this.passColors;
 				let renderPassDescriptor: GPURenderPassDescriptor;
 				if (dsAtt) {
