@@ -19,6 +19,7 @@ class WGRUnitEmpty implements IWGRUnit {
 
 	__$rever = 0;
 	bounds: IAABB;
+	pst: WGRUnitState;
 	st: WGRUnitState;
 	enabled = true;
 	material: IWGMaterial;

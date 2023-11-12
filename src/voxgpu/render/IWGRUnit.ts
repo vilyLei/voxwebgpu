@@ -14,6 +14,7 @@ interface IWGRUnit {
 	etuuid?: string;
 	enabled: boolean;
 	passes?: IWGRUnit[];
+	pst: WGRUnitState;
 	st: WGRUnitState;
 	__$rever: number;
 	material: IWGMaterial;

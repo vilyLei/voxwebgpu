@@ -21,11 +21,14 @@ class WGRUnitState {
 		} else {
 			this.rf = Bit.removeBit(this.rf, Bit.ONE_1);
 		}
-		// console.log("CCCC 0 this.rf: ", this.rf);
+		if(!v) {
+			console.log("inRenderer CCCC 0 VVVVVVVV false");
+		}
+		console.log("inRenderer CCCC 0 v: ",v,", this.rf: ", this.rf,);
 		// console.log("CCCC 0 Bit.containsBit(this.rf, Bit.ONE_1): ", Bit.containsBit(this.rf, Bit.ONE_1));
 	}
 	get __$inRenderer(): boolean {
-		// console.log("CCCC 1 this.rf: ", this.rf);
+		// console.log("inRenderer CCCC 1 this.rf: ", this.rf);
 		// console.log("CCCC 1 Bit.containsBit(this.rf, Bit.ONE_1): ", Bit.containsBit(this.rf, Bit.ONE_1));
 		return Bit.containsBit(this.rf, Bit.ONE_1);
 	}

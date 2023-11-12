@@ -32,6 +32,7 @@ class WGRCompUnit implements IWGRUnit {
 
 	bounds: IAABB;
 
+	pst = __$rcompeust;
 	st = __$rcompeust;
 
 	__$rever = 0;
@@ -43,16 +44,15 @@ class WGRCompUnit implements IWGRUnit {
 
 	workcounts = __$workcounts;
 
-	clone(): WGRCompUnit {
-		const r = new WGRCompUnit();
-
-		r.uniforms = this.uniforms;
-		r.pipelinectx = this.pipelinectx;
-		r.passes = this.passes;
-		r.rp = this.rp;
-
-		return r;
-	}
+	// clone(): WGRCompUnit {
+	// 	const r = new WGRCompUnit();
+	// 	r.uniforms = this.uniforms;
+	// 	r.pipelinectx = this.pipelinectx;
+	// 	r.passes = this.passes;
+	// 	r.rp = this.rp;
+	// 	return r;
+	// }
+	
 	getRF(): boolean {
 		return this.enabled && this.st.isDrawable();
 	}
@@ -125,6 +125,7 @@ class WGRCompUnit implements IWGRUnit {
 			this.pipelinectx = null;
 			this.material = null;
 			this.rp = null;
+			this.pst = null;
 			this.st = null;
 			this.workcounts = null;
 		}

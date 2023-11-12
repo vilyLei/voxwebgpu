@@ -59,6 +59,7 @@ class Entity3D implements IRenderableEntity {
 	 * 第30位位存放是否渲染运行时排序
 	 */
 	__$rseFlag = REF.DEFAULT;
+	__$bids: number[] = [];
 
 	uuid?: string;
 

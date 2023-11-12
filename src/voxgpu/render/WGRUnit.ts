@@ -33,6 +33,7 @@ class WGRUnit implements IWGRUnit {
 
 	bounds: IAABB;
 
+	pst = __$reust;
 	st = __$reust;
 
 	__$rever = 0;
@@ -42,18 +43,15 @@ class WGRUnit implements IWGRUnit {
 	rp: IWGRendererPass;
 
 	material: IWGMaterial;
-	clone(): WGRUnit {
-
-		const r = new WGRUnit();
-
-		r.uniforms			= this.uniforms;
-		r.pipelinectx		= this.pipelinectx;
-		r.geometry			= this.geometry;
-		r.passes			= this.passes;
-		r.rp				= this.rp;
-
-		return r;
-	}
+	// clone(): WGRUnit {
+	// 	const r = new WGRUnit();
+	// 	r.uniforms			= this.uniforms;
+	// 	r.pipelinectx		= this.pipelinectx;
+	// 	r.geometry			= this.geometry;
+	// 	r.passes			= this.passes;
+	// 	r.rp				= this.rp;
+	// 	return r;
+	// }
 	getRF(): boolean {
 		// console.log("this.st.isDrawable(): ", this.st.isDrawable());
 		return this.enabled && this.st.isDrawable();
@@ -146,6 +144,7 @@ class WGRUnit implements IWGRUnit {
 			this.pipelinectx = null;
 			this.material = null;
 			this.rp = null;
+			this.pst = null;
 			this.st = null;
 		}
 	}

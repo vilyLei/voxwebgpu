@@ -11,10 +11,15 @@ import { IRenderableObject } from "./IRenderableObject";
 import { WGCompMaterial } from "../material/WGCompMaterial";
 import { WGRBufferData } from "../render/buffer/WGRBufferData";
 import { findShaderEntryPoint, WGRShderSrcType } from "../render/pipeline/WGRPipelineCtxParams";
+import { WGREntityNode } from "./WGREntityNode";
+import { WebGPUContext } from "../gpu/WebGPUContext";
 
 type GeomType = { indexBuffer?: GPUBuffer, vertexBuffers: GPUBuffer[], indexCount?: number, vertexCount?: number };
 
 class WGRObjBuilder {
+
+	wgctx: WebGPUContext;
+
 	constructor() { }
 	createPrimitive(geomParam?: GeomType): WGRPrimitive {
 		const g = new WGRPrimitive();
@@ -152,7 +157,7 @@ class WGRObjBuilder {
 		ru.material = material;
 		return ru;
 	}
-	createRUnit(entity: Entity3D, builder: IWGRPassNodeBuilder): IWGRUnit {
+	createRUnit(entity: Entity3D, builder: IWGRPassNodeBuilder, node: WGREntityNode): IWGRUnit {
 
 		const wgctx = builder.getWGCtx();
 
@@ -201,7 +206,9 @@ class WGRObjBuilder {
 		ru.bounds = entity.getGlobalBounds();
 		ru.st = entity.rstate;
 		ru.st.__$rendering = true;
-		ru.__$rever = ru.st.__$rever;
+		
+		ru.pst = node.rstate;
+		ru.__$rever = ru.pst.__$rever;
 
 		ru.etuuid = entity.uuid;
 		return ru;

@@ -1,13 +1,24 @@
 import { WebGPUContext } from "../gpu/WebGPUContext";
 import { WGMaterial } from "../material/WGMaterial";
 import { WGWaitEntityNode } from "./WGEntityNode";
+import { WGRObjBuilder } from "../render/WGRObjBuilder";
 
 class WGEntityNodeMana {
 	private mNodes: WGWaitEntityNode[] = [];
 	private mEnabled = false;
-	// target: NodeManaTarget;
-	callback : (entity: WGWaitEntityNode) => void;
-	wgCtx: WebGPUContext;
+	
+	wgctx: WebGPUContext;
+	roBuilder: WGRObjBuilder;
+
+	private receiveNode(wnode: WGWaitEntityNode): void {
+
+		wnode.block.addEntityToBlock(wnode.entity, wnode.node);
+
+		wnode.entity = null;
+		wnode.node = null;
+		wnode.builder = null;
+		wnode.block = null;
+	}
 	addEntity(node: WGWaitEntityNode): void {
 		// console.log("WGEntityNodeMana::addEntity(), this.mNodes.length: ", this.mNodes.length);
 		this.mNodes.push(node);
@@ -19,7 +30,7 @@ class WGEntityNodeMana {
 			for (let i = 0; i < ls.length; ++i) {
 				const node = ls[i];
 				const entity = node.entity;
-				if (node.rever == entity.rstate.__$rever) {
+				if (node.rever == node.node.rstate.__$rever) {
 					// console.log("ppp 01");
 					if (!entity.isREnabled()) {
 						const ms = entity.materials;
@@ -34,10 +45,7 @@ class WGEntityNodeMana {
 						// console.log("WGEntityNodeMana::update(), ppp a 01");
 						ls.splice(i, 1);
 						--i;
-						entity.rstate.__$inRenderer = false;
-						// this.target.addEntity(entity, node.processIndex, node.deferred);
-						this.callback( node );
-						// entity.rstate.__$inRenderer = true;
+						this.receiveNode( node );
 					}
 				} else {
 					ls.splice(i, 1);
@@ -49,7 +57,7 @@ class WGEntityNodeMana {
 	}
 	private updateMaterial(m: WGMaterial): void {
 		if (!m.isREnabled()) {
-			const ctx = this.wgCtx;
+			const ctx = this.wgctx;
 			const texs = m.textures;
 			for (let i = 0; i < texs.length; ++i) {
 				const tex = texs[i];

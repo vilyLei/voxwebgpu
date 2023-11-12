@@ -62,41 +62,17 @@ class WGRenderPassBlock implements IWGRPassNodeBuilder {
 			}
 		}
 	}
-
-	private addEntityToBlock(entity: Entity3D): void {
-		entity.update();
-		const runit = this.mRBParam.roBuilder.createRUnit(entity, this);
-		runit.etuuid = entity.uuid;
-		this.unitBlock.addRUnit(runit);
-	}
 	addEntity(entity: Entity3D): void {
 		// console.log("Renderer::addEntity(), entity.isInRenderer(): ", entity.isInRenderer());
-		if (entity && !entity.isInRenderer()) {
-
-			entity.update();
-			entity.rstate.__$inRenderer = true;
-
-			let flag = true;
-			if (this.mWGCtx && this.mWGCtx.enabled) {
-				if (entity.isREnabled()) {
-					flag = false;
-					this.addEntityToBlock(entity);
-				}
+		if (entity) {
+			if (!this.unitBlock) {
+				this.unitBlock = WGRenderUnitBlock.createBlock();
 			}
-			if (flag) {
-				this.mRBParam.entityMana.addEntity({ entity: entity, rever: entity.rstate.__$rever, dst: this });
-			}
+			const ub = this.unitBlock;
+			ub.rbParam = this.mRBParam;
+			ub.builder = this;
+			ub.addEntity( entity );
 		}
-	}
-	addRUnit(unit: IWGRUnit): void {
-		// /**
-		//  * 正式加入渲染器之前，对shader等的分析已经做好了
-		//  */
-		// if (unit) {
-		// 	this.mUnits.push(unit);
-		// }
-		// console.log("add an unit to a block.");
-		this.unitBlock.addRUnit(unit);
 	}
 	getRenderPassAt(index: number): IWGRPassRef {
 
@@ -181,7 +157,6 @@ class WGRenderPassBlock implements IWGRPassNodeBuilder {
 		ref.index = index
 		ref.node = passNode;
 		return ref;
-		// return { index, node: passNode };
 	}
 	private getPassNode(ref: IWGRPassRef): WGRenderPassNode {
 		const nodes = this.mRPassNodes;
@@ -198,17 +173,6 @@ class WGRenderPassBlock implements IWGRPassNodeBuilder {
 		}
 		return node;
 	}
-	// createRenderPipelineCtxWithMaterial(material: WGMaterialDescripter): { ctx: WGRPipelineContext, rpass: IWGRendererPass } {
-	// 	let node = this.getPassNode(material.rpass ? material.rpass.rpass : null);
-	// 	if (material.shaderCodeSrc.compShaderSrc) {
-	// 		if (this.mCompPassNodes.length < 1) {
-	// 			this.appendRendererPass({ computeEnabled: true });
-	// 		}
-	// 		node = this.mCompPassNodes[this.mCompPassNodes.length - 1];
-	// 	}
-	// 	return { ctx: node.createRenderPipelineCtxWithMaterial(material), rpass: node.rpass };
-	// }
-
 	getPassNodeWithMaterial(material: WGMaterialDescripter): WGRenderPassNode {
 		let node = this.getPassNode(material.rpass ? material.rpass.rpass : null);
 		if (material.shaderCodeSrc.compShaderSrc) {
@@ -265,7 +229,9 @@ class WGRenderPassBlock implements IWGRPassNodeBuilder {
 			for (let i = 0; i < nodes.length; ++i) {
 				nodes[i].run();
 			}
-			this.unitBlock.run();
+			if(this.unitBlock) {
+				this.unitBlock.run();
+			}
 		}
 	}
 	destroy(): void {

@@ -1,5 +1,5 @@
 import { WGRPassParam, WGRendererPass } from "./pipeline/WGRendererPass";
-import { WGRPipelineContextDefParam, findShaderEntryPoint, WGRShadeSrcParam, WGRShderSrcType, WGRPipelineCtxParams } from "./pipeline/WGRPipelineCtxParams";
+import { WGRPipelineContextDefParam, WGRShderSrcType, WGRPipelineCtxParams } from "./pipeline/WGRPipelineCtxParams";
 import { VtxPipelinDescParam, WGRPipelineContext } from "./pipeline/WGRPipelineContext";
 import { WebGPUContext } from "../gpu/WebGPUContext";
 import { GPUCommandBuffer } from "../gpu/GPUCommandBuffer";
@@ -9,7 +9,6 @@ import { IWGRenderPassNodeRef } from "./IWGRenderPassNodeRef";
 import Color4 from "../material/Color4";
 import Camera from "../view/Camera";
 import { BlockParam, WGRenderUnitBlock } from "./WGRenderUnitBlock";
-import { IWGRUnit } from "./IWGRUnit";
 import { Entity3D } from "../entity/Entity3D";
 class WGRenderPassNode implements IWGRenderPassNodeRef {
 	private static sUid = 0;
@@ -17,9 +16,9 @@ class WGRenderPassNode implements IWGRenderPassNodeRef {
 	private mWGCtx: WebGPUContext;
 	private mRBParam: BlockParam;
 	private mDrawing = true;
+	clearColor = new Color4(0.0, 0.0, 0.0, 1.0);
 
 	camera: Camera;
-	clearColor = new Color4(0.0, 0.0, 0.0, 1.0);
 
 	name = "";
 
@@ -81,44 +80,18 @@ class WGRenderPassNode implements IWGRenderPassNodeRef {
 		}
 	}
 
-	private addEntityToBlock(entity: Entity3D): void {
-		entity.update();
-		const runit = this.mRBParam.roBuilder.createRUnit(entity, this);
-		this.unitBlock.addRUnit(runit);
-	}
 	addEntity(entity: Entity3D): void {
 		// console.log("WGRenderPassNode::addEntity(), entity.isInRenderer(): ", entity.isInRenderer());
-		if (entity && !entity.isInRenderer()) {
+		if (entity) {
 			if (!this.unitBlock) {
 				this.unitBlock = WGRenderUnitBlock.createBlock();
 			}
-			entity.update();
-			entity.rstate.__$inRenderer = true;
-
-			let flag = true;
-			if (this.mWGCtx && this.mWGCtx.enabled) {
-				if (entity.isREnabled()) {
-					flag = false;
-					this.addEntityToBlock(entity);
-				}
-			}
-			// console.log("WGRenderPassNode::addEntity(), flag: ", flag);
-			if (flag) {
-				this.mRBParam.entityMana.addEntity({ entity: entity, rever: entity.rstate.__$rever, dst: this });
-			}
+			const ub = this.unitBlock;
+			ub.rbParam = this.mRBParam;
+			ub.builder = this;
+			this.unitBlock.addEntity( entity );
 		}
 	}
-	addRUnit(unit: IWGRUnit): void {
-		// /**
-		//  * 正式加入渲染器之前，对shader等的分析已经做好了
-		//  */
-		// if (unit) {
-		// 	this.mUnits.push(unit);
-		// }
-		// console.log("add an unit to a passNode.");
-		this.unitBlock.addRUnit(unit);
-	}
-
 	private checkRPassParam(param: WGRPassParam): void {
 		if (param.sampleCount !== undefined && param.sampleCount > 1) {
 			param.multisampleEnabled = true;
@@ -215,14 +188,14 @@ class WGRenderPassNode implements IWGRenderPassNodeRef {
 		this.rcommands = [];
 		this.rpass.runBegin();
 		if (this.enabled) {
-			for (let i = 0; i < this.pipelineCtxs.length; ) {
+			for (let i = 0; i < this.pipelineCtxs.length;) {
 				this.pipelineCtxs[i++].runBegin();
 			}
 		}
 	}
 	runEnd(): void {
 		if (this.enabled) {
-			for (let i = 0; i < this.pipelineCtxs.length; ) {
+			for (let i = 0; i < this.pipelineCtxs.length;) {
 				this.pipelineCtxs[i++].runEnd();
 			}
 		}
