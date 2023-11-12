@@ -70,7 +70,6 @@ export class PassNodeGraphTest {
 		let entities: FixScreenPlaneEntity[] = [];
 		entity = new FixScreenPlaneEntity({ extent: [-0.8, -0.8, 0.8, 0.8], textures: [diffuseTex], blendModes });
 		entity.setColor([0.9, 0.3, 0.9]);
-		entity.uuid = "pl-0";
 		rs.addEntity(entity);
 		entities.push(entity);
 
