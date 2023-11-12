@@ -9,7 +9,7 @@ interface IWGRenderPassNode extends IWGRPassNodeBuilder {
 	clearColor: IColor4;
 	rcommands: GPUCommandBuffer[];
 	addEntity(entity: Entity3D): void;
-	setColorArrachmentClearEnabledAt(enabled: boolean, index?: number): void;
+	setColorAttachmentClearEnabledAt(enabled: boolean, index?: number): void;
 	runBegin(): void;
 	runEnd(): void;
 	run(): void;

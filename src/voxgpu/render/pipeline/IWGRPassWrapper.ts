@@ -9,6 +9,6 @@ interface IWGRPassWrapper {
 	name?: string;
 	node?: IWGRenderPassNode;
 	addEntity?(entity: Entity3D): IWGRPassWrapper;
-	setColorArrachmentClearEnabledAt?(enabled: boolean, index?: number): IWGRPassWrapper;
+	setColorAttachmentClearEnabledAt?(enabled: boolean, index?: number): IWGRPassWrapper;
 }
 export { IWGRPassWrapper };

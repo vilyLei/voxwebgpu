@@ -42,7 +42,7 @@ class WGRenderPassNode implements IWGRenderPassNode {
 		this.rpass = new WGRendererPass(null, drawing);
 		this.rpass.clearColor = this.clearColor;
 	}
-	setColorArrachmentClearEnabledAt(enabled: boolean, index: number = 0): void {
+	setColorAttachmentClearEnabledAt(enabled: boolean, index: number = 0): void {
 		if(this.mPassBuilded) {
 			const ca = this.rpass.passColors[index];
 			if(ca) {

@@ -15,9 +15,9 @@ class WGRPassWrapper implements IWGRPassWrapper {
 		}
 		return this;
 	}
-	setColorArrachmentClearEnabledAt(enabled: boolean, index: number = 0): IWGRPassWrapper {
+	setColorAttachmentClearEnabledAt(enabled: boolean, index: number = 0): IWGRPassWrapper {
 		if(this.node) {
-			this.node.setColorArrachmentClearEnabledAt(enabled, index);
+			this.node.setColorAttachmentClearEnabledAt(enabled, index);
 		}
 		return this;
 	}

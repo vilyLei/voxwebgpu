@@ -9,11 +9,14 @@ class PassGraph extends WGRPassNodeGraph {
 		super.runBegin();
 	}
 	run(): void {
-		// const cmds = this.rcommands;
+
 		this.rcommands = [];
 		let ps = this.passes;
-		for (let i = 0; i < ps.length; ++i) {
-			const node = ps[i].node;
+		
+		const node = ps[0].node;
+
+		for (let i = 0; i < 15; ++i) {
+			node.setColorAttachmentClearEnabledAt( i < 1 );
 			node.runBegin();
 			node.run();
 			node.runEnd();
@@ -70,7 +73,8 @@ export class PassNodeGraphTest {
 		let entity: FixScreenPlaneEntity;
 
 		// const diffuseTex = { diffuse: { url: "static/assets/blueTransparent.png", flipY: true } };
-		const diffuseTex = { diffuse: { url: "static/assets/redTransparent.png", flipY: true } };
+		// const diffuseTex = { diffuse: { url: "static/assets/redTransparent.png", flipY: true } };
+		const diffuseTex = { diffuse: { url: "static/assets/guangyun_40.png", flipY: true } };
 
 		let blendModes = ['add'];
 		let entities: FixScreenPlaneEntity[] = [];
