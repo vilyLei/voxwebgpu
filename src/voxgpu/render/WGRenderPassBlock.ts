@@ -219,11 +219,15 @@ class WGRenderPassBlock implements IWGRPassNodeBuilder {
 		this.rcommands = [];
 		if (this.enabled) {
 			const graph = this.mGraph;
-			graph.runBegin();
-			
+			if(graph) {
+				graph.runBegin();
+			}
+
 			const nodes = this.mPassNodes;
 			for (let i = 0; i < nodes.length; ++i) {
-				nodes[i].runBegin();
+				if(nodes[i].mode < 1) {
+					nodes[i].runBegin();
+				}
 			}
 		}
 	}
@@ -231,18 +235,27 @@ class WGRenderPassBlock implements IWGRPassNodeBuilder {
 		if (this.enabled) {
 			const nodes = this.mPassNodes;
 			// console.log("this.mPassNodes: ", this.mPassNodes);
+			
 			for (let i = 0; i < nodes.length; ++i) {
-				nodes[i].runEnd();
-				this.rcommands = this.rcommands.concat(nodes[i].rcommands);
+				if(nodes[i].mode < 1) {
+					nodes[i].runEnd();
+					this.rcommands = this.rcommands.concat(nodes[i].rcommands);
+				}
 			}
 			// console.log("this.rcommands: ", this.rcommands);
 		}
 	}
 	run(): void {
 		if (this.enabled) {
+			const graph = this.mGraph;
+			if(graph) {
+				graph.run();
+			}
 			const nodes = this.mPassNodes;
 			for (let i = 0; i < nodes.length; ++i) {
-				nodes[i].run();
+				if(nodes[i].mode < 1) {
+					nodes[i].run();
+				}
 			}
 			if(this.unitBlock) {
 				this.unitBlock.run();

@@ -33,7 +33,7 @@ class WGRenderPassNode implements IWGRenderPassNode {
 	builder: IWGRPassNodeBuilder;
 
 	unitBlock: WGRenderUnitBlock;
-
+	mode = 0;
 	separate = false;
 	constructor(bp: BlockParam, drawing = true) {
 		this.mRBParam = bp;

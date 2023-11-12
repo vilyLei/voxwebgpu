@@ -37,7 +37,7 @@ class FixScreenPlaneEntity extends FixScreenEntity {
 	setColor(c: ColorDataType): FixScreenPlaneEntity {
 		if (c && this.mColorV) {
 			this.mColor.setColor(c).toArray4(this.mColorV.data as Float32Array);
-			this.mColorV.version ++;
+			this.mColorV.version++;
 		}
 		return this;
 	}
@@ -49,11 +49,11 @@ class FixScreenPlaneEntity extends FixScreenEntity {
 			let geom = new RectPlaneGeometry();
 			geom.axisType = 0;
 			geom.flipY = param.flipY === true;
-			if(param.extent !== undefined) {
+			if (param.extent !== undefined) {
 				const t = this.mExtent;
 				t.setExtent(param.extent);
-				geom.initialize( t.x, t.y, t.width, t.height);
-			}else {
+				geom.initialize(t.x, t.y, t.width, t.height);
+			} else {
 				geom.initialize(
 					param.x === undefined ? -1 : param.x,
 					param.y === undefined ? -1 : param.y,
@@ -83,11 +83,18 @@ class FixScreenPlaneEntity extends FixScreenEntity {
 					vertShaderSrc: { code: vertWGSL, uuid: "vertShdCode" },
 					fragShaderSrc: { code: texTotal > 0 ? texFragWGSL : fragWGSL, uuid: frag_uuid }
 				};
-			let depthWriteEnabled = param.depthWriteEnabled === undefined ? false : param.depthWriteEnabled;
+			
+			let b = param.depthWriteEnabled;
+			b = b === undefined ? false : b;
+			let f = param.faceCullMode;
+			f = param.faceCullMode ? param.faceCullMode : "back";
+			let bl = param.blendModes;
+			bl = param.blendModes ? param.blendModes : ["solid"];
+
 			let pipelineDefParam = {
-				depthWriteEnabled: depthWriteEnabled,
-				faceCullMode: param.faceCullMode ? param.faceCullMode : "back",
-				blendModes: param.blendModes ? param.blendModes : ["solid"]
+				depthWriteEnabled: b,
+				faceCullMode: f,
+				blendModes: bl
 			};
 
 			const material = new WGMaterial({
@@ -96,7 +103,7 @@ class FixScreenPlaneEntity extends FixScreenEntity {
 				pipelineDefParam
 			});
 			material.addTextures(texs);
-			if(param.instanceCount !== undefined) {
+			if (param.instanceCount !== undefined) {
 				material.instanceCount = param.instanceCount;
 			}
 			material.uniformValues = param.uniformValues ? param.uniformValues : [this.mColorV];
@@ -106,13 +113,13 @@ class FixScreenPlaneEntity extends FixScreenEntity {
 			this.materials = [material];
 		}
 		const rpasses = param.rpasses;
-		if(rpasses) {
+		if (rpasses) {
 			const ms = this.materials;
 			// 这里的实现需要优化, 因为一个material实际上可以加入到多个rpass中去
 			let len = Math.min(rpasses.length, ms.length);
-			for(let i = 0; i < len; ++i) {
+			for (let i = 0; i < len; ++i) {
 				const rpass = ms[i].rpass;
-				if(!rpass || !rpass.rpass.node) {
+				if (!rpass || !rpass.rpass.node) {
 					ms[i].rpass = rpasses[i];
 				}
 			}
