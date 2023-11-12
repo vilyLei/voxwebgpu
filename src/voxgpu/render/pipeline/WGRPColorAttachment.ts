@@ -3,7 +3,8 @@ import { GPURenderPassColorAttachment } from "../../gpu/GPURenderPassColorAttach
 import Color4 from "../../material/Color4";
 import { GPUTexture } from "../../gpu/GPUTexture";
 import { copyFromObjectValueWithKey } from "../../utils/CommonUtils";
-class WGRPColorAttachment implements GPURenderPassColorAttachment {
+import { WGRPColorAttachmentImpl } from "./WGRPColorAttachmentImpl";
+class WGRPColorAttachment implements WGRPColorAttachmentImpl {
 	/**
 	 * A GPUTextureView object representing the texture subresource that will be output to for this color attachment.
 	 */
@@ -26,6 +27,12 @@ class WGRPColorAttachment implements GPURenderPassColorAttachment {
 	 */
 	storeOp = "store";
 
+	set clearEnabled(enabled: boolean) {
+		this.loadOp = enabled ? "clear" : "load";
+	}
+	get clearEnabled(): boolean {
+		return this.loadOp === "clear";
+	}
 	setParam(param: GPURenderPassColorAttachment): WGRPColorAttachment {
 		if (param) {
 			let c = this.clearValue;

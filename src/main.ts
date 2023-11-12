@@ -43,10 +43,12 @@
 
 // import { MultiGPUPassTest as Demo } from "./voxgpu/sample/MultiGPUPassTest";
 // import { RTTFixScreenTest as Demo } from "./voxgpu/sample/RTTFixScreenTest";
+// import { RTTTest as Demo } from "./voxgpu/sample/RTTTest";
 // import { AddEntityIntoMultiRPasses as Demo } from "./voxgpu/sample/AddEntityIntoMultiRPasses";
 
-import { PassNodeGraphTest as Demo } from "./voxgpu/sample/PassNodeGraphTest";
-// import { RTTTest as Demo } from "./voxgpu/sample/RTTTest";
+// import { PassNodeGraphTest as Demo } from "./voxgpu/sample/PassNodeGraphTest";
+import { PingpongBlur as Demo } from "./voxgpu/sample/PingpongBlur";
+
 
 
 let demoIns = new Demo();

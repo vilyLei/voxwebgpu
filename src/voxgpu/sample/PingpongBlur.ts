@@ -25,11 +25,11 @@ class PassGraph extends WGRPassNodeGraph {
 	}
 }
 
-export class PassNodeGraphTest {
+export class PingpongBlur {
 	private mRscene = new RendererScene();
 
 	initialize(): void {
-		console.log("PassNodeGraphTest::initialize() ...");
+		console.log("PingpongBlur::initialize() ...");
 
 		this.mRscene.initialize({ rpassparam: { multisampleEnabled: true, depthTestEnabled: false } });
 		this.initEvent();
@@ -74,12 +74,13 @@ export class PassNodeGraphTest {
 
 		// const diffuseTex = { diffuse: { url: "static/assets/blueTransparent.png", flipY: true } };
 		// const diffuseTex = { diffuse: { url: "static/assets/redTransparent.png", flipY: true } };
-		const diffuseTex = { diffuse: { url: "static/assets/guangyun_40.png", flipY: true } };
+		// const diffuseTex = { diffuse: { url: "static/assets/guangyun_40.png", flipY: true } };
+		const diffuseTex = { diffuse: { url: "static/assets/huluwa.jpg", flipY: true } };
 
 		let blendModes = ['add'];
 		let entities: FixScreenPlaneEntity[] = [];
 		entity = new FixScreenPlaneEntity({ extent: [-0.8, -0.8, 0.8, 0.8], textures: [diffuseTex], blendModes });
-		entity.setColor([0.9, 0.3, 0.9]);
+		// entity.setColor([0.9, 0.3, 0.9]);
 		entity.uuid = "pl-0";
 		rs.addEntity(entity);
 		entities.push(entity);

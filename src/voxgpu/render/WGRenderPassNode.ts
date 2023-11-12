@@ -10,6 +10,7 @@ import Color4 from "../material/Color4";
 import Camera from "../view/Camera";
 import { BlockParam, WGRenderUnitBlock } from "./WGRenderUnitBlock";
 import { Entity3D } from "../entity/Entity3D";
+import { WGRPColorAttachmentImpl } from "./pipeline/WGRPColorAttachmentImpl";
 class WGRenderPassNode implements IWGRenderPassNode {
 	private static sUid = 0;
 	private mUid = WGRenderPassNode.sUid++;
@@ -19,6 +20,8 @@ class WGRenderPassNode implements IWGRenderPassNode {
 	private mPassBuilded = false;
 	readonly clearColor = new Color4(0.0, 0.0, 0.0, 1.0);
 
+	
+	colorAttachments: WGRPColorAttachmentImpl[];
 	camera: Camera;
 	name = "";
 
@@ -86,6 +89,7 @@ class WGRenderPassNode implements IWGRenderPassNode {
 			this.checkRPassParam(this.param);
 			this.rpass.build(this.param);
 			this.mPassBuilded = true;
+			this.colorAttachments = this.rpass.passColors;
 		}
 	}
 
@@ -199,6 +203,7 @@ class WGRenderPassNode implements IWGRenderPassNode {
 	}
 
 	runBegin(): void {
+		this.colorAttachments = this.rpass.passColors;
 		this.rpass.enabled = this.enabled;
 		this.rcommands = [];
 		this.rpass.runBegin();
