@@ -10,14 +10,14 @@ const rttTex1 = { diffuse: { uuid: 'rtt1', rttTexture: {} } };
 const attachment0 = {
 	texture: rttTex0,
 	clearValue: [] as ColorDataType,
-	// loadOp: "clear",
-	// storeOp: "store"
+	loadOp: "clear",
+	storeOp: "store"
 } as WGRPassColorAttachment;
 const attachment1 = {
 	texture: rttTex1,
 	clearValue: [] as ColorDataType,
-	loadOp: "clear",
-	storeOp: "store"
+	// loadOp: "clear",
+	// storeOp: "store"
 } as WGRPassColorAttachment;
 const colorAttachments: WGRPassColorAttachment[] = [attachment0];
 
