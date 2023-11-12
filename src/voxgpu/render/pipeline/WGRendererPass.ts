@@ -136,7 +136,6 @@ class WGRendererPass implements IWGRendererPass {
 			if (!dsAtt) dsAtt = new WGRPDepthStencilAttachment().setParam(dsp);
 			this.passDepthStencil = dsAtt;
 
-			// if (!dsAtt.view && !separate) {
 			if (!dsAtt.view) {
 				size = [ctx.canvasWidth, ctx.canvasHeight];
 				let format = "depth24plus";

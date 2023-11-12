@@ -17,7 +17,13 @@ class WGRPColorAttachment implements GPURenderPassColorAttachment {
 	resolveTargetTexture?: GPUTexture;
 
 	clearValue = new Color4();
+	/**
+	 * Possible values are: "clear", "load"
+	 */
 	loadOp = "clear";
+	/**
+	 * Possible values are: "discard", "store"
+	 */
 	storeOp = "store";
 
 	setParam(param: GPURenderPassColorAttachment): WGRPColorAttachment {

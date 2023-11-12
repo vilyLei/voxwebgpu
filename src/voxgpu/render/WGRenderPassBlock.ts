@@ -3,9 +3,8 @@ import { WGRPipelineContextDefParam, WGRShderSrcType, WGRPipelineCtxParams } fro
 import { VtxPipelinDescParam, WGRPipelineContext } from "./pipeline/WGRPipelineContext";
 import { WebGPUContext } from "../gpu/WebGPUContext";
 import { GPUCommandBuffer } from "../gpu/GPUCommandBuffer";
-import { IWGRUnit } from "./IWGRUnit";
 import { IWGRPassWrapper } from "./pipeline/IWGRPassWrapper";
-import { WGRPassRef } from "./pipeline/WGRPassRef";
+import { WGRPassWrapper } from "./pipeline/WGRPassWrapper";
 
 import { WGMaterialDescripter } from "../material/WGMaterialDescripter";
 import Camera from "../view/Camera";
@@ -13,6 +12,7 @@ import { WGRenderPassNode } from "./WGRenderPassNode";
 import { BlockParam, WGRenderUnitBlock } from "./WGRenderUnitBlock";
 import { IWGRPassNodeBuilder } from "./IWGRPassNodeBuilder";
 import { Entity3D } from "../entity/Entity3D";
+import { WGRPassNodeGraph } from "./pass/WGRPassNodeGraph";
 
 class WGRenderPassBlock implements IWGRPassNodeBuilder {
 	private mWGCtx: WebGPUContext;
@@ -23,6 +23,7 @@ class WGRenderPassBlock implements IWGRPassNodeBuilder {
 	private mRPassNodes: WGRenderPassNode[] = [];
 	private mRSeparatePassNodes: WGRenderPassNode[] = [];
 	private mPassNodes: WGRenderPassNode[] = [];
+	private mPNodeFlags: number[] = [];
 	private mRBParam: BlockParam;
 
 	camera: Camera;
@@ -58,6 +59,7 @@ class WGRenderPassBlock implements IWGRPassNodeBuilder {
 				passNode.builder = this;
 				passNode.initialize(wgCtx, param);
 				this.mPassNodes.push(passNode);
+				this.mPNodeFlags.push(1);
 				this.mRPassNodes.push(passNode);
 			}
 		}
@@ -158,8 +160,9 @@ class WGRenderPassBlock implements IWGRPassNodeBuilder {
 			}
 		}
 		this.mPassNodes.push(passNode);
+		this.mPNodeFlags.push(1);
 
-		const ref = new WGRPassRef();
+		const ref = new WGRPassWrapper();
 		ref.index = index
 		ref.node = passNode;
 		return ref;
@@ -207,11 +210,17 @@ class WGRenderPassBlock implements IWGRPassNodeBuilder {
 		const node = this.getPassNode(renderPassConfig);
 		return node.createRenderPipeline(pipelineParams, vtxDesc);
 	}
-
+	private mGraph: WGRPassNodeGraph;
+	setPassNodeGraph(graph: WGRPassNodeGraph): void {
+		this.mGraph = graph;
+	}
 	runBegin(): void {
 
 		this.rcommands = [];
 		if (this.enabled) {
+			const graph = this.mGraph;
+			graph.runBegin();
+			
 			const nodes = this.mPassNodes;
 			for (let i = 0; i < nodes.length; ++i) {
 				nodes[i].runBegin();
@@ -244,6 +253,7 @@ class WGRenderPassBlock implements IWGRPassNodeBuilder {
 		if (this.mWGCtx) {
 			this.mWGCtx = null;
 			this.mRPassNodes = [];
+			this.mCompPassNodes = [];
 			this.mPassNodes = [];
 			this.mRBParam = null;
 		}

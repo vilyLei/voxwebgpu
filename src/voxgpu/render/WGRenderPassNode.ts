@@ -5,21 +5,21 @@ import { WebGPUContext } from "../gpu/WebGPUContext";
 import { GPUCommandBuffer } from "../gpu/GPUCommandBuffer";
 import { WGMaterialDescripter } from "../material/WGMaterialDescripter";
 import { IWGRPassNodeBuilder } from "./IWGRPassNodeBuilder";
-import { IWGRenderPassNodeRef } from "./IWGRenderPassNodeRef";
+import { IWGRenderPassNode } from "./IWGRenderPassNode";
 import Color4 from "../material/Color4";
 import Camera from "../view/Camera";
 import { BlockParam, WGRenderUnitBlock } from "./WGRenderUnitBlock";
 import { Entity3D } from "../entity/Entity3D";
-class WGRenderPassNode implements IWGRenderPassNodeRef {
+class WGRenderPassNode implements IWGRenderPassNode {
 	private static sUid = 0;
 	private mUid = WGRenderPassNode.sUid++;
 	private mWGCtx: WebGPUContext;
 	private mRBParam: BlockParam;
 	private mDrawing = true;
-	clearColor = new Color4(0.0, 0.0, 0.0, 1.0);
+	private mPassBuilded = false;
+	readonly clearColor = new Color4(0.0, 0.0, 0.0, 1.0);
 
 	camera: Camera;
-
 	name = "";
 
 	pipelineCtxs: WGRPipelineContext[] = [];
@@ -41,6 +41,14 @@ class WGRenderPassNode implements IWGRenderPassNodeRef {
 		this.mDrawing = drawing;
 		this.rpass = new WGRendererPass(null, drawing);
 		this.rpass.clearColor = this.clearColor;
+	}
+	setColorArrachmentClearEnabledAt(enabled: boolean, index: number = 0): void {
+		if(this.mPassBuilded) {
+			const ca = this.rpass.passColors[index];
+			if(ca) {
+				ca.loadOp = enabled ? "clear" : "load";
+			}
+		}
 	}
 	isDrawing(): boolean {
 		return this.mDrawing;
@@ -77,6 +85,7 @@ class WGRenderPassNode implements IWGRenderPassNodeRef {
 			this.rpass.initialize(wgCtx);
 			this.checkRPassParam(this.param);
 			this.rpass.build(this.param);
+			this.mPassBuilded = true;
 		}
 	}
 

@@ -12,6 +12,7 @@ import IRenderer from "./IRenderer";
 import { IWGRPassWrapper } from "../render/pipeline/IWGRPassWrapper";
 import { WGRendererConfig, checkConfig } from "./WGRendererParam";
 import { WGRenderUnitBlock } from "../render/WGRenderUnitBlock";
+import { WGRPassNodeGraph } from "../render/pass/WGRPassNodeGraph";
 
 class WGRenderer implements IRenderer {
 	private ___$$$$$$$Author = "VilyLei(vily313@126.com)";
@@ -178,6 +179,13 @@ class WGRenderer implements IRenderer {
 				console.log("Renderer::removeEntity(), entity.isInRenderer(): ", entity.isInRenderer());
 			}
 		}
+	}
+	setPassNodeGraph(graph: WGRPassNodeGraph, blockIndex = 0): void {
+		const len = this.mRPBlocks.length;
+		if (blockIndex >= 0 && blockIndex < len) {
+			this.mRPBlocks[blockIndex].setPassNodeGraph(graph);
+		}
+		throw Error("Illegal operations !!!");
 	}
 	appendRenderPass(param?: WGRPassParam, blockIndex = 0): IWGRPassWrapper {
 		this.initialize();
