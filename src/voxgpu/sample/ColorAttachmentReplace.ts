@@ -3,22 +3,23 @@ import { RendererScene } from "../rscene/RendererScene";
 import { MouseInteraction } from "../ui/MouseInteraction";
 import { FixScreenPlaneEntity } from "../entity/FixScreenPlaneEntity";
 import { WGRPassNodeGraph } from "../render/pass/WGRPassNodeGraph";
+import { WGRPassColorAttachment } from "../render/pipeline/WGRPassColorAttachment";
 
 const rttTex0 = { diffuse: { uuid: 'rtt0', rttTexture: {} } };
 const rttTex1 = { diffuse: { uuid: 'rtt1', rttTexture: {} } };
 const attachment0 = {
 	texture: rttTex0,
 	clearValue: [] as ColorDataType,
-	loadOp: "clear",
-	storeOp: "store"
-};
+	// loadOp: "clear",
+	// storeOp: "store"
+} as WGRPassColorAttachment;
 const attachment1 = {
 	texture: rttTex1,
 	clearValue: [] as ColorDataType,
 	loadOp: "clear",
 	storeOp: "store"
-};
-const colorAttachments = [attachment0];
+} as WGRPassColorAttachment;
+const colorAttachments: WGRPassColorAttachment[] = [attachment0];
 
 class PassGraph extends WGRPassNodeGraph {
 	private mTimes = 0;
