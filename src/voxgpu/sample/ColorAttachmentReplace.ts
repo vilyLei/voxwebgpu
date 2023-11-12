@@ -4,11 +4,6 @@ import { MouseInteraction } from "../ui/MouseInteraction";
 import { FixScreenPlaneEntity } from "../entity/FixScreenPlaneEntity";
 import { WGRPassNodeGraph } from "../render/pass/WGRPassNodeGraph";
 
-import vertWGSL from "../material/shader/wgsl/fixScreenPlane.vert.wgsl";
-import fragWGSL from "../material/shader/wgsl/fixScreenPlaneTex.frag.wgsl";
-import blurHWGSL from "../material/shader/wgsl/blurHTex.frag.wgsl";
-// import blurVWGSL from "../material/shader/wgsl/blurVTex.frag.wgsl";
-
 const rttTex0 = { diffuse: { uuid: 'rtt0', rttTexture: {} } };
 const rttTex1 = { diffuse: { uuid: 'rtt1', rttTexture: {} } };
 const attachment0 = {
@@ -44,11 +39,11 @@ class PassGraph extends WGRPassNodeGraph {
 	}
 }
 
-export class PingpongBlur {
+export class ColorAttachmentReplace {
 	private mRscene = new RendererScene();
 
 	initialize(): void {
-		console.log("PingpongBlur::initialize() ...");
+		console.log("ColorAttachmentReplace::initialize() ...");
 
 		let multisampleEnabled = true;
 		let depthTestEnabled = false;
@@ -59,7 +54,7 @@ export class PingpongBlur {
 	}
 
 	private mGraph = new PassGraph();
-	private applyBlurPass(clearColor: ColorDataType, extent = [0.4, 0.3, 0.5, 0.5]): void {
+	private applyRTTPass(clearColor: ColorDataType, extent = [0.4, 0.3, 0.5, 0.5]): void {
 
 		let rs = this.mRscene;
 
@@ -72,14 +67,7 @@ export class PingpongBlur {
 		let rPass = rs.renderer.appendRenderPass({ separate: true, colorAttachments });
 
 		const diffuseTex = { diffuse: { url: "static/assets/huluwa.jpg", flipY: true } };
-		let shaderSrc = {
-			vert: { code: vertWGSL, uuid: "vert" },
-			frag: { code: blurHWGSL, uuid: "frag" }
-		};
-		let rttEntity = new FixScreenPlaneEntity({ extent: [-0.8, -0.8, 1.6, 1.6], shaderSrc, textures: [diffuseTex] });
-		// let rttEntity = new FixScreenPlaneEntity({ extent: [-0.8, -0.8, 1.6, 1.6], textures: [diffuseTex] });
-		// rttEntity.setColor([0.9, 0.3, 0.9]);
-		rttEntity.setColor([512, 512, 2]);
+		let rttEntity = new FixScreenPlaneEntity({ extent: [-0.8, -0.8, 1.6, 1.6], textures: [diffuseTex] });
 		rPass.addEntity(rttEntity);
 
 		graph.passes = [rPass];
@@ -94,16 +82,11 @@ export class PingpongBlur {
 	}
 	private initEvent(): void {
 		const rs = this.mRscene;
-		rs.addEventListener(MouseEvent.MOUSE_DOWN, this.mouseDown);
 		new MouseInteraction().initialize(rs, 0, false).setAutoRunning(true);
-	}
-	private mouseDown = (evt: MouseEvent): void => {
-		console.log("mouse down .....");
-		// colorAttachments[0] = attachment1;
 	}
 	private initScene(): void {
 
-		this.applyBlurPass([0.1, 0.1, 0.1, 1.0], [-0.8, -0.8, 1.6, 1.6]);
+		this.applyRTTPass([0.1, 0.1, 0.1, 1.0], [-0.8, -0.8, 1.6, 1.6]);
 	}
 
 	run(): void {

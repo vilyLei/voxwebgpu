@@ -72,7 +72,7 @@ class FixScreenPlaneEntity extends FixScreenEntity {
 			this.materials = param.materials;
 		} else {
 			if (!param.uniformValues) {
-				this.mColorV = getUniformValueFromParam('color', param, new WGRUniformValue({ data: new Float32Array([0.5, 0.5, 0.5, 1]), shdVarName: 'color' }));
+				this.mColorV = getUniformValueFromParam('color', param, new WGRUniformValue({ data: new Float32Array([1,1,1, 1]), shdVarName: 'color' }));
 			}
 			const texs = param.textures;
 			const texTotal = texs ? texs.length : 0;

@@ -47,7 +47,8 @@
 // import { AddEntityIntoMultiRPasses as Demo } from "./voxgpu/sample/AddEntityIntoMultiRPasses";
 
 // import { PassNodeGraphTest as Demo } from "./voxgpu/sample/PassNodeGraphTest";
-import { PingpongBlur as Demo } from "./voxgpu/sample/PingpongBlur";
+import { ColorAttachmentReplace as Demo } from "./voxgpu/sample/ColorAttachmentReplace";
+// import { PingpongBlur as Demo } from "./voxgpu/sample/PingpongBlur";
 
 
 
