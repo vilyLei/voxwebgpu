@@ -6,6 +6,7 @@ import Camera from "../view/Camera";
 import { WGREntityNode } from "./WGREntityNode";
 import { Entity3D } from "../entity/Entity3D";
 import { IWGRPassNodeBuilder } from "./IWGRPassNodeBuilder";
+import { WGMaterialDescripter } from "../material/WGMaterialDescripter";
 
 type BlockParam = { entityMana: WGEntityNodeMana, roBuilder: WGRObjBuilder, camera: Camera };
 
@@ -31,11 +32,23 @@ class WGRenderUnitBlock {
 	}
 
 	private mENodeMap: Map<number, WGREntityNode> = new Map();
+	private mMaterialMap: Map<number, WGMaterialDescripter> = new Map();
+	
+	hasMaterial(material: WGMaterialDescripter): boolean {
+		if(material.uid !== undefined) {
+			const map = this.mMaterialMap;
+			if(map.has(material.uid)) {
+				return true;
+			}
+			map.set(material.uid, material);
+		}
+		return false;
+	}
 	addEntityToBlock(entity: Entity3D, node: WGREntityNode): void {
 		entity.update();
 		node.rstate.__$rever++;
 		const runit = this.rbParam.roBuilder.createRUnit(entity, this.builder, node);
-		runit.etuuid = entity.uuid;
+		runit.etuuid = entity.uuid + '-[block(' + this.uid+')]';
 		this.addRUnit(runit);
 	}
 	addEntity(entity: Entity3D): void {
@@ -55,8 +68,9 @@ class WGRenderUnitBlock {
 				map.set(euid, node);
 				entity.rstate.__$inRenderer = true;
 				entity.update();
-				console.log("and a new entity into the unit bolck, entity: ", entity);
-				console.log("and a new entity into the unit bolck, entity.isInRenderer(): ", entity.isInRenderer());
+				// console.log("and a new entity into the unit bolck, entity: ", entity);
+				// console.log("and a new entity into the unit bolck, entity.isInRenderer(): ", entity.isInRenderer());
+				// console.log("and a new entity into the unit bolck, this.builder: ", this.builder);
 
 				const wgctx = this.rbParam.roBuilder.wgctx;
 				let flag = true;

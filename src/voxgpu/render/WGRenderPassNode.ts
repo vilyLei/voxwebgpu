@@ -80,8 +80,13 @@ class WGRenderPassNode implements IWGRenderPassNodeRef {
 		}
 	}
 
+	hasMaterial(material: WGMaterialDescripter): boolean {
+		if(this.unitBlock) {
+			return this.unitBlock.hasMaterial(material);
+		}
+		return false;
+	}
 	addEntity(entity: Entity3D): void {
-		// console.log("WGRenderPassNode::addEntity(), entity.isInRenderer(): ", entity.isInRenderer());
 		if (entity) {
 			if (!this.unitBlock) {
 				this.unitBlock = WGRenderUnitBlock.createBlock();
@@ -89,6 +94,7 @@ class WGRenderPassNode implements IWGRenderPassNodeRef {
 			const ub = this.unitBlock;
 			ub.rbParam = this.mRBParam;
 			ub.builder = this;
+			console.log("WGRenderPassNode::addEntity(), ub.builder: ", ub.builder);
 			this.unitBlock.addEntity( entity );
 		}
 	}

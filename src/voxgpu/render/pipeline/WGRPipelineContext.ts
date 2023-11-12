@@ -82,6 +82,7 @@ class WGRPipelineContext implements IWGRPipelineContext {
 				} else {
 					p.layout = pipeGLayout;
 					p.label = this.shadinguuid + "-pl-" + this.mUid;
+					console.log("create rendering pieline desc: ", p);
 					this.pipeline = ctx.device.createRenderPipeline(p);
 					this.bindGroupCtx.pipeline = this.pipeline;
 				}

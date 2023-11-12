@@ -34,24 +34,24 @@ class WGRObjBuilder {
 		return g;
 	}
 	private testShaderSrc(shdSrc: WGRShderSrcType): void {
-		if(shdSrc) {
+		if (shdSrc) {
 			if (shdSrc.code !== undefined && !shdSrc.shaderSrc) {
 				const obj = { code: shdSrc.code, uuid: shdSrc.uuid };
-				if(findShaderEntryPoint('@compute', shdSrc.code) != '') {
+				if (findShaderEntryPoint('@compute', shdSrc.code) != '') {
 					// console.log(">>>>>>>>>>> find comp shader >>>>>>>>>>>>>>>>>>>>>");
 					shdSrc.compShaderSrc = shdSrc.compShaderSrc ? shdSrc.compShaderSrc : obj;
-				}else {
+				} else {
 					// console.log(">>>>>>>>>>> find curr shader >>>>>>>>>>>>>>>>>>>>>");
 					shdSrc.shaderSrc = shdSrc.shaderSrc ? shdSrc.shaderSrc : obj;
 				}
 			}
-			if(shdSrc.vert) {
+			if (shdSrc.vert) {
 				shdSrc.vertShaderSrc = shdSrc.vert;
 			}
-			if(shdSrc.frag) {
+			if (shdSrc.frag) {
 				shdSrc.fragShaderSrc = shdSrc.frag;
 			}
-			if(shdSrc.comp) {
+			if (shdSrc.comp) {
 				shdSrc.compShaderSrc = shdSrc.comp;
 			}
 		}
@@ -61,20 +61,28 @@ class WGRObjBuilder {
 		const material = entity.materials[materialIndex];
 
 		let pctx = material.getRCtx();
-		if (!pctx) {
-			if (material.pipelineVtxParam) {
-				material.pipelineVtxParam.vertex.buffers = primitive.vbufs;
-			} else {
-				if (primitive) {
-					material.pipelineVtxParam = { vertex: { buffers: primitive.vbufs, attributeIndicesArray: [] } };
-					const ls = material.pipelineVtxParam.vertex.attributeIndicesArray;
-					for (let i = 0; i < primitive.vbufs.length; ++i) {
-						ls.push([0]);
+		// console.log('WGRObjBuilder::createRPass(), !pctx: ', !pctx);
+		// console.log('WGRObjBuilder::createRPass(), builder: ', builder);
+		// if (!pctx) {
+		if (!builder.hasMaterial(material)) {
+			// const mvtx = material.pipelineVtxParam.vertex;
+			if (!pctx) {
+				if (material.pipelineVtxParam) {
+					material.pipelineVtxParam.vertex.buffers = primitive.vbufs;
+				} else {
+					if (primitive) {
+						material.pipelineVtxParam = { vertex: { buffers: primitive.vbufs, attributeIndicesArray: [] } };
+						const ls = [];
+						for (let i = 0; i < primitive.vbufs.length; ++i) {
+							ls.push([0]);
+						}
+						material.pipelineVtxParam.vertex.attributeIndicesArray = ls;
 					}
 				}
 			}
 			this.testShaderSrc(material.shaderCodeSrc);
 			const node = builder.getPassNodeWithMaterial(material);
+			// console.log('WGRObjBuilder::createRPass(), node.uid: ', node.uid, ", node: ", node);
 			pctx = node.createRenderPipelineCtxWithMaterial(material);
 			material.initialize(pctx);
 		}
@@ -94,7 +102,7 @@ class WGRObjBuilder {
 			if (compMat && compMat.workcounts) {
 				rcompunit.workcounts = compMat.workcounts;
 			}
-			if(!rcompunit.workcounts) {
+			if (!rcompunit.workcounts) {
 				rcompunit.workcounts = new Uint16Array([1, 1, 0, 0]);
 			}
 			rcompunit.rp = pctx.rpass;
@@ -206,11 +214,10 @@ class WGRObjBuilder {
 		ru.bounds = entity.getGlobalBounds();
 		ru.st = entity.rstate;
 		ru.st.__$rendering = true;
-		
+
 		ru.pst = node.rstate;
 		ru.__$rever = ru.pst.__$rever;
-
-		ru.etuuid = entity.uuid;
+		// ru.etuuid = entity.uuid;
 		return ru;
 	}
 }

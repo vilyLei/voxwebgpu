@@ -8,16 +8,18 @@ import {
 
 import { WGRPipelineContextDefParam, WGRShderSrcType } from "../render/pipeline/WGRPipelineCtxParams";
 import { VtxPipelinDescParam, IWGRPipelineContext } from "../render/pipeline/IWGRPipelineContext";
-// import { IWGRPassWrapper } from "../render/pipeline/IWGRPassWrapper";
 import { IWGRMaterialPassView } from "../render/pipeline/IWGRMaterialPassView";
 import { WGMaterialDescripter } from "./WGMaterialDescripter";
-import { WGRUniformValue } from "../render/uniform/WGRUniformValue";
 import { IWGMaterial } from "./IWGMaterial";
 import { IWGMaterialGraph } from "./IWGMaterialGraph";
 import { WGRBufferData } from "../render/buffer/WGRBufferValueParam";
 
 class WGMaterial implements IWGMaterial {
+	private static sUid = 0;
+	private mUid = WGMaterial.sUid ++;
+
 	private mRCtx: IWGRPipelineContext;
+
 	private mREnabled = false;
 	name?: string;
 	/**
@@ -48,7 +50,9 @@ class WGMaterial implements IWGMaterial {
 	constructor(descriptor?: WGMaterialDescripter) {
 		this.setDescriptor(descriptor);
 	}
-
+	get uid(): number {
+		return this.mUid;
+	}
 	addTextureWithDatas(datas: WGTextureData[], shdVarNames?: string[]): WGMaterial {
 		if (datas) {
 			if (shdVarNames) {

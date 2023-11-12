@@ -62,6 +62,12 @@ class WGRenderPassBlock implements IWGRPassNodeBuilder {
 			}
 		}
 	}
+	hasMaterial(material: WGMaterialDescripter): boolean {
+		if(this.unitBlock) {
+			return this.unitBlock.hasMaterial(material);
+		}
+		return false;
+	}
 	addEntity(entity: Entity3D): void {
 		// console.log("Renderer::addEntity(), entity.isInRenderer(): ", entity.isInRenderer());
 		if (entity) {

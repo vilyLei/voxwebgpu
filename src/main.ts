@@ -42,7 +42,8 @@
 // import { GameOfLife3DPBR as Demo } from "./voxgpu/sample/GameOfLife3DPBR";
 
 // import { MultiGPUPassTest as Demo } from "./voxgpu/sample/MultiGPUPassTest";
-import { RTTFixScreenTest as Demo } from "./voxgpu/sample/RTTFixScreenTest";
+// import { RTTFixScreenTest as Demo } from "./voxgpu/sample/RTTFixScreenTest";
+import { AddEntityIntoMultiRPasses as Demo } from "./voxgpu/sample/AddEntityIntoMultiRPasses";
 // import { RTTTest as Demo } from "./voxgpu/sample/RTTTest";
 
 
