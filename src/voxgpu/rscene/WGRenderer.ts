@@ -181,11 +181,13 @@ class WGRenderer implements IRenderer {
 		}
 	}
 	setPassNodeGraph(graph: WGRPassNodeGraph, blockIndex = 0): void {
+		this.intDefaultBlock();
 		const len = this.mRPBlocks.length;
 		if (blockIndex >= 0 && blockIndex < len) {
 			this.mRPBlocks[blockIndex].setPassNodeGraph(graph);
+		}else {
+			throw Error("Illegal operations !!!");
 		}
-		throw Error("Illegal operations !!!");
 	}
 	appendRenderPass(param?: WGRPassParam, blockIndex = 0): IWGRPassWrapper {
 		this.initialize();

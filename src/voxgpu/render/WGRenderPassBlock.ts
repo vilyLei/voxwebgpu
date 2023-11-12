@@ -46,7 +46,7 @@ class WGRenderPassBlock implements IWGRPassNodeBuilder {
 	}
 	initialize(wgCtx: WebGPUContext, param?: WGRPassParam): void {
 		this.mrPassParam = param ? param : this.mrPassParam;
-		if(wgCtx) {
+		if (wgCtx) {
 			param = this.mrPassParam;
 			if (!this.mWGCtx && wgCtx && wgCtx.enabled) {
 				this.mWGCtx = wgCtx;
@@ -65,7 +65,7 @@ class WGRenderPassBlock implements IWGRPassNodeBuilder {
 		}
 	}
 	hasMaterial(material: WGMaterialDescripter): boolean {
-		if(this.unitBlock) {
+		if (this.unitBlock) {
 			return this.unitBlock.hasMaterial(material);
 		}
 		return false;
@@ -79,28 +79,28 @@ class WGRenderPassBlock implements IWGRPassNodeBuilder {
 			const ub = this.unitBlock;
 			ub.rbParam = this.mRBParam;
 			ub.builder = this;
-			ub.addEntity( entity );
+			ub.addEntity(entity);
 		}
 	}
 	getRenderPassAt(index: number): IWGRPassWrapper {
 
 		const ls = this.mRPassNodes;
 		const ln = ls.length;
-		if(index < 0) index = 0;
-		else if(index >= ln) index = ln;
+		if (index < 0) index = 0;
+		else if (index >= ln) index = ln;
 		return { index, node: ls[index] };
 	}
 	getComptePassAt(index: number): IWGRPassWrapper {
 
 		const ls = this.mCompPassNodes;
 		const ln = ls.length;
-		if(index < 0) index = 0;
-		else if(index >= ln) index = ln;
+		if (index < 0) index = 0;
+		else if (index >= ln) index = ln;
 		return { index, node: ls[index] };
 	}
 	appendRendererPass(param?: WGRPassParam): IWGRPassWrapper {
 
-		if(!param) param = {};
+		if (!param) param = {};
 		const computing = param && param.computeEnabled === true;
 		let index = -1;
 		const passNode = new WGRenderPassNode(this.mRBParam, !computing);
@@ -119,7 +119,7 @@ class WGRenderPassBlock implements IWGRPassNodeBuilder {
 			let prevPass = param.prevPass;
 			let prevNodeParam: WGRPassParam;
 
-			if(prevPass && prevPass.node !== undefined) {
+			if (prevPass && prevPass.node !== undefined) {
 
 				prevNode = prevPass.node as WGRenderPassNode;
 				prevNodeParam = prevNode.param;
@@ -136,7 +136,7 @@ class WGRenderPassBlock implements IWGRPassNodeBuilder {
 				this.mRPassNodes.push(passNode);
 				index = this.mRPassNodes.length - 1;
 
-			}else if(!(param.separate === true)) {
+			} else if (!(param.separate === true)) {
 
 				prevNode = this.mRPassNodes[this.mRPassNodes.length - 1];
 				prevNodeParam = prevNode.param;
@@ -149,7 +149,7 @@ class WGRenderPassBlock implements IWGRPassNodeBuilder {
 				rpass.name = "newpass_type02";
 				this.mRPassNodes.push(passNode);
 				index = this.mRPassNodes.length - 1;
-			}else {
+			} else {
 				console.log("create a separate render pass.");
 				const rpass = passNode.rpass;
 				rpass.name = "newpass_type03(separate)";
@@ -171,7 +171,7 @@ class WGRenderPassBlock implements IWGRPassNodeBuilder {
 		const nodes = this.mRPassNodes;
 		let node = nodes[nodes.length - 1];
 		if (ref) {
-			if(ref.node) {
+			if (ref.node) {
 				return node;
 			}
 			if (ref.index !== undefined) {
@@ -213,19 +213,31 @@ class WGRenderPassBlock implements IWGRPassNodeBuilder {
 	private mGraph: WGRPassNodeGraph;
 	setPassNodeGraph(graph: WGRPassNodeGraph): void {
 		this.mGraph = graph;
+		if (graph) {
+			let ps = graph.passes;
+			for (let i = 0; i < ps.length; ++i) {
+				const node = ps[i].node as WGRenderPassNode;
+				node.mode = 1;
+			}
+		}
 	}
 	runBegin(): void {
 
 		this.rcommands = [];
 		if (this.enabled) {
 			const graph = this.mGraph;
-			if(graph) {
+			if (graph) {
+				// let ps = graph.passes;
+				// for (let i = 0; i < ps.length; ++i) {
+				// 	const node = ps[i].node;
+				// 	node.rcommands = [];
+				// }
 				graph.runBegin();
 			}
 
 			const nodes = this.mPassNodes;
 			for (let i = 0; i < nodes.length; ++i) {
-				if(nodes[i].mode < 1) {
+				if (nodes[i].mode < 1) {
 					nodes[i].runBegin();
 				}
 			}
@@ -233,13 +245,19 @@ class WGRenderPassBlock implements IWGRPassNodeBuilder {
 	}
 	runEnd(): void {
 		if (this.enabled) {
+			
+			const graph = this.mGraph;
+			if (graph) {
+				this.rcommands = this.rcommands.concat(graph.rcommands);
+			}
 			const nodes = this.mPassNodes;
 			// console.log("this.mPassNodes: ", this.mPassNodes);
-			
+
 			for (let i = 0; i < nodes.length; ++i) {
-				if(nodes[i].mode < 1) {
-					nodes[i].runEnd();
-					this.rcommands = this.rcommands.concat(nodes[i].rcommands);
+				const node = nodes[i];
+				if (node.mode < 1) {
+					node.runEnd();
+					this.rcommands = this.rcommands.concat(node.rcommands);
 				}
 			}
 			// console.log("this.rcommands: ", this.rcommands);
@@ -248,16 +266,16 @@ class WGRenderPassBlock implements IWGRPassNodeBuilder {
 	run(): void {
 		if (this.enabled) {
 			const graph = this.mGraph;
-			if(graph) {
+			if (graph) {
 				graph.run();
 			}
 			const nodes = this.mPassNodes;
 			for (let i = 0; i < nodes.length; ++i) {
-				if(nodes[i].mode < 1) {
+				if (nodes[i].mode < 1) {
 					nodes[i].run();
 				}
 			}
-			if(this.unitBlock) {
+			if (this.unitBlock) {
 				this.unitBlock.run();
 			}
 		}

@@ -12,6 +12,7 @@ import { IRenderableEntityContainer } from "../render/IRenderableEntityContainer
 import { WebGPUContext } from "../gpu/WebGPUContext";
 import { WGRPassParam } from "../render/WGRenderPassBlock";
 import { IWGRPassWrapper } from "../render/pipeline/IWGRPassWrapper";
+import { WGRPassNodeGraph } from "../render/pass/WGRPassNodeGraph";
 
 class RendererScene implements IRendererScene {
 	private static sUid = 0;
@@ -26,7 +27,7 @@ class RendererScene implements IRendererScene {
 	racontext: RAdapterContext;
 	camera: Camera;
 
-	constructor(uidBase: number = 0) {
+	constructor(uidBase = 0) {
 		this.mUid = uidBase + RendererScene.sUid++;
 	}
 	get renderer(): WGRenderer {
@@ -53,6 +54,10 @@ class RendererScene implements IRendererScene {
 		}
 	}
 
+	setPassNodeGraph(graph: WGRPassNodeGraph, blockIndex = 0): void {
+		this.initialize();
+		this.mRenderer.setPassNodeGraph(graph, blockIndex);
+	}
 	createRTTPass(param?: WGRPassParam, blockIndex = 0): IWGRPassWrapper {
 		this.initialize();
 		if(!param) param = {};

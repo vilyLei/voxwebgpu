@@ -87,9 +87,9 @@ class FixScreenPlaneEntity extends FixScreenEntity {
 			let b = param.depthWriteEnabled;
 			b = b === undefined ? false : b;
 			let f = param.faceCullMode;
-			f = param.faceCullMode ? param.faceCullMode : "back";
+			f = f ? f : "back";
 			let bl = param.blendModes;
-			bl = param.blendModes ? param.blendModes : ["solid"];
+			bl = bl ? bl : ["solid"];
 
 			let pipelineDefParam = {
 				depthWriteEnabled: b,

@@ -77,11 +77,17 @@ class PrimitiveEntity extends Entity3D {
 						uuid: texTotal > 0 ? "primitiveTexFragShdCode" : "primitiveFragShdCode"
 					}
 				};
-			let depthWriteEnabled = param.depthWriteEnabled === false ? false : true;
+			let b = param.depthWriteEnabled;
+			b = b === false ? false : true;
+			let f = param.faceCullMode;
+			f = f ? f : "back";
+			let bl = param.blendModes;
+			bl = bl ? bl : ["solid"]
+
 			let pipelineDefParam = {
-				depthWriteEnabled: depthWriteEnabled,
-				faceCullMode: param.faceCullMode ? param.faceCullMode : "back",
-				blendModes: param.blendModes ? param.blendModes : ["solid"]
+				depthWriteEnabled: b,
+				faceCullMode: f,
+				blendModes: bl
 			};
 			const material = new WGMaterial({
 				shadinguuid: param.shadinguuid !== undefined ? param.shadinguuid : "PrimitiveEntity-material-tex" + texTotal,
