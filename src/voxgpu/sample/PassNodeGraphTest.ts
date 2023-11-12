@@ -31,7 +31,10 @@ export class PassNodeGraphTest {
 	initialize(): void {
 		console.log("PassNodeGraphTest::initialize() ...");
 
-		this.mRscene.initialize({ rpassparam: { multisampleEnabled: true, depthTestEnabled: false } });
+		let multisampleEnabled = true;
+		let depthTestEnabled = false;
+		let rpassparam = { multisampleEnabled, depthTestEnabled };
+		this.mRscene.initialize({ rpassparam });
 		this.initEvent();
 		this.initScene();
 	}

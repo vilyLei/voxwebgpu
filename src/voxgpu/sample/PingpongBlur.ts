@@ -3,6 +3,11 @@ import { MouseInteraction } from "../ui/MouseInteraction";
 import { FixScreenPlaneEntity } from "../entity/FixScreenPlaneEntity";
 import { WGRPassNodeGraph } from "../render/pass/WGRPassNodeGraph";
 
+import vertWGSL from "../material/shader/wgsl/fixScreenPlane.vert.wgsl";
+// import fragWGSL from "../material/shader/wgsl/fixScreenPlaneTex.frag.wgsl";
+import blurHWGSL from "../material/shader/wgsl/blurHTex.frag.wgsl";
+import blurVWGSL from "../material/shader/wgsl/blurVTex.frag.wgsl";
+
 class PassGraph extends WGRPassNodeGraph {
 	constructor() { super(); }
 	runBegin(): void {
@@ -15,7 +20,7 @@ class PassGraph extends WGRPassNodeGraph {
 		
 		const node = ps[0].node;
 
-		for (let i = 0; i < 15; ++i) {
+		for (let i = 0; i < 1; ++i) {
 			node.colorAttachments[0].clearEnabled = i < 1;
 			node.runBegin();
 			node.run();
@@ -36,7 +41,7 @@ export class PingpongBlur {
 		this.initScene();
 	}
 
-	private applyNewRPass(texUUID: string, entities: FixScreenPlaneEntity[], clearColor: ColorDataType, extent = [0.4, 0.3, 0.5, 0.5]): void {
+	private applyBlurPass(texUUID: string, clearColor: ColorDataType, extent = [0.4, 0.3, 0.5, 0.5]): void {
 
 		let rs = this.mRscene;
 		let rttTex = { diffuse: { uuid: texUUID, rttTexture: {} } };
@@ -48,10 +53,19 @@ export class PingpongBlur {
 				storeOp: "store"
 			}
 		];
+
+		
 		let rPass = rs.renderer.appendRenderPass({ separate: true, colorAttachments });
-		for (let i = 0; i < entities.length; ++i) {
-			rPass.addEntity(entities[i]);
-		}
+		
+		const diffuseTex = { diffuse: { url: "static/assets/huluwa.jpg", flipY: true } };
+		
+		let shaderSrc = {
+			vert: { code: vertWGSL, uuid: "vertShdCode" },
+			frag: { code: blurVWGSL, uuid: "fragShdCode" }
+		};
+		let rttEntity = new FixScreenPlaneEntity({ extent: [-0.9, -0.9, 1.8, 1.8], shaderSrc, textures: [diffuseTex] });
+		rttEntity.setColor([512, 512, 2.0, 1.0]);
+		rPass.addEntity( rttEntity );
 
 
 		let graph = new PassGraph();
@@ -59,7 +73,6 @@ export class PingpongBlur {
 		rs.setPassNodeGraph(graph);
 
 		let entity = new FixScreenPlaneEntity({ extent, flipY: true, textures: [rttTex] });
-		// entity.setColor([0.7, 0.5, 0.5]);
 		entity.uuid = 'apply-rtt-entity';
 		rs.addEntity(entity);
 	}
@@ -70,30 +83,7 @@ export class PingpongBlur {
 	private initScene(): void {
 
 		const rs = this.mRscene;
-		let entity: FixScreenPlaneEntity;
-
-		// const diffuseTex = { diffuse: { url: "static/assets/blueTransparent.png", flipY: true } };
-		// const diffuseTex = { diffuse: { url: "static/assets/redTransparent.png", flipY: true } };
-		// const diffuseTex = { diffuse: { url: "static/assets/guangyun_40.png", flipY: true } };
-		const diffuseTex = { diffuse: { url: "static/assets/huluwa.jpg", flipY: true } };
-
-		let blendModes = ['add'];
-		let entities: FixScreenPlaneEntity[] = [];
-		entity = new FixScreenPlaneEntity({ extent: [-0.8, -0.8, 0.8, 0.8], textures: [diffuseTex], blendModes });
-		// entity.setColor([0.9, 0.3, 0.9]);
-		entity.uuid = "pl-0";
-		rs.addEntity(entity);
-		entities.push(entity);
-
-		// entity = new FixScreenPlaneEntity({ extent: [-0.2, -0.2, 0.4, 0.4], textures: [diffuseTex] });
-		// entity.setColor([0.2, 0.9, 0.9]);
-		// entity.uuid = "pl-1";
-		// rs.addEntity(entity);
-		// entities.push(entity);
-
-		this.applyNewRPass('rtt0', entities, [0.2, 0.2, 0.2, 1.0], [-0.2, 0.1, 0.8, 0.8]);
-		// this.applyNewRPass( 'rtt1', entities, [0.3, 0.5, 0.1, 1.0], [-0.2, 0.3, 0.5, 0.5] );
-		// this.applyNewRPass( 'rtt2', entities, [0.3, 0.5, 0.7, 1.0], [-0.8, 0.3, 0.5, 0.5] );
+		this.applyBlurPass('rtt0',  [0.1, 0.1, 0.1, 1.0], [-0.9, -0.9, 1.8, 1.8]);
 	}
 
 	run(): void {

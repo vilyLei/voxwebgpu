@@ -34,7 +34,7 @@ class WGRendererPass implements IWGRendererPass {
 	separate = false;
 	enabled = true;
 	constructor(wgCtx?: WebGPUContext, drawing = true) {
-		console.log("WGRendererPass::constructor(), drawing: ", drawing);
+		// console.log("WGRendererPass::constructor(), drawing: ", drawing);
 		this.mDrawing = drawing;
 		if (wgCtx) {
 			this.initialize(wgCtx);

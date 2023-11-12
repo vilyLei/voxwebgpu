@@ -170,14 +170,14 @@ fn dithering( color: vec3<f32>, fragCoord: vec2<f32> ) -> vec3<f32> {
 
 const dis = 600.0;
 const disY = 400.0;
-const u_lightPositions = array<vec3<f32>, 4>(
+const lightPositions = array<vec3<f32>, 4>(
 	vec3<f32>(-dis, disY, dis),
 	vec3<f32>(dis, disY, dis),
 	vec3<f32>(-dis, disY, -dis),
 	vec3<f32>(dis, disY, -dis)
 );
 const colorValue = 300.0;
-const u_lightColors = array<vec3<f32>, 4>(
+const lightColors = array<vec3<f32>, 4>(
 	vec3<f32>(colorValue, colorValue, colorValue),
 	vec3<f32>(colorValue, colorValue, colorValue),
 	vec3<f32>(colorValue, colorValue, colorValue),
@@ -206,12 +206,12 @@ fn calcPBRColor3(Normal: vec3<f32>, WorldPos: vec3<f32>, camPos: vec3<f32>) -> v
 
 	for (var i: i32 = 0; i < 4; i++) {
 		// calculate per-light radiance
-        let L = normalize(u_lightPositions[i].xyz - WorldPos);
+        let L = normalize(lightPositions[i].xyz - WorldPos);
         let H = normalize(V + L);
-        let distance = length(u_lightPositions[i].xyz - WorldPos);
+        let distance = length(lightPositions[i].xyz - WorldPos);
 
         let attenuation = 1.0 / (1.0 + 0.001 * distance + 0.0003 * distance * distance);
-        let radiance = u_lightColors[i].xyz * attenuation;
+        let radiance = lightColors[i].xyz * attenuation;
 
         // Cook-Torrance BRDF
         let NDF = DistributionGGX(N, H, roughness);
