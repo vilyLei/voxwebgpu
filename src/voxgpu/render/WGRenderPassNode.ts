@@ -233,5 +233,12 @@ class WGRenderPassNode implements IWGRenderPassNode {
 			}
 		}
 	}
+	render(): void {
+		if (this.enabled) {
+			this.runBegin();
+			this.run();
+			this.runEnd();
+		}
+	}
 }
 export { WGRenderPassNode };

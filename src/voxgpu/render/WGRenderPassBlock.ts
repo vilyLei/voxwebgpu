@@ -248,7 +248,7 @@ class WGRenderPassBlock implements IWGRPassNodeBuilder {
 			
 			const graph = this.mGraph;
 			if (graph) {
-				this.rcommands = this.rcommands.concat(graph.rcommands);
+				this.rcommands = this.rcommands.concat(graph.cmdWrapper.rcommands);
 			}
 			const nodes = this.mPassNodes;
 			// console.log("this.mPassNodes: ", this.mPassNodes);

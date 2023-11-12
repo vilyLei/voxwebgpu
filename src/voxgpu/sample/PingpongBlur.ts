@@ -15,17 +15,11 @@ class PassGraph extends WGRPassNodeGraph {
 	}
 	run(): void {
 
-		this.rcommands = [];
-		let ps = this.passes;
-		
+		let ps = this.passes;		
 		const node = ps[0].node;
-
 		for (let i = 0; i < 1; ++i) {
 			node.colorAttachments[0].clearEnabled = i < 1;
-			node.runBegin();
-			node.run();
-			node.runEnd();
-			this.rcommands = this.rcommands.concat(node.rcommands);
+			node.render();
 		}
 	}
 }

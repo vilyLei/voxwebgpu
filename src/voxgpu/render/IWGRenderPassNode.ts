@@ -15,5 +15,6 @@ interface IWGRenderPassNode extends IWGRPassNodeBuilder {
 	runBegin(): void;
 	runEnd(): void;
 	run(): void;
+	render(): void;
 }
 export { IWGRenderPassNode };

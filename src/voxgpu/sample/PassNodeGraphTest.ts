@@ -9,18 +9,10 @@ class PassGraph extends WGRPassNodeGraph {
 		super.runBegin();
 	}
 	run(): void {
-
-		this.rcommands = [];
-		let ps = this.passes;
-		
-		const node = ps[0].node;
-
+		let pass = this.passes[0];
 		for (let i = 0; i < 15; ++i) {
-			node.colorAttachments[0].clearEnabled = i < 1;
-			node.runBegin();
-			node.run();
-			node.runEnd();
-			this.rcommands = this.rcommands.concat(node.rcommands);
+			pass.colorAttachments[0].clearEnabled = i < 1;
+			pass.render();
 		}
 	}
 }
