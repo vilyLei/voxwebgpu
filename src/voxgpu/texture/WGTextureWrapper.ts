@@ -173,6 +173,7 @@ interface WGTextureType {
 	flipY?: boolean;
 	name?: string;
 	dimension?: string;
+	format?: string;
 	generateMipmaps?: boolean;
 	data?: WGTextureDataType;
 }
@@ -184,6 +185,7 @@ interface WGTexSamplerType {
 class WGTexture implements WGTextureType {
 	name = "WGTexture";
 
+	format?: string;
 	shdVarName = "";
 
 	generateMipmaps = true;

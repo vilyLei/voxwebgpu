@@ -79,7 +79,7 @@ class WGRendererPass implements IWGRendererPass {
 					if(rttData) {
 						const ctx = this.mWGCtx;
 						if (rttData.texture === undefined) {
-							const rtt = ctx.texture.createColorRTTTexture();
+							const rtt = ctx.texture.createColorRTTTexture({format: td.format});
 							rttData.texture = rtt;
 							rttData.textureView = rtt.createView();
 							// colorAtt.texSrcData = rttData;
@@ -87,7 +87,7 @@ class WGRendererPass implements IWGRendererPass {
 							// colorAtt.view = rtt.createView();
 							colorAtt.view = rttData.textureView;
 							colorAtt.view.label = td.uuid;
-							// console.log("动态创建一个 color rtt gpu texture instance, td: ", td);
+							console.log("动态创建一个 color rtt gpu texture instance, td: ", td);
 						}else {
 							colorAtt.view = rttData.textureView;
 						}
@@ -175,8 +175,6 @@ class WGRendererPass implements IWGRendererPass {
 				dsAtt.viewTexture = depthTexture;
 			}
 		}
-
-		// console.log(this);
 		// console.log("depthTexDesc: ", depthTexDesc, ", depthTexture: ", depthTexture);
 	}
 	runBegin(): void {
@@ -230,13 +228,10 @@ class WGRendererPass implements IWGRendererPass {
 						if(cts !== undefined) {
 							const p = colorT.param;
 							const t = cts[0];
-							// console.log(" ??? ?? ?? AAA colorT.texture: ", colorT.texture, ", t.texture: ", t.texture);
 							if (!colorT.view || p !== t || colorT.texture !== t.texture) {
 								if(t.texture !== undefined) {
 									colorT.view = null;
-									// console.log(" ??? ?? ?? BBB create a rpass colorAttachment, t.texture: ", t.texture);
 									this.updateColorAttachmentView( colorT, t, p === t );
-									// console.log(" ??? ?? ?? CCC colorT.texture: ", colorT.texture, ", t.texture: ", t.texture);
 									this.clearColor.setColor(colorT.clearValue);
 								}
 							}
@@ -278,16 +273,6 @@ class WGRendererPass implements IWGRendererPass {
 		const ctx = this.mWGCtx;
 		if (this.enabled && ctx.enabled) {
 			if (this.mDrawing) {
-
-				// if (this.separate) {
-				// 	let pcs = this.passColors;
-				// 	const colorT = pcs[0];
-				// 	if(colorT.texSrcData) {
-				// 		colorT.texSrcData.texture = colorT.gpuTexture;
-				// 		colorT.texSrcData.textureView = colorT.view;
-				// 		colorT.texSrcData = null;
-				// 	}
-				// }
 				this.passEncoder.end();
 			} else {
 				this.compPassEncoder.end();

@@ -57,13 +57,6 @@ class WGRPipelineShader {
 				vert.module = vertShdModule;
 				vert.entryPoint = entryPoint;
 			}
-			// entryPoint = this.findShaderEntryPoint('@vertex', shdSrc.code);
-			// console.log("vert entryPoint: >"+entryPoint+"<");
-			// if (shdSrc.vertEntryPoint !== undefined) {
-			// 	vert.entryPoint = shdSrc.vertEntryPoint;
-			// }else {
-			// 	shdSrc.vertEntryPoint = vert.entryPoint = this.findShaderEntryPoint('@vertex', shdSrc.code);
-			// }
 		}else {
 			params.vertex = null;
 		}
@@ -79,15 +72,6 @@ class WGRPipelineShader {
 				frag.module = fragShdModule;
 				frag.entryPoint = entryPoint;
 			}
-			// if(!frag) {
-			// 	frag = params.fragment = createFragmentState();
-			// }
-			// frag.module = fragShdModule;
-			// if (shdSrc.fragEntryPoint !== undefined) {
-			// 	frag.entryPoint = shdSrc.fragEntryPoint;
-			// }else {
-			// 	shdSrc.fragEntryPoint = frag.entryPoint = this.findShaderEntryPoint('@fragment', shdSrc.code);
-			// }
 		}else {
 			params.fragment = null;
 		}

@@ -25,13 +25,6 @@ class WGRPColorAttachment implements WGRPColorAttachmentImpl {
 	 * Possible values are: "clear", "load"
 	 */
 	loadOp = "clear";
-	// mLoadOp = "clear";
-	// set loadOp(s: string) {
-	// 	this.mLoadOp = s;
-	// }
-	// get loadOp(): string {
-	// 	return this.mLoadOp;
-	// }
 	/**
 	 * Possible values are: "discard", "store"
 	 */

@@ -48,8 +48,8 @@
 
 // import { PassNodeGraphTest as Demo } from "./voxgpu/sample/PassNodeGraphTest";
 // import { ColorAttachmentReplace as Demo } from "./voxgpu/sample/ColorAttachmentReplace";
-import { PingpongBlur as Demo } from "./voxgpu/sample/PingpongBlur";
-// import { DepthBlur as Demo } from "./voxgpu/sample/DepthBlur";
+// import { PingpongBlur as Demo } from "./voxgpu/sample/PingpongBlur";
+import { DepthBlur as Demo } from "./voxgpu/sample/DepthBlur";
 
 
 
