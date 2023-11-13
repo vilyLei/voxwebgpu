@@ -3,24 +3,34 @@ import { RendererScene } from "../rscene/RendererScene";
 import { FixScreenPlaneEntity } from "../entity/FixScreenPlaneEntity";
 import { WGRPassNodeGraph } from "../render/pass/WGRPassNodeGraph";
 import { WGTextureDataDescriptor, WGMaterial } from "../material/WGMaterial";
+import { MouseInteraction } from "../ui/MouseInteraction";
 
 import vertWGSL from "../material/shader/wgsl/fixScreenPlane.vert.wgsl";
 import blurHWGSL from "../material/shader/wgsl/blurHTex.frag.wgsl";
 import blurVWGSL from "../material/shader/wgsl/blurVTex.frag.wgsl";
-import { WGRPassColorAttachment } from "../render/pipeline/WGRPassColorAttachment";
 
-//format: 'rgba16float'
-const rttTex0 = { diffuse: { uuid: "rtt0", rttTexture: {}, format: 'rgba16float' } };
-// const rttTex0 = { diffuse: { uuid: "rtt0", rttTexture: {} } };
-const rttTex1 = { diffuse: { uuid: "rtt1", rttTexture: {} } };
-const rtts = [rttTex0, rttTex1];
+import entityVertWGSL from "../material/shader/wgsl/primitive.vert.wgsl";
+import entityFragWGSL from "./shaders/primitiveVPos.frag.wgsl";
+import vposReadFragWGSL from "./shaders/vposRead.frag.wgsl";
+import depthBlurFragWGSL from "./shaders/depthBlur.frag.wgsl";
+//src\voxgpu\sample\shaders\vposRead.frag.wgsl
+
+import { WGRPassColorAttachment } from "../render/pipeline/WGRPassColorAttachment";
+import { TorusEntity } from "../entity/TorusEntity";
+
+const blurRTTTex0 = { diffuse: { uuid: "rtt0", rttTexture: {} } };
+const blurRTTTex1 = { diffuse: { uuid: "rtt1", rttTexture: {} } };
+const rtts = [blurRTTTex0, blurRTTTex1];
 const attachment = {
-	texture: rttTex0,
+	texture: blurRTTTex0,
 	clearValue: [] as ColorDataType,
 	loadOp: "clear",
 	storeOp: "store"
 } as WGRPassColorAttachment;
 const colorAttachments = [attachment];
+
+const colorRTTTex = { diffuse: { uuid: "colorRTT", rttTexture: {} } };
+const vposRTTTex = { diffuse: { uuid: "floatRTT", rttTexture: {}, format: 'rgba16float' } };
 
 class PassGraph extends WGRPassNodeGraph {
 	blurEntity: FixScreenPlaneEntity;
@@ -35,24 +45,15 @@ class PassGraph extends WGRPassNodeGraph {
 		const entity = this.blurEntity;
 		let ms = entity.materials;
 
-		// for (let i = 0; i < 10; ++i) {
-		// 	const ia = i % 2;
-		// 	const ib = (i + 1) % 2;
-		// 	pass.colorAttachments[0].clearEnabled = i < 1;
-		// 	this.srcEntity.visible = i < 1;
-		// 	this.blurEntity.visible = i > 0;
-		// 	attachment.texture = rtts[ia];
-		// 	ms[ia].visible = false;
-		// 	ms[ib].visible = true;
-		// 	pass.render();
-		// }
-		for (let i = 0; i < 1; ++i) {
+		for (let i = 0; i < 11; ++i) {
 			const ia = i % 2;
+			const ib = (i + 1) % 2;
 			pass.colorAttachments[0].clearEnabled = i < 1;
 			this.srcEntity.visible = i < 1;
 			this.blurEntity.visible = i > 0;
 			attachment.texture = rtts[ia];
 			ms[ia].visible = false;
+			ms[ib].visible = true;
 			pass.render();
 		}
 	}
@@ -62,7 +63,7 @@ export class DepthBlur {
 
 	private mRscene = new RendererScene();
 	private mGraph = new PassGraph();
-	private uniformValues = [{ data: new Float32Array([512, 512, 2.0, 0]) }];
+	private uniformValues = [{ data: new Float32Array([512, 512, 3.0, 0]) }];
 
 	initialize(): void {
 		console.log("DepthBlur::initialize() ...");
@@ -79,6 +80,7 @@ export class DepthBlur {
 	private initEvent(): void {
 		const rc = this.mRscene;
 		rc.addEventListener(MouseEvent.MOUSE_DOWN, this.mouseDown);
+		new MouseInteraction().initialize(rc, 0, false).setAutoRunning(true);
 	}
 	private mouseDown = (evt: MouseEvent): void => {}
 
@@ -112,10 +114,10 @@ export class DepthBlur {
 
 		const diffuseTex = { diffuse: { url: "static/assets/huluwa.jpg", flipY: true } };
 
-		// let materials = [this.createMaterial("shd-00", [rttTex0], 0), this.createMaterial("shd-01", [rttTex1], 1)];
-		let materials = [this.createMaterial("shd-00", [rttTex0], 0)];
+		let materials = [this.createMaterial("shd-00", [blurRTTTex0], 0), this.createMaterial("shd-01", [blurRTTTex1], 1)];
+		// let materials = [this.createMaterial("shd-00", [blurRTTTex0], 0)];
 
-		let rttEntity = new FixScreenPlaneEntity({ extent: [-1, -1, 2, 2], textures: [diffuseTex], shadinguuid: "srcEntityMaterial" });
+		let rttEntity = new FixScreenPlaneEntity({ extent: [-1, -1, 2, 2], flipY: true, textures: [colorRTTTex] });
 		rttEntity.uuid = "src-entity";
 		rPass.addEntity(rttEntity);
 		graph.srcEntity = rttEntity;
@@ -128,20 +130,81 @@ export class DepthBlur {
 		rPass.addEntity(entity);
 		graph.blurEntity = entity;
 
+		let shaderSrc = {
+			vert: { code: vertWGSL, uuid: "vert" },
+			frag: { code: depthBlurFragWGSL, uuid: "depthBlur" }
+		};
+		////depthBlurFragWGSL
 		// display blur rendering result
+		let textures = [colorRTTTex, blurRTTTex0, vposRTTTex];
 		extent = [-0.8, -0.8, 1.6, 1.6];
-		entity = new FixScreenPlaneEntity({ extent, flipY: true, textures: [rttTex0], shadinguuid: "smallImgMaterial" });
+		entity = new FixScreenPlaneEntity({ extent, flipY: false, shaderSrc, textures, shadinguuid: "smallImgMaterial" });
+		// entity = new FixScreenPlaneEntity({ extent, flipY: true, textures: [blurRTTTex0] });
 		entity.uuid = "blur-big-img";
 		rs.addEntity(entity);
 
-		// display origin image
+		// // display origin image
+		// extent = [-0.95, -0.95, 0.6, 0.6];
+		// entity = new FixScreenPlaneEntity({ extent, flipY: false, textures: [diffuseTex], shadinguuid: "smallImgMaterial" });
+		// entity.uuid = "small-img";
+		// rs.addEntity(entity);
+	}
+
+	private applyMRTPass(extent: number[]): void {
+		let rs = this.mRscene;
+
+		const attachment0 = {
+			texture: colorRTTTex,
+			clearValue: [0.15, 0.15, 0.15, 1.0]
+		};
+		const attachment1 = {
+			texture: vposRTTTex,
+			clearValue: [0.2, 0.25, 0.2, 1.0]
+		};
+
+		const colorAttachments = [attachment0, attachment1];
+
+		let rPass = rs.createRenderPass({ separate: true, colorAttachments });
+
+		const diffuseTex = { diffuse: { url: "static/assets/huluwa.jpg", flipY: true } };
+
+		let shaderSrc = {
+			vert: { code: entityVertWGSL, uuid: "vertMRT" },
+			frag: { code: entityFragWGSL, uuid: "fragMRT" }
+		};
+
+		let torus = new TorusEntity({shaderSrc, radius: 150});
+		torus.setAlbedo([0.7,0.02,0.1]);
+		rPass.addEntity(torus);
+
+		// display rendering result
+		// extent = [-0.8, -0.8, 1.6, 1.6];
+		// let entity = new FixScreenPlaneEntity({ extent, textures: [colorRTTTex] });
+		// rs.addEntity(entity);
+
+		shaderSrc = {
+			vert: { code: vertWGSL, uuid: "vert" },
+			frag: { code: vposReadFragWGSL, uuid: "readNromal" }
+		};
+		// display depth value drawing result
 		extent = [-0.95, -0.95, 0.6, 0.6];
-		entity = new FixScreenPlaneEntity({ extent, flipY: false, textures: [diffuseTex], shadinguuid: "smallImgMaterial" });
-		entity.uuid = "small-img";
+		let entity = new FixScreenPlaneEntity({ extent, shaderSrc, textures: [vposRTTTex], shadinguuid: "readDepth" });
+		rs.addEntity(entity);
+
+		// display albedo drawing result
+		extent = [-0.33, -0.95, 0.6, 0.6];
+		entity = new FixScreenPlaneEntity({ extent, textures: [colorRTTTex] });
+		rs.addEntity(entity);
+
+
+		// display blur drawing result
+		extent = [0.3, -0.95, 0.6, 0.6];
+		entity = new FixScreenPlaneEntity({ extent, textures: [blurRTTTex0] });
 		rs.addEntity(entity);
 	}
 	private initScene(): void {
-		this.applyBlurPass([0.1, 0.1, 0.1, 1.0], [-1, -1, 2, 2]);
+		this.applyBlurPass([0.0, 0.0, 0.03, 1.0], [-1, -1, 2, 2]);
+		this.applyMRTPass( [-1, -1, 2, 2] );
 	}
 
 	run(): void {

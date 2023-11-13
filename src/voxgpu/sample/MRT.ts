@@ -9,8 +9,6 @@ import vertMRT from "./shaders/floatAndColorMRT.vert.wgsl";
 import fragMRT from "./shaders/floatAndColorMRT.frag.wgsl";
 import fragReadNormal from "./shaders/floatNormalRead.frag.wgsl";
 
-import { WGRPassColorAttachment } from "../render/pipeline/WGRPassColorAttachment";
-import { CubeEntity } from "../entity/CubeEntity";
 import { TorusEntity } from "../entity/TorusEntity";
 
 const colorRTTTex = { diffuse: { uuid: "colorRTT", rttTexture: {} } };
@@ -42,7 +40,7 @@ export class MRT {
 		this.mFlag = 1;
 	}
 
-	private applyRTTPass(extent: number[]): void {
+	private applyMRTPass(extent: number[]): void {
 		let rs = this.mRscene;
 
 		const attachment0 = {
@@ -93,7 +91,7 @@ export class MRT {
 		rs.addEntity(entity);
 	}
 	private initScene(): void {
-		this.applyRTTPass( [-1, -1, 2, 2] );
+		this.applyMRTPass( [-1, -1, 2, 2] );
 	}
 	run(): void {
 		this.mRscene.run();
