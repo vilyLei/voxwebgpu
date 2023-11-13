@@ -124,7 +124,8 @@ class WGRUnit implements IWGRUnit {
 					st.ibuf = gt.ibuf;
 					rc.setIndexBuffer(gt.ibuf, gt.ibuf.dataFormat);
 				}
-				// console.log("runit drawIndexed this.etuuid: ", this.etuuid, gt.indexCount, gt.instanceCount);
+				// console.log("runit drawIndexed this.etuuid: ", this.etuuid,',', ', indexCount: ',gt.indexCount);
+				// console.log("runit drawIndexed this.etuuid: ", this.etuuid,',', gt.indexCount,',', gt.instanceCount,',', this.material);
 				// console.log("runit drawIndexed indexCount: ", gt.indexCount, ", gt.instanceCount: ", gt.instanceCount);
 				rc.drawIndexed(gt.indexCount, gt.instanceCount);
 			} else {

@@ -4,6 +4,7 @@ import { WGRenderUnitBlock } from "../render/WGRenderUnitBlock";
 import { IWGRPassNodeBuilder } from "../render/IWGRPassNodeBuilder";
 interface WGWaitEntityNode {
 
+	syncSort?: boolean;// = true;
 	entity: Entity3D;
 	rever: number;
 	builder: IWGRPassNodeBuilder;

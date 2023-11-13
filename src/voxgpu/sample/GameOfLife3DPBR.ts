@@ -83,7 +83,7 @@ export class GameOfLife3DPBR {
 		new RenderStatusDisplay(this.mRscene, true);
 		new MouseInteraction().initialize(rc, 0, false).setAutoRunning(true);
 	}
-	private mouseDown = (evt: MouseEvent): void => {};
+	private mouseDown = (evt: MouseEvent): void => {}
 
 	private createUniformValues(): { ufvs0: WGRBufferData[], ufvs1: WGRBufferData[] }[] {
 
@@ -138,7 +138,7 @@ export class GameOfLife3DPBR {
 
 		const compvb1 = {storage: { bufData: sharedData1, stride: 1, shared, layout: { visibility: 'vert_comp' } }};
 		const compvb2 = {storage: { bufData: sharedData0, stride: 1, shared, layout: { visibility: 'comp', access: "read_write" } }};
-		
+
 		const compv3 = {storage: { bufData: sharedData3, stride: 1, shared, layout: { visibility: 'comp', access: "read_write" }  }};
 
 		return [

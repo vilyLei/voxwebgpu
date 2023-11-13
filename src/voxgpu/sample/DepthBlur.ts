@@ -1,3 +1,4 @@
+import MouseEvent from "../event/MouseEvent";
 import { RendererScene } from "../rscene/RendererScene";
 import { FixScreenPlaneEntity } from "../entity/FixScreenPlaneEntity";
 import { WGRPassNodeGraph } from "../render/pass/WGRPassNodeGraph";
@@ -45,23 +46,30 @@ class PassGraph extends WGRPassNodeGraph {
 	}
 }
 
-export class PingpongBlur {
+export class DepthBlur {
 
 	private mRscene = new RendererScene();
 	private mGraph = new PassGraph();
-	private mBlurDensity = 2.0;
-	private uniformValues = [{ data: new Float32Array([512, 512, this.mBlurDensity, 0]) }];
+	private uniformValues = [{ data: new Float32Array([512, 512, 2.0, 0]) }];
 
 	initialize(): void {
-		console.log("PingpongBlur::initialize() ...");
+		console.log("DepthBlur::initialize() ...");
 
-		const multisampleEnabled = true;
-		const depthTestEnabled = false;
-		const rpassparam = { multisampleEnabled, depthTestEnabled };
+		let multisampleEnabled = true;
+		let depthTestEnabled = false;
+		let rpassparam = { multisampleEnabled, depthTestEnabled };
 		this.mRscene.initialize({ rpassparam });
 
+		this.initEvent();
 		this.initScene();
 	}
+
+	private initEvent(): void {
+		const rc = this.mRscene;
+		rc.addEventListener(MouseEvent.MOUSE_DOWN, this.mouseDown);
+	}
+	private mouseDown = (evt: MouseEvent): void => {}
+
 	private createMaterial(shadinguuid: string, textures: WGTextureDataDescriptor[], type: number): WGMaterial {
 		let shaderCodeSrc = {
 			vert: { code: vertWGSL, uuid: "vert" },

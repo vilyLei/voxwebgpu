@@ -72,7 +72,6 @@ export class ColorAttachmentReplace {
 		attachment0.clearValue = clearColor;
 		attachment1.clearValue = clearColor;
 
-
 		let rPass = rs.renderer.appendRenderPass({ separate: true, colorAttachments });
 
 		const diffuseTex = { diffuse: { url: "static/assets/huluwa.jpg", flipY: true } };

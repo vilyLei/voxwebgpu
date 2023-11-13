@@ -33,7 +33,7 @@ class WGRenderUnitBlock {
 
 	private mENodeMap: Map<number, WGREntityNode> = new Map();
 	private mMaterialMap: Map<number, WGMaterialDescripter> = new Map();
-	
+
 	hasMaterial(material: WGMaterialDescripter): boolean {
 		if(material.uid !== undefined) {
 			const map = this.mMaterialMap;
@@ -47,7 +47,7 @@ class WGRenderUnitBlock {
 	addEntityToBlock(entity: Entity3D, node: WGREntityNode): void {
 		entity.update();
 		node.rstate.__$rever++;
-		const runit = this.rbParam.roBuilder.createRUnit(entity, this.builder, node);
+		const runit = this.rbParam.roBuilder.createRUnit(entity, this.builder, node, this.uid);
 		runit.etuuid = entity.uuid + '-[block(' + this.uid+')]';
 		this.addRUnit(runit);
 	}

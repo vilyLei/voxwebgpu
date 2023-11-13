@@ -56,7 +56,7 @@ class WGRObjBuilder {
 			}
 		}
 	}
-	createRPass(entity: Entity3D, builder: IWGRPassNodeBuilder, primitive: WGRPrimitive, materialIndex = 0): IWGRUnit {
+	createRPass(entity: Entity3D, builder: IWGRPassNodeBuilder, primitive: WGRPrimitive, materialIndex = 0, blockUid = 0): IWGRUnit {
 
 		const material = entity.materials[materialIndex];
 
@@ -163,9 +163,10 @@ class WGRObjBuilder {
 			], material.uniformAppend);
 		}
 		ru.material = material;
+		ru.etuuid = entity.uuid + '-[block(' + blockUid+'), material('+material.shadinguuid+')]';
 		return ru;
 	}
-	createRUnit(entity: Entity3D, builder: IWGRPassNodeBuilder, node: WGREntityNode): IWGRUnit {
+	createRUnit(entity: Entity3D, builder: IWGRPassNodeBuilder, node: WGREntityNode, blockUid = 0): IWGRUnit {
 
 		const wgctx = builder.getWGCtx();
 
@@ -203,7 +204,8 @@ class WGRObjBuilder {
 		if (mts.length > 1) {
 			const passes: IWGRUnit[] = new Array(mts.length);
 			for (let i = 0; i < mts.length; ++i) {
-				passes[i] = this.createRPass(entity, builder, primitive, i);
+				passes[i] = this.createRPass(entity, builder, primitive, i, blockUid);
+				// passes[i].etuuid = entity.uuid + '-[block(' + blockUid+')]';
 			}
 			ru = new WGRUnit();
 			// console.log("xxxxxxxxx passes: ", passes);

@@ -6,7 +6,7 @@ import { WGRObjBuilder } from "../render/WGRObjBuilder";
 class WGEntityNodeMana {
 	private mNodes: WGWaitEntityNode[] = [];
 	private mEnabled = false;
-	
+
 	wgctx: WebGPUContext;
 	roBuilder: WGRObjBuilder;
 
@@ -31,7 +31,6 @@ class WGEntityNodeMana {
 				const node = ls[i];
 				const entity = node.entity;
 				if (node.rever == node.node.rstate.__$rever) {
-					// console.log("ppp 01");
 					if (!entity.isREnabled()) {
 						const ms = entity.materials;
 						if (ms) {
@@ -39,6 +38,10 @@ class WGEntityNodeMana {
 							for (let j = 0; j < ms.length; ++j) {
 								this.updateMaterial(ms[j]);
 							}
+						}
+						// 保证顺序
+						if(!(node.syncSort === false)) {
+							break;
 						}
 					}
 					if (entity.isREnabled()) {

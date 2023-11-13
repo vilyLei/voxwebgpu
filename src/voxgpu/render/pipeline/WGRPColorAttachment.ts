@@ -4,8 +4,10 @@ import { GPUTexture } from "../../gpu/GPUTexture";
 import { copyFromObjectValueWithKey } from "../../utils/CommonUtils";
 import { WGRPColorAttachmentImpl } from "./WGRPColorAttachmentImpl";
 import { WGRPassColorAttachment } from "./WGRPassColorAttachment";
-import { WGTextureDataDescriptor } from "../../texture/WGTextureDataDescriptor";
+import { RTTTextureDataDescriptor, WGTextureDataDescriptor } from "../../texture/WGTextureDataDescriptor";
 class WGRPColorAttachment implements WGRPColorAttachmentImpl {
+	private static sUid = 0;
+	private mUid = WGRPColorAttachment.sUid ++;
 	/**
 	 * A GPUTextureView object representing the texture subresource that will be output to for this color attachment.
 	 */
@@ -23,6 +25,13 @@ class WGRPColorAttachment implements WGRPColorAttachmentImpl {
 	 * Possible values are: "clear", "load"
 	 */
 	loadOp = "clear";
+	// mLoadOp = "clear";
+	// set loadOp(s: string) {
+	// 	this.mLoadOp = s;
+	// }
+	// get loadOp(): string {
+	// 	return this.mLoadOp;
+	// }
 	/**
 	 * Possible values are: "discard", "store"
 	 */
@@ -30,8 +39,11 @@ class WGRPColorAttachment implements WGRPColorAttachmentImpl {
 
 	param: WGRPassColorAttachment;
 	texture: WGTextureDataDescriptor;
+	// gpuTexture: GPUTexture;
+	// texSrcData: RTTTextureDataDescriptor;
 	set clearEnabled(enabled: boolean) {
 		this.loadOp = enabled ? "clear" : "load";
+		// console.log("xxx this.loadOp: ", this.loadOp, ', uid: ',this.mUid);
 	}
 	get clearEnabled(): boolean {
 		return this.loadOp === "clear";
@@ -39,12 +51,12 @@ class WGRPColorAttachment implements WGRPColorAttachmentImpl {
 	setParam(param: WGRPassColorAttachment): WGRPColorAttachment {
 		if (param) {
 			this.param = param;
-			this.texture = param.texture;
-			
+
 			let c = this.clearValue;
 			copyFromObjectValueWithKey(param, this);
 			c.setColor( this.clearValue );
 			this.clearValue = c;
+			this.texture = param.texture;
 		}
 		return this;
 	}
