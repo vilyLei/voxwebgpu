@@ -1,14 +1,14 @@
 import { WGRUniform } from "./uniform/WGRUniform";
 import { WGRPrimitive } from "./WGRPrimitive";
 import { WGRUniformValue } from "./uniform/WGRUniformValue";
-import { IWGRPipelineContext } from "./pipeline/IWGRPipelineContext";
+import { WGRPipelineContextImpl } from "./pipeline/WGRPipelineContextImpl";
 import IAABB from "../cgeom/IAABB";
 import { WGRUnitState } from "./WGRUnitState";
 import { IWGMaterial } from "../material/IWGMaterial";
 
 interface IWGRUnit {
 	uniforms?: WGRUniform[];
-	pipelinectx: IWGRPipelineContext;
+	pipelinectx: WGRPipelineContextImpl;
 	geometry?: WGRPrimitive;
 	bounds: IAABB;
 	etuuid?: string;

@@ -1,7 +1,7 @@
 import { WebGPUContext } from "../gpu/WebGPUContext";
 import { WGRPipelineContextDefParam, WGRPassParam, WGRenderPassBlock } from "../render/WGRenderPassBlock";
 import { GPUCanvasConfiguration } from "../gpu/GPUCanvasConfiguration";
-import { IWGRPassWrapper } from "../render/pipeline/IWGRPassWrapper";
+import { WGRPassWrapperImpl } from "../render/pipeline/WGRPassWrapperImpl";
 import Vector3 from "../math/Vector3";
 
 interface WGCameraParam {
@@ -25,7 +25,7 @@ interface WGRendererConfig {
 class RPassInfoParam {
 	blockIndex = 0;
 	rparam: WGRPassParam;
-	ref: IWGRPassWrapper;
+	ref: WGRPassWrapperImpl;
 }
 
 function checkConfig(config?: WGRendererConfig): WGRendererConfig {

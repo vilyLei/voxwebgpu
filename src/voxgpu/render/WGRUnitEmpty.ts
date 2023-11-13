@@ -1,7 +1,7 @@
 import { WGRUniform } from "./uniform/WGRUniform";;
 import { WGRPrimitive } from "./WGRPrimitive";
 import { WGRUniformValue } from "./uniform/WGRUniformValue";
-import { IWGRPipelineContext } from "./pipeline/IWGRPipelineContext";
+import { WGRPipelineContextImpl } from "./pipeline/WGRPipelineContextImpl";
 import { IWGRUnit } from "./IWGRUnit";
 import IAABB from "../cgeom/IAABB";
 import { WGRUnitState } from "./WGRUnitState";
@@ -12,7 +12,7 @@ import { IWGMaterial } from "../material/IWGMaterial";
  */
 class WGRUnitEmpty implements IWGRUnit {
 	uniforms?: WGRUniform[];
-	pipelinectx: IWGRPipelineContext;
+	pipelinectx: WGRPipelineContextImpl;
 	geometry: WGRPrimitive;
 
 	etuuid?: string;

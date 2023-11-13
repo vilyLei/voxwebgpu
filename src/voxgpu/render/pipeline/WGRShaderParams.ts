@@ -1,6 +1,7 @@
 import { GPUFragmentState } from "../../gpu/GPUFragmentState";
 import { GPUComputeState } from "../../gpu/GPUComputeState";
 import { GPUShaderModule } from "../../gpu/GPUShaderModule";
+import { GPUColorTargetState } from "../../gpu/GPUColorTargetState";
 
 interface WGRShadeSrcParam {
 	code?: string;
@@ -31,7 +32,7 @@ function findShaderEntryPoint(keyStr: string, src: string): string {
 
 	return src.slice(i, j).trim();
 }
-function createFragmentState(shaderModule?: GPUShaderModule): GPUFragmentState {
+function createFragmentState(shaderModule?: GPUShaderModule, targetStates?: GPUColorTargetState[]): GPUFragmentState {
 	const st = {
 		module: shaderModule,
 		entryPoint: "main",
@@ -41,6 +42,9 @@ function createFragmentState(shaderModule?: GPUShaderModule): GPUFragmentState {
 			}
 		]
 	} as GPUFragmentState;
+	if(targetStates !== undefined && targetStates.length > 0) {
+		st.targets = targetStates;
+	}
 	return st;
 }
 function createComputeState(shaderModule?: GPUShaderModule): GPUComputeState {

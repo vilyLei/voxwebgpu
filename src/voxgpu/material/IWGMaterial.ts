@@ -1,9 +1,8 @@
 import { WGImageTextureData, WGTextureWrapper } from "../texture/WGTextureWrapper";
 
 import { WGRPipelineContextDefParam, WGRShderSrcType } from "../render/pipeline/WGRPipelineCtxParams";
-import { VtxPipelinDescParam, IWGRPipelineContext } from "../render/pipeline/IWGRPipelineContext";
+import { VtxPipelinDescParam, WGRPipelineContextImpl } from "../render/pipeline/WGRPipelineContextImpl";
 import { WGMaterialDescripter } from "./WGMaterialDescripter";
-import { WGRUniformValue } from "../render/uniform/WGRUniformValue";
 import { IWGMaterialGraph } from "./IWGMaterialGraph";
 
 interface IWGMaterial extends WGMaterialDescripter {
@@ -32,9 +31,9 @@ interface IWGMaterial extends WGMaterialDescripter {
 	addTextureWithDatas(datas: WGImageTextureData[], shdVarNames?: string[]): void;
 
 	isREnabled(): boolean;
-	getRCtx(): IWGRPipelineContext;
+	getRCtx(): WGRPipelineContextImpl;
 	setDescriptor(descriptor: WGMaterialDescripter): void;
-	initialize(pipelineCtx: IWGRPipelineContext): void;
+	initialize(pipelineCtx: WGRPipelineContextImpl): void;
 	destroy(): void;
 }
 export { IWGMaterial };

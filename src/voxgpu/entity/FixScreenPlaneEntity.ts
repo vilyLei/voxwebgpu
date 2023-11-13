@@ -83,7 +83,7 @@ class FixScreenPlaneEntity extends FixScreenEntity {
 					vertShaderSrc: { code: vertWGSL, uuid: "vertShdCode" },
 					fragShaderSrc: { code: texTotal > 0 ? texFragWGSL : fragWGSL, uuid: frag_uuid }
 				};
-			
+
 			let b = param.depthWriteEnabled;
 			b = b === undefined ? false : b;
 			let f = param.faceCullMode;
@@ -97,8 +97,9 @@ class FixScreenPlaneEntity extends FixScreenEntity {
 				blendModes: bl
 			};
 
+			let shadinguuid = param.shadinguuid !== undefined ? param.shadinguuid : "FixScreenPlaneEntity-material-tex" + texTotal;
 			const material = new WGMaterial({
-				shadinguuid: param.shadinguuid !== undefined ? param.shadinguuid : "FixScreenPlaneEntity-material-tex" + texTotal,
+				shadinguuid,
 				shaderCodeSrc,
 				pipelineDefParam
 			});

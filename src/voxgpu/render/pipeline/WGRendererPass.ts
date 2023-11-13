@@ -8,13 +8,13 @@ import { GPUTexture } from "../../gpu/GPUTexture";
 import { GPUTextureDescriptor } from "../../gpu/GPUTextureDescriptor";
 import { GPUTextureView } from "../../gpu/GPUTextureView";
 import { WebGPUContext } from "../../gpu/WebGPUContext";
-import { WGRPassParam, IWGRendererPass } from "./IWGRendererPass";
+import { WGRPassParam, WGRendererPassImpl } from "./WGRendererPassImpl";
 import { WGRPColorAttachment } from "./WGRPColorAttachment";
 import { WGRPDepthStencilAttachment } from "./WGRPDepthStencilAttachment";
 import { texDescriptorFilter } from "../../texture/WGTextureDataDescriptor";
 import { WGRPassColorAttachment } from "./WGRPassColorAttachment";
 
-class WGRendererPass implements IWGRendererPass {
+class WGRendererPass implements WGRendererPassImpl {
 	private mWGCtx: WebGPUContext;
 	private mParam: WGRPassParam;
 	private mDepthTexture: GPUTexture;
@@ -82,11 +82,12 @@ class WGRendererPass implements IWGRendererPass {
 							const rtt = ctx.texture.createColorRTTTexture({format: td.format});
 							rttData.texture = rtt;
 							rttData.textureView = rtt.createView();
-							// colorAtt.texSrcData = rttData;
 							// colorAtt.gpuTexture = rtt;
-							// colorAtt.view = rtt.createView();
+							colorAtt.textureFormat = rtt.format;
 							colorAtt.view = rttData.textureView;
 							colorAtt.view.label = td.uuid;
+							console.log("动态创建一个 color rtt gpu texture instance, colorAtt.textureFormat: ", colorAtt.textureFormat);
+							// console.log("动态创建一个 color rtt gpu texture instance, view: ", colorAtt.view);
 							console.log("动态创建一个 color rtt gpu texture instance, td: ", td);
 						}else {
 							colorAtt.view = rttData.textureView;
@@ -226,13 +227,18 @@ class WGRendererPass implements IWGRendererPass {
 						// console.log("run a rpass, this.separate: ", this.separate,", multisampleEnabled: ", multisampleEnabled);
 						const cts = this.mColorAttachments;
 						if(cts !== undefined) {
-							const p = colorT.param;
-							const t = cts[0];
-							if (!colorT.view || p !== t || colorT.texture !== t.texture) {
-								if(t.texture !== undefined) {
-									colorT.view = null;
-									this.updateColorAttachmentView( colorT, t, p === t );
-									this.clearColor.setColor(colorT.clearValue);
+							for(let i = 0; i < pcs.length; ++i) {
+								const ct = pcs[i];
+								const p = ct.param;
+								const t = cts[i];
+								if (!ct.view || p !== t || ct.texture !== t.texture) {
+									if(t.texture !== undefined) {
+										ct.view = null;
+										this.updateColorAttachmentView( ct, t, p === t );
+										if(i < 1 && p !== t) {
+											this.clearColor.setColor(ct.clearValue);
+										}
+									}
 								}
 							}
 						}
@@ -248,8 +254,11 @@ class WGRendererPass implements IWGRendererPass {
 				let colorAttachments = this.passColors;
 				// for test
 				// if (this.separate) {
-				// 	const ca = colorAttachments[0];
-				// 	console.log("xxx xxx ca.loadOp: ", ca.loadOp, ', view: ',ca.view, ', ca: ', ca);
+				// 	// const ca = colorAttachments[0];
+				// 	let ca = colorAttachments[0];
+				// 	console.log("xxx xxx ca0: ", ca);
+				// 	ca = colorAttachments[1];
+				// 	console.log("xxx xxx ca1: ", ca);
 				// }
 				let renderPassDescriptor: GPURenderPassDescriptor;
 				if (dsAtt) {
@@ -285,4 +294,4 @@ class WGRendererPass implements IWGRendererPass {
 		this.mColorAttachments = null;
 	}
 }
-export { IWGRendererPass, WGRPassParam, WGRendererPass };
+export { WGRendererPassImpl, WGRPassParam, WGRendererPass };

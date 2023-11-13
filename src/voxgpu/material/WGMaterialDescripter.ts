@@ -1,7 +1,7 @@
 
 import { WGRPipelineContextDefParam, WGRShderSrcType } from "../render/pipeline/WGRPipelineCtxParams";
-import { VtxPipelinDescParam } from "../render/pipeline/IWGRPipelineContext";
-import { IWGRMaterialPassView } from "../render/pipeline/IWGRMaterialPassView";
+import { VtxPipelinDescParam } from "../render/pipeline/WGRPipelineContextImpl";
+import { WGRMaterialPassViewImpl } from "../render/pipeline/WGRMaterialPassViewImpl";
 import { WGRBufferData } from "../render/buffer/WGRBufferValueParam";
 
 interface WGMaterialDescripter {
@@ -10,7 +10,7 @@ interface WGMaterialDescripter {
 	shaderCodeSrc?: WGRShderSrcType;
 	pipelineVtxParam?: VtxPipelinDescParam;
 	pipelineDefParam?: WGRPipelineContextDefParam;
-	rpass?: IWGRMaterialPassView;
+	rpass?: WGRMaterialPassViewImpl;
 	/**
 	 * material uniforms append to pipeline, or not
 	 */

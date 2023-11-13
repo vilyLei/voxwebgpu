@@ -4,10 +4,10 @@ import { GPUTexture } from "../../gpu/GPUTexture";
 import { copyFromObjectValueWithKey } from "../../utils/CommonUtils";
 import { WGRPColorAttachmentImpl } from "./WGRPColorAttachmentImpl";
 import { WGRPassColorAttachment } from "./WGRPassColorAttachment";
-import { RTTTextureDataDescriptor, WGTextureDataDescriptor } from "../../texture/WGTextureDataDescriptor";
+import { WGTextureDataDescriptor } from "../../texture/WGTextureDataDescriptor";
 class WGRPColorAttachment implements WGRPColorAttachmentImpl {
-	private static sUid = 0;
-	private mUid = WGRPColorAttachment.sUid ++;
+	// private static sUid = 0;
+	// private mUid = WGRPColorAttachment.sUid ++;
 	/**
 	 * A GPUTextureView object representing the texture subresource that will be output to for this color attachment.
 	 */
@@ -32,8 +32,9 @@ class WGRPColorAttachment implements WGRPColorAttachmentImpl {
 
 	param: WGRPassColorAttachment;
 	texture: WGTextureDataDescriptor;
+	textureFormat = 'bgra8unorm';
 	// gpuTexture: GPUTexture;
-	// texSrcData: RTTTextureDataDescriptor;
+
 	set clearEnabled(enabled: boolean) {
 		this.loadOp = enabled ? "clear" : "load";
 		// console.log("xxx this.loadOp: ", this.loadOp, ', uid: ',this.mUid);
@@ -50,6 +51,7 @@ class WGRPColorAttachment implements WGRPColorAttachmentImpl {
 			c.setColor( this.clearValue );
 			this.clearValue = c;
 			this.texture = param.texture;
+			console.log("xxx setParam(), this.loadOp: ", this.loadOp, ', clearValue: ', this.clearValue);
 		}
 		return this;
 	}

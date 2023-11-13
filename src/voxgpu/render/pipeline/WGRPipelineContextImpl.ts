@@ -3,7 +3,7 @@ import { GPUBuffer } from "../../gpu/GPUBuffer";
 import { GPURenderPipeline } from "../../gpu/GPURenderPipeline";
 import { GPUComputePipeline } from "../../gpu/GPUComputePipeline";
 import { IWGRUniformContext } from "../uniform/IWGRUniformContext";
-import { IWGRendererPass } from "./IWGRendererPass";
+import { WGRendererPassImpl } from "./WGRendererPassImpl";
 import { WGRBufferVisibility } from "../buffer/WGRBufferVisibility";
 import { WGRBufferData } from "../buffer/WGRBufferData";
 import { WGRBindGroupContext } from "./WGRBindGroupContext";
@@ -23,9 +23,9 @@ type BindGroupDataParamType = { index: number, buffer: GPUBuffer, bufferSize: nu
 type VtxPipelinDescParam = { vertex: { buffers?: GPUBuffer[], attributeIndicesArray: number[][] } };
 type UniformBufferParam = { sizes: number[], usage: number, arrayStride?:number };
 
-interface IWGRPipelineContext {
+interface WGRPipelineContextImpl {
 	bindGroupCtx: WGRBindGroupContext;
-	rpass: IWGRendererPass;
+	rpass: WGRendererPassImpl;
 	pipeline?: GPURenderPipeline;
 	comppipeline?: GPUComputePipeline;
 	readonly uniformCtx: IWGRUniformContext;
@@ -34,4 +34,4 @@ interface IWGRPipelineContext {
 	getWGCtx(): WebGPUContext;
 
 }
-export { BindGroupDataParamType, VtxDescParam, VtxPipelinDescParam, BufDataParamType, UniformBufferParam, IWGRPipelineContext };
+export { BindGroupDataParamType, VtxDescParam, VtxPipelinDescParam, BufDataParamType, UniformBufferParam, WGRPipelineContextImpl };

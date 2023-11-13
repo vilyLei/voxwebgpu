@@ -1,8 +1,8 @@
 
 import { GPUCommandBuffer } from "../../gpu/GPUCommandBuffer";
-import { WGRCmdWrapper, IWGRPassWrapper } from "../pipeline/IWGRPassWrapper";
+import { WGRCmdWrapper, WGRPassWrapperImpl } from "../pipeline/WGRPassWrapperImpl";
 class WGRPassNodeGraph {
-    passes: IWGRPassWrapper[] = null;    
+    passes: WGRPassWrapperImpl[] = null;
 	cmdWrapper: WGRCmdWrapper = {rcommands: [] as GPUCommandBuffer[]};
     constructor(){}
     runBegin(): void {

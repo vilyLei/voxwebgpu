@@ -1,7 +1,7 @@
 import { GPUSampler } from "../../gpu/GPUSampler";
 import { GPUTextureView } from "../../gpu/GPUTextureView";
 import { UniformVerType, WGRUniform } from "./WGRUniform";
-import { BindGroupDataParamType, BufDataParamType, UniformBufferParam, IWGRPipelineContext } from "../pipeline/IWGRPipelineContext";
+import { BindGroupDataParamType, BufDataParamType, UniformBufferParam, WGRPipelineContextImpl } from "../pipeline/WGRPipelineContextImpl";
 import { WGRUniformValue } from "./WGRUniformValue";
 import { WGRUniformBufObj, WGRUniformParam, WGRUniformWrapper } from "./IWGRUniformContext";
 import { GPUBindGroupDescriptor } from "../../gpu/GPUBindGroupDescriptor";
@@ -175,7 +175,7 @@ class WGRUniformCtxInstance {
 					// console.log("VVVVVVVVVVVV bufDataShared: ", bufDataShared, ", dp.shared: ", dp.shared);
 					if (ufv.shared || bufDataShared) {
 						let bufuid = (bufDataShared && bufData.uid !== undefined ? bufData.uid : -1);
-												
+
 						let vuid = ufv.shared ? ufv.uid : bufuid;
 						// console.log("VVVVVVVVVVVV shared: ", dp.shared,", vuid: ", vuid, ", bufuid: ", bufuid, ", byteLength: ", ufv.byteLength);
 						if (store.hasWithUid(vuid)) {
@@ -318,7 +318,7 @@ class WGRUniformCtxInstance {
 		}
 		const index = this.getFreeIndex();
 		// console.log("WGRUniformCtxInstance::createUniform(), index: ", index, ", mUid: ", this.mUid);
-		
+
 		const u = new WGRUniform( this );
 		u.layoutName = layoutName;
 		u.groupIndex = groupIndex;

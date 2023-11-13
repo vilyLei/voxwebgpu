@@ -12,7 +12,7 @@ import AABB from "../cgeom/AABB";
 import { WGRUnitState } from "../render/WGRUnitState";
 import { WGRShderSrcType } from "../material/WGMaterialDescripter";
 import { WGRBufferData } from "../render/buffer/WGRBufferData";
-import { IWGRMaterialPassView } from "../render/pipeline/IWGRMaterialPassView";
+import { WGRMaterialPassViewImpl } from "../render/pipeline/WGRMaterialPassViewImpl";
 
 interface Entity3DParam {
 	cameraViewing?: boolean;
@@ -30,7 +30,7 @@ interface Entity3DParam {
 	// uniformValueMap?: { [key: string]: WGRUniformValue }
 	shadinguuid?: string;
 	instanceCount?: number;
-	rpasses?: IWGRMaterialPassView[];
+	rpasses?: WGRMaterialPassViewImpl[];
 }
 function getUniformValueFromParam(key: string, param: Entity3DParam, defaultV?: WGRBufferData ): WGRBufferData {
 	const ufvs = param.uniformValues;

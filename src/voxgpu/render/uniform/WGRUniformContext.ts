@@ -1,7 +1,7 @@
 import { GPUSampler } from "../../gpu/GPUSampler";
 import { GPUTextureView } from "../../gpu/GPUTextureView";
 import { WGRUniform } from "./WGRUniform";
-import { BufDataParamType } from "../pipeline/IWGRPipelineContext";
+import { BufDataParamType } from "../pipeline/WGRPipelineContextImpl";
 import { WGRUniformParam, WGRUniformTexParam, IWGRUniformContext } from "./IWGRUniformContext";
 import { GPUBindGroupLayout } from "../../gpu/GPUBindGroupLayout";
 import { SharedUniformObj, WGRUniformCtxInstance } from "./WGRUniformCtxInstance";
@@ -102,7 +102,7 @@ class WGRUniformContext implements IWGRUniformContext {
 				const vuid = v.uid;
 				const arrayStride = v.arrayStride;
 				const visibility = v.visibility.clone();
-				
+
 				// console.log(v, ", B1 v instanceof WGRBufferValue: ", v instanceof WGRBufferValue);
 				let param = {
 					arrayStride,

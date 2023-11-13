@@ -2,10 +2,10 @@ import { WGRUniform } from "./uniform/WGRUniform";
 import { GPUBuffer } from "../gpu/GPUBuffer";
 import { WGRPrimitive } from "./WGRPrimitive";
 // import { WGRUniformValue } from "./uniform/WGRUniformValue";
-import { IWGRPipelineContext } from "./pipeline/IWGRPipelineContext";
+import { WGRPipelineContextImpl } from "./pipeline/WGRPipelineContextImpl";
 import { IWGRUnit } from "./IWGRUnit";
 import IAABB from "../cgeom/IAABB";
-import { IWGRendererPass } from "../render/pipeline/IWGRendererPass";
+import { WGRendererPassImpl } from "./pipeline/WGRendererPassImpl";
 import { WGRUnitState } from "./WGRUnitState";
 import { IWGMaterial } from "../material/IWGMaterial";
 import { GPUComputePassEncoder } from "../gpu/GPUComputePassEncoder";
@@ -28,7 +28,7 @@ class WGRCompUnit implements IWGRUnit {
 
 	etuuid?: string;
 
-	pipelinectx: IWGRPipelineContext;
+	pipelinectx: WGRPipelineContextImpl;
 
 	bounds: IAABB;
 
@@ -39,7 +39,7 @@ class WGRCompUnit implements IWGRUnit {
 
 	enabled = true;
 	passes: IWGRUnit[];
-	rp: IWGRendererPass;
+	rp: WGRendererPassImpl;
 	material: IWGMaterial;
 
 	workcounts = __$workcounts;
@@ -52,7 +52,7 @@ class WGRCompUnit implements IWGRUnit {
 	// 	r.rp = this.rp;
 	// 	return r;
 	// }
-	
+
 	getRF(): boolean {
 		return this.enabled && this.st.isDrawable();
 	}

@@ -7,8 +7,8 @@ import {
 } from "../texture/WGTextureWrapper";
 
 import { WGRPipelineContextDefParam, WGRShderSrcType } from "../render/pipeline/WGRPipelineCtxParams";
-import { VtxPipelinDescParam, IWGRPipelineContext } from "../render/pipeline/IWGRPipelineContext";
-import { IWGRMaterialPassView } from "../render/pipeline/IWGRMaterialPassView";
+import { VtxPipelinDescParam, WGRPipelineContextImpl } from "../render/pipeline/WGRPipelineContextImpl";
+import { WGRMaterialPassViewImpl } from "../render/pipeline/WGRMaterialPassViewImpl";
 import { WGMaterialDescripter } from "./WGMaterialDescripter";
 import { IWGMaterial } from "./IWGMaterial";
 import { IWGMaterialGraph } from "./IWGMaterialGraph";
@@ -18,7 +18,7 @@ class WGMaterial implements IWGMaterial {
 	private static sUid = 0;
 	private mUid = WGMaterial.sUid ++;
 
-	private mRCtx: IWGRPipelineContext;
+	private mRCtx: WGRPipelineContextImpl;
 
 	private mREnabled = false;
 	name?: string;
@@ -30,7 +30,7 @@ class WGMaterial implements IWGMaterial {
 	shaderCodeSrc?: WGRShderSrcType;
 	pipelineVtxParam?: VtxPipelinDescParam;
 	pipelineDefParam?: WGRPipelineContextDefParam;
-	rpass: IWGRMaterialPassView = {rpass: { index: 0 } };
+	rpass: WGRMaterialPassViewImpl = {rpass: { index: 0 } };
 
 	/**
 	 * material uniforms append to pipeline, or not
@@ -113,7 +113,7 @@ class WGMaterial implements IWGMaterial {
 		this.mREnabled = true;
 		return this.mREnabled;
 	}
-	getRCtx(): IWGRPipelineContext {
+	getRCtx(): WGRPipelineContextImpl {
 		return this.mRCtx;
 	}
 	setDescriptor(descriptor: WGMaterialDescripter): void {
@@ -130,7 +130,7 @@ class WGMaterial implements IWGMaterial {
 			if (d.instanceCount !== undefined) this.instanceCount = d.instanceCount;
 		}
 	}
-	initialize(pipelineCtx: IWGRPipelineContext): void {
+	initialize(pipelineCtx: WGRPipelineContextImpl): void {
 		if (!this.mRCtx) {
 			if (!pipelineCtx) {
 				throw Error("pipelineCtx is undefined.");

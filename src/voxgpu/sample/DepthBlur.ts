@@ -7,8 +7,11 @@ import { WGTextureDataDescriptor, WGMaterial } from "../material/WGMaterial";
 import vertWGSL from "../material/shader/wgsl/fixScreenPlane.vert.wgsl";
 import blurHWGSL from "../material/shader/wgsl/blurHTex.frag.wgsl";
 import blurVWGSL from "../material/shader/wgsl/blurVTex.frag.wgsl";
+import { WGRPassColorAttachment } from "../render/pipeline/WGRPassColorAttachment";
 
-const rttTex0 = { diffuse: { uuid: "rtt0", rttTexture: {} } };
+//format: 'rgba16float'
+const rttTex0 = { diffuse: { uuid: "rtt0", rttTexture: {}, format: 'rgba16float' } };
+// const rttTex0 = { diffuse: { uuid: "rtt0", rttTexture: {} } };
 const rttTex1 = { diffuse: { uuid: "rtt1", rttTexture: {} } };
 const rtts = [rttTex0, rttTex1];
 const attachment = {
@@ -16,7 +19,7 @@ const attachment = {
 	clearValue: [] as ColorDataType,
 	loadOp: "clear",
 	storeOp: "store"
-};
+} as WGRPassColorAttachment;
 const colorAttachments = [attachment];
 
 class PassGraph extends WGRPassNodeGraph {
@@ -32,15 +35,24 @@ class PassGraph extends WGRPassNodeGraph {
 		const entity = this.blurEntity;
 		let ms = entity.materials;
 
-		for (let i = 0; i < 9; ++i) {
+		// for (let i = 0; i < 10; ++i) {
+		// 	const ia = i % 2;
+		// 	const ib = (i + 1) % 2;
+		// 	pass.colorAttachments[0].clearEnabled = i < 1;
+		// 	this.srcEntity.visible = i < 1;
+		// 	this.blurEntity.visible = i > 0;
+		// 	attachment.texture = rtts[ia];
+		// 	ms[ia].visible = false;
+		// 	ms[ib].visible = true;
+		// 	pass.render();
+		// }
+		for (let i = 0; i < 1; ++i) {
 			const ia = i % 2;
-			const ib = (i + 1) % 2;
 			pass.colorAttachments[0].clearEnabled = i < 1;
 			this.srcEntity.visible = i < 1;
 			this.blurEntity.visible = i > 0;
 			attachment.texture = rtts[ia];
 			ms[ia].visible = false;
-			ms[ib].visible = true;
 			pass.render();
 		}
 	}
@@ -95,12 +107,13 @@ export class DepthBlur {
 
 		attachment.clearValue = clearColor;
 
-		let rPass = rs.renderer.appendRenderPass({ separate: true, colorAttachments });
+		let rPass = rs.createRenderPass({ separate: true, colorAttachments });
 		graph.passes = [rPass];
 
 		const diffuseTex = { diffuse: { url: "static/assets/huluwa.jpg", flipY: true } };
 
-		let materials = [this.createMaterial("shd-00", [rttTex0], 0), this.createMaterial("shd-01", [rttTex1], 1)];
+		// let materials = [this.createMaterial("shd-00", [rttTex0], 0), this.createMaterial("shd-01", [rttTex1], 1)];
+		let materials = [this.createMaterial("shd-00", [rttTex0], 0)];
 
 		let rttEntity = new FixScreenPlaneEntity({ extent: [-1, -1, 2, 2], textures: [diffuseTex], shadinguuid: "srcEntityMaterial" });
 		rttEntity.uuid = "src-entity";

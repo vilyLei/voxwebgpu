@@ -1,13 +1,13 @@
 
 import { Entity3D } from "../../entity/Entity3D";
 import { IWGRenderPassNode } from "../IWGRenderPassNode";
-import { WGRCmdWrapper, IWGRPassWrapper } from "./IWGRPassWrapper";
+import { WGRCmdWrapper, WGRPassWrapperImpl } from "./WGRPassWrapperImpl";
 import { WGRPColorAttachmentImpl } from "../pipeline/WGRPColorAttachmentImpl";
 import { GPUCommandBuffer } from "../../gpu/GPUCommandBuffer";
 /**
  * render pass reference
  */
-class WGRPassWrapper implements IWGRPassWrapper {
+class WGRPassWrapper implements WGRPassWrapperImpl {
 	index?: number;
 	name?: string;
 	node?: IWGRenderPassNode;
@@ -24,13 +24,13 @@ class WGRPassWrapper implements IWGRPassWrapper {
 		}
 		return undefined;
 	}
-	addEntity(entity: Entity3D): IWGRPassWrapper {
+	addEntity(entity: Entity3D): WGRPassWrapperImpl {
 		if(this.node) {
 			this.node.addEntity( entity );
 		}
 		return this;
 	}
-	setColorAttachmentClearEnabledAt(enabled: boolean, index: number = 0): IWGRPassWrapper {
+	setColorAttachmentClearEnabledAt(enabled: boolean, index: number = 0): WGRPassWrapperImpl {
 		if(this.node) {
 			this.node.setColorAttachmentClearEnabledAt(enabled, index);
 		}

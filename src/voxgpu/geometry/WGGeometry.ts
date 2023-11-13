@@ -1,6 +1,6 @@
 import AABB from "../cgeom/AABB";
 import { GPUBuffer } from "../gpu/GPUBuffer";
-import { VtxPipelinDescParam } from "../render/pipeline/IWGRPipelineContext";
+import { VtxPipelinDescParam } from "../render/pipeline/WGRPipelineContextImpl";
 interface WGGeomAttributeParam {
 	shdVarName?: string;
 	data?: NumberArrayViewType;

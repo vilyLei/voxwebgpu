@@ -1,7 +1,7 @@
 import { GPUSampler } from "../../gpu/GPUSampler";
 import { GPUTextureView } from "../../gpu/GPUTextureView";
 import { WGRUniform } from "./WGRUniform";
-import { BindGroupDataParamType, BufDataParamType } from "../pipeline/IWGRPipelineContext";
+import { BindGroupDataParamType, BufDataParamType } from "../pipeline/WGRPipelineContextImpl";
 import { WGRUniformValue } from "./WGRUniformValue";
 import { GPUBuffer } from "../../gpu/GPUBuffer";
 import { WGRBufferData } from "../../render/buffer/WGRBufferData";

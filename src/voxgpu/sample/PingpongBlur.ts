@@ -28,18 +28,21 @@ class PassGraph extends WGRPassNodeGraph {
 	run(): void {
 		let pass = this.passes[0];
 
+		const srcEntity = this.srcEntity;
 		const entity = this.blurEntity;
 		let ms = entity.materials;
 
 		for (let i = 0; i < 9; ++i) {
 			const ia = i % 2;
 			const ib = (i + 1) % 2;
+			srcEntity.visible = i < 1;
+			entity.visible = !srcEntity.visible;
+
 			pass.colorAttachments[0].clearEnabled = i < 1;
-			this.srcEntity.visible = i < 1;
-			this.blurEntity.visible = i > 0;
 			attachment.texture = rtts[ia];
+
 			ms[ia].visible = false;
-			ms[ib].visible = true;
+			ms[ib].visible = !ms[ia].visible;
 			pass.render();
 		}
 	}
@@ -87,15 +90,14 @@ export class PingpongBlur {
 
 		attachment.clearValue = clearColor;
 
-		let rPass = rs.renderer.appendRenderPass({ separate: true, colorAttachments });
+		let rPass = rs.createRenderPass({ separate: true, colorAttachments });
 		graph.passes = [rPass];
 
 		const diffuseTex = { diffuse: { url: "static/assets/huluwa.jpg", flipY: true } };
 
 		let materials = [this.createMaterial("shd-00", [rttTex0], 0), this.createMaterial("shd-01", [rttTex1], 1)];
 
-		let rttEntity = new FixScreenPlaneEntity({ extent: [-1, -1, 2, 2], textures: [diffuseTex], shadinguuid: "srcEntityMaterial" });
-		rttEntity.uuid = "src-entity";
+		let rttEntity = new FixScreenPlaneEntity({ extent: [-1, -1, 2, 2], textures: [diffuseTex] });
 		rPass.addEntity(rttEntity);
 		graph.srcEntity = rttEntity;
 
@@ -109,14 +111,13 @@ export class PingpongBlur {
 
 		// display blur rendering result
 		extent = [-0.8, -0.8, 1.6, 1.6];
-		entity = new FixScreenPlaneEntity({ extent, flipY: true, textures: [rttTex0], shadinguuid: "smallImgMaterial" });
+		entity = new FixScreenPlaneEntity({ extent, flipY: true, textures: [rttTex0] });
 		entity.uuid = "blur-big-img";
 		rs.addEntity(entity);
 
 		// display origin image
 		extent = [-0.95, -0.95, 0.6, 0.6];
-		entity = new FixScreenPlaneEntity({ extent, flipY: false, textures: [diffuseTex], shadinguuid: "smallImgMaterial" });
-		entity.uuid = "small-img";
+		entity = new FixScreenPlaneEntity({ extent, flipY: false, textures: [diffuseTex] });
 		rs.addEntity(entity);
 	}
 	private initScene(): void {

@@ -5,7 +5,7 @@ import { WebGPUContext } from "../gpu/WebGPUContext";
 import { WGRPrimitive } from "../render/WGRPrimitive";
 
 import BoxGeometry from "./primitive/BoxGeometry";
-import { VtxPipelinDescParam } from "../render/pipeline/IWGRPipelineContext";
+import { VtxPipelinDescParam } from "../render/pipeline/WGRPipelineContextImpl";
 import AABB from "../cgeom/AABB";
 import RectPlaneGeometry from "./primitive/RectPlaneGeometry";
 import SphereGeometry from "./primitive/SphereGeometry";

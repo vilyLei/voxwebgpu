@@ -8,12 +8,12 @@ import { GPURenderPipelineEmpty } from "../../gpu/GPURenderPipelineEmpty";
 import { GPUSampler } from "../../gpu/GPUSampler";
 import { GPUTextureView } from "../../gpu/GPUTextureView";
 import { WebGPUContext } from "../../gpu/WebGPUContext";
-import { BindGroupDataParamType, BufDataParamType, VtxDescParam, VtxPipelinDescParam, UniformBufferParam, IWGRPipelineContext } from "./IWGRPipelineContext";
+import { BindGroupDataParamType, BufDataParamType, VtxDescParam, VtxPipelinDescParam, UniformBufferParam, WGRPipelineContextImpl } from "./WGRPipelineContextImpl";
 import { WGRPipelineCtxParams } from "./WGRPipelineCtxParams";
 import { WGRPipelineShader } from "./WGRPipelineShader";
 import { WGRUniformParam, WGRUniformContext } from "../uniform/WGRUniformContext";
 import { GPUQueue } from "../../gpu/GPUQueue";
-import { IWGRendererPass } from "./IWGRendererPass";
+import { WGRendererPassImpl } from "./WGRendererPassImpl";
 import { GPUBindGroupLayoutDescriptor } from "../../gpu/GPUBindGroupLayoutDescriptor";
 import { GPUComputePipeline } from "../../gpu/GPUComputePipeline";
 import { GPUPipelineLayout } from "../../gpu/GPUPipelineLayout";
@@ -28,7 +28,7 @@ class WGRBindGroupContext {
 	private mBGLayouts: GPUBindGroupLayout[] = new Array(8);
 
 
-	rpass: IWGRendererPass;
+	rpass: WGRendererPassImpl;
 	pipeline?: GPURenderPipeline = new GPURenderPipelineEmpty();
 	comppipeline?: GPUComputePipeline;
 

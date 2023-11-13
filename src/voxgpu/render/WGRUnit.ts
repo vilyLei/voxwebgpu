@@ -4,10 +4,10 @@ import { GPURenderPassEncoder } from "../gpu/GPURenderPassEncoder";
 import { GPURenderPipeline } from "../gpu/GPURenderPipeline";
 import { WGRPrimitive } from "./WGRPrimitive";
 // import { WGRUniformValue } from "./uniform/WGRUniformValue";
-import { IWGRPipelineContext } from "./pipeline/IWGRPipelineContext";
+import { WGRPipelineContextImpl } from "./pipeline/WGRPipelineContextImpl";
 import { IWGRUnit } from "./IWGRUnit";
 import IAABB from "../cgeom/IAABB";
-import { IWGRendererPass } from "../render/pipeline/IWGRendererPass";
+import { WGRendererPassImpl } from "./pipeline/WGRendererPassImpl";
 import { WGRUnitState } from "./WGRUnitState";
 import { IWGMaterial } from "../material/IWGMaterial";
 
@@ -28,7 +28,7 @@ class WGRUnit implements IWGRUnit {
 
 	etuuid?: string;
 
-	pipelinectx: IWGRPipelineContext;
+	pipelinectx: WGRPipelineContextImpl;
 	geometry: WGRPrimitive;
 
 	bounds: IAABB;
@@ -40,7 +40,7 @@ class WGRUnit implements IWGRUnit {
 
 	enabled = true;
 	passes: IWGRUnit[];
-	rp: IWGRendererPass;
+	rp: WGRendererPassImpl;
 
 	material: IWGMaterial;
 	// clone(): WGRUnit {

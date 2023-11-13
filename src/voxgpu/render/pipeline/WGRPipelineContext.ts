@@ -2,19 +2,19 @@ import { GPUBuffer } from "../../gpu/GPUBuffer";
 import { GPURenderPipeline } from "../../gpu/GPURenderPipeline";
 import { GPURenderPipelineEmpty } from "../../gpu/GPURenderPipelineEmpty";
 import { WebGPUContext } from "../../gpu/WebGPUContext";
-import { BufDataParamType, VtxDescParam, VtxPipelinDescParam, IWGRPipelineContext } from "./IWGRPipelineContext";
+import { BufDataParamType, VtxDescParam, VtxPipelinDescParam, WGRPipelineContextImpl } from "./WGRPipelineContextImpl";
 import { WGRPipelineCtxParams } from "./WGRPipelineCtxParams";
 import { WGRPipelineShader } from "./WGRPipelineShader";
 import { WGRUniformParam, WGRUniformContext } from "../uniform/WGRUniformContext";
 import { GPUQueue } from "../../gpu/GPUQueue";
-import { IWGRendererPass } from "./IWGRendererPass";
+import { WGRendererPassImpl } from "./WGRendererPassImpl";
 import { GPUComputePipeline } from "../../gpu/GPUComputePipeline";
 import { GPUPipelineLayout } from "../../gpu/GPUPipelineLayout";
 import { WGRBindGroupContext } from "./WGRBindGroupContext";
 /**
  * one type shading shader, one WGRPipelineContext instance
  */
-class WGRPipelineContext implements IWGRPipelineContext {
+class WGRPipelineContext implements WGRPipelineContextImpl {
 	private static sUid = 0;
 	private mUid = WGRPipelineContext.sUid++;
 
@@ -25,7 +25,7 @@ class WGRPipelineContext implements IWGRPipelineContext {
 
 	bindGroupCtx = new WGRBindGroupContext();
 	type = "render";
-	rpass: IWGRendererPass;
+	rpass: WGRendererPassImpl;
 	pipeline?: GPURenderPipeline = new GPURenderPipelineEmpty();
 	comppipeline?: GPUComputePipeline;
 
@@ -47,7 +47,7 @@ class WGRPipelineContext implements IWGRPipelineContext {
 			const ctx = this.mWGCtx;
 			const p = this.mPipelineParams;
 			if (p) {
-				this.mShader.build(p);
+				this.mShader.build(p, this.rpass);
 				// console.log("WGRPipelineContext::init(), param:\n", p);
 
 				let pipeGLayout: GPUPipelineLayout;
@@ -139,7 +139,7 @@ class WGRPipelineContext implements IWGRPipelineContext {
 		if (pipelineParams.buildDeferred) {
 			this.mPipelineParams = pipelineParams;
 		} else {
-			this.mShader.build(pipelineParams);
+			this.mShader.build(pipelineParams, this.rpass);
 		}
 		// console.log("createRenderPipeline(), pipelineParams:\n", pipelineParams);
 		if (!this.mPipelineParams) {

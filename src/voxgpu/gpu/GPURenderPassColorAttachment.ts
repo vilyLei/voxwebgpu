@@ -13,14 +13,14 @@ interface GPURenderPassColorAttachment {
 	 * 		"load": Loads the existing value for this attachment into the render pass.
 	 * In GPULoadOp: https://gpuweb.github.io/gpuweb/#load-and-store-ops
 	 */
-	loadOp: string;
+	loadOp?: string;
 	/**
 	 * An enumerated value indicating the store operation to perform on view after executing the render pass. Possible values are:
 	 * 		"discard": Discards the resulting value of the render pass for this attachment.
 	 * 		"store": Stores the resulting value of the render pass for this attachment.
 	 * In GPUStoreOp: https://gpuweb.github.io/gpuweb/#load-and-store-ops
 	 */
-	storeOp: string;
+	storeOp?: string;
 	/**
 	 * A GPUTextureView object representing the texture subresource that will receive the resolved output for this color attachment if view is multisampled.
 	 */

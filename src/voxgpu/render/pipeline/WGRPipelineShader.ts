@@ -1,7 +1,9 @@
+import { GPUFragmentState } from "../../gpu/GPUFragmentState";
 import { GPUShaderModule } from "../../gpu/GPUShaderModule";
 import { WebGPUContext } from "../../gpu/WebGPUContext";
 import { WGRShadeSrcParam, WGRPipelineCtxParams } from "./WGRPipelineCtxParams";
 import { findShaderEntryPoint, createFragmentState, createComputeState } from "./WGRShaderParams";
+import { WGRendererPassImpl } from "./WGRendererPassImpl";
 
 class WGRPipelineShader {
 	private mWGCtx: WebGPUContext;
@@ -41,7 +43,8 @@ class WGRPipelineShader {
 		}
 		return null;
 	}
-	build(params: WGRPipelineCtxParams): void {
+
+	build(params: WGRPipelineCtxParams, rpass: WGRendererPassImpl): void {
 
 		let shdModule = params.shaderSrc ? this.createShaderModule("Shader", params.shaderSrc) : null;
 		let vertShdModule = params.vertShaderSrc ? this.createShaderModule("VertShader", params.vertShaderSrc) : shdModule;
@@ -72,6 +75,7 @@ class WGRPipelineShader {
 				frag.module = fragShdModule;
 				frag.entryPoint = entryPoint;
 			}
+			this.checkFrag(frag, rpass);
 		}else {
 			params.fragment = null;
 		}
@@ -90,6 +94,22 @@ class WGRPipelineShader {
 			if(entryPoint != '') {
 				params.compute = createComputeState( compShdModule );
 				params.compute.entryPoint = entryPoint;
+			}
+		}
+	}
+	private checkFrag(frag: GPUFragmentState, rpass: WGRendererPassImpl): void {
+		if(frag) {
+			let cs = rpass.passColors;
+			let ts = frag.targets;
+			for(let i = 0; i < cs.length; ++i) {
+				// console.log('checkFrag(), textureFormat: ', cs[i].textureFormat);
+				// console.log('checkFrag(), AAA, textureFormat: ', cs[i].textureFormat, ', target format: ', ts[i].format);
+				if(ts.length > i) {
+					ts[i].format = cs[i].textureFormat;
+				}else {
+					ts.push({format: cs[i].textureFormat});
+				}
+				// console.log('checkFrag(), textureFormat: ', cs[i].textureFormat, ', target format: ', ts[i].format);
 			}
 		}
 	}
