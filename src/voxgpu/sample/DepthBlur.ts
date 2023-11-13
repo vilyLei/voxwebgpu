@@ -13,7 +13,6 @@ import entityVertWGSL from "../material/shader/wgsl/primitive.vert.wgsl";
 import entityFragWGSL from "./shaders/primitiveVPos.frag.wgsl";
 import vposReadFragWGSL from "./shaders/vposRead.frag.wgsl";
 import depthBlurFragWGSL from "./shaders/depthBlur.frag.wgsl";
-//src\voxgpu\sample\shaders\vposRead.frag.wgsl
 
 import { WGRPassColorAttachment } from "../render/pipeline/WGRPassColorAttachment";
 import { TorusEntity } from "../entity/TorusEntity";
@@ -112,10 +111,7 @@ export class DepthBlur {
 		let rPass = rs.createRenderPass({ separate: true, colorAttachments });
 		graph.passes = [rPass];
 
-		const diffuseTex = { diffuse: { url: "static/assets/huluwa.jpg", flipY: true } };
-
 		let materials = [this.createMaterial("shd-00", [blurRTTTex0], 0), this.createMaterial("shd-01", [blurRTTTex1], 1)];
-		// let materials = [this.createMaterial("shd-00", [blurRTTTex0], 0)];
 
 		let rttEntity = new FixScreenPlaneEntity({ extent: [-1, -1, 2, 2], flipY: true, textures: [colorRTTTex] });
 		rttEntity.uuid = "src-entity";
@@ -134,20 +130,13 @@ export class DepthBlur {
 			vert: { code: vertWGSL, uuid: "vert" },
 			frag: { code: depthBlurFragWGSL, uuid: "depthBlur" }
 		};
-		////depthBlurFragWGSL
+		
 		// display blur rendering result
 		let textures = [colorRTTTex, blurRTTTex0, vposRTTTex];
 		extent = [-0.8, -0.8, 1.6, 1.6];
 		entity = new FixScreenPlaneEntity({ extent, flipY: false, shaderSrc, textures, shadinguuid: "smallImgMaterial" });
-		// entity = new FixScreenPlaneEntity({ extent, flipY: true, textures: [blurRTTTex0] });
-		entity.uuid = "blur-big-img";
 		rs.addEntity(entity);
 
-		// // display origin image
-		// extent = [-0.95, -0.95, 0.6, 0.6];
-		// entity = new FixScreenPlaneEntity({ extent, flipY: false, textures: [diffuseTex], shadinguuid: "smallImgMaterial" });
-		// entity.uuid = "small-img";
-		// rs.addEntity(entity);
 	}
 
 	private applyMRTPass(extent: number[]): void {
@@ -166,8 +155,6 @@ export class DepthBlur {
 
 		let rPass = rs.createRenderPass({ separate: true, colorAttachments });
 
-		const diffuseTex = { diffuse: { url: "static/assets/huluwa.jpg", flipY: true } };
-
 		let shaderSrc = {
 			vert: { code: entityVertWGSL, uuid: "vertMRT" },
 			frag: { code: entityFragWGSL, uuid: "fragMRT" }
@@ -177,15 +164,11 @@ export class DepthBlur {
 		torus.setAlbedo([0.7,0.02,0.1]);
 		rPass.addEntity(torus);
 
-		// display rendering result
-		// extent = [-0.8, -0.8, 1.6, 1.6];
-		// let entity = new FixScreenPlaneEntity({ extent, textures: [colorRTTTex] });
-		// rs.addEntity(entity);
-
 		shaderSrc = {
 			vert: { code: vertWGSL, uuid: "vert" },
 			frag: { code: vposReadFragWGSL, uuid: "readNromal" }
 		};
+		
 		// display depth value drawing result
 		extent = [-0.95, -0.95, 0.6, 0.6];
 		let entity = new FixScreenPlaneEntity({ extent, shaderSrc, textures: [vposRTTTex], shadinguuid: "readDepth" });
