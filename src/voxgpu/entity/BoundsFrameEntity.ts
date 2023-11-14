@@ -140,7 +140,6 @@ function buildColorData(param: BoundsFrameEntityParam): void {
 	for(let i = 0; i < cs.length; ++i) {
 		const k = i * 2;
 		if(cs[i]) {
-			console.log("xxx xxx cs[i]: ", cs[i]);
 			param.lineColors[ k ] = cs[i];
 			param.lineColors[ k  + 1] = cs[i];
 		}else {
@@ -148,12 +147,10 @@ function buildColorData(param: BoundsFrameEntityParam): void {
 			param.lineColors[ k  + 1] = c;
 		}
 	}
-	// param.linePositions.length
+	
 	for(let i = cs.length * 2; i < len; ++i) {
 		param.lineColors[i] = c;
 	}
-
-	console.log("param.lineColors: ", param.lineColors);
 }
 class BoundsFrameEntity extends Line3DEntity {
 	constructor(param?: BoundsFrameEntityParam) {

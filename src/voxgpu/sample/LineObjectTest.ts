@@ -79,7 +79,6 @@ export class LineObjectTest {
 
 		const rsc = this.mRscene;
 
-		// return;
 		let color = new Color4().toBlack().setColor([1.0]);
 		let sph = new SphereEntity();
 		sph.transform.setXYZ(-200, 200, -300);
@@ -116,7 +115,7 @@ export class LineObjectTest {
 		boxFrame.color = [0.6, 0.8, 0.3];
 		rsc.addEntity( boxFrame );
 
-		boxFrame = new BoundsFrameEntity({minPos: new Vector3(200, 200, 400), maxPos: new Vector3(300, 300, 450)});
+		boxFrame = new BoundsFrameEntity({minPos: [200, 200, 400], maxPos: [300, 300, 450]});
 		boxFrame.color = [1.0, 0.2, 0.6];
 		rsc.addEntity( boxFrame );
 

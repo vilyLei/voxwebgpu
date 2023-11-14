@@ -12,38 +12,33 @@ import OrientationType from "./OrientationType";
 import IMatrix4 from "./IMatrix4";
 import { Euler } from "./Euler";
 import { Quaternion } from "./Quaternion";
+import { IdentityMat4Data } from "./MatrixUtils";
 
 class Matrix4 implements IMatrix4 {
-	private static s_InitData: Float32Array = new Float32Array([
-		1.0, 0.0, 0.0, 0.0,
-		0.0, 1.0, 0.0, 0.0,
-		0.0, 0.0, 1.0, 0.0,
-		0.0, 0.0, 0.0, 1.0
-	]);
-	private static m_v3: Vector3 = new Vector3();
-	private static s_uid: number = 0;
-	private static s_isolatedUid: number = 0x4ffff;
-	private m_uid: number = -1;
-	private static s_tMat4: Matrix4 = new Matrix4();
-	private m_index: number = 0;
-	private m_fs32: Float32Array = null;
-	private m_localFS32: Float32Array = null;
-	constructor(pfs32: Float32Array = null, index: number = 0) {
-		this.m_index = index;
-		if (pfs32 != null) {
-			this.m_uid = Matrix4.s_uid++;
-			this.m_fs32 = pfs32;
-			this.m_localFS32 = this.m_fs32.subarray(index, index + 16);
+	private static sV3: Vector3 = new Vector3();
+	private static sUid: number = 0;
+	private static sIsolatedUid: number = 0x4ffff;
+	private static sTMat4 = new Matrix4();
+	private mUid = -1;
+	private mIndex = 0;
+	private mFS32: Float32Array = null;
+	private mLocalFS32: Float32Array = null;
+	constructor(pfs32?: Float32Array, index: number = 0) {
+		this.mIndex = index;
+		if (pfs32) {
+			this.mUid = Matrix4.sUid++;
+			this.mFS32 = pfs32;
+			this.mLocalFS32 = this.mFS32.subarray(index, index + 16);
 		}
 		else {
-			this.m_uid = Matrix4.s_isolatedUid++;
-			this.m_fs32 = new Float32Array(16);
-			this.m_fs32.set(Matrix4.s_InitData, 0);
-			this.m_localFS32 = this.m_fs32;
+			this.mUid = Matrix4.sIsolatedUid++;
+			this.mFS32 = new Float32Array(16);
+			this.mFS32.set(IdentityMat4Data, 0);
+			this.mLocalFS32 = this.mFS32;
 		}
 	}
 	fromArray(array: number[] | ArrayLike<number>, offset: number = 0): IMatrix4 {
-		const fs = this.m_localFS32;
+		const fs = this.mLocalFS32;
 		for ( let i = 0; i < 16; i ++ ) {
 			fs[ i ] = array[ i + offset ];
 		}
@@ -51,7 +46,7 @@ class Matrix4 implements IMatrix4 {
 	}
 	setData(array16: number[] | ArrayLike<number>): IMatrix4 {
 		if (array16.length == 16) {
-			this.m_localFS32.set(array16);
+			this.mLocalFS32.set(array16);
 		}
 		return this;
 	}
@@ -59,25 +54,25 @@ class Matrix4 implements IMatrix4 {
 		return 16;
 	}
 	GetMaxUid(): number {
-		return Matrix4.s_uid;
+		return Matrix4.sUid;
 	}
 	getUid(): number {
-		return this.m_uid;
+		return this.mUid;
 	}
 	getLocalFS32(): Float32Array {
-		return this.m_localFS32;
+		return this.mLocalFS32;
 	}
 	getFS32(): Float32Array {
-		return this.m_fs32;
+		return this.mFS32;
 	}
 	getFSIndex(): number {
-		return this.m_index;
+		return this.mIndex;
 	}
 	identity(): void {
-		this.m_localFS32.set(Matrix4.s_InitData, 0);
+		this.mLocalFS32.set(IdentityMat4Data, 0);
 	}
 	determinant(): number {
-		let lfs = this.m_localFS32;
+		let lfs = this.mLocalFS32;
 		return (lfs[0] * lfs[5] - lfs[4] * lfs[1])
 			*
 			(lfs[10] * lfs[15] - lfs[14] * lfs[11])
@@ -160,7 +155,7 @@ class Matrix4 implements IMatrix4 {
 
 	append(lhs: IMatrix4): void {
 		let lfs32: Float32Array = lhs.getLocalFS32();
-		let fs: Float32Array = this.m_localFS32;
+		let fs: Float32Array = this.mLocalFS32;
 
 		let m111: number = fs[0];
 		let m121: number = fs[4];
@@ -214,7 +209,7 @@ class Matrix4 implements IMatrix4 {
 	}
 	append3x3(lhs: Matrix4): void {
 		let lfs32: Float32Array = lhs.getLocalFS32();
-		let fs: Float32Array = this.m_localFS32;
+		let fs: Float32Array = this.mLocalFS32;
 
 		let m111: number = fs[0];
 		let m121: number = fs[4];
@@ -248,55 +243,55 @@ class Matrix4 implements IMatrix4 {
 		if (pivotPoint == null) {
 			pivotPoint = Vector3.Z_AXIS;
 		}
-		Matrix4.s_tMat4.identity();
-		Matrix4.s_tMat4.getAxisRotation(axis.x, axis.y, axis.z, radian);
-		Matrix4.s_tMat4.appendTranslationXYZ(pivotPoint.x, pivotPoint.y, pivotPoint.z);
-		this.append(Matrix4.s_tMat4);
+		Matrix4.sTMat4.identity();
+		Matrix4.sTMat4.getAxisRotation(axis.x, axis.y, axis.z, radian);
+		Matrix4.sTMat4.appendTranslationXYZ(pivotPoint.x, pivotPoint.y, pivotPoint.z);
+		this.append(Matrix4.sTMat4);
 	}
 	appendRotation(radian: number, axis: Vector3): void {
-		Matrix4.s_tMat4.identity();
-		Matrix4.s_tMat4.getAxisRotation(axis.x, axis.y, axis.z, radian);
-		this.append(Matrix4.s_tMat4);
+		Matrix4.sTMat4.identity();
+		Matrix4.sTMat4.getAxisRotation(axis.x, axis.y, axis.z, radian);
+		this.append(Matrix4.sTMat4);
 	}
 	appendRotationX(radian: number): void {
-		Matrix4.s_tMat4.rotationX(radian);
-		this.append3x3(Matrix4.s_tMat4);
+		Matrix4.sTMat4.rotationX(radian);
+		this.append3x3(Matrix4.sTMat4);
 	}
 	appendRotationY(radian: number): void {
-		Matrix4.s_tMat4.rotationY(radian);
-		this.append3x3(Matrix4.s_tMat4);
+		Matrix4.sTMat4.rotationY(radian);
+		this.append3x3(Matrix4.sTMat4);
 	}
 	appendRotationZ(radian: number): void {
-		Matrix4.s_tMat4.rotationZ(radian);
-		this.append3x3(Matrix4.s_tMat4);
+		Matrix4.sTMat4.rotationZ(radian);
+		this.append3x3(Matrix4.sTMat4);
 	}
 	// 用欧拉角形式旋转(heading->pitch->bank) => (y->x->z)
 	appendRotationEulerAngle(radianX: number, radianY: number, radianZ: number): void {
-		Matrix4.s_tMat4.rotationY(radianY);
-		this.append3x3(Matrix4.s_tMat4);
-		Matrix4.s_tMat4.rotationX(radianX);
-		this.append3x3(Matrix4.s_tMat4);
-		Matrix4.s_tMat4.rotationZ(radianZ);
-		this.append3x3(Matrix4.s_tMat4);
+		Matrix4.sTMat4.rotationY(radianY);
+		this.append3x3(Matrix4.sTMat4);
+		Matrix4.sTMat4.rotationX(radianX);
+		this.append3x3(Matrix4.sTMat4);
+		Matrix4.sTMat4.rotationZ(radianZ);
+		this.append3x3(Matrix4.sTMat4);
 	}
 
 	setScale(v3: Vector3): Matrix4 {
-		let fs: Float32Array = this.m_localFS32;
+		let fs: Float32Array = this.mLocalFS32;
 		fs[0] = v3.x; fs[5] = v3.y; fs[10] = v3.z;
 		return this;
 	}
 	setScaleXYZ(xScale: number, yScale: number, zScale: number): void {
-		let fs: Float32Array = this.m_localFS32;
+		let fs: Float32Array = this.mLocalFS32;
 		fs[0] = xScale; fs[5] = yScale; fs[10] = zScale;
 	}
 	getScale(outV3: Vector3): void {
-		let fs: Float32Array = this.m_localFS32;
+		let fs: Float32Array = this.mLocalFS32;
 		outV3.x = fs[0]
 		outV3.y = fs[5];
 		outV3.z = fs[10];
 	}
 	setRotationEulerAngle(radianX: number, radianY: number, radianZ: number): void {
-		let fs: Float32Array = this.m_localFS32;
+		let fs: Float32Array = this.mLocalFS32;
 		//let sx:number = fs[0];
 		//let sy:number = fs[5];
 		//let sz:number = fs[10];
@@ -327,7 +322,7 @@ class Matrix4 implements IMatrix4 {
 	}
 
 	setRotationEulerAngle2(cosX: number, sinX: number, cosY: number, sinY: number, cosZ: number, sinZ: number): void {
-		let fs: Float32Array = this.m_localFS32;
+		let fs: Float32Array = this.mLocalFS32;
 		//let sx:number = fs[0];
 		//let sy:number = fs[5];
 		//let sz:number = fs[10];
@@ -359,7 +354,7 @@ class Matrix4 implements IMatrix4 {
 
 	compose( position: Vector3, quaternion: Quaternion, scale: Vector3 ): Matrix4 {
 
-		const fs = this.m_localFS32;
+		const fs = this.mLocalFS32;
 
 		const x = quaternion.x, y = quaternion.y, z = quaternion.z, w = quaternion.w;
 
@@ -406,7 +401,7 @@ class Matrix4 implements IMatrix4 {
 
 		}
 
-		const fs = this.m_localFS32;
+		const fs = this.mLocalFS32;
 
 		const x = euler.x, y = euler.y, z = euler.z;
 		const a = Math.cos( x ), b = Math.sin( x );
@@ -530,9 +525,9 @@ class Matrix4 implements IMatrix4 {
 
 		// this method does not support reflection matrices
 
-		const fs = this.m_localFS32;
+		const fs = this.mLocalFS32;
 		const me = m.getLocalFS32();
-		const v3 = Matrix4.m_v3;
+		const v3 = Matrix4.sV3;
 		m.copyColumnTo(0, v3);
 		const scaleX = 1.0 / v3.getLength();
 		m.copyColumnTo(1, v3);
@@ -566,7 +561,7 @@ class Matrix4 implements IMatrix4 {
 
 	copyTranslation( m: IMatrix4 ): IMatrix4 {
 
-		const fs = this.m_localFS32, me = m.getLocalFS32();
+		const fs = this.mLocalFS32, me = m.getLocalFS32();
 
 		fs[ 12 ] = me[ 12 ];
 		fs[ 13 ] = me[ 13 ];
@@ -576,39 +571,39 @@ class Matrix4 implements IMatrix4 {
 
 	}
 	setTranslationXYZ(px: number, py: number, pz: number): void {
-		this.m_localFS32[12] = px;
-		this.m_localFS32[13] = py;
-		this.m_localFS32[14] = pz;
+		this.mLocalFS32[12] = px;
+		this.mLocalFS32[13] = py;
+		this.mLocalFS32[14] = pz;
 	}
 	setTranslation(v3: Vector3): void {
-		this.m_localFS32[12] = v3.x;
-		this.m_localFS32[13] = v3.y;
-		this.m_localFS32[14] = v3.z;
+		this.mLocalFS32[12] = v3.x;
+		this.mLocalFS32[13] = v3.y;
+		this.mLocalFS32[14] = v3.z;
 	}
 	appendScaleXYZ(xScale: number, yScale: number, zScale: number): void {
-		const fs = this.m_localFS32;
+		const fs = this.mLocalFS32;
 		fs[0] *= xScale; fs[1] *= xScale; fs[2] *= xScale; fs[3] *= xScale;
 		fs[4] *= yScale; fs[5] *= yScale; fs[6] *= yScale; fs[7] *= yScale;
 		fs[8] *= zScale; fs[9] *= zScale; fs[10] *= zScale; fs[11] *= zScale;
 	}
 
 	appendScaleXY(xScale: number, yScale: number): void {
-		const fs = this.m_localFS32;
+		const fs = this.mLocalFS32;
 		fs[0] *= xScale; fs[1] *= xScale; fs[2] *= xScale; fs[3] *= xScale;
 		fs[4] *= yScale; fs[5] *= yScale; fs[6] *= yScale; fs[7] *= yScale;
 	}
 	appendTranslationXYZ(px: number, py: number, pz: number): void {
-		this.m_localFS32[12] += px;
-		this.m_localFS32[13] += py;
-		this.m_localFS32[14] += pz;
+		this.mLocalFS32[12] += px;
+		this.mLocalFS32[13] += py;
+		this.mLocalFS32[14] += pz;
 	}
 	appendTranslation(v3: Vector3): void {
-		this.m_localFS32[12] += v3.x;
-		this.m_localFS32[13] += v3.y;
-		this.m_localFS32[14] += v3.z;
+		this.mLocalFS32[12] += v3.x;
+		this.mLocalFS32[13] += v3.y;
+		this.mLocalFS32[14] += v3.z;
 	}
 	copyColumnFrom(column_index: number, v3: Vector3): void {
-		const fs = this.m_localFS32;
+		const fs = this.mLocalFS32;
 		switch (column_index) {
 			case 0:
 				{
@@ -647,7 +642,7 @@ class Matrix4 implements IMatrix4 {
 		}
 	}
 	copyColumnTo(column_index: number, outV3: Vector3): void {
-		const fs = this.m_localFS32;
+		const fs = this.mLocalFS32;
 		column_index <<= 2;
 		outV3.x = fs[column_index];
 		outV3.y = fs[1 + column_index];
@@ -656,40 +651,40 @@ class Matrix4 implements IMatrix4 {
 	}
 	setF32ArrAndIndex(fs32Arr: Float32Array, index: number = 0): void {
 		if (fs32Arr != null && index >= 0) {
-			this.m_fs32 = fs32Arr;
-			this.m_index = index;
-			this.m_localFS32 = this.m_fs32.subarray(index, index + 16);
+			this.mFS32 = fs32Arr;
+			this.mIndex = index;
+			this.mLocalFS32 = this.mFS32.subarray(index, index + 16);
 		}
 	}
 	setF32ArrIndex(index: number = 0): void {
 		if (index >= 0) {
-			this.m_index = index;
-			this.m_localFS32 = this.m_fs32.subarray(index, index + 16);
+			this.mIndex = index;
+			this.mLocalFS32 = this.mFS32.subarray(index, index + 16);
 		}
 	}
 	setF32Arr(fs32Arr: Float32Array): void {
 		if (fs32Arr != null) {
-			this.m_fs32 = fs32Arr;
+			this.mFS32 = fs32Arr;
 		}
 	}
 	copyFromF32Arr(fs32Arr: Float32Array, index: number = 0): void {
 		//let subArr:Float32Array = fs32Arr.subarray(index, index + 16);
-		//this.m_localFS32.set(fs32Arr.subarray(index, index + 16), 0);
+		//this.mLocalFS32.set(fs32Arr.subarray(index, index + 16), 0);
 		let i: number = 0;
 		for (let end: number = index + 16; index < end; index++) {
-			this.m_localFS32[i] = fs32Arr[index];
+			this.mLocalFS32[i] = fs32Arr[index];
 			++i;
 		}
 	}
 	copyToF32Arr(fs32Arr: Float32Array, index: number = 0): void {
-		fs32Arr.set(this.m_localFS32, index);
+		fs32Arr.set(this.mLocalFS32, index);
 	}
 	copy(smat: IMatrix4): IMatrix4 {
-		this.m_localFS32.set(smat.getLocalFS32(), 0);
+		this.mLocalFS32.set(smat.getLocalFS32(), 0);
 		return this;
 	}
 	copyFrom(smat: IMatrix4): void {
-		this.m_localFS32.set(smat.getLocalFS32(), 0);
+		this.mLocalFS32.set(smat.getLocalFS32(), 0);
 	}
 	copyTo(dmat: IMatrix4): void {
 		//dmat.copyFrom(this);
@@ -700,7 +695,7 @@ class Matrix4 implements IMatrix4 {
 		rawDataLength = rawDataLength - index;
 		let c: number = 0;
 		while (c < rawDataLength) {
-			this.m_fs32[this.m_index + c] = float_rawDataArr[c + index];
+			this.mFS32[this.mIndex + c] = float_rawDataArr[c + index];
 			++c;
 		}
 		if (bool_tp) this.transpose();
@@ -709,13 +704,13 @@ class Matrix4 implements IMatrix4 {
 		if (bool_tp) this.transpose();
 		let c: number = 0;
 		while (c < rawDataLength) {
-			float_rawDataArr[c + index] = this.m_fs32[this.m_index + c];
+			float_rawDataArr[c + index] = this.mFS32[this.mIndex + c];
 			++c;
 		}
 		if (bool_tp) this.transpose();
 	}
 	copyRowFrom(row_index: number, v3: Vector3): void {
-		const fs = this.m_localFS32;
+		const fs = this.mLocalFS32;
 		switch (row_index) {
 			case 0:
 				{
@@ -754,7 +749,7 @@ class Matrix4 implements IMatrix4 {
 		}
 	}
 	copyRowTo(row_index: number, v3: Vector3): void {
-		const fs = this.m_localFS32;
+		const fs = this.mLocalFS32;
 		v3.x = fs[row_index];
 		v3.y = fs[4 + row_index];
 		v3.z = fs[8 + row_index];
@@ -767,7 +762,7 @@ class Matrix4 implements IMatrix4 {
 	decompose(orientationStyle: number = OrientationType.EULER_ANGLES): Vector3[] {
 		// TODO: optimize after 4 lines
 		let vec = [];
-		let mr = Matrix4.s_tMat4;
+		let mr = Matrix4.sTMat4;
 		let rfs = mr.getLocalFS32();
 		//let mrfsI = mr.getFSIndex();
 		//std::memcpy(&mr, m_rawData, m_rawDataSize);
@@ -857,7 +852,7 @@ class Matrix4 implements IMatrix4 {
 		let d: number = this.determinant();
 		let invertable = Math.abs(d) > MathConst.MATH_MIN_POSITIVE;
 		if (invertable) {
-			let fs: Float32Array = this.m_localFS32;
+			let fs: Float32Array = this.mLocalFS32;
 			d = 1.0 / d;
 			let m11: number = fs[0];
 			let m21: number = fs[4];
@@ -916,7 +911,7 @@ class Matrix4 implements IMatrix4 {
 		else vup.setXYZ(1, 0, 0);
 		let right = vup.crossProduct(dir);
 		right.normalize();
-		let fs = this.m_localFS32;
+		let fs = this.mLocalFS32;
 		fs[0] = right.x;
 		fs[4] = right.y;
 		fs[8] = right.z;
@@ -936,7 +931,7 @@ class Matrix4 implements IMatrix4 {
 	}
 	prepend(rhs: IMatrix4): void {
 		let rfs32: Float32Array = rhs.getLocalFS32();
-		let fs: Float32Array = this.m_localFS32;
+		let fs: Float32Array = this.mLocalFS32;
 		let m111 = rfs32[0];
 		let m121 = rfs32[4];
 		let m131 = rfs32[8];
@@ -988,7 +983,7 @@ class Matrix4 implements IMatrix4 {
 	}
 	prepend3x3(rhs: IMatrix4): void {
 		let rfs32: Float32Array = rhs.getLocalFS32();
-		let fs: Float32Array = this.m_localFS32;
+		let fs: Float32Array = this.mLocalFS32;
 		let m111 = rfs32[0];
 		let m121 = rfs32[4];
 		let m131 = rfs32[8];
@@ -1018,75 +1013,75 @@ class Matrix4 implements IMatrix4 {
 		fs[10] = m131 * m213 + m132 * m223 + m133 * m233;
 	}
 	prependRotationPivot(radian: number, axis: Vector3, pivotPoint: Vector3): void {
-		Matrix4.s_tMat4.identity();
-		Matrix4.s_tMat4.getAxisRotation(axis.x, axis.y, axis.z, radian);
-		Matrix4.s_tMat4.appendTranslationXYZ(pivotPoint.x, pivotPoint.y, pivotPoint.z);
-		this.prepend(Matrix4.s_tMat4);
+		Matrix4.sTMat4.identity();
+		Matrix4.sTMat4.getAxisRotation(axis.x, axis.y, axis.z, radian);
+		Matrix4.sTMat4.appendTranslationXYZ(pivotPoint.x, pivotPoint.y, pivotPoint.z);
+		this.prepend(Matrix4.sTMat4);
 	}
 	prependRotation(radian: number, axis: Vector3): void {
-		Matrix4.s_tMat4.identity();
-		Matrix4.s_tMat4.getAxisRotation(axis.x, axis.y, axis.z, radian);
-		this.prepend(Matrix4.s_tMat4);
+		Matrix4.sTMat4.identity();
+		Matrix4.sTMat4.getAxisRotation(axis.x, axis.y, axis.z, radian);
+		this.prepend(Matrix4.sTMat4);
 	}
 	prependRotationX(radian: number): void {
 		//s_tempMat.identity();
-		Matrix4.s_tMat4.rotationX(radian);
-		this.prepend3x3(Matrix4.s_tMat4);
+		Matrix4.sTMat4.rotationX(radian);
+		this.prepend3x3(Matrix4.sTMat4);
 	}
 	prependRotationY(radian: number): void {
 		//s_tempMat.identity();
-		Matrix4.s_tMat4.rotationY(radian);
-		this.prepend3x3(Matrix4.s_tMat4);
+		Matrix4.sTMat4.rotationY(radian);
+		this.prepend3x3(Matrix4.sTMat4);
 	}
 	prependRotationZ(radian: number): void {
 		//s_tempMat.identity();
-		Matrix4.s_tMat4.rotationZ(radian);
-		this.prepend3x3(Matrix4.s_tMat4);
+		Matrix4.sTMat4.rotationZ(radian);
+		this.prepend3x3(Matrix4.sTMat4);
 	}
 	// 用欧拉角形式旋转(heading->pitch->bank) => (y->x->z)
 	prependRotationEulerAngle(radianX: number, radianY: number, radianZ: number): void {
 		//s_tempMat.identity();
-		Matrix4.s_tMat4.rotationY(radianY);
-		this.prepend3x3(Matrix4.s_tMat4);
+		Matrix4.sTMat4.rotationY(radianY);
+		this.prepend3x3(Matrix4.sTMat4);
 		//s_tempMat.identity();
-		Matrix4.s_tMat4.rotationX(radianX);
-		this.prepend3x3(Matrix4.s_tMat4);
+		Matrix4.sTMat4.rotationX(radianX);
+		this.prepend3x3(Matrix4.sTMat4);
 		//s_tempMat.identity();
-		Matrix4.s_tMat4.rotationZ(radianZ);
-		this.prepend3x3(Matrix4.s_tMat4);
+		Matrix4.sTMat4.rotationZ(radianZ);
+		this.prepend3x3(Matrix4.sTMat4);
 	}
 	prependScale(xScale: number, yScale: number, zScale: number): void {
-		const fs = this.m_localFS32;
+		const fs = this.mLocalFS32;
 		fs[0] *= xScale; fs[1] *= yScale; fs[2] *= zScale;
 		fs[4] *= xScale; fs[5] *= yScale; fs[6] *= zScale;
 		fs[8] *= xScale; fs[9] *= yScale; fs[10] *= zScale;
 		fs[12] *= xScale; fs[13] *= yScale; fs[14] *= zScale;
 	}
 	prependScaleXY(xScale: number, yScale: number): void {
-		const fs = this.m_localFS32;
+		const fs = this.mLocalFS32;
 		fs[0] *= xScale; fs[1] *= yScale;
 		fs[4] *= xScale; fs[5] *= yScale;
 		fs[8] *= xScale; fs[9] *= yScale;
 		fs[12] *= xScale; fs[13] *= yScale;
 	}
 	prependTranslationXYZ(px: number, py: number, pz: number): void {
-		Matrix4.s_tMat4.identity();
-		//Matrix4.s_tMat4.setPositionXYZ(px, py, pz);
-		this.prepend(Matrix4.s_tMat4);
+		Matrix4.sTMat4.identity();
+		//Matrix4.sTMat4.setPositionXYZ(px, py, pz);
+		this.prepend(Matrix4.sTMat4);
 	}
 	prependTranslation(v3: Vector3): void {
-		Matrix4.s_tMat4.identity();
-		//Matrix4.s_tMat4.setPositionXYZ(v3.x, v3.y, v3.z);
-		this.prepend(Matrix4.s_tMat4);
+		Matrix4.sTMat4.identity();
+		//Matrix4.sTMat4.setPositionXYZ(v3.x, v3.y, v3.z);
+		this.prepend(Matrix4.sTMat4);
 	}
 	recompose(components: Vector3[], orientationStyle: number): boolean {
 		if (components.length < 3 || components[2].x == 0 || components[2].y == 0 || components[2].z == 0) return false;
 		this.identity();
-		let scale = Matrix4.s_tMat4.getFS32();
+		let scale = Matrix4.sTMat4.getFS32();
 		scale[0] = scale[1] = scale[2] = components[2].x;
 		scale[4] = scale[5] = scale[6] = components[2].y;
 		scale[8] = scale[9] = scale[10] = components[2].z;
-		let fs: Float32Array = this.m_localFS32;
+		let fs: Float32Array = this.mLocalFS32;
 		switch (orientationStyle) {
 			case OrientationType.EULER_ANGLES:
 				{
@@ -1147,14 +1142,14 @@ class Matrix4 implements IMatrix4 {
 				break;
 		};
 		//TODO: need thinking
-		if (components[2].x == 0) this.m_localFS32[0] = 0;// 1e-15;
-		if (components[2].y == 0) this.m_localFS32[5] = 0;// 1e-15;
-		if (components[2].z == 0) this.m_localFS32[10] = 0;// 1e-15;
+		if (components[2].x == 0) this.mLocalFS32[0] = 0;// 1e-15;
+		if (components[2].y == 0) this.mLocalFS32[5] = 0;// 1e-15;
+		if (components[2].z == 0) this.mLocalFS32[10] = 0;// 1e-15;
 		scale = null;
 		return true;
 	}
 	setThreeAxes(x_axis: Vector3, y_axis: Vector3, z_axis: Vector3,): void {
-		let vs: Float32Array = this.m_localFS32;
+		let vs: Float32Array = this.mLocalFS32;
 		vs[0] = x_axis.x; vs[1] = x_axis.y; vs[2] = x_axis.z;
 		vs[4] = y_axis.x; vs[5] = y_axis.y; vs[6] = y_axis.z;
 		vs[8] = z_axis.x; vs[9] = z_axis.y; vs[10] = z_axis.z;
@@ -1164,14 +1159,14 @@ class Matrix4 implements IMatrix4 {
 		let y: number = v3.y;
 		let z: number = v3.z;
 		return new Vector3(
-			x * this.m_localFS32[0] + y * this.m_localFS32[4] + z * this.m_localFS32[8]
-			, x * this.m_localFS32[1] + y * this.m_localFS32[5] + z * this.m_localFS32[9]
-			, x * this.m_localFS32[2] + y * this.m_localFS32[6] + z * this.m_localFS32[10]
+			x * this.mLocalFS32[0] + y * this.mLocalFS32[4] + z * this.mLocalFS32[8]
+			, x * this.mLocalFS32[1] + y * this.mLocalFS32[5] + z * this.mLocalFS32[9]
+			, x * this.mLocalFS32[2] + y * this.mLocalFS32[6] + z * this.mLocalFS32[10]
 			, 0.0);
 	}
 
 	deltaTransformVectorSelf(v3: Vector3): void {
-		let fs = this.m_localFS32;
+		let fs = this.mLocalFS32;
 		let x = v3.x;
 		let y = v3.y;
 		let z = v3.z;
@@ -1180,13 +1175,13 @@ class Matrix4 implements IMatrix4 {
 		v3.z = x * fs[2] + y * fs[6] + z * fs[10];
 	}
 	deltaTransformOutVector(v3: Vector3, out_v3: Vector3): void {
-		let fs = this.m_localFS32;
+		let fs = this.mLocalFS32;
 		out_v3.x = v3.x * fs[0] + v3.y * fs[4] + v3.z * fs[8];
 		out_v3.y = v3.x * fs[1] + v3.y * fs[5] + v3.z * fs[9];
 		out_v3.z = v3.x * fs[2] + v3.y * fs[6] + v3.z * fs[10];
 	}
 	transformVector(v3: Vector3): Vector3 {
-		let fs = this.m_localFS32;
+		let fs = this.mLocalFS32;
 		let x = v3.x;
 		let y = v3.y;
 		let z = v3.z;
@@ -1201,7 +1196,7 @@ class Matrix4 implements IMatrix4 {
 		let x: number = v3.x;
 		let y: number = v3.y;
 		let z: number = v3.z;
-		let fs = this.m_localFS32;
+		let fs = this.mLocalFS32;
 		out_v3.setXYZW(
 			x * fs[0] + y * fs[4] + z * fs[8] + fs[12]
 			, x * fs[1] + y * fs[5] + z * fs[9] + fs[13]
@@ -1210,7 +1205,7 @@ class Matrix4 implements IMatrix4 {
 		);
 	}
 	transformOutVector3(v3: Vector3, out_v3: Vector3): void {
-		let fs: Float32Array = this.m_localFS32;
+		let fs: Float32Array = this.mLocalFS32;
 		out_v3.x = v3.x * fs[0] + v3.y * fs[4] + v3.z * fs[8] + fs[12];
 		out_v3.y = v3.x * fs[1] + v3.y * fs[5] + v3.z * fs[9] + fs[13];
 		out_v3.z = v3.x * fs[2] + v3.y * fs[6] + v3.z * fs[10] + fs[14];
@@ -1219,7 +1214,7 @@ class Matrix4 implements IMatrix4 {
 		let x: number = v3.x;
 		let y: number = v3.y;
 		let z: number = v3.z;
-		let fs: Float32Array = this.m_localFS32;
+		let fs: Float32Array = this.mLocalFS32;
 		v3.x = x * fs[0] + y * fs[4] + z * fs[8] + fs[12];
 		v3.y = x * fs[1] + y * fs[5] + z * fs[9] + fs[13];
 		v3.z = x * fs[2] + y * fs[6] + z * fs[10] + fs[14];
@@ -1228,7 +1223,7 @@ class Matrix4 implements IMatrix4 {
 		let x: number = v3.x;
 		let y: number = v3.y;
 		let z: number = v3.z;
-		let fs: Float32Array = this.m_localFS32;
+		let fs: Float32Array = this.mLocalFS32;
 		v3.setXYZW(
 			x * fs[0] + y * fs[4] + z * fs[8] + fs[12],
 			x * fs[1] + y * fs[5] + z * fs[9] + fs[13],
@@ -1239,7 +1234,7 @@ class Matrix4 implements IMatrix4 {
 	transformVectors(float_vinArr: Float32Array | number[], vinLength: number, float_voutArr: Float32Array): void {
 		let i: number = 0;
 		let x: number, y: number, z: number;
-		let pfs: Float32Array = this.m_localFS32;
+		let pfs: Float32Array = this.mLocalFS32;
 		vinLength -= 3;
 		while (i <= vinLength) {
 			x = float_vinArr[i];
@@ -1254,7 +1249,7 @@ class Matrix4 implements IMatrix4 {
 	transformVectorsSelf(float_vinArr: Float32Array | number[], vinLength: number): void {
 		let i: number = 0;
 		let x: number, y: number, z: number;
-		let pfs: Float32Array = this.m_localFS32;
+		let pfs: Float32Array = this.mLocalFS32;
 		vinLength -= 3;
 		while (i <= vinLength) {
 			x = float_vinArr[i];
@@ -1269,7 +1264,7 @@ class Matrix4 implements IMatrix4 {
 	transformVectorsRangeSelf(float_vinArr: Float32Array | number[], begin: number, end: number): void {
 		let i: number = begin;
 		let x: number, y: number, z: number;
-		let pfs: Float32Array = this.m_localFS32;
+		let pfs: Float32Array = this.mLocalFS32;
 		end -= 3;
 		while (i <= end) {
 			x = float_vinArr[i];
@@ -1282,9 +1277,9 @@ class Matrix4 implements IMatrix4 {
 		}
 	}
 	transpose(): void {
-		Matrix4.s_tMat4.copyFrom(this);
-		let fs32 = Matrix4.s_tMat4.getFS32();
-		let fs = this.m_localFS32;
+		Matrix4.sTMat4.copyFrom(this);
+		let fs32 = Matrix4.sTMat4.getFS32();
+		let fs = this.mLocalFS32;
 		fs[1] = fs32[4];
 		fs[2] = fs32[8];
 		fs[3] = fs32[12];
@@ -1302,16 +1297,16 @@ class Matrix4 implements IMatrix4 {
 		let fs32: Float32Array = toMat.getFS32();
 		let fsI: number = toMat.getFSIndex();
 		let _g: number = 0;
-		let i: number = this.m_index;
+		let i: number = this.mIndex;
 		while (_g < 16) {
-			this.m_fs32[i] += (fs32[fsI + _g] - this.m_fs32[i]) * float_percent;
+			this.mFS32[i] += (fs32[fsI + _g] - this.mFS32[i]) * float_percent;
 			++i;
 			++_g;
 		}
 	}
 	private getAxisRotation(x: number, y: number, z: number, radian: number): void {
 		radian = -radian;
-		let fs: Float32Array = this.m_localFS32;
+		let fs: Float32Array = this.mLocalFS32;
 		let s: number = Math.sin(radian), c = Math.cos(radian);
 		let t: number = 1.0 - c;
 		fs[0] = c + x * x * t;
@@ -1332,33 +1327,33 @@ class Matrix4 implements IMatrix4 {
 	}
 	rotationX(radian: number): void {
 		let s: number = Math.sin(radian), c: number = Math.cos(radian);
-		this.m_localFS32[0] = 1.0; this.m_localFS32[1] = 0.0; this.m_localFS32[2] = 0.0;
-		this.m_localFS32[4] = 0.0; this.m_localFS32[5] = c; this.m_localFS32[6] = s;
-		this.m_localFS32[8] = 0.0; this.m_localFS32[9] = -s; this.m_localFS32[10] = c;
+		this.mLocalFS32[0] = 1.0; this.mLocalFS32[1] = 0.0; this.mLocalFS32[2] = 0.0;
+		this.mLocalFS32[4] = 0.0; this.mLocalFS32[5] = c; this.mLocalFS32[6] = s;
+		this.mLocalFS32[8] = 0.0; this.mLocalFS32[9] = -s; this.mLocalFS32[10] = c;
 	}
 	rotationY(radian: number): void {
 		let s: number = Math.sin(radian), c: number = Math.cos(radian);
-		this.m_localFS32[0] = c; this.m_localFS32[1] = 0.0; this.m_localFS32[2] = -s;
-		this.m_localFS32[4] = 0.0; this.m_localFS32[5] = 1.0; this.m_localFS32[6] = 0.0;
-		this.m_localFS32[8] = s; this.m_localFS32[9] = 0.0; this.m_localFS32[10] = c;
+		this.mLocalFS32[0] = c; this.mLocalFS32[1] = 0.0; this.mLocalFS32[2] = -s;
+		this.mLocalFS32[4] = 0.0; this.mLocalFS32[5] = 1.0; this.mLocalFS32[6] = 0.0;
+		this.mLocalFS32[8] = s; this.mLocalFS32[9] = 0.0; this.mLocalFS32[10] = c;
 	}
 	rotationZ(radian: number): void {
 		let s: number = Math.sin(radian), c = Math.cos(radian);
-		this.m_localFS32[0] = c; this.m_localFS32[1] = s; this.m_localFS32[2] = 0.0;
-		this.m_localFS32[4] = -s; this.m_localFS32[5] = c; this.m_localFS32[6] = 0.0;
-		this.m_localFS32[8] = 0.0; this.m_localFS32[9] = 0.0; this.m_localFS32[10] = 1.0;
+		this.mLocalFS32[0] = c; this.mLocalFS32[1] = s; this.mLocalFS32[2] = 0.0;
+		this.mLocalFS32[4] = -s; this.mLocalFS32[5] = c; this.mLocalFS32[6] = 0.0;
+		this.mLocalFS32[8] = 0.0; this.mLocalFS32[9] = 0.0; this.mLocalFS32[10] = 1.0;
 	}
 	/////////////////////////////////////////////////////////////
 	toString(): string {
-		let str: string = "\n" + this.m_localFS32[0] + "," + this.m_localFS32[1] + "," + this.m_localFS32[2] + "," + this.m_localFS32[3] + "\n";
-		str += this.m_localFS32[4] + "," + this.m_localFS32[5] + "," + this.m_localFS32[6] + "," + this.m_localFS32[7] + "\n";
-		str += this.m_localFS32[8] + "," + this.m_localFS32[9] + "," + this.m_localFS32[10] + "," + this.m_localFS32[11] + "\n";
-		str += this.m_localFS32[12] + "," + this.m_localFS32[13] + "," + this.m_localFS32[14] + "," + this.m_localFS32[15] + "\n";
+		let str: string = "\n" + this.mLocalFS32[0] + "," + this.mLocalFS32[1] + "," + this.mLocalFS32[2] + "," + this.mLocalFS32[3] + "\n";
+		str += this.mLocalFS32[4] + "," + this.mLocalFS32[5] + "," + this.mLocalFS32[6] + "," + this.mLocalFS32[7] + "\n";
+		str += this.mLocalFS32[8] + "," + this.mLocalFS32[9] + "," + this.mLocalFS32[10] + "," + this.mLocalFS32[11] + "\n";
+		str += this.mLocalFS32[12] + "," + this.mLocalFS32[13] + "," + this.mLocalFS32[14] + "," + this.mLocalFS32[15] + "\n";
 		return str;
 	}
 
 	transformPerspV4Self(v4: Vector3): void {
-		const fs = this.m_localFS32;
+		const fs = this.mLocalFS32;
 		v4.w = v4.z;
 		v4.x *= fs[0];
 		v4.y *= fs[5];
@@ -1377,7 +1372,7 @@ class Matrix4 implements IMatrix4 {
 	///////////////////////////////////////////
 	perspectiveRH(fovy: number, aspect: number, zNear: number, zFar: number, zfactor = 1.0): void {
 		//assert(abs(aspect - std::numeric_limits<float>::epsilon()) > minFloatValue)
-		const fs = this.m_localFS32;
+		const fs = this.mLocalFS32;
 		let tanHalfFovy = Math.tan(fovy * 0.5);
 		this.identity();
 		fs[0] = 1.0 / (aspect * tanHalfFovy);
@@ -1393,7 +1388,7 @@ class Matrix4 implements IMatrix4 {
 		let m10: number = -zFar / (zFar - zNear);
 		let m14: number = -zNear * m10;
 		this.identity();
-		const fs = this.m_localFS32;
+		const fs = this.mLocalFS32;
 		fs[0] = m0;
 		fs[5] = m5;
 		fs[10] = m10;
@@ -1403,7 +1398,7 @@ class Matrix4 implements IMatrix4 {
 	orthoRH(b: number, t: number, l: number, r: number, zNear: number, zFar: number, zfactor = 1.0): void {
 
 		this.identity();
-		const fs = this.m_localFS32;
+		const fs = this.mLocalFS32;
 		fs[0] = 2.0 / (r - l);
 		fs[5] = 2.0 / (t - b);
 		fs[10] = -zfactor * 2.0 / (zFar - zNear);
@@ -1417,7 +1412,7 @@ class Matrix4 implements IMatrix4 {
 
 		let tanHalfFovy: number = Math.tan(fovy * 0.5);
 		this.identity();
-		const fs = this.m_localFS32;
+		const fs = this.mLocalFS32;
 		fs[0] = 1.0 / (aspect * tanHalfFovy);
 		fs[5] = 1.0 / tanHalfFovy;
 		fs[10] = zfactor * (zFar + zNear) / (zFar - zNear);
@@ -1426,7 +1421,7 @@ class Matrix4 implements IMatrix4 {
 	}
 	orthoLH(b: number, t: number, l: number, r: number, zNear: number, zFar: number, zfactor = 1.0): void {
 		this.identity();
-		const fs = this.m_localFS32;
+		const fs = this.mLocalFS32;
 		fs[0] = 2.0 / (r - l);// / (aspect * tanHalfFovy);
 		fs[5] = 2.0 / (t - b);// / tanHalfFovy;
 		fs[10] = zfactor * 2.0 / (zFar - zNear);
@@ -1465,9 +1460,9 @@ class Matrix4 implements IMatrix4 {
 		this.copyRowFrom(2, f);
 	}
 	destroy(): void {
-		this.m_localFS32 = null;
-		this.m_fs32 = null;
-		this.m_index = -1;
+		this.mLocalFS32 = null;
+		this.mFS32 = null;
+		this.mIndex = -1;
 	}
 }
 

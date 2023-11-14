@@ -1,4 +1,3 @@
-import Color4 from "../material/Color4";
 import IVector3 from "../math/IVector3";
 import Vector3 from "../math/Vector3";
 import { Line3DEntityParam, Line3DEntity } from "./Line3DEntity";
@@ -25,7 +24,6 @@ function buildGridMesh(minV3: Vector3DataType, maxV3: Vector3DataType, stepsTota
 	}
 	dv.scaleBy(1.0 / stepsTotal);
 	let rn = stepsTotal + 1;
-	// let cn = stepsTotal + 1;
 
 	let pv0 = minV.clone();
 	let pv1 = maxV.clone();

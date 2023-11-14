@@ -12,11 +12,12 @@ import Matrix4 from "../math/Matrix4";
 import Matrix4Pool from "../math/Matrix4Pool";
 import IROTransform from "./IROTransform";
 import { WGRUniformValue } from "../render/uniform/WGRUniformValue";
+import { IdentityMat4Data } from "../math/MatrixUtils";
 
 export default class ROTransform implements IROTransform {
 
 	private static sUid = 0;
-	private static sInitData = new Float32Array([1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0]);
+	// private static sInitData = new Float32Array([1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0]);
 
 	static readonly NONE = 0;
 	static readonly POSITION = 1;
@@ -442,7 +443,7 @@ export default class ROTransform implements IROTransform {
 		unit.mLocalMat = unit.mOMat;
 
 		if (!param.fs32) {
-			const ida = ROTransform.sInitData;
+			const ida = IdentityMat4Data;
 			if (unit.mFS32) {
 				unit.mFS32.set(ida, 0);
 			} else {
