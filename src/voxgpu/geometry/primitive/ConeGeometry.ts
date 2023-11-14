@@ -10,23 +10,18 @@ import AABB from "../../cgeom/AABB";
 import GeometryBase from "./GeometryBase";
 import GeometryVertex from "./GeometryVertex";
 import Vector3 from "../../math/Vector3";
+import { WGRNormalType } from "../../render/Define";
 
 export default class ConeGeometry extends GeometryBase {
 	constructor() {
 		super();
 	}
 
-	private mvs: Float32Array = null;
-	private muvs: Float32Array = null;
-	private mnvs: Float32Array = null;
-	private m_cvs: Float32Array = null;
+	private mvs: Float32Array;
+	private muvs: Float32Array;
+	private mnvs: Float32Array;
 
-	inverseUV = false;
-	uScale = 1.0;
-	vScale = 1.0;
-	// normalType = VtxNormalType.FLAT;
-	// normalType = VtxNormalType.GOURAND;
-	normalType = 1;
+	normalType = WGRNormalType.GOURAND;
 
 	getVS(): Float32Array {
 		return this.mvs;
@@ -37,9 +32,6 @@ export default class ConeGeometry extends GeometryBase {
 	getNVS(): Float32Array {
 		return this.mnvs;
 	}
-	getCVS(): Float32Array {
-		return this.m_cvs;
-	}
 	getIVS(): Uint16Array | Uint32Array {
 		return this.mivs;
 	}
@@ -48,14 +40,12 @@ export default class ConeGeometry extends GeometryBase {
 		radius: number,
 		height: number,
 		longitudeNumSegments: number,
-		latitudeNumSegments: number,
-		uvType: number = 1,
 		alignYRatio: number = -0.5
 	) {
 		if (this.vtxTotal < 1) {
 			if (radius < 0.01) radius = 0.01;
 			if (longitudeNumSegments < 2) longitudeNumSegments = 2;
-			let latitudeNumSegments: number = 2;
+			let latitudeNumSegments = 2;
 
 			let i = 1;
 			let j = 0;
@@ -264,7 +254,6 @@ export default class ConeGeometry extends GeometryBase {
 			this.mvs = null;
 			this.muvs = null;
 			this.mnvs = null;
-			this.m_cvs = null;
 			super.__$destroy();
 		}
 	}
