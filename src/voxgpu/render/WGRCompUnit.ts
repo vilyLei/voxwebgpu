@@ -44,15 +44,6 @@ class WGRCompUnit implements IWGRUnit {
 
 	workcounts = __$workcounts;
 
-	// clone(): WGRCompUnit {
-	// 	const r = new WGRCompUnit();
-	// 	r.uniforms = this.uniforms;
-	// 	r.pipelinectx = this.pipelinectx;
-	// 	r.passes = this.passes;
-	// 	r.rp = this.rp;
-	// 	return r;
-	// }
-
 	getRF(): boolean {
 		return this.enabled && this.st.isDrawable();
 	}
