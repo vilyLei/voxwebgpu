@@ -11,6 +11,7 @@ import OBB from "../cgeom/OBB";
 import { RectLineGridEntity } from "../entity/RectLineGridEntity";
 import { TorusEntity } from "../entity/TorusEntity";
 import { createLineCircleXOZ, Line3DEntity } from "../entity/Line3DEntity";
+import Color4 from "../material/Color4";
 
 export class LineObjectTest {
 	private mRscene = new RendererScene();
@@ -48,7 +49,8 @@ export class LineObjectTest {
 
 		const cam = new Camera({eye: new Vector3(500, 500, -300), near: 50, far: 200});
 		const rsc = this.mRscene;
-		let boxFrame = new BoundsFrameEntity({posList8: cam.getWordFrustumVtxArr(), frameColor: [0.3, 0.7, 0.2]});
+		let frameColors = [[1.0, 0.0, 1.0], [0.0, 1.0, 1.0], [1.0, 0.0, 1.0], [0.0, 1.0, 1.0]];
+		let boxFrame = new BoundsFrameEntity({ posList8: cam.getWordFrustumVtxArr(), frameColors });
 		rsc.addEntity( boxFrame );
 	}
 	private mouseDown = (evt: MouseEvent): void => {};
@@ -74,7 +76,16 @@ export class LineObjectTest {
 
 	}
 	private initScene(): void {
+
 		const rsc = this.mRscene;
+
+		// return;
+		let color = new Color4().toBlack().setColor([1.0]);
+		let sph = new SphereEntity();
+		sph.transform.setXYZ(-200, 200, -300);
+		rsc.addEntity( sph );
+		sph.color = color;
+
 		this.createCurve();
 
 		let gridPlane = new RectLineGridEntity();
@@ -86,11 +97,9 @@ export class LineObjectTest {
 		rsc.addEntity( axis );
 
 		this.testOBB();
+
 		this.testFrustumFrame();
 
-		let sph = new SphereEntity();
-		sph.transform.setXYZ(-200, 200, -300);
-		rsc.addEntity( sph );
 		let boxFrame = new BoundsFrameEntity({bounds: sph.getGlobalBounds()});
 		rsc.addEntity( boxFrame );
 

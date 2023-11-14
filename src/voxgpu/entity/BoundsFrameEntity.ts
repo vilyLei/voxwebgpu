@@ -12,7 +12,7 @@ interface BoundsFrameEntityParam extends Line3DEntityParam {
 	obb?: IOBB;
 	obbFrameScale?: number;
 	bounds?: IAABB;
-	frameColor?: ColorDataType;
+
 	frameColors?: ColorDataType[];
 	posList8?: Vector3DataType[];
 }
@@ -133,14 +133,27 @@ function buildPosData(param: BoundsFrameEntityParam): void {
 
 function buildColorData(param: BoundsFrameEntityParam): void {
 	let c = new Color4();
-	if(param.frameColor) {
-		c.setColor( param.frameColor );
-	}
+
 	let len = param.linePositions.length;
 	param.lineColors = new Array(len) as ColorDataType[];
-	for(let i = 0; i < len; ++i) {
+	let cs = param.frameColors;
+	for(let i = 0; i < cs.length; ++i) {
+		const k = i * 2;
+		if(cs[i]) {
+			console.log("xxx xxx cs[i]: ", cs[i]);
+			param.lineColors[ k ] = cs[i];
+			param.lineColors[ k  + 1] = cs[i];
+		}else {
+			param.lineColors[ k ] = c;
+			param.lineColors[ k  + 1] = c;
+		}
+	}
+	// param.linePositions.length
+	for(let i = cs.length * 2; i < len; ++i) {
 		param.lineColors[i] = c;
 	}
+
+	console.log("param.lineColors: ", param.lineColors);
 }
 class BoundsFrameEntity extends Line3DEntity {
 	constructor(param?: BoundsFrameEntityParam) {
@@ -150,7 +163,7 @@ class BoundsFrameEntity extends Line3DEntity {
 		if( !param.linePositions ) {
 			buildPosData( param );
 		}
-		if( !param.lineColors ) {
+		if( !param.lineColors && param.frameColors ) {
 			buildColorData( param );
 		}
 		super(param);

@@ -47,8 +47,8 @@ export default class DashedLineGeometry extends GeometryBase {
 	 */
 	public lineRadius = 2.0;
 	initialize(positions: Vector3DataType[], colors?: ColorDataType[]): void {
-		const v3 = __$v3;
-		const c4 = __$c4;
+		const v3 = new Vector3();
+		const c4 = new Color4();
 		let j = 0;
 		if (this.dashedData) {
 			this.mvs = new Float32Array(positions.length * 3);

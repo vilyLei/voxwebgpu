@@ -53,16 +53,16 @@ export default class Color4 implements IColor4 {
 	b: number;
 	a: number;
 
-	h = 0.0;
-	s = 0.0;
-	l = 0.0;
-	v = 0.0;
+	h = 0;
+	s = 0;
+	l = 0;
+	v = 0;
 
-	c = 0.0;
-	m = 0.0;
-	y = 0.0;
-	k = 0.0;
-	constructor(pr: number = 1.0, pg: number = 1.0, pb: number = 1.0, pa: number = 1.0) {
+	c = 0;
+	m = 0;
+	y = 0;
+	k = 0;
+	constructor(pr = 1.0, pg = 1.0, pb = 1.0, pa = 1.0) {
 		this.r = pr;
 		this.g = pg;
 		this.b = pb;
@@ -78,6 +78,7 @@ export default class Color4 implements IColor4 {
 			const vs = v as number[];
 			if (vs.length !== undefined) {
 				const len = vs.length;
+				console.log("hhhhhh len: ", len);
 				if (len > 0) c.r = vs[0];
 				if (len > 1) c.g = vs[1];
 				if (len > 2) c.b = vs[2];
@@ -90,6 +91,10 @@ export default class Color4 implements IColor4 {
 				if (vo.a !== undefined) c.a = vo.a;
 			}
 		}
+		return this;
+	}
+	toBlack(brn = 0): Color4 {
+		this.r = this.g = this.b = brn;
 		return this;
 	}
 	gammaCorrect(): Color4 {
