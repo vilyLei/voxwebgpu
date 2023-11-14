@@ -23,6 +23,7 @@ interface IWGMaterial extends WGMaterialDescripter {
 	// textures: { [key: string]: WGTextureWrapper } = {};
 	textures: WGTextureWrapper[];
 
+	wireframe?: boolean;
 	visible: boolean;
 	graph?: IWGMaterialGraph;
 

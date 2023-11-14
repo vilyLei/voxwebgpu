@@ -15,14 +15,14 @@ import { Quaternion } from "./Quaternion";
 import { IdentityMat4Data } from "./MatrixUtils";
 
 class Matrix4 implements IMatrix4 {
-	private static sV3: Vector3 = new Vector3();
-	private static sUid: number = 0;
-	private static sIsolatedUid: number = 0x4ffff;
+	private static sV3 = new Vector3();
+	private static sUid = 0;
+	private static sIsolatedUid = 0x4ffff;
 	private static sTMat4 = new Matrix4();
 	private mUid = -1;
 	private mIndex = 0;
-	private mFS32: Float32Array = null;
-	private mLocalFS32: Float32Array = null;
+	private mFS32: Float32Array;
+	private mLocalFS32: Float32Array;
 	constructor(pfs32?: Float32Array, index: number = 0) {
 		this.mIndex = index;
 		if (pfs32) {
