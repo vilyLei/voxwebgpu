@@ -27,17 +27,13 @@ export class PrimitiveEntityTest {
 	private initScene(): void {
 		const rc = this.mRscene;
 
-		// let cone = new ConeEntity();
-		// rc.addEntity(cone);
-		// return;
-
 		let entities: PrimitiveEntity[] = [
 			new SphereEntity(),
 			new BoxEntity(),
 			new CylinderEntity({alignYRatio : 0.0}),
 			new CubeEntity({cubeSize: 130}),
 			new TorusEntity({radius: 110, axisType: 1}),
-			new PlaneEntity({axisType: 1}),
+			new PlaneEntity({axisType: 1, extent: [-80, -80, 160, 160]}),
 			new ConeEntity({alignYRatio : 0.0})
 		];
 
@@ -47,7 +43,7 @@ export class PrimitiveEntityTest {
 				.setAlbedo(new Color4().randomRGB(1.5, 0.1))
 				.setARM(1.1, Math.random() * 0.95 + 0.05, Math.random() * 0.9 + 0.1);
 
-			entity.transform.setXYZ(-700 + i * 200, 0, 0);
+			entity.transform.setXYZ(-700 + i * 230, 0, 0);
 			rc.addEntity(entity);
 		}
 	}

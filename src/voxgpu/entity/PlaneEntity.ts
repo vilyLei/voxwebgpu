@@ -11,8 +11,8 @@ interface PlaneEntityParam extends Entity3DParam {
 	axisType?: number;
 	extent?: Extent2DataType;
 }
+const __$Extent = new Extent2();
 class PlaneEntity extends PrimitiveEntity {
-	private mExtent = new Extent2();
 	constructor(param?: PlaneEntityParam) {
 		super(param);
 	}
@@ -20,7 +20,7 @@ class PlaneEntity extends PrimitiveEntity {
 		let geom = new RectPlaneGeometry();
 		geom.axisType = param.axisType === undefined ? 0 : param.axisType;
 		if(param.extent !== undefined) {
-			const t = this.mExtent;
+			const t = __$Extent;
 			t.setExtent(param.extent);
 			geom.initialize( t.x, t.y, t.width, t.height);
 		}else {
