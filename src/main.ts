@@ -41,7 +41,7 @@
 // import { GameOfLifeSpherePBR as Demo } from "./voxgpu/sample/GameOfLifeSpherePBR";
 // import { GameOfLife3DPBR as Demo } from "./voxgpu/sample/GameOfLife3DPBR";
 
-// import { MultiGPUPassTest as Demo } from "./voxgpu/sample/MultiGPUPassTest";
+import { MultiGPUPassTest as Demo } from "./voxgpu/sample/MultiGPUPassTest";
 // import { RTTFixScreenTest as Demo } from "./voxgpu/sample/RTTFixScreenTest";
 // import { RTTTest as Demo } from "./voxgpu/sample/RTTTest";
 // import { AddEntityIntoMultiRPasses as Demo } from "./voxgpu/sample/AddEntityIntoMultiRPasses";
@@ -55,7 +55,7 @@
 // import { DepthBlur as Demo } from "./voxgpu/sample/DepthBlur";
 
 // import { LineEntityTest as Demo } from "./voxgpu/sample/LineEntityTest";
-import { LineObjectTest as Demo } from "./voxgpu/sample/LineObjectTest";
+// import { LineObjectTest as Demo } from "./voxgpu/sample/LineObjectTest";
 
 
 

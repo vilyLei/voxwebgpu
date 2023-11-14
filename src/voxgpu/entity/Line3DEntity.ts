@@ -2,7 +2,7 @@ import { WGGeometry } from "../geometry/WGGeometry";
 import DashedLineGeometry from "../geometry/primitive/DashedLineGeometry";
 import GeometryBase from "../geometry/primitive/GeometryBase";
 import Color4 from "../material/Color4";
-import { WGMaterial } from "../material/WGMaterial";
+import { checkMaterialRPasses, WGMaterial } from "../material/WGMaterial";
 import Vector3 from "../math/Vector3";
 import { WGRBufferData } from "../render/buffer/WGRBufferData";
 import { WGRUniformValue } from "../render/uniform/WGRUniformValue";
@@ -127,18 +127,20 @@ class Line3DEntity extends Entity3D {
 			}
 			this.materials = [material];
 		}
-		const rpasses = param.rpasses;
-		if (rpasses) {
-			const ms = this.materials;
-			// 这里的实现需要优化, 因为一个material实际上可以加入到多个rpass中去
-			let len = Math.min(rpasses.length, ms.length);
-			for (let i = 0; i < len; ++i) {
-				const rpass = ms[i].rpass;
-				if (!rpass || !rpass.rpass.node) {
-					ms[i].rpass = rpasses[i];
-				}
-			}
-		}
+		
+		checkMaterialRPasses(this.materials, param.rpasses);
+		// const rpasses = param.rpasses;
+		// if (rpasses) {
+		// 	const ms = this.materials;
+		// 	// 这里的实现需要优化, 因为一个material实际上可以加入到多个rpass中去
+		// 	let len = Math.min(rpasses.length, ms.length);
+		// 	for (let i = 0; i < len; ++i) {
+		// 		const rpass = ms[i].rpass;
+		// 		if (!rpass || !rpass.rpass.node) {
+		// 			ms[i].rpass = rpasses[i];
+		// 		}
+		// 	}
+		// }
 	}
 }
 

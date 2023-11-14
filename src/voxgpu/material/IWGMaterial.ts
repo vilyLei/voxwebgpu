@@ -4,6 +4,8 @@ import { WGRPipelineContextDefParam, WGRShderSrcType } from "../render/pipeline/
 import { VtxPipelinDescParam, WGRPipelineContextImpl } from "../render/pipeline/WGRPipelineContextImpl";
 import { WGMaterialDescripter } from "./WGMaterialDescripter";
 import { IWGMaterialGraph } from "./IWGMaterialGraph";
+import { WGRBufferData } from "../render/buffer/WGRBufferData";
+import { WGRMaterialPassViewImpl } from "../render/pipeline/WGRMaterialPassViewImpl";
 
 interface IWGMaterial extends WGMaterialDescripter {
 
@@ -17,11 +19,12 @@ interface IWGMaterial extends WGMaterialDescripter {
 	pipelineVtxParam?: VtxPipelinDescParam;
 	pipelineDefParam?: WGRPipelineContextDefParam;
 
-	// uniformValues: WGRUniformValue[];
-	// uniformValues: WGRBufferData[];
+	uniformValues: WGRBufferData[];
 
 	// textures: { [key: string]: WGTextureWrapper } = {};
 	textures: WGTextureWrapper[];
+
+	rpass: WGRMaterialPassViewImpl;
 
 	wireframe?: boolean;
 	visible: boolean;
@@ -37,4 +40,18 @@ interface IWGMaterial extends WGMaterialDescripter {
 	initialize(pipelineCtx: WGRPipelineContextImpl): void;
 	destroy(): void;
 }
-export { IWGMaterial };
+function checkMaterialRPasses(ms: IWGMaterial[], rpasses: WGRMaterialPassViewImpl[]): void {
+	// const rpasses = param.rpasses;
+	if (rpasses) {
+		const ms = this.materials;
+		// 这里的实现需要优化, 因为一个material实际上可以加入到多个rpass中去
+		let len = Math.min(rpasses.length, ms.length);
+		for (let i = 0; i < len; ++i) {
+			const rpass = ms[i].rpass;
+			if (!rpass || !rpass.rpass.node) {
+				ms[i].rpass = rpasses[i];
+			}
+		}
+	}
+}
+export { checkMaterialRPasses, IWGMaterial };

@@ -10,7 +10,7 @@ import { WGRPipelineContextDefParam, WGRShderSrcType } from "../render/pipeline/
 import { VtxPipelinDescParam, WGRPipelineContextImpl } from "../render/pipeline/WGRPipelineContextImpl";
 import { WGRMaterialPassViewImpl } from "../render/pipeline/WGRMaterialPassViewImpl";
 import { WGMaterialDescripter } from "./WGMaterialDescripter";
-import { IWGMaterial } from "./IWGMaterial";
+import { checkMaterialRPasses, IWGMaterial } from "./IWGMaterial";
 import { IWGMaterialGraph } from "./IWGMaterialGraph";
 import { WGRBufferData } from "../render/buffer/WGRBufferValueParam";
 
@@ -36,7 +36,6 @@ class WGMaterial implements IWGMaterial {
 	 * material uniforms append to pipeline, or not
 	 */
 	uniformAppend?: boolean;
-	// uniformValues: WGRUniformValue[];
 	uniformValues: WGRBufferData[];
 
 	instanceCount = 1;
@@ -147,4 +146,4 @@ class WGMaterial implements IWGMaterial {
 		}
 	}
 }
-export { WGTextureDataDescriptor, WGMaterial };
+export { checkMaterialRPasses, WGTextureDataDescriptor, WGMaterial };
