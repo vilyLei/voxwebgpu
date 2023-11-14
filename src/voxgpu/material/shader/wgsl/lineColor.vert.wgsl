@@ -4,7 +4,7 @@
 
 struct VertexOutput {
   @builtin(position) Position : vec4<f32>,
-  @location(0) vertColor : vec3<f32>
+  @location(0) vertColor : vec4<f32>
 }
 @vertex
 fn main(
@@ -15,6 +15,6 @@ fn main(
   let wpos = objMat * vec4(position.xyz, 1.0);
   var output : VertexOutput;
   output.Position = projMat * viewMat * wpos;
-  output.vertColor = color;
+  output.vertColor = vec4f(color.xyz, 1.0);
   return output;
 }

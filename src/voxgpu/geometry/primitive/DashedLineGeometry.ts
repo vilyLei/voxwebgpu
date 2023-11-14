@@ -63,14 +63,15 @@ export default class DashedLineGeometry extends GeometryBase {
 			j = 0;
 			for (let i = 0; i < colors.length; ++i) {
 				if (colors[i]) {
-					c4.setColor(colors[i]).toArray3(this.mvs, j++ * 3);
+					c4.setColor(colors[i]).toArray3(this.mcvs, j++ * 3);
 					if (i > 0 && i < colors.length - 1) {
-						c4.setColor(colors[i]).toArray3(this.mvs, j++ * 3);
+						c4.setColor(colors[i]).toArray3(this.mcvs, j++ * 3);
 					}
 				}
 			}
 		}
-		console.log(this.mvs);
+		console.log("this.mvs: ", this.mvs);
+		console.log(this.mcvs);
 		if (!this.bounds) this.bounds = new AABB();
 		this.bounds.addFloat32Arr(this.mvs);
 		this.bounds.updateFast();

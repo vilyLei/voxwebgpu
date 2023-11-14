@@ -52,6 +52,8 @@ class Line3DEntity extends Entity3D {
 		} else {
 			const geom = this.getGeometryData(param);
 			if(geom) {
+
+				console.log("geom.getCVS(): ", geom.getCVS());
 				const g = new WGGeometry()
 					.addAttribute({ position: geom.getVS() });
 				if(geom.getCVS()) {
@@ -93,7 +95,7 @@ class Line3DEntity extends Entity3D {
 				blendModes: bl
 			};
 
-			let shadinguuid = param.shadinguuid !== undefined ? param.shadinguuid : "line3DEntity-material";
+			let shadinguuid = param.shadinguuid !== undefined ? param.shadinguuid : ns + "line3DEntity-material";
 			const material = new WGMaterial({
 				shadinguuid,
 				shaderCodeSrc,
