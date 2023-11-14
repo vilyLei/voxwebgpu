@@ -27,7 +27,6 @@ interface Entity3DParam {
 	depthWriteEnabled?: boolean;
 	shaderSrc?: WGRShderSrcType;
 	uniformValues?: WGRBufferData[];
-	// uniformValueMap?: { [key: string]: WGRUniformValue }
 	shadinguuid?: string;
 	instanceCount?: number;
 	rpasses?: WGRMaterialPassViewImpl[];

@@ -265,7 +265,7 @@ class Camera implements IRenderCamera {
         this.m_tempV.setXYZ(px,py,pz);
         if (this.m_unlock && Vector3.DistanceSquared(this.m_camPos, this.m_tempV) > 0.00001) {
 
-            this.m_camPos.setTo(px, py, pz);
+            this.m_camPos.setXYZ(px, py, pz);
             this.m_lookAtPos.x = px + this.m_lookAtDirec.x;
             this.m_lookAtPos.y = py + this.m_lookAtDirec.y;
             this.m_lookAtPos.z = pz + this.m_lookAtDirec.z;
@@ -445,7 +445,7 @@ class Camera implements IRenderCamera {
             this.m_tempV1.copyFrom(this.m_initUP);
             this.m_tempV1.scaleBy(dot);
             this.m_tempV.subtractBy(this.m_tempV1);
-            this.m_camPos.setTo(px, py, pz);
+            this.m_camPos.setXYZ(px, py, pz);
             // this.m_lookAtDirec.x = this.m_lookAtPos.x - this.m_camPos.x;
             // this.m_lookAtDirec.y = this.m_lookAtPos.y - this.m_camPos.y;
             // this.m_lookAtDirec.z = this.m_lookAtPos.z - this.m_camPos.z;
@@ -460,7 +460,7 @@ class Camera implements IRenderCamera {
     }
     setLookPosXYZFixUp(px: number, py: number, pz: number): void {
         if (this.m_unlock) {
-            this.m_lookAtPos.setTo(px, py, pz);
+            this.m_lookAtPos.setXYZ(px, py, pz);
             // this.m_lookAtDirec.x = this.m_lookAtPos.x - this.m_camPos.x;
             // this.m_lookAtDirec.y = this.m_lookAtPos.y - this.m_camPos.y;
             // this.m_lookAtDirec.z = this.m_lookAtPos.z - this.m_camPos.z;
@@ -476,7 +476,7 @@ class Camera implements IRenderCamera {
     }
     setPositionXYZFixUp(px: number, py: number, pz: number): void {
         if (this.m_unlock) {
-            this.m_camPos.setTo(px, py, pz);
+            this.m_camPos.setXYZ(px, py, pz);
             // this.m_lookAtDirec.x = this.m_lookAtPos.x - this.m_camPos.x;
             // this.m_lookAtDirec.y = this.m_lookAtPos.y - this.m_camPos.y;
             // this.m_lookAtDirec.z = this.m_lookAtPos.z - this.m_camPos.z;
@@ -544,7 +544,7 @@ class Camera implements IRenderCamera {
     }
     setLookAtXYZ(px: number, py: number, pz: number): void {
         if (this.m_unlock) {
-            this.m_lookAtPos.setTo(px, py, pz);
+            this.m_lookAtPos.setXYZ(px, py, pz);
             // this.m_lookAtDirec.x = this.m_lookAtPos.x - this.m_camPos.x;
             // this.m_lookAtDirec.y = this.m_lookAtPos.y - this.m_camPos.y;
             // this.m_lookAtDirec.z = this.m_lookAtPos.z - this.m_camPos.z;
@@ -590,7 +590,7 @@ class Camera implements IRenderCamera {
             px = this.m_nearPlaneWidth * (px - this.m_viewHalfW) / this.m_viewHalfW;
             py = this.m_nearPlaneHeight * (this.m_viewHalfH - py) / this.m_viewHalfH;
         }
-        outV.setTo(px, py, -this.m_zNear);
+        outV.setXYZ(px, py, -this.m_zNear);
         //
     }
     screenXYToWorldXYZ(px: number, py: number, outV: Vector3): void {
@@ -600,7 +600,7 @@ class Camera implements IRenderCamera {
             px = 0.5 * this.m_nearPlaneWidth * (px - this.m_viewHalfW) / this.m_viewHalfW;
             py = 0.5 * this.m_nearPlaneHeight * (this.m_viewHalfH - py) / this.m_viewHalfH;
         }
-        outV.setTo(px, py, -this.m_zNear);
+        outV.setXYZ(px, py, -this.m_zNear);
         outV.w = 1.0;
         this.m_viewInvertMat.transformVectorSelf(outV);
     }
@@ -611,7 +611,7 @@ class Camera implements IRenderCamera {
         if (this.m_perspectiveEnabled) {
             screenX = 0.5 * this.m_nearPlaneWidth * (screenX - this.m_viewHalfW) / this.m_viewHalfW;
             screenY = 0.5 * this.m_nearPlaneHeight * (screenY - this.m_viewHalfH) / this.m_viewHalfH;
-            ray_pos.setTo(screenX, screenY, -this.m_zNear);
+            ray_pos.setXYZ(screenX, screenY, -this.m_zNear);
             ray_pos.w = 1.0;
             this.m_viewInvertMat.transformVectorSelf(ray_pos);
             ray_tv.copyFrom(ray_pos);
@@ -621,7 +621,7 @@ class Camera implements IRenderCamera {
         else {
             screenX -= this.m_viewHalfW;
             screenY -= this.m_viewHalfH;
-            ray_pos.setTo(screenX, screenY, -this.m_zNear);
+            ray_pos.setXYZ(screenX, screenY, -this.m_zNear);
             ray_pos.w = 1.0;
             this.m_viewInvertMat.transformVectorSelf(ray_pos);
             ray_tv.copyFrom(this.m_lookDirectNV);

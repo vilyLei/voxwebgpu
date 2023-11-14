@@ -189,8 +189,8 @@ class Plane extends AbsGeomBase {
 	}
 	// 判断一个球体是否和一个平面的负空间相交
 	intersectSphNegSpace(cv: Vector3, radius: number): void {
-		//this.intersectBoo = (this.nv.dot(cv) - this.distance - radius) < MathConst.MATH_MIN_POSITIVE;				
-		//this.intersectBoo = (this.nv.dot(cv) - this.distance) < radius;				
+		//this.intersectBoo = (this.nv.dot(cv) - this.distance - radius) < MathConst.MATH_MIN_POSITIVE;
+		//this.intersectBoo = (this.nv.dot(cv) - this.distance) < radius;
 		this.intersectBoo = (Math.abs(this.nv.dot(cv) - this.distance) < radius);
 	}
 	update(): void {
@@ -214,12 +214,12 @@ class Plane extends AbsGeomBase {
 	}
 	static CalcPVCloseV(plane: Plane, posV: Vector3, outV: Vector3): void {
 		let value: number = plane.distance - posV.dot(plane.nv);
-		outV.setTo(value * plane.nv.x, value * plane.nv.y, value * plane.nv.z);
+		outV.setXYZ(value * plane.nv.x, value * plane.nv.y, value * plane.nv.z);
 		outV.addBy(posV);
 	}
 	static CalcPVCloseV2(pnv: Vector3, pd: number, posV: Vector3, outV: Vector3): void {
 		let value: number = pd - posV.dot(pnv);
-		outV.setTo(value * pnv.x, value * pnv.y, value * pnv.z);
+		outV.setXYZ(value * pnv.x, value * pnv.y, value * pnv.z);
 		//outV.scaleBy(value);
 		outV.addBy(posV);
 	}

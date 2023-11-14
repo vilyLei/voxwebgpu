@@ -65,13 +65,13 @@ class WGRObjBuilder {
 		// console.log('WGRObjBuilder::createRPass(), builder: ', builder);
 		// if (!pctx) {
 		if (!builder.hasMaterial(material)) {
-			// const mvtx = material.pipelineVtxParam.vertex;
 			if (!pctx) {
 				if (material.pipelineVtxParam) {
 					material.pipelineVtxParam.vertex.buffers = primitive.vbufs;
+					material.pipelineVtxParam.vertex.drawMode = primitive.drawMode;
 				} else {
 					if (primitive) {
-						material.pipelineVtxParam = { vertex: { buffers: primitive.vbufs, attributeIndicesArray: [] } };
+						material.pipelineVtxParam = { vertex: { buffers: primitive.vbufs, attributeIndicesArray: [], drawMode: primitive.drawMode } };
 						const ls = [];
 						for (let i = 0; i < primitive.vbufs.length; ++i) {
 							ls.push([0]);
@@ -197,6 +197,7 @@ class WGRObjBuilder {
 			const indexCount = indexBuffer ? indexBuffer.elementCount : 0;
 			const vertexCount = vertexBuffers[0].vectorCount;
 			primitive = this.createPrimitive({ vertexBuffers, indexBuffer, indexCount, vertexCount });
+			primitive.drawMode = geometry.drawMode;
 		}
 
 		let ru: IWGRUnit;

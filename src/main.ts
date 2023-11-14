@@ -26,7 +26,7 @@
 // import { RSceneEntityManagement as Demo } from "./voxgpu/sample/RSceneEntityManagement";
 // import { SimplePBRTest as Demo } from "./voxgpu/sample/SimplePBRTest";
 // import { FixScreenPlaneTest as Demo } from "./voxgpu/sample/FixScreenPlaneTest";
-// import { PrimitiveEntityTest as Demo } from "./voxgpu/sample/PrimitiveEntityTest";
+import { PrimitiveEntityTest as Demo } from "./voxgpu/sample/PrimitiveEntityTest";
 
 // import { ScreenPostEffect as Demo } from "./voxgpu/sample/ScreenPostEffect";
 // import { ModelLoadTest as Demo } from "./voxgpu/sample/ModelLoadTest";
@@ -52,7 +52,9 @@
 
 // import { FloatRTT as Demo } from "./voxgpu/sample/FloatRTT";
 // import { MRT as Demo } from "./voxgpu/sample/MRT";
-import { DepthBlur as Demo } from "./voxgpu/sample/DepthBlur";
+// import { DepthBlur as Demo } from "./voxgpu/sample/DepthBlur";
+
+// import { LineEntityTest as Demo } from "./voxgpu/sample/LineEntityTest";
 
 
 

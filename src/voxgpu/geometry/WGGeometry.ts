@@ -1,6 +1,7 @@
 import AABB from "../cgeom/AABB";
 import { GPUBuffer } from "../gpu/GPUBuffer";
 import { VtxPipelinDescParam } from "../render/pipeline/WGRPipelineContextImpl";
+import { WGRDrawMode } from "../render/Define";
 interface WGGeomAttributeParam {
 	shdVarName?: string;
 	data?: NumberArrayViewType;
@@ -41,6 +42,7 @@ class WGGeometry {
 	gpuvbufs?: GPUBuffer[];
 	indexBuffer: WGGeomIndexBuffer;
 	bounds: AABB;
+	drawMode = WGRDrawMode.TRIANGLES;
 	setIndexBuffer(param: { name?: string, data: IndexArrayViewType }): WGGeometry {
 		this.indexBuffer = new WGGeomIndexBuffer(param);
 		return this;

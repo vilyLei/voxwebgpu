@@ -7,7 +7,7 @@
 import IVector3 from "./IVector3";
 
 const v_m_180pk = 180.0 / Math.PI;
-const v_m_minp: number = 1e-7;
+const v_m_minp = 1e-7;
 export default class Vector3 implements IVector3 {
     x = 0.0;
     y = 0.0;
@@ -22,26 +22,60 @@ export default class Vector3 implements IVector3 {
     clone(): Vector3 {
         return new Vector3(this.x, this.y, this.z, this.w);
     }
+
+	setVector3(vector3: Vector3DataType): Vector3 {
+		let v = vector3;
+		if (v) {
+			const t = this;
+			const vs = v as number[];
+			if (vs.length !== undefined) {
+				const len = vs.length;
+				if (len > 0) t.x = vs[0];
+				if (len > 1) t.y = vs[1];
+				if (len > 2) t.z = vs[2];
+				if (len > 3) t.w = vs[3];
+			} else {
+				const tv = v as Vector3Type;
+				if (tv.x !== undefined) t.x = tv.x;
+				if (tv.y !== undefined) t.y = tv.y;
+				if (tv.z !== undefined) t.z = tv.z;
+				if (tv.w !== undefined) t.w = tv.w;
+			}
+		}
+		return this;
+	}
 	abs(): Vector3 {
 		this.x = Math.abs(this.x);
 		this.y = Math.abs(this.y);
 		this.z = Math.abs(this.z);
 		return this;
 	}
-    setTo(px: number, py: number, pz: number, pw: number = 1.0): Vector3 {
+    setXYZW(px: number, py: number, pz: number, pw: number): Vector3 {
         this.x = px;
         this.y = py;
         this.z = pz;
         this.w = pw;
         return this;
     }
-    fromArray(arr: number[] | Float32Array, offset: number = 0): Vector3 {
+    setXYZ(px: number, py: number, pz: number): Vector3 {
+        this.x = px;
+        this.y = py;
+        this.z = pz;
+        return this;
+    }
+	/**
+     * example: [0],[1],[2],[3] => x,y,z,w
+     */
+    fromArray3(arr: number[] | Float32Array, offset: number = 0): Vector3 {
         this.x = arr[offset];
         this.y = arr[offset + 1];
         this.z = arr[offset + 2];
         return this;
     }
-    toArray(arr: number[] | Float32Array, offset: number = 0): Vector3 {
+	/**
+     * example: x,y,z => [0],[1],[2]
+     */
+    toArray3(arr: number[] | Float32Array, offset: number = 0): Vector3 {
         arr[offset] = this.x;
         arr[offset + 1] = this.y;
         arr[offset + 2] = this.z;
@@ -59,12 +93,6 @@ export default class Vector3 implements IVector3 {
         arr[offset + 1] = this.y;
         arr[offset + 2] = this.z;
         arr[offset + 3] = this.w;
-        return this;
-    }
-    setXYZ(px: number, py: number, pz: number): Vector3 {
-        this.x = px;
-        this.y = py;
-        this.z = pz;
         return this;
     }
     copyFrom(v3: Vector3): Vector3 {

@@ -31,44 +31,43 @@ export default class RectPlaneGeometry extends GeometryBase {
      */
     axisType = 0;
 
-    private m_polyhedralBoo = true;
-    private m_vs: Float32Array = null
-    private m_uvs: Float32Array = null;
-    private m_nvs: Float32Array = null;
+    private mvs: Float32Array = null
+    private muvs: Float32Array = null;
+    private mnvs: Float32Array = null;
 
-    getVS(): Float32Array { return this.m_vs; }
-    getUVS(): Float32Array { return this.m_uvs; }
+    getVS(): Float32Array { return this.mvs; }
+    getUVS(): Float32Array { return this.muvs; }
     setUVS(uvsLen8: Float32Array): void {
         if (uvsLen8 != null && uvsLen8.length == 8) {
-            if (this.m_uvs == null) {
-                this.m_uvs = uvsLen8.slice(0);
+            if (this.muvs == null) {
+                this.muvs = uvsLen8.slice(0);
             }
             else {
-                this.m_uvs.set(uvsLen8);
+                this.muvs.set(uvsLen8);
             }
         }
     }
 
-    getNVS(): Float32Array { return this.m_nvs; }
+    getNVS(): Float32Array { return this.mnvs; }
     initialize(startX: number, startY: number, pwidth: number, pheight: number): void {
 
-        if (this.m_vs) {
+        if (this.mvs) {
             return;
         }
 
-        let minX: number = startX;
-        let minY: number = startY;
-        let maxX: number = startX + pwidth;
-        let maxY: number = startY + pheight;
-        let pz: number = 0.0;
-        //
+        let minX = startX;
+        let minY = startY;
+        let maxX = startX + pwidth;
+        let maxY = startY + pheight;
+        let pz = 0.0;
+
         // ccw is positive, left-bottom pos(minX,minY) -> right-bottom pos(maxX,minY) -> right-top pos(maxX,maxY)  -> right-top pos(minX,maxY)
-        this.m_ivs = new Uint16Array([0, 1, 2, 0, 2, 3]);
-        //this.m_ivs = new Uint32Array([0,1,2,0,2,3]);
+        this.mivs = new Uint16Array([0, 1, 2, 0, 2, 3]);
+        //this.mivs = new Uint32Array([0,1,2,0,2,3]);
         switch (this.axisType) {
             case 0:
                 // XOY plane
-                this.m_vs = new Float32Array([
+                this.mvs = new Float32Array([
                     minX, minY, pz,
                     maxX, minY, pz,
                     maxX, maxY, pz,
@@ -77,7 +76,7 @@ export default class RectPlaneGeometry extends GeometryBase {
                 break;
             case 1:
                 // XOZ plane
-                this.m_vs = new Float32Array([
+                this.mvs = new Float32Array([
                     maxX, pz, minY,
                     minX, pz, minY,
                     minX, pz, maxY,
@@ -86,7 +85,7 @@ export default class RectPlaneGeometry extends GeometryBase {
                 break;
             case 2:
                 // YOZ plane
-                this.m_vs = new Float32Array([
+                this.mvs = new Float32Array([
                     pz, minX, minY,
                     pz, maxX, minY,
                     pz, maxX, maxY,
@@ -96,13 +95,13 @@ export default class RectPlaneGeometry extends GeometryBase {
             default:
                 break;
         }
-        if (this.bounds == null) this.bounds = new AABB();
-        this.bounds.addFloat32Arr(this.m_vs);
+        if (!this.bounds) this.bounds = new AABB();
+        this.bounds.addFloat32Arr(this.mvs);
         this.bounds.updateFast();
 
-        if (!this.m_uvs) {
+        if (!this.muvs) {
             if (this.flipY) {
-                this.m_uvs = new Float32Array([
+                this.muvs = new Float32Array([
                     this.offsetU + 0.0 * this.uScale, this.offsetV + 1.0 * this.vScale,
                     this.offsetU + 1.0 * this.uScale, this.offsetV + 1.0 * this.vScale,
                     this.offsetU + 1.0 * this.uScale, this.offsetV + 0.0 * this.vScale,
@@ -110,7 +109,7 @@ export default class RectPlaneGeometry extends GeometryBase {
                 ]);
             }
             else {
-                this.m_uvs = new Float32Array([
+                this.muvs = new Float32Array([
                     this.offsetU + 0.0 * this.uScale, this.offsetV + 0.0 * this.vScale,
                     this.offsetU + 1.0 * this.uScale, this.offsetV + 0.0 * this.vScale,
                     this.offsetU + 1.0 * this.uScale, this.offsetV + 1.0 * this.vScale,
@@ -122,7 +121,7 @@ export default class RectPlaneGeometry extends GeometryBase {
         if (true) {
             switch (this.axisType) {
                 case 0:
-                    this.m_nvs = new Float32Array([
+                    this.mnvs = new Float32Array([
                         0.0, 0.0, 1.0,
                         0.0, 0.0, 1.0,
                         0.0, 0.0, 1.0,
@@ -130,7 +129,7 @@ export default class RectPlaneGeometry extends GeometryBase {
                     ]);
                     break;
                 case 1:
-                    this.m_nvs = new Float32Array([
+                    this.mnvs = new Float32Array([
                         0.0, 1.0, 0.0,
                         0.0, 1.0, 0.0,
                         0.0, 1.0, 0.0,
@@ -138,7 +137,7 @@ export default class RectPlaneGeometry extends GeometryBase {
                     ]);
                     break;
                 case 2:
-                    this.m_nvs = new Float32Array([
+                    this.mnvs = new Float32Array([
                         1.0, 0.0, 0.0,
                         1.0, 0.0, 0.0,
                         1.0, 0.0, 0.0,
@@ -150,19 +149,11 @@ export default class RectPlaneGeometry extends GeometryBase {
             }
         }
 
-        // this.drawMode = RenderDrawMode.ELEMENTS_TRIANGLES;
-
         this.vtxTotal = 4;
         this.trisNumber = 2;
-        this.vtCount = this.m_ivs.length;
+        this.vtCount = this.mivs.length;
 
     }
-    vsFloat32: Float32Array = null;
-    dataStepList: number[] = null;
-    // 是否是多面体实体,如果是，则可以进行三角面的相关计算等操作, 如果不是则需要进行相关的几何算法计算
-    isPolyhedral(): boolean { return this.m_polyhedralBoo; }
-    // 设置自身是否是多面体实体，根据实际需要改变相关的状态值
-    setPolyhedral(boo: boolean): void { this.m_polyhedralBoo = boo; }
 
     /**
      * 射线和自身的相交检测(多面体或几何函数(例如球体))
@@ -173,7 +164,7 @@ export default class RectPlaneGeometry extends GeometryBase {
      * @return          返回值 -1 表示不会进行检测,1表示相交,0表示不相交
      */
     testRay(rlpv: Vector3, rltv: Vector3, outV: Vector3, boundsHit: boolean): number {
-        if (this.m_polyhedralBoo) return -1;
+        if (this.mPolyhedral) return -1;
         if (boundsHit) {
             let boo: boolean = AABBCalc.IntersectionRL2(rltv, rlpv, this.bounds, outV);
             return boo ? 1 : -1;
@@ -181,12 +172,12 @@ export default class RectPlaneGeometry extends GeometryBase {
         return -1;
     }
     __$destroy(): void {
-        if (this.m_ivs) {
+        if (this.mivs) {
             this.bounds = null;
 
-            this.m_vs = null;
-            this.m_uvs = null;
-            this.m_nvs = null;
+            this.mvs = null;
+            this.muvs = null;
+            this.mnvs = null;
 
             super.__$destroy();
         }

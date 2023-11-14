@@ -33,9 +33,9 @@ class SurfaceNormalCalc {
 	static ClacTriNormalByVS(verteies: Float32Array, triangleIndex: number, resultNormal: Vector3): void {
 		let calc = SurfaceNormalCalc;
 		let i: number = triangleIndex * 9;
-		calc.s_temp_va.setTo(verteies[i], verteies[i + 1], verteies[i + 2]);
-		resultNormal.setTo(verteies[i + 3], verteies[i + 4], verteies[i + 5]);
-		calc.s_temp_vc.setTo(verteies[i + 6], verteies[i + 7], verteies[i + 8]);
+		calc.s_temp_va.setXYZ(verteies[i], verteies[i + 1], verteies[i + 2]);
+		resultNormal.setXYZ(verteies[i + 3], verteies[i + 4], verteies[i + 5]);
+		calc.s_temp_vc.setXYZ(verteies[i + 6], verteies[i + 7], verteies[i + 8]);
 		resultNormal.subtractBy(calc.s_temp_va);
 		calc.s_temp_vc.subtractBy(calc.s_temp_va);
 		//vox::kernel::geom::Vector3::cross(vb, vc, resultNormal);
@@ -47,11 +47,11 @@ class SurfaceNormalCalc {
 		let calc = SurfaceNormalCalc;
 		let j: number = triangleIndex * 3;
 		let i: number = indices[j] * 3;
-		calc.s_temp_va.setTo(verteies[i], verteies[i + 1], verteies[i + 2]);
+		calc.s_temp_va.setXYZ(verteies[i], verteies[i + 1], verteies[i + 2]);
 		i = indices[j + 1] * 3;
-		resultNormal.setTo(verteies[i], verteies[i + 1], verteies[i + 2]);
+		resultNormal.setXYZ(verteies[i], verteies[i + 1], verteies[i + 2]);
 		i = indices[j + 2] * 3;
-		calc.s_temp_vc.setTo(verteies[i], verteies[i + 1], verteies[i + 2]);
+		calc.s_temp_vc.setXYZ(verteies[i], verteies[i + 1], verteies[i + 2]);
 		//trace(triangleIndex, ", v3a: ", SurfaceNormalCalc.s_temp_va, ", v3b: ", resultNormal, ", v3c: ", SurfaceNormalCalc.s_temp_vc);
 		resultNormal.subtractBy(calc.s_temp_va);
 		calc.s_temp_vc.subtractBy(calc.s_temp_va);
@@ -79,7 +79,7 @@ class SurfaceNormalCalc {
 			normals[k] += v3.x; normals[k + 1] += v3.y; normals[k + 2] += v3.z;
 		}
 		for (i = 0; i < verteiesLength; i += 3) {
-			calc.s_temp_va.setTo(normals[i], normals[i + 1], normals[i + 2]);
+			calc.s_temp_va.setXYZ(normals[i], normals[i + 1], normals[i + 2]);
 			calc.s_temp_va.normalize();
 			normals[i] = calc.s_temp_va.x; normals[i + 1] = calc.s_temp_va.y; normals[i + 2] = calc.s_temp_va.z;
 		}
@@ -90,19 +90,19 @@ class SurfaceNormalCalc {
 		let j: number = triangleIndex * 3;
 		// pos
 		let i: number = indices[j] * 3;
-		calc.s_temp_va.setTo(nvs[i], nvs[i + 1], nvs[i + 2]);
-		calc.s_temp_va.setTo(verteies[i], verteies[i + 1], verteies[i + 2]);
+		calc.s_temp_va.setXYZ(nvs[i], nvs[i + 1], nvs[i + 2]);
+		calc.s_temp_va.setXYZ(verteies[i], verteies[i + 1], verteies[i + 2]);
 		i = indices[j + 1] * 3;
-		calc.s_temp_vb.setTo(verteies[i], verteies[i + 1], verteies[i + 2]);
+		calc.s_temp_vb.setXYZ(verteies[i], verteies[i + 1], verteies[i + 2]);
 		i = indices[j + 2] * 3;
-		calc.s_temp_vc.setTo(verteies[i], verteies[i + 1], verteies[i + 2]);
+		calc.s_temp_vc.setXYZ(verteies[i], verteies[i + 1], verteies[i + 2]);
 		// uv
 		i = indices[j] * 2;
-		calc.s_temp_vd.setTo(uvs[i], uvs[i + 1], 0.0);
+		calc.s_temp_vd.setXYZ(uvs[i], uvs[i + 1], 0.0);
 		i = indices[j + 1] * 2;
-		calc.s_temp_ve.setTo(uvs[i], uvs[i + 1], 0.0);
+		calc.s_temp_ve.setXYZ(uvs[i], uvs[i + 1], 0.0);
 		i = indices[j + 2] * 2;
-		calc.s_temp_vf.setTo(uvs[i], uvs[i + 1], 0.0);
+		calc.s_temp_vf.setXYZ(uvs[i], uvs[i + 1], 0.0);
 		// edges of pos
 		calc.s_temp_vb.subtractBy(calc.s_temp_va);
 		calc.s_temp_vc.subtractBy(calc.s_temp_va);
@@ -127,7 +127,7 @@ class SurfaceNormalCalc {
 		//*/
 	}
 	static ClacTrisTangent(verteies: Float32Array, verteiesLength: number, uvs: Float32Array, nvs: Float32Array, numTriangles: number, indices: Uint16Array | Uint32Array, tangent: Float32Array, biTangent: Float32Array): void {
-		
+
 		let calc = SurfaceNormalCalc;
 		let tv3: Vector3 = new Vector3(), btv3: Vector3 = new Vector3();
 		let j: number = 0, k: number = 0, i: number = 0;
@@ -149,17 +149,17 @@ class SurfaceNormalCalc {
 			biTangent[k] = btv3.x; biTangent[k + 1] = btv3.y; biTangent[k + 2] = btv3.z;
 		}
 		for (i = 0; i < verteiesLength; i += 3) {
-			calc.s_temp_vd.setTo(tangent[i], tangent[i + 1], tangent[i + 2]);
+			calc.s_temp_vd.setXYZ(tangent[i], tangent[i + 1], tangent[i + 2]);
 			calc.s_temp_vd.normalize();
-			calc.s_temp_vb.setTo(biTangent[i], biTangent[i + 1], biTangent[i + 2]);
+			calc.s_temp_vb.setXYZ(biTangent[i], biTangent[i + 1], biTangent[i + 2]);
 			calc.s_temp_vb.normalize();
-			calc.s_temp_vc.setTo(nvs[i], nvs[i + 1], nvs[i + 2]);
+			calc.s_temp_vc.setXYZ(nvs[i], nvs[i + 1], nvs[i + 2]);
 			calc.s_temp_va.copyFrom(calc.s_temp_vc);
 			calc.s_temp_vc.scaleBy(calc.s_temp_vc.dot(calc.s_temp_vd));
 			calc.s_temp_vd.subtractBy(calc.s_temp_vc);
 			calc.s_temp_vd.normalize();
 			//b = b - n * dot( b, n )
-			calc.s_temp_vc.setTo(nvs[i], nvs[i + 1], nvs[i + 2]);
+			calc.s_temp_vc.setXYZ(nvs[i], nvs[i + 1], nvs[i + 2]);
 			calc.s_temp_vc.scaleBy(calc.s_temp_vb.dot(calc.s_temp_vc));
 			calc.s_temp_vb.subtractBy(calc.s_temp_vc);
 			calc.s_temp_vb.normalize();
@@ -168,7 +168,7 @@ class SurfaceNormalCalc {
 				calc.s_temp_vd.scaleBy(-1.0);
 			}
 			tangent[i] = calc.s_temp_vd.x; tangent[i + 1] = calc.s_temp_vd.y; tangent[i + 2] = calc.s_temp_vd.z;
-			calc.s_temp_vb.setTo(nvs[i], nvs[i + 1], nvs[i + 2]);
+			calc.s_temp_vb.setXYZ(nvs[i], nvs[i + 1], nvs[i + 2]);
 			calc.s_temp_vb.crossBy(calc.s_temp_vd);
 			calc.s_temp_vb.normalize();
 			biTangent[i] = calc.s_temp_vb.x; biTangent[i + 1] = calc.s_temp_vb.y; biTangent[i + 2] = calc.s_temp_vb.z;

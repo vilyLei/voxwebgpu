@@ -912,8 +912,8 @@ class Matrix4 implements IMatrix4 {
 
 		vup.subtractBy(dir2);
 		if (vup.getLength() > MathConst.MATH_MIN_POSITIVE) vup.normalize();
-		else if (dir.x != 0) vup.setTo(-dir.y, dir.x, 0);
-		else vup.setTo(1, 0, 0);
+		else if (dir.x != 0) vup.setXYZ(-dir.y, dir.x, 0);
+		else vup.setXYZ(1, 0, 0);
 		let right = vup.crossProduct(dir);
 		right.normalize();
 		let fs = this.m_localFS32;
@@ -1201,8 +1201,8 @@ class Matrix4 implements IMatrix4 {
 		let x: number = v3.x;
 		let y: number = v3.y;
 		let z: number = v3.z;
-		let fs: Float32Array = this.m_localFS32;
-		out_v3.setTo(
+		let fs = this.m_localFS32;
+		out_v3.setXYZW(
 			x * fs[0] + y * fs[4] + z * fs[8] + fs[12]
 			, x * fs[1] + y * fs[5] + z * fs[9] + fs[13]
 			, x * fs[2] + y * fs[6] + z * fs[10] + fs[14]
@@ -1229,7 +1229,7 @@ class Matrix4 implements IMatrix4 {
 		let y: number = v3.y;
 		let z: number = v3.z;
 		let fs: Float32Array = this.m_localFS32;
-		v3.setTo(
+		v3.setXYZW(
 			x * fs[0] + y * fs[4] + z * fs[8] + fs[12],
 			x * fs[1] + y * fs[5] + z * fs[9] + fs[13],
 			x * fs[2] + y * fs[6] + z * fs[10] + fs[14],

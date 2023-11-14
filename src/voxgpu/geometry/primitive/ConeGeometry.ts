@@ -16,9 +16,9 @@ export default class ConeGeometry extends GeometryBase {
 		super();
 	}
 
-	private m_vs: Float32Array = null;
-	private m_uvs: Float32Array = null;
-	private m_nvs: Float32Array = null;
+	private mvs: Float32Array = null;
+	private muvs: Float32Array = null;
+	private mnvs: Float32Array = null;
 	private m_cvs: Float32Array = null;
 
 	inverseUV = false;
@@ -29,19 +29,19 @@ export default class ConeGeometry extends GeometryBase {
 	normalType = 1;
 
 	getVS(): Float32Array {
-		return this.m_vs;
+		return this.mvs;
 	}
 	getUVS(): Float32Array {
-		return this.m_uvs;
+		return this.muvs;
 	}
 	getNVS(): Float32Array {
-		return this.m_nvs;
+		return this.mnvs;
 	}
 	getCVS(): Float32Array {
 		return this.m_cvs;
 	}
 	getIVS(): Uint16Array | Uint32Array {
-		return this.m_ivs;
+		return this.mivs;
 	}
 
 	initialize(
@@ -129,16 +129,16 @@ export default class ConeGeometry extends GeometryBase {
 			let rowa: GeometryVertex[] = vtxRows[vtxRows.length - 1];
 			let rowb: GeometryVertex[] = vtxRows[vtxRows.length - 2];
 			for (j = 0; j < longitudeNumSegments; ++j) {
-				
+
 				let pv = rowb[j].cloneVertex();
                 pv.f = 1;
-                
+
 				rowa.push(pv);
 
 				rowa[j].index = trisTot;
 				++trisTot;
 				vtxVec.push(rowa[j]);
-                                
+
                 pv = rowb[j];
 				pv.nx = 0.0;
 				pv.ny = -1.0;
@@ -188,82 +188,82 @@ export default class ConeGeometry extends GeometryBase {
 
 			this.vtxTotal = vtxVec.length;
 
-			this.m_vs = new Float32Array(this.vtxTotal * 3);
+			this.mvs = new Float32Array(this.vtxTotal * 3);
 			i = 0;
 			for (j = 0; j < this.vtxTotal; ++j) {
 				pvtx = vtxVec[j];
-				this.m_vs[i] = pvtx.x;
-				this.m_vs[i + 1] = pvtx.y;
-				this.m_vs[i + 2] = pvtx.z;
+				this.mvs[i] = pvtx.x;
+				this.mvs[i + 1] = pvtx.y;
+				this.mvs[i + 2] = pvtx.z;
 				//trace(pvtx.x+","+pvtx.y+","+pvtx.z);
 				i += 3;
 			}
 
-			if (this.m_transMatrix != null) {
-				this.m_transMatrix.transformVectorsSelf(this.m_vs, this.m_vs.length);
-				this.bounds.addFloat32Arr(this.m_vs);
+			if (this.mTransMatrix != null) {
+				this.mTransMatrix.transformVectorsSelf(this.mvs, this.mvs.length);
+				this.bounds.addFloat32Arr(this.mvs);
 				this.bounds.updateFast();
 			}
 
-			this.m_ivs = new Uint16Array(pivs);
+			this.mivs = new Uint16Array(pivs);
 			if (true) {
-				this.m_uvs = new Float32Array(this.vtxTotal * 2);
+				this.muvs = new Float32Array(this.vtxTotal * 2);
 
 				i = 0;
 				for (j = 0; j < this.vtxTotal; ++j) {
 					pvtx = vtxVec[j];
-					this.m_uvs[i] = pvtx.u;
-					this.m_uvs[i + 1] = pvtx.v;
+					this.muvs[i] = pvtx.u;
+					this.muvs[i + 1] = pvtx.v;
 					i += 2;
 				}
 			}
 			if (true) {
-				this.m_nvs = new Float32Array(this.vtxTotal * 3);
+				this.mnvs = new Float32Array(this.vtxTotal * 3);
 				// i = 0;
 				// for (j = 0; j < this.vtxTotal; ++j) {
 				//     pvtx = vtxVec[j];
-				//     this.m_nvs[i] = pvtx.nx; this.m_nvs[i + 1] = pvtx.ny; this.m_nvs[i + 2] = pvtx.nz;
+				//     this.mnvs[i] = pvtx.nx; this.mnvs[i + 1] = pvtx.ny; this.mnvs[i + 2] = pvtx.nz;
 				//     i += 3;
 				// }
 				// let nvs = new Float32Array(vtxTotal * 3);
-				let trisNumber = this.m_ivs.length / 3;
+				let trisNumber = this.mivs.length / 3;
 				if (this.normalType == 0) {
-					SurfaceNormalCalc.ClacTrisNormal(this.m_vs, this.m_vs.length, trisNumber, this.m_ivs, this.m_nvs);
+					SurfaceNormalCalc.ClacTrisNormal(this.mvs, this.mvs.length, trisNumber, this.mivs, this.mnvs);
 				} else {
-					SurfaceNormalCalc.ClacTrisNormal(this.m_vs, this.m_vs.length, trisNumber, this.m_ivs, this.m_nvs);
+					SurfaceNormalCalc.ClacTrisNormal(this.mvs, this.mvs.length, trisNumber, this.mivs, this.mnvs);
 					i = 0;
 					let nv = new Vector3();
 					for (j = 0; j < this.vtxTotal; ++j) {
 						pvtx = vtxVec[j];
 						if (pvtx.f > 0) {
-							nv.x = pvtx.nx + this.m_nvs[i];
-							nv.y = pvtx.ny + this.m_nvs[i + 1];
-							nv.z = pvtx.nz + this.m_nvs[i + 2];
+							nv.x = pvtx.nx + this.mnvs[i];
+							nv.y = pvtx.ny + this.mnvs[i + 1];
+							nv.z = pvtx.nz + this.mnvs[i + 2];
                             nv.normalize();
-							this.m_nvs[i] = nv.x;
-							this.m_nvs[i + 1] = nv.y;
-							this.m_nvs[i + 2] = nv.z;
+							this.mnvs[i] = nv.x;
+							this.mnvs[i + 1] = nv.y;
+							this.mnvs[i + 2] = nv.z;
 						} else {
-							this.m_nvs[i] = pvtx.nx;
-							this.m_nvs[i + 1] = pvtx.ny;
-							this.m_nvs[i + 2] = pvtx.nz;
+							this.mnvs[i] = pvtx.nx;
+							this.mnvs[i + 1] = pvtx.ny;
+							this.mnvs[i + 2] = pvtx.nz;
 						}
 						i += 3;
 					}
 				}
 			}
 
-			this.vtCount = this.m_ivs.length;
+			this.vtCount = this.mivs.length;
 			this.trisNumber = this.vtCount / 3;
 		}
 	}
 	__$destroy(): void {
-		if (this.m_ivs) {
+		if (this.mivs) {
 			this.bounds = null;
 
-			this.m_vs = null;
-			this.m_uvs = null;
-			this.m_nvs = null;
+			this.mvs = null;
+			this.muvs = null;
+			this.mnvs = null;
 			this.m_cvs = null;
 			super.__$destroy();
 		}

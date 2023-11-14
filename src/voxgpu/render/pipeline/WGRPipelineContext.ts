@@ -11,6 +11,7 @@ import { WGRendererPassImpl } from "./WGRendererPassImpl";
 import { GPUComputePipeline } from "../../gpu/GPUComputePipeline";
 import { GPUPipelineLayout } from "../../gpu/GPUPipelineLayout";
 import { WGRBindGroupContext } from "./WGRBindGroupContext";
+import { WGRDrawMode } from "../Define";
 /**
  * one type shading shader, one WGRPipelineContext instance
  */
@@ -113,7 +114,7 @@ class WGRPipelineContext implements WGRPipelineContextImpl {
 	getWGCtx(): WebGPUContext {
 		return this.mWGCtx;
 	}
-	createRenderPipeline(pipelineParams: WGRPipelineCtxParams, descParams: VtxDescParam[]): GPURenderPipeline {
+	createRenderPipeline(pipelineParams: WGRPipelineCtxParams, descParams: VtxDescParam[], vtxDesc?: VtxPipelinDescParam): GPURenderPipeline {
 		const ctx = this.mWGCtx;
 		if (descParams) {
 			if(!pipelineParams.compShaderSrc) {
@@ -132,6 +133,19 @@ class WGRPipelineContext implements WGRPipelineContextImpl {
 							},
 							k
 						);
+					}
+				}
+				if(vtxDesc) {
+					const primitive = pipelineParams.primitive;
+					if(primitive && vtxDesc.vertex) {
+						// console.log("vtxDesc.vertex.drawMode: ", vtxDesc.vertex.drawMode);
+						switch(vtxDesc.vertex.drawMode) {
+							case WGRDrawMode.LINES:
+								primitive.topology = 'line-list';
+								break;
+							default:
+								break;
+						}
 					}
 				}
 			}
@@ -153,7 +167,7 @@ class WGRPipelineContext implements WGRPipelineContextImpl {
 			const vtx = vtxDesc.vertex;
 			const vtxDescParams = vtx ? this.createRenderPipelineVtxParams(vtx.buffers, vtx.attributeIndicesArray): [{}] as VtxDescParam[];
 			// console.log("vtxDescParams: ", vtxDescParams);
-			return this.createRenderPipeline(pipelineParams, vtxDescParams);
+			return this.createRenderPipeline(pipelineParams, vtxDescParams, vtxDesc);
 		}else {
 			return this.createRenderPipeline(pipelineParams, [{}] as VtxDescParam[]);
 		}

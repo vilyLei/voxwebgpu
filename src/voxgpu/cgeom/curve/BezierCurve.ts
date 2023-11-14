@@ -9,9 +9,9 @@ import Vector3 from "../../math/Vector3";
 
 /**
  * ec3d.geom.curve.CurveSrcCalc
- * 
+ *
  * 曲线源数据计算
- * 
+ *
  * @author Vily
  */
 class CurveSrcCalc {
@@ -165,7 +165,7 @@ class CurveBase {
 	// 分段总数
 	protected m_segTot: number = 5;
 	// 记录曲线现阶段实际的曲线上的所有点的坐标,每三个元素表示一个点
-	protected m_vs: number[] = [];
+	protected mvs: number[] = [];
 	/**
 	 * 曲线的起点
 	 */
@@ -190,7 +190,7 @@ class CurveBase {
 		return this.m_curveType;
 	}
 	getVS(): number[] {
-		return this.m_vs;
+		return this.mvs;
 	}
 	/**
 	 * 获取曲线大概的距离
@@ -202,26 +202,26 @@ class CurveBase {
 		let k: number = 0;
 		for (let i: number = 3; i < total; i += 3) {
 			k = i - 3;
-			dis += Vector3.DistanceXYZ(this.m_vs[k], this.m_vs[k + 1], this.m_vs[k + 2], this.m_vs[i], this.m_vs[i + 1], this.m_vs[i + 2]);
+			dis += Vector3.DistanceXYZ(this.mvs[k], this.mvs[k + 1], this.mvs[k + 2], this.mvs[i], this.mvs[i + 1], this.mvs[i + 2]);
 		}
 		return dis;
 	}
 	reset(): void {
-		this.m_vs = [];
+		this.mvs = [];
 	}
 	getPosList(posList: Vector3[] = null): Vector3[] {
 		let k: number = 0;
 		if (posList == null) {
 			posList = new Array(this.m_segTot + 1);
-			for (let i: number = 0; i < this.m_vs.length; i += 3) {
-				posList[k++] = new Vector3(this.m_vs[i], this.m_vs[i + 1], this.m_vs[i + 2]);
+			for (let i: number = 0; i < this.mvs.length; i += 3) {
+				posList[k++] = new Vector3(this.mvs[i], this.mvs[i + 1], this.mvs[i + 2]);
 			}
 		}
 		else {
 			let pv: Vector3;
-			for (let i: number = 0; i < this.m_vs.length; i += 3) {
+			for (let i: number = 0; i < this.mvs.length; i += 3) {
 				pv = posList[k++];
-				pv.setXYZ(this.m_vs[i], this.m_vs[i + 1], this.m_vs[i + 2]);
+				pv.setXYZ(this.mvs[i], this.mvs[i + 1], this.mvs[i + 2]);
 			}
 		}
 		return posList;
@@ -236,9 +236,9 @@ class CurveBase {
 }
 /**
  * ec3d.geom.curve.Bezier2Curve
- * 
+ *
  * 二次Bezier曲线的逻辑对象
- * 
+ *
  * @author Vily
  */
 class Bezier2Curve extends CurveBase {
@@ -253,11 +253,11 @@ class Bezier2Curve extends CurveBase {
 	ctrPos: Vector3 = new Vector3(100.0, 100.0, 0.0);
 	updateCalc() {
 		this.reset();
-		CurveSrcCalc.CalcBezier2(this.m_vs, this.m_segTot, this.begin, this.ctrPos, this.end);
+		CurveSrcCalc.CalcBezier2(this.mvs, this.m_segTot, this.begin, this.ctrPos, this.end);
 	}
 	calcByProgress(k: number): void {
 		this.reset();
-		CurveSrcCalc.CalcBezier2ByProgress(this.m_vs, k, this.begin, this.ctrPos, this.end);
+		CurveSrcCalc.CalcBezier2ByProgress(this.mvs, k, this.begin, this.ctrPos, this.end);
 	}
 
 	/**
@@ -340,10 +340,10 @@ class Bezier3Curve extends CurveBase {
 	 */
 	updateCalc(): void {
 		this.reset();
-		CurveSrcCalc.CalcBezier3(this.m_vs, this.m_segTot, this.begin, this.ctrAPos, this.ctrBPos, this.end);
+		CurveSrcCalc.CalcBezier3(this.mvs, this.m_segTot, this.begin, this.ctrAPos, this.ctrBPos, this.end);
 	}
 	calcByProgress(k: number): void {
-		CurveSrcCalc.CalcBezier3ByProgress(this.m_vs, k, this.begin, this.ctrAPos, this.ctrBPos, this.end);
+		CurveSrcCalc.CalcBezier3ByProgress(this.mvs, k, this.begin, this.ctrAPos, this.ctrBPos, this.end);
 	}
 }
 

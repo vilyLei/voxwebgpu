@@ -15,9 +15,9 @@ export default class TorusGeometry extends GeometryBase {
         super();
     }
 
-    private m_vs: Float32Array = null;
-    private m_uvs: Float32Array = null;
-    private m_nvs: Float32Array = null;
+    private mvs: Float32Array = null;
+    private muvs: Float32Array = null;
+    private mnvs: Float32Array = null;
     private m_cvs: Float32Array = null;
     private m_boundsChanged: boolean = false;
 
@@ -39,15 +39,15 @@ export default class TorusGeometry extends GeometryBase {
         this.geometry.transformAt(i, mat4);
         this.m_boundsChanged = true;
     }
-    getVS(): Float32Array { return this.m_vs; }
-    getUVS(): Float32Array { return this.m_uvs; }
-    getNVS(): Float32Array { return this.m_nvs; }
+    getVS(): Float32Array { return this.mvs; }
+    getUVS(): Float32Array { return this.muvs; }
+    getNVS(): Float32Array { return this.mnvs; }
     getCVS(): Float32Array { return this.m_cvs; }
-    getIVS(): Uint16Array | Uint32Array { return this.m_ivs; }
+    getIVS(): Uint16Array | Uint32Array { return this.mivs; }
 
     initialize(ringRadius: number, axisRadius: number, longitudeNumSegments: number, latitudeNumSegments: number, uvType: number = 1, alignYRatio: number = -0.5): void {
 
-        if (this.m_vs == null) {
+        if (this.mvs == null) {
 
             let g = this.geometry;
             switch (this.axisType) {
@@ -69,9 +69,9 @@ export default class TorusGeometry extends GeometryBase {
             let ivs = g.getIVS();
 
             if (nvFlag) {
-                this.m_nvs = new Float32Array(vs.length);
+                this.mnvs = new Float32Array(vs.length);
             }
-            let nvs = this.m_nvs;
+            let nvs = this.mnvs;
 
             let pi2 = 2.0 * Math.PI;
             let rad = 0.0;
@@ -120,47 +120,47 @@ export default class TorusGeometry extends GeometryBase {
                     }
                 }
             }
-            this.m_vs = vs;
-            this.m_uvs = uvs;
-            this.m_ivs = ivs;
+            this.mvs = vs;
+            this.muvs = uvs;
+            this.mivs = ivs;
             this.bounds = this.geometry.bounds;
             this.bounds.reset();
-            this.bounds.addFloat32Arr(this.m_vs);
+            this.bounds.addFloat32Arr(this.mvs);
             this.bounds.update();
 
             this.vtCount = this.geometry.vtCount;
             this.trisNumber = this.geometry.trisNumber;
-            this.vtxTotal = this.m_vs.length / 3;
+            this.vtxTotal = this.mvs.length / 3;
         }
         this.initializeBuf(true);
     }
 
     reinitialize(): void {
-        if (this.m_vs != null) {
+        if (this.mvs != null) {
             this.initializeBuf(false);
         }
     }
     private initializeBuf(newBuild: boolean): void {
-        if (this.m_transMatrix != null) {
+        if (this.mTransMatrix != null) {
             this.m_boundsChanged = true;
-            this.m_transMatrix.transformVectorsSelf(this.m_vs, this.m_vs.length);
+            this.mTransMatrix.transformVectorsSelf(this.mvs, this.mvs.length);
         }
         if (this.m_boundsChanged) {
             this.bounds.reset();
-            this.bounds.addFloat32Arr(this.m_vs);
+            this.bounds.addFloat32Arr(this.mvs);
             this.bounds.updateFast();
         }
         this.m_boundsChanged = false;
 
-        
+
     }
     __$destroy(): void {
-        if (this.m_ivs) {
+        if (this.mivs) {
             this.bounds = null;
 
-            this.m_vs = null;
-            this.m_uvs = null;
-            this.m_nvs = null;
+            this.mvs = null;
+            this.muvs = null;
+            this.mnvs = null;
             this.m_cvs = null;
             super.__$destroy();
         }

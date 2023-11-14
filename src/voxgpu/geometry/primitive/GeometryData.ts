@@ -10,11 +10,11 @@ import Matrix4 from "../../math/Matrix4";
 import Vector3 from "../../math/Vector3";
 
 export default class GeometryData {
-    
-    protected m_vs: Float32Array = null;
-    protected m_uvs: Float32Array = null;
-    protected m_nvs: Float32Array = null;
-    protected m_ivs: Uint16Array | Uint32Array = null;
+
+    protected mvs: Float32Array = null;
+    protected muvs: Float32Array = null;
+    protected mnvs: Float32Array = null;
+    protected mivs: Uint16Array | Uint32Array = null;
 
     readonly bounds = new AABB();
     vtxTotal = 0;
@@ -30,40 +30,40 @@ export default class GeometryData {
     constructor() { }
 
     clone(): GeometryData {
-        let geometry = new GeometryData();        
+        let geometry = new GeometryData();
         geometry.copyFrom( this );
         return geometry;
     }
-    
+
     copyFrom(src: GeometryData): void {
-        
+
         let geometry = new GeometryData();
-        
-        if(src.m_vs != null) {
-            if(this.m_vs != null)
-                this.m_vs.set(src.m_vs);
+
+        if(src.mvs != null) {
+            if(this.mvs != null)
+                this.mvs.set(src.mvs);
             else
-                this.m_vs = src.m_vs.slice(0);
+                this.mvs = src.mvs.slice(0);
         }
-        if(src.m_uvs != null) {
-            if(this.m_uvs != null)
-                this.m_uvs.set(src.m_uvs);
+        if(src.muvs != null) {
+            if(this.muvs != null)
+                this.muvs.set(src.muvs);
             else
-                this.m_uvs = src.m_uvs.slice(0);
+                this.muvs = src.muvs.slice(0);
         }
-        if(src.m_nvs != null) {
-            if(this.m_nvs != null)
-                this.m_nvs.set(src.m_nvs);
+        if(src.mnvs != null) {
+            if(this.mnvs != null)
+                this.mnvs.set(src.mnvs);
             else
-                this.m_nvs = src.m_nvs.slice(0);
+                this.mnvs = src.mnvs.slice(0);
         }
-        if(src.m_ivs != null) {
-            if(this.m_ivs != null)
-                this.m_ivs.set(src.m_ivs);
+        if(src.mivs != null) {
+            if(this.mivs != null)
+                this.mivs.set(src.mivs);
             else
-                this.m_ivs = src.m_ivs.slice(0);
+                this.mivs = src.mivs.slice(0);
         }
-        
+
         geometry.vtxTotal = this.vtxTotal;
         geometry.trisNumber = this.trisNumber;
         geometry.vtCount = this.vtCount;
@@ -79,28 +79,28 @@ export default class GeometryData {
     /**
      * @returns vertex position buffer Float32Array
      */
-    getVS(): Float32Array { return this.m_vs; }
+    getVS(): Float32Array { return this.mvs; }
 
     /**
      * @returns vertex uv buffer Float32Array
      */
-    getUVS(): Float32Array { return this.m_uvs; }
+    getUVS(): Float32Array { return this.muvs; }
 
     /**
      * @returns vertex normal buffer Float32Array
      */
-    getNVS(): Float32Array { return this.m_nvs; }
+    getNVS(): Float32Array { return this.mnvs; }
     /**
      * @returns vertex indices buffer Uint16Array or Uint32Array
      */
-    getIVS(): Uint16Array | Uint32Array { return this.m_ivs; }
+    getIVS(): Uint16Array | Uint32Array { return this.mivs; }
 
     reset(): void {
 
-        this.m_vs = null;
-        this.m_uvs = null;
-        this.m_nvs = null;
-        this.m_ivs = null;
+        this.mvs = null;
+        this.muvs = null;
+        this.mnvs = null;
+        this.mivs = null;
 
         this.vtxTotal = 0;
         this.trisNumber = 0;

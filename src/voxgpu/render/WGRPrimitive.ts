@@ -1,14 +1,18 @@
 import { GPUBuffer } from "../gpu/GPUBuffer";
 import { GPURenderPassEncoder } from "../gpu/GPURenderPassEncoder";
+import { WGRDrawMode } from "./Define";
 
 class WGRPrimitive {
 
-	layoutUid = 0;
 	vbufs: GPUBuffer[];
 	ibuf: GPUBuffer;
 	indexCount = 0;
+
+	layoutUid = 0;
 	instanceCount = 1;
 	vertexCount = 0;
+
+	drawMode = WGRDrawMode.TRIANGLES;
 
 	run(rc: GPURenderPassEncoder): void {
 		const vs = this.vbufs;

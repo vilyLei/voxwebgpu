@@ -15,9 +15,9 @@ fn calcColor(uv: vec2f) -> vec4f {
     var blurColor = textureSample(blurTexture1, blurSampler1, uv);
     var vpos = textureSample(vposTexture1, vposSampler1, uv);
 	var f = clamp((length(vpos.xyz) - 300.0)/200.0, 0.0, 1.0);
-	f = 1.0 - f * f;
+	// f = 1.0 - f * f;
+	f = f * f;
 	var result = vec4f(color.xyz * (1.0 - f) + f * blurColor.xyz, 1.0);
-	// result = vec4f(vec3f(f), 1.0);
 
     return result;
 }

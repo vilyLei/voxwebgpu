@@ -130,11 +130,11 @@ export class DepthBlur {
 			vert: { code: vertWGSL, uuid: "vert" },
 			frag: { code: depthBlurFragWGSL, uuid: "depthBlur" }
 		};
-		
+
 		// display blur rendering result
 		let textures = [colorRTTTex, blurRTTTex0, vposRTTTex];
 		extent = [-0.8, -0.8, 1.6, 1.6];
-		entity = new FixScreenPlaneEntity({ extent, flipY: false, shaderSrc, textures, shadinguuid: "smallImgMaterial" });
+		entity = new FixScreenPlaneEntity({ extent, flipY: false, shaderSrc, textures, shadinguuid: "blurRenderingResult" });
 		rs.addEntity(entity);
 
 	}
@@ -148,7 +148,7 @@ export class DepthBlur {
 		};
 		const attachment1 = {
 			texture: vposRTTTex,
-			clearValue: [0.2, 0.25, 0.2, 1.0]
+			clearValue: [800, 800, 800, 1]
 		};
 
 		const colorAttachments = [attachment0, attachment1];
@@ -168,7 +168,7 @@ export class DepthBlur {
 			vert: { code: vertWGSL, uuid: "vert" },
 			frag: { code: vposReadFragWGSL, uuid: "readNromal" }
 		};
-		
+
 		// display depth value drawing result
 		extent = [-0.95, -0.95, 0.6, 0.6];
 		let entity = new FixScreenPlaneEntity({ extent, shaderSrc, textures: [vposRTTTex], shadinguuid: "readDepth" });

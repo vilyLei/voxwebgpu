@@ -16,18 +16,18 @@ export default class CylinderGeometry extends GeometryBase {
         super();
     }
 
-    private m_vs: Float32Array = null;
-    private m_uvs: Float32Array = null;
-    private m_nvs: Float32Array = null;
+    private mvs: Float32Array = null;
+    private muvs: Float32Array = null;
+    private mnvs: Float32Array = null;
 
     inverseUV: boolean = false;
     uScale: number = 1.0;
     vScale: number = 1.0;
 
-    getVS(): Float32Array { return this.m_vs; }
-    getUVS(): Float32Array { return this.m_uvs; }
-    getNVS(): Float32Array { return this.m_nvs; }
-    getIVS(): Uint16Array | Uint32Array { return this.m_ivs; }
+    getVS(): Float32Array { return this.mvs; }
+    getUVS(): Float32Array { return this.muvs; }
+    getNVS(): Float32Array { return this.mnvs; }
+    getIVS(): Uint16Array | Uint32Array { return this.mivs; }
 
     initialize(radius: number, height: number, longitudeNumSegments: number, latitudeNumSegments: number, uvType: number = 1, alignYRatio: number = -0.5) {
         if (this.vtxTotal < 1) {
@@ -35,13 +35,13 @@ export default class CylinderGeometry extends GeometryBase {
 
             if (longitudeNumSegments < 2) longitudeNumSegments = 2;
             latitudeNumSegments = 3;
-            
-            let m_radius = Math.abs(radius);
+
+            let mRadius = Math.abs(radius);
             let m_height = Math.abs(height);
-            
+
             let plongitudeNumSegments = longitudeNumSegments;
             let platitudeNumSegments = latitudeNumSegments;
-            
+
             let i = 1
             let j = 0;
             let trisTot = 0;
@@ -53,7 +53,7 @@ export default class CylinderGeometry extends GeometryBase {
             this.bounds.min.setXYZ(-radius, minY, -radius);
             this.bounds.max.setXYZ(radius, minY + m_height, radius);
             this.bounds.updateFast();
-            
+
             let vtx = new GeometryVertex();
             vtx.y = minY;
 
@@ -66,21 +66,21 @@ export default class CylinderGeometry extends GeometryBase {
             vtx.nx = 0.0; vtx.ny = -1.0; vtx.nz = 0.0;
             vtxRow.push(vtx.cloneVertex());
             vtxVec.push(vtxRow[0]);
-            
+
             for (; i < platitudeNumSegments; ++i) {
-                
+
                 vtx.y = minY + m_height * (i - 1);
                 vtxRows.push([]);
                 let row = vtxRows[i];
                 for (j = 0; j < plongitudeNumSegments; ++j) {
                     yRad = (Math.PI * 2 * j) / plongitudeNumSegments;
                     ++trisTot;
-                    
+
                     px = Math.sin(yRad);
                     py = Math.cos(yRad);
-                    
-                    vtx.x = px * m_radius;
-                    vtx.z = py * m_radius;
+
+                    vtx.x = px * mRadius;
+                    vtx.z = py * mRadius;
                     vtx.index = trisTot;
 
                     // calc uv
@@ -88,14 +88,14 @@ export default class CylinderGeometry extends GeometryBase {
                     py *= 0.495;
                     vtx.u = 0.5 + px;
                     vtx.v = 0.5 + py;
-                    
+
                     if (i < 2) {
                         vtx.nx = 0.0; vtx.ny = -1.0; vtx.nz = 0.0;
                     }
                     else {
                         vtx.nx = 0.0; vtx.ny = 1.0; vtx.nz = 0.0;
                     }
-                    
+
                     row.push(vtx.cloneVertex());
                     vtxVec.push(row[j]);
                 }
@@ -112,7 +112,7 @@ export default class CylinderGeometry extends GeometryBase {
             vtxVec.push(lastRow[0]);
             // two circles's vertexes calc end;
             // calc cylinder wall vertexes
-            let f = 1.0 / m_radius;
+            let f = 1.0 / mRadius;
             for (i = 0; i < 2; ++i) {
                 let preRow = vtxRows[i + 1];
                 vtxRows.push([]);
@@ -170,61 +170,61 @@ export default class CylinderGeometry extends GeometryBase {
                 pivs.push(rowa[j].index); pivs.push(rowb[j - 1].index); pivs.push(rowa[j - 1].index);
                 pivs.push(rowa[j].index); pivs.push(rowb[j].index); pivs.push(rowb[j - 1].index);
             }
-            
+
             this.vtxTotal = vtxVec.length;
-            this.m_vs = new Float32Array(this.vtxTotal * 3);
+            this.mvs = new Float32Array(this.vtxTotal * 3);
             i = 0;
             for (j = 0; j < this.vtxTotal; ++j) {
                 pvtx = vtxVec[j];
-                this.m_vs[i] = pvtx.x; this.m_vs[i + 1] = pvtx.y; this.m_vs[i + 2] = pvtx.z;
+                this.mvs[i] = pvtx.x; this.mvs[i + 1] = pvtx.y; this.mvs[i + 2] = pvtx.z;
                 i += 3;
             }
-            if (this.m_transMatrix != null) {
-                this.m_transMatrix.transformVectorsSelf(this.m_vs, this.m_vs.length);
-                this.bounds.addFloat32Arr(this.m_vs);
+            if (this.mTransMatrix != null) {
+                this.mTransMatrix.transformVectorsSelf(this.mvs, this.mvs.length);
+                this.bounds.addFloat32Arr(this.mvs);
                 this.bounds.updateFast();
             }
-            
-            this.m_ivs = new Uint16Array(pivs);
-            
-            this.vtCount = this.m_ivs.length;
+
+            this.mivs = new Uint16Array(pivs);
+
+            this.vtCount = this.mivs.length;
             this.trisNumber = this.vtCount / 3;
-            
+
             if (true) {
-                this.m_uvs = new Float32Array(this.vtxTotal * 2);
+                this.muvs = new Float32Array(this.vtxTotal * 2);
                 i = 0;
                 for (j = 0; j < this.vtxTotal; ++j) {
                     pvtx = vtxVec[j];
-                    this.m_uvs[i] = pvtx.u; this.m_uvs[i + 1] = pvtx.v;
+                    this.muvs[i] = pvtx.u; this.muvs[i + 1] = pvtx.v;
                     i += 2;
                 }
             }
             if (true) {
-                this.m_nvs = new Float32Array(this.vtxTotal * 3);
-                if (this.m_transMatrix != null) {
-                    SurfaceNormalCalc.ClacTrisNormal(this.m_vs, this.m_vs.length, this.trisNumber, this.m_ivs, this.m_nvs);
+                this.mnvs = new Float32Array(this.vtxTotal * 3);
+                if (this.mTransMatrix != null) {
+                    SurfaceNormalCalc.ClacTrisNormal(this.mvs, this.mvs.length, this.trisNumber, this.mivs, this.mnvs);
                 }
                 else {
                     i = 0;
                     for (j = 0; j < this.vtxTotal; ++j) {
                         pvtx = vtxVec[j];
-                        this.m_nvs[i] = pvtx.nx; this.m_nvs[i + 1] = pvtx.ny; this.m_nvs[i + 2] = pvtx.nz;
+                        this.mnvs[i] = pvtx.nx; this.mnvs[i + 1] = pvtx.ny; this.mnvs[i + 2] = pvtx.nz;
                         i += 3;
                     }
                 }
             }
 
-            this.vtCount = this.m_ivs.length;
+            this.vtCount = this.mivs.length;
             this.trisNumber = this.vtCount / 3;
         }
     }
     __$destroy(): void {
-        if (this.m_ivs) {
+        if (this.mivs) {
             this.bounds = null;
 
-            this.m_vs = null;
-            this.m_uvs = null;
-            this.m_nvs = null;
+            this.mvs = null;
+            this.muvs = null;
+            this.mnvs = null;
             super.__$destroy();
         }
     }

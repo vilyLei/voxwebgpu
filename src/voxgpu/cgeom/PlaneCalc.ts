@@ -25,12 +25,12 @@ class PlaneCalc {
 	}
 	static CalcPVCloseV(planeNV: Vector3, planeDis: number, posV: Vector3, outV: Vector3): void {
 		let value: number = planeDis - posV.dot(planeNV);
-		outV.setTo(value * planeNV.x, value * planeNV.y, value * planeNV.z);
+		outV.setXYZ(value * planeNV.x, value * planeNV.y, value * planeNV.z);
 		outV.addBy(posV);
 	}
 	static CalcPVCloseV2(pnv: Vector3, pd: number, posV: Vector3, outV: Vector3): void {
 		let value: number = pd - posV.dot(pnv);
-		outV.setTo(value * pnv.x, value * pnv.y, value * pnv.z);
+		outV.setXYZ(value * pnv.x, value * pnv.y, value * pnv.z);
 		//outV.scaleBy(value);
 		outV.addBy(posV);
 	}

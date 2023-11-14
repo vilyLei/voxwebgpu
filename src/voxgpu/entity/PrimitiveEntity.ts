@@ -17,6 +17,7 @@ class PrimitiveEntity extends Entity3D {
 	protected armV: WGRBufferData;
 	constructor(param?: Entity3DParam) {
 		super(param);
+		if(!param) param = {};
 		this.createGeometry(param);
 		this.createMaterial(param);
 	}

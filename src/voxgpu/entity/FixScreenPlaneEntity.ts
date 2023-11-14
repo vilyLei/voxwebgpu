@@ -76,12 +76,12 @@ class FixScreenPlaneEntity extends FixScreenEntity {
 			}
 			const texs = param.textures;
 			const texTotal = texs ? texs.length : 0;
-			let frag_uuid = texTotal > 0 ? "fragTexShdCode" : "fragShdCode";
+			let fragUuid = texTotal > 0 ? "fragTex" : "frag";
 			const shaderCodeSrc = param.shaderSrc
 				? param.shaderSrc
 				: {
-					vertShaderSrc: { code: vertWGSL, uuid: "vertShdCode" },
-					fragShaderSrc: { code: texTotal > 0 ? texFragWGSL : fragWGSL, uuid: frag_uuid }
+					vertShaderSrc: { code: vertWGSL, uuid: "fixScreenPlaneVertShdCode" },
+					fragShaderSrc: { code: texTotal > 0 ? texFragWGSL : fragWGSL, uuid: 'fixScreenPlaneShdCode' + fragUuid }
 				};
 
 			let b = param.depthWriteEnabled;

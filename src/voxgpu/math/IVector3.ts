@@ -23,8 +23,10 @@ interface IVector3 {
      */
     w: number;
     clone(): IVector3;
+	setVector3(vector3: Vector3DataType): IVector3;
 	abs(): IVector3;
-    setTo(px: number, py: number, pz: number, pw?: number): IVector3;
+    setXYZW(px: number, py: number, pz: number, pw?: number): IVector3;
+    setXYZ(px: number, py: number, pz: number): IVector3;
 
     /**
      * example: [0],[1],[2],[3] => x,y,z,w
@@ -37,13 +39,12 @@ interface IVector3 {
     /**
      * example: [0],[1],[2] => x,y,z
      */
-    fromArray(arr: number[] | Float32Array, offset?: number): IVector3;
-     /**
-      * example: x,y,z => [0],[1],[2]
-      */
-    toArray(arr?: number[] | Float32Array, offset?: number): IVector3;
+    fromArray3(arr: number[] | Float32Array, offset?: number): IVector3;
+    /**
+     * example: x,y,z => [0],[1],[2]
+     */
+    toArray3(arr?: number[] | Float32Array, offset?: number): IVector3;
 
-    setXYZ(px: number, py: number, pz: number): IVector3;
     copyFrom(v3: IVector3): IVector3;
     dot(a: IVector3): number;
     multBy(a: IVector3): IVector3;
