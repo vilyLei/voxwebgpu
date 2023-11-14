@@ -270,6 +270,7 @@ export default class SphereGeometry extends GeometryBase {
             }
 
             this.bounds.updateFast();
+
             this.vtxTotal = vtxVec.length;
             if (doubleTriFaceEnabled) {
                 this.mivs = createIndexArrayWithSize(pivs.length * 2);
@@ -290,7 +291,7 @@ export default class SphereGeometry extends GeometryBase {
             if (true) {
                 // uv
                 this.muvs = new Float32Array(this.vtxTotal * 2);
-                //
+
                 i = 0;
                 for (j = 0; j < this.vtxTotal; ++j) {
                     pvtx = vtxVec[j];

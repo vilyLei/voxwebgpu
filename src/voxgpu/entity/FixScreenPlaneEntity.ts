@@ -28,11 +28,11 @@ class FixScreenPlaneEntity extends FixScreenEntity {
 	private mExtent = new Extent2();
 	constructor(param?: FixScreenPlaneEntityParam) {
 		super(param);
-		if (!param) {
-			param = {};
+		if (!param) param = {};
+		if (!(param.building === false)) {
+			this.createGeometry(param);
+			this.createMaterial(param);
 		}
-		this.createGeometry(param);
-		this.createMaterial(param);
 	}
 	setColor(c: ColorDataType): FixScreenPlaneEntity {
 		if (c && this.mColorV) {
@@ -41,11 +41,16 @@ class FixScreenPlaneEntity extends FixScreenEntity {
 		}
 		return this;
 	}
+	set color(c: ColorDataType) {
+		this.setColor(c);
+	}
+	get color(): ColorDataType {
+		return this.mColor;
+	}
 	private createGeometry(param: FixScreenPlaneEntityParam): void {
 		if (param.geometry) {
 			this.geometry = param.geometry;
 		} else {
-
 			let geom = new RectPlaneGeometry();
 			geom.axisType = 0;
 			geom.flipY = param.flipY === true;
@@ -72,7 +77,11 @@ class FixScreenPlaneEntity extends FixScreenEntity {
 			this.materials = param.materials;
 		} else {
 			if (!param.uniformValues) {
-				this.mColorV = getUniformValueFromParam('color', param, new WGRUniformValue({ data: new Float32Array([1,1,1, 1]), shdVarName: 'color' }));
+				this.mColorV = getUniformValueFromParam(
+					"color",
+					param,
+					new WGRUniformValue({ data: new Float32Array([1, 1, 1, 1]), shdVarName: "color" })
+				);
 			}
 			const texs = param.textures;
 			const texTotal = texs ? texs.length : 0;
@@ -80,9 +89,9 @@ class FixScreenPlaneEntity extends FixScreenEntity {
 			const shaderCodeSrc = param.shaderSrc
 				? param.shaderSrc
 				: {
-					vertShaderSrc: { code: vertWGSL, uuid: "fixScreenPlaneVertShdCode" },
-					fragShaderSrc: { code: texTotal > 0 ? texFragWGSL : fragWGSL, uuid: 'fixScreenPlaneShdCode' + fragUuid }
-				};
+						vertShaderSrc: { code: vertWGSL, uuid: "fixScreenPlaneVertShdCode" },
+						fragShaderSrc: { code: texTotal > 0 ? texFragWGSL : fragWGSL, uuid: "fixScreenPlaneShdCode" + fragUuid }
+				  };
 
 			let b = param.depthWriteEnabled;
 			b = b === undefined ? false : b;

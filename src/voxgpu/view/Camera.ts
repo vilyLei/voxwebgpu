@@ -13,6 +13,8 @@ import Plane from "../cgeom/Plane";
 import AABB from "../cgeom/AABB";
 import {IRenderCamera} from "../render/IRenderCamera";
 import { WGRUniformValue } from "../render/uniform/WGRUniformValue";
+import { WGCameraParam } from "../rscene/WGRendererParam";
+import { initializeCamera } from "./CameraUtils";
 
 const pmin = MathConst.MATH_MIN_POSITIVE;
 class Camera implements IRenderCamera {
@@ -67,12 +69,16 @@ class Camera implements IRenderCamera {
     private m_changed = true;
     private m_unlock = true;
 	inversePerspectiveZ = false;
-    constructor() {
+    constructor(param?: WGCameraParam) {
 		this.viewUniformV = new WGRUniformValue({data: this.mViewMat.getLocalFS32(), shared: true, shdVarName: "viewMat"});
 		this.projUniformV = new WGRUniformValue({data: this.mProjMat.getLocalFS32(), shared: true, shdVarName: "projMat"});
-        // this.viewUniformV.visibility.toVisibleVert();
-        // this.projUniformV.visibility.toVisibleVert();
+		if(param) {
+			this.initialize(param);
+		}
     }
+	initialize(param?: WGCameraParam): void {
+		initializeCamera(param, this);
+	}
     // 不允许外界修改camera数据
     lock(): void {
         this.m_unlock = false;

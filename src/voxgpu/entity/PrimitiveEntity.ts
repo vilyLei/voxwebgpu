@@ -17,15 +17,26 @@ class PrimitiveEntity extends Entity3D {
 	protected armV: WGRBufferData;
 	constructor(param?: Entity3DParam) {
 		super(param);
-		if(!param) param = {};
-		this.createGeometry(param);
-		this.createMaterial(param);
+		if (!param) param = {};
+		if (!(param.building === false)) {
+			this.createGeometry(param);
+			this.createMaterial(param);
+		}
+	}
+	setColor(c: ColorDataType): PrimitiveEntity {
+		return this.setAlbedo( c );
+	}
+	set color(c: ColorDataType) {
+		this.setColor(c);
+	}
+	get color(): ColorDataType {
+		return this.mColor;
 	}
 	setAlbedo(c: ColorDataType): PrimitiveEntity {
 		if (this.albedoV) {
 			if (c) {
 				this.mColor.setColor(c).toArray4(this.albedoV.data as Float32Array);
-				this.albedoV.version ++;
+				this.albedoV.version++;
 			}
 		}
 		return this;
@@ -36,7 +47,7 @@ class PrimitiveEntity extends Entity3D {
 			vs[0] = ao;
 			vs[1] = roughness;
 			vs[2] = metallic;
-			this.armV.version ++;
+			this.armV.version++;
 		}
 		return this;
 	}
@@ -44,17 +55,20 @@ class PrimitiveEntity extends Entity3D {
 		return null;
 	}
 	private createGeometry(param: Entity3DParam): void {
-
 		if (param && param.geometry) {
 			this.geometry = param.geometry;
 		} else {
 			const geom = this.getGeometryData(param);
-			if(geom) {
-				this.geometry = new WGGeometry()
+			if (geom) {
+				const g = new WGGeometry()
 					.addAttribute({ position: geom.getVS() })
 					.addAttribute({ uv: geom.getUVS() })
 					.addAttribute({ normal: geom.getNVS() })
 					.setIndices(geom.getIVS());
+				g.bounds = geom.bounds;
+				g.drawMode = geom.drawMode;
+				g.geometryData = geom;
+				this.geometry = g;
 			}
 		}
 	}
@@ -66,24 +80,32 @@ class PrimitiveEntity extends Entity3D {
 			const texs = param.textures;
 			const texTotal = texs ? texs.length : 0;
 			if (!param.uniformValues) {
-				this.albedoV = getUniformValueFromParam("albedo", param, new WGRUniformValue({ data: new Float32Array([0.5, 0.5, 0.5, 1]), shdVarName: 'albedo' }));
-				this.armV = getUniformValueFromParam("arm", param, new WGRUniformValue({ data: new Float32Array([1, 0.1, 0.1, 1]), shdVarName: 'arm' }));
+				this.albedoV = getUniformValueFromParam(
+					"albedo",
+					param,
+					new WGRUniformValue({ data: new Float32Array([0.5, 0.5, 0.5, 1]), shdVarName: "albedo" })
+				);
+				this.armV = getUniformValueFromParam(
+					"arm",
+					param,
+					new WGRUniformValue({ data: new Float32Array([1, 0.1, 0.1, 1]), shdVarName: "arm" })
+				);
 			}
 			let shdSrc = param.shaderSrc
 				? param.shaderSrc
 				: {
-					vertShaderSrc: { code: vertWGSL, uuid: "primitiveVertShdCode" },
-					fragShaderSrc: {
-						code: texTotal > 0 ? texFragWGSL : fragWGSL,
-						uuid: texTotal > 0 ? "primitiveTexFragShdCode" : "primitiveFragShdCode"
-					}
-				};
+						vertShaderSrc: { code: vertWGSL, uuid: "primitiveVertShdCode" },
+						fragShaderSrc: {
+							code: texTotal > 0 ? texFragWGSL : fragWGSL,
+							uuid: texTotal > 0 ? "primitiveTexFragShdCode" : "primitiveFragShdCode"
+						}
+				  };
 			let b = param.depthWriteEnabled;
 			b = b === false ? false : true;
 			let f = param.faceCullMode;
 			f = f ? f : "back";
 			let bl = param.blendModes;
-			bl = bl ? bl : ["solid"]
+			bl = bl ? bl : ["solid"];
 
 			let pipelineDefParam = {
 				depthWriteEnabled: b,
@@ -96,11 +118,11 @@ class PrimitiveEntity extends Entity3D {
 				pipelineDefParam
 			});
 			material.addTextures(texs);
-			if(param.instanceCount !== undefined) {
+			if (param.instanceCount !== undefined) {
 				material.instanceCount = param.instanceCount;
 			}
 			material.uniformValues = param.uniformValues;
-			if(!material.uniformValues) {
+			if (!material.uniformValues) {
 				material.uniformValues = [this.albedoV, this.armV];
 				this.albedoV = material.uniformValues[0];
 				this.armV = material.uniformValues[1];
@@ -108,13 +130,13 @@ class PrimitiveEntity extends Entity3D {
 			this.materials = [material];
 		}
 		const rpasses = param.rpasses;
-		if(rpasses) {
+		if (rpasses) {
 			const ms = this.materials;
 			// 这里的实现需要优化, 因为一个material实际上可以加入到多个rpass中去
 			let len = Math.min(rpasses.length, ms.length);
-			for(let i = 0; i < len; ++i) {
+			for (let i = 0; i < len; ++i) {
 				const rpass = ms[i].rpass;
-				if(!rpass || !rpass.rpass.node) {
+				if (!rpass || !rpass.rpass.node) {
 					ms[i].rpass = rpasses[i];
 				}
 			}

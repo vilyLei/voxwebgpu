@@ -12,6 +12,10 @@ interface WGCameraParam {
 	far?: number;
 	perspective?: boolean;
 	fovDegree?: number;
+	viewX?: number;
+	viewY?: number;
+	viewWidth?: number;
+	viewHeight?: number;
 }
 interface WGRendererConfig {
 	gpuCanvasCfg?: GPUCanvasConfiguration;

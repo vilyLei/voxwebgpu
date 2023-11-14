@@ -4,7 +4,6 @@ import { WebGPUContext } from "../gpu/WebGPUContext";
 import { WGRObjBuilder } from "../render/WGRObjBuilder";
 import { WGRPipelineContextDefParam, WGRPassParam, WGRenderPassBlock } from "../render/WGRenderPassBlock";
 import { WGEntityNodeMana } from "./WGEntityNodeMana";
-import Vector3 from "../math/Vector3";
 import IRenderStage3D from "../render/IRenderStage3D";
 import { IRenderCamera } from "../render/IRenderCamera";
 
@@ -36,27 +35,13 @@ class WGRenderer implements IRenderer {
 		}
 	}
 	private initCamera(width: number, height: number): void {
+
 		let p = this.mConfig.camera;
 		if (!p) p = {};
-		if (!p.eye) p.eye = new Vector3(1100.0, 1100.0, 1100.0);
-		if (!p.up) p.up = new Vector3(0, 1, 0);
-		if (!p.origin) p.origin = new Vector3();
-		if (p.fovDegree === undefined) p.fovDegree = 45;
-		if (p.near === undefined) p.near = 0.1;
-		if (p.far === undefined) p.far = 8000;
-		p.perspective = p.perspective === false ? false : true;
+		p.viewWidth = width;
+		p.viewHeight = height;
+		this.camera.initialize(p);
 
-		const cam = this.camera;
-		if (p.perspective) {
-			cam.perspectiveRH((Math.PI * p.fovDegree) / 180.0, width / height, p.near, p.far);
-		} else {
-			cam.inversePerspectiveZ = true;
-			cam.orthoRH(p.near, p.far, -0.5 * height, 0.5 * height, -0.5 * width, 0.5 * width);
-		}
-		cam.lookAtRH(p.eye, p.origin, p.up);
-		cam.setViewXY(0, 0);
-		cam.setViewSize(width, height);
-		cam.update();
 	}
 	get uid(): number {
 		return 0;

@@ -1,12 +1,11 @@
 import { Entity3DParam, PrimitiveEntity } from "./PrimitiveEntity";
 import GeometryBase from "../geometry/primitive/GeometryBase";
 import BoxGeometry from "../geometry/primitive/BoxGeometry";
-import IVector3 from "../math/IVector3";
 import Vector3 from "../math/Vector3";
 
 interface BoxEntityParam extends Entity3DParam {
-	minPos?: IVector3,
-	maxPos?: IVector3,
+	minPos?: Vector3DataType;
+	maxPos?: Vector3DataType;
 }
 class BoxEntity extends PrimitiveEntity {
 	constructor(param?: BoxEntityParam) {

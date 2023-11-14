@@ -13,6 +13,8 @@ import { WGRUnitState } from "../render/WGRUnitState";
 import { WGRShderSrcType } from "../material/WGMaterialDescripter";
 import { WGRBufferData } from "../render/buffer/WGRBufferData";
 import { WGRMaterialPassViewImpl } from "../render/pipeline/WGRMaterialPassViewImpl";
+import Vector3 from "../math/Vector3";
+import { EntityVolume } from "../space/EntityVolume";
 
 interface Entity3DParam {
 	cameraViewing?: boolean;
@@ -30,12 +32,16 @@ interface Entity3DParam {
 	shadinguuid?: string;
 	instanceCount?: number;
 	rpasses?: WGRMaterialPassViewImpl[];
+	/**
+	 * build geometry/material object, yes or no
+	 */
+	building?: boolean;
 }
-function getUniformValueFromParam(key: string, param: Entity3DParam, defaultV?: WGRBufferData ): WGRBufferData {
+function getUniformValueFromParam(key: string, param: Entity3DParam, defaultV?: WGRBufferData): WGRBufferData {
 	const ufvs = param.uniformValues;
-	if(param.uniformValues) {
-		for(let i = 0; i < ufvs.length; ++i) {
-			if(ufvs[i].shdVarName == key) {
+	if (param.uniformValues) {
+		for (let i = 0; i < ufvs.length; ++i) {
+			if (ufvs[i].shdVarName == key) {
 				return ufvs[i];
 			}
 		}
@@ -67,6 +73,8 @@ class Entity3D implements IRenderableEntity {
 
 	transform?: ROTransform;
 
+	volume?: EntityVolume;
+
 	/**
 	 * for compute shader computing process
 	 */
@@ -82,8 +90,10 @@ class Entity3D implements IRenderableEntity {
 	mouseEnabled = false;
 
 	constructor(param?: Entity3DParam) {
-		if(!param) param = {};
-		this.init(param);
+		if (!param) param = {};
+		if (!(param.building === false)) {
+			this.init(param);
+		}
 	}
 	protected init(param?: Entity3DParam): void {
 		this.cameraViewing = param.cameraViewing === false ? false : true;
@@ -113,7 +123,7 @@ class Entity3D implements IRenderableEntity {
 		}
 		this.initBounds(transformEnabled);
 		if (param) {
-			if(param.transufvShared === true) {
+			if (param.transufvShared === true) {
 				this.transform.uniformv.shared = true;
 			}
 			this.materials = param.materials;
@@ -171,19 +181,128 @@ class Entity3D implements IRenderableEntity {
 		}
 		return true;
 	}
+	// updateBounds(): void {
+	// 	if (this.mGBs) {
+	// 	}
+	// }
+
 	updateBounds(): void {
-		if (this.mGBs) {
+		const trans = this.transform;
+		const lb = this.mLBs;
+		if (trans && lb) {
+			// this.m_transStatus = ROTransform.UPDATE_TRANSFORM;
+			const g = this.geometry;
+			if (g) {
+				const slb = g.bounds;
+				if(lb.version != slb.version) {
+
+					lb.reset();
+					const gd = g.geometryData;
+					let ivs = gd.getIVS();
+					const ivsIndex = 0;
+					const vtCount = gd.vtCount;
+					lb.addFloat32AndIndices(gd.getVS(), ivs.subarray(ivsIndex, ivsIndex + vtCount), gd.getVSStride());
+					lb.update();
+					this.update();
+				}
+			}
+		}
+	}
+	private static sBoundsOutVS = new Float32Array(24);
+	private static sPos = new Vector3();
+	private static sPrePos = new Vector3();
+	private mLBoundsVS: Float32Array;
+	private updateLocalBoundsVS(bounds: IAABB): void {
+		let min = bounds.min;
+		let max = bounds.max;
+		if (!this.mLBoundsVS) {
+			this.mLBoundsVS = new Float32Array(24);
+		}
+		const pvs = this.mLBoundsVS;
+		pvs[0] = min.x;
+		pvs[1] = min.y;
+		pvs[2] = min.z;
+		pvs[3] = max.x;
+		pvs[4] = min.y;
+		pvs[5] = min.z;
+		pvs[6] = min.x;
+		pvs[7] = min.y;
+		pvs[8] = max.z;
+		pvs[9] = max.x;
+		pvs[10] = min.y;
+		pvs[11] = max.z;
+		pvs[12] = min.x;
+		pvs[13] = max.y;
+		pvs[14] = min.z;
+		pvs[15] = max.x;
+		pvs[16] = max.y;
+		pvs[17] = min.z;
+		pvs[18] = min.x;
+		pvs[19] = max.y;
+		pvs[20] = max.z;
+		pvs[21] = max.x;
+		pvs[22] = max.y;
+		pvs[23] = max.z;
+	}
+	protected updateGlobalBounds(): void {
+
+		// 这里的逻辑也有问题,需要再处理，为了支持摄像机等的拾取以及支持遮挡计算等空间管理计算
+
+		const trans = this.transform;
+		const slb = this.geometry.bounds;
+		const lb = this.mLBs;
+
+		if (trans && lb && slb) {
+
+			const gb = this.mGBs;
+			const DE = Entity3D;
+
+			if (trans.isDirty() || lb.version != slb.version) {
+
+				lb.version = slb.version;
+				trans.update();
+
+				const mat = trans.getMatrix();
+				if (lb.version != slb.version || !this.mLBoundsVS) {
+					this.updateLocalBoundsVS(lb);
+				}
+				let invs = this.mLBoundsVS;
+				let outvs = DE.sBoundsOutVS;
+				mat.transformVectors(invs, 24, outvs);
+				gb.reset();
+				gb.addFloat32Arr(outvs);
+				gb.update();
+
+			} else {
+
+				DE.sPrePos.setXYZ(0, 0, 0);
+				DE.sPos.setXYZ(0, 0, 0);
+
+				let matrix = trans.getMatrix(false);
+				matrix.transformVector3Self(DE.sPrePos);
+				trans.update();
+				matrix = trans.getMatrix(false);
+				matrix.transformVector3Self(DE.sPos);
+				DE.sPos.subtractBy(DE.sPrePos);
+
+				gb.min.addBy(DE.sPos);
+				gb.max.addBy(DE.sPos);
+				gb.center.addBy(DE.sPos);
+
+				++gb.version;
+			}
 		}
 	}
 	update(): Entity3D {
-		this.transform.update();
 		const g = this.geometry;
 		if (g) {
 			const lb = this.mLBs;
 			if (lb && g.bounds && lb.version != g.bounds.version) {
 				lb.copyFrom(g.bounds);
 			}
+			this.updateGlobalBounds();
 		}
+		this.transform.update();
 		return this;
 	}
 	destroy(): void {}

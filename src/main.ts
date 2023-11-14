@@ -54,7 +54,8 @@
 // import { MRT as Demo } from "./voxgpu/sample/MRT";
 // import { DepthBlur as Demo } from "./voxgpu/sample/DepthBlur";
 
-import { LineEntityTest as Demo } from "./voxgpu/sample/LineEntityTest";
+// import { LineEntityTest as Demo } from "./voxgpu/sample/LineEntityTest";
+import { LineObjectTest as Demo } from "./voxgpu/sample/LineObjectTest";
 
 
 

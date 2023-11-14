@@ -12,6 +12,7 @@ import IMatrix4 from "../math/IMatrix4";
 
 interface IRenderCamera {
 
+	inversePerspectiveZ: boolean;
     version: number;
     // 不允许外界修改camera数据
     lock(): void;

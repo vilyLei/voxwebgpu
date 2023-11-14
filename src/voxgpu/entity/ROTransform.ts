@@ -365,6 +365,9 @@ export default class ROTransform implements IROTransform {
 	// setUpdater(updater: ITransUpdater): void {
 	// 	// if (this.wrapper) this.wrapper.setUpdater(updater);
 	// }
+	isDirty(): boolean {
+		return this.updateStatus != ROTransform.NONE;
+	}
 	update(): void {
 		let st = this.updateStatus;
 		if (st > 0) {
@@ -446,7 +449,7 @@ export default class ROTransform implements IROTransform {
 				unit.mFS32 = ida.slice(0);
 			}
 		}
-		unit.uniformv = new WGRUniformValue({data: unit.mOMat.getLocalFS32(), shdVarName:"objMat"});		
+		unit.uniformv = new WGRUniformValue({data: unit.mOMat.getLocalFS32(), shdVarName:"objMat"});
         // unit.uniformv.visibility.toVisibleVert();
 		return unit;
 	}

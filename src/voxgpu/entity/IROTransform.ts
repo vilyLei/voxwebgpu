@@ -73,6 +73,7 @@ export default interface IROTransform {
     forceUpdate(): void;
     update(): void;
     getMatrixFS32(): Float32Array;
+	isDirty(): boolean;
 
 //     wrapper: IROTransUpdateWrapper;
 //     setUpdater(updater: ITransUpdater): void;

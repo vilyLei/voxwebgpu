@@ -184,16 +184,33 @@ export default class BoxGeometry extends MeshBase {
 
 		this.initData();
 	}
-	initialize(minV: Vector3, maxV: Vector3): void {
-		this.mList[0] = [maxV.x, minV.y, maxV.z];
-		this.mList[1] = [maxV.x, minV.y, minV.z];
-		this.mList[2] = [minV.x, minV.y, minV.z];
-		this.mList[3] = [minV.x, minV.y, maxV.z];
+	private minV = new Vector3();
+	private maxV = new Vector3();
+	initialize(minV: Vector3DataType, maxV: Vector3DataType): void {
 
-		this.mList[4] = [maxV.x, maxV.y, maxV.z];
-		this.mList[5] = [maxV.x, maxV.y, minV.z];
-		this.mList[6] = [minV.x, maxV.y, minV.z];
-		this.mList[7] = [minV.x, maxV.y, maxV.z];
+		const min = this.minV;
+		const max = this.maxV;
+		min.setXYZ(0,0,0).setVector3(minV);
+		max.setXYZ(0,0,0).setVector3(maxV);
+		// this.mList[0] = [maxV.x, minV.y, maxV.z];
+		// this.mList[1] = [maxV.x, minV.y, minV.z];
+		// this.mList[2] = [minV.x, minV.y, minV.z];
+		// this.mList[3] = [minV.x, minV.y, maxV.z];
+
+		// this.mList[4] = [maxV.x, maxV.y, maxV.z];
+		// this.mList[5] = [maxV.x, maxV.y, minV.z];
+		// this.mList[6] = [minV.x, maxV.y, minV.z];
+		// this.mList[7] = [minV.x, maxV.y, maxV.z];
+
+		this.mList[0] = [max.x, min.y, max.z];
+		this.mList[1] = [max.x, min.y, min.z];
+		this.mList[2] = [min.x, min.y, min.z];
+		this.mList[3] = [min.x, min.y, max.z];
+
+		this.mList[4] = [max.x, max.y, max.z];
+		this.mList[5] = [max.x, max.y, min.z];
+		this.mList[6] = [min.x, max.y, min.z];
+		this.mList[7] = [min.x, max.y, max.z];
 
 		this.initData();
 	}

@@ -27,6 +27,8 @@ export default class DashedLineGeometry extends GeometryBase {
 	private muvs: Float32Array;
 	private mcvs: Float32Array;
 
+	dashedData = false;
+
 	getVS(): Float32Array {
 		return this.mvs;
 	}
@@ -45,33 +47,51 @@ export default class DashedLineGeometry extends GeometryBase {
 	 */
 	public lineRadius = 2.0;
 	initialize(positions: Vector3DataType[], colors?: ColorDataType[]): void {
-		this.mvs = new Float32Array(positions.length > 2 ? ((positions.length - 2) * 2 + 2) * 3 : positions.length * 3);
 		const v3 = __$v3;
+		const c4 = __$c4;
 		let j = 0;
-		for (let i = 0; i < positions.length; ++i) {
-			if (positions[i]) {
-				v3.setVector3(positions[i]).toArray3(this.mvs, j++ * 3);
-				if (i > 0 && i < positions.length - 1) {
+		if (this.dashedData) {
+			this.mvs = new Float32Array(positions.length * 3);
+			for (let i = 0; i < positions.length; ++i) {
+				if (positions[i]) {
 					v3.setVector3(positions[i]).toArray3(this.mvs, j++ * 3);
 				}
 			}
-		}
-		console.log("this.mvs: ", this.mvs);
-		if (colors) {
-			const c4 = __$c4;
-			this.mcvs = new Float32Array(colors.length > 2 ? ((colors.length - 2) * 2 + 2) * 3 : colors.length * 3);
-			j = 0;
-			for (let i = 0; i < colors.length; ++i) {
-				if (colors[i]) {
-					c4.setColor(colors[i]).toArray3(this.mcvs, j++ * 3);
-					if (i > 0 && i < colors.length - 1) {
-						c4.setColor(colors[i]).toArray3(this.mcvs, j++ * 3);
+		} else {
+			this.mvs = new Float32Array(positions.length > 2 ? ((positions.length - 2) * 2 + 2) * 3 : positions.length * 3);
+			for (let i = 0; i < positions.length; ++i) {
+				if (positions[i]) {
+					v3.setVector3(positions[i]).toArray3(this.mvs, j++ * 3);
+					if (i > 0 && i < positions.length - 1) {
+						v3.setVector3(positions[i]).toArray3(this.mvs, j++ * 3);
 					}
 				}
 			}
 		}
-		console.log("this.mvs: ", this.mvs);
-		console.log(this.mcvs);
+
+		if (colors) {
+			j = 0;
+			if (this.dashedData) {
+				this.mcvs = new Float32Array(colors.length * 3);
+				for (let i = 0; i < colors.length; ++i) {
+					if (colors[i]) {
+						c4.setColor(colors[i]).toArray3(this.mcvs, j++ * 3);
+					}
+				}
+			} else {
+				this.mcvs = new Float32Array(colors.length > 2 ? ((colors.length - 2) * 2 + 2) * 3 : colors.length * 3);
+				for (let i = 0; i < colors.length; ++i) {
+					if (colors[i]) {
+						c4.setColor(colors[i]).toArray3(this.mcvs, j++ * 3);
+						if (i > 0 && i < colors.length - 1) {
+							c4.setColor(colors[i]).toArray3(this.mcvs, j++ * 3);
+						}
+					}
+				}
+			}
+		}
+		// console.log("this.mvs: ", this.mvs);
+		// console.log(this.mcvs);
 		if (!this.bounds) this.bounds = new AABB();
 		this.bounds.addFloat32Arr(this.mvs);
 		this.bounds.updateFast();
