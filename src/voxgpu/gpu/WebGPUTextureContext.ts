@@ -111,16 +111,14 @@ class WebGPUTextureContext {
 	createTexCubeByImages(images: WebImageType[], generateMipmaps = true, flipY = false, format = "rgba8unorm", label?: string): GPUTexture {
 		let image = images[0];
 
-		const device = this.mWGCtx.device;
 		const queue = this.mWGCtx.queue;
-		const mipmapG = this.mipmapGenerator;
 		const mipLevelCount = generateMipmaps ? calculateMipLevels(image.width, image.height) : 1;
 		const textureDescriptor = {
 			dimension: "2d",
 			size: { width: image.width, height: image.height, depthOrArrayLayers: 6 },
 			format,
 			mipLevelCount,
-			usage: GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST | GPUTextureUsage.RENDER_ATTACHMENT
+			usage: GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST
 		};
 		const tex = this.createTexture(textureDescriptor);
 		for (let i = 0; i < images.length; ++i) {
@@ -128,27 +126,35 @@ class WebGPUTextureContext {
 			queue.copyExternalImageToTexture({ source: image, flipY }, { texture: tex, origin: [0, 0, i] }, [image.width, image.height]);
 		}
 		if (generateMipmaps) {
-			mipmapG.generateMipmap(tex, textureDescriptor);
+			this.mipmapGenerator.generateMipmap(tex, textureDescriptor);
 		}
 		return tex;
 	}
 
-	createFloat16Texture(dataF32: Float32Array, width: number, height: number, usage?: number): GPUTexture {
+	createFloat16Texture(srcData: NumberArrayType,width: number, height: number, descriptor?: GPUTextureDescriptor, generateMipmaps = false): GPUTexture {
+
+		generateMipmaps = generateMipmaps === true ? true : false;
 
 		let wgctx =  this.mWGCtx;
-		let data = new Uint16Array(dataF32.length);
-		for(let i = 0; i < dataF32.length; ++i) {
-			data[i] = toFloat16( dataF32[i] );
+		let data = new Uint16Array(srcData.length);
+		for(let i = 0; i < srcData.length; ++i) {
+			data[i] = toFloat16( srcData[i] );
 		}
-		if(!usage) {
-			usage = GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST;
+		if(!descriptor) descriptor = {};
+		if(!descriptor.usage) {
+			descriptor.usage = GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST;
 		}
-		const texture = wgctx.device.createTexture({
-			size: { width, height },
-			format: "rgba16float",
-			usage
-		});
+		if(!descriptor.size) {
+			descriptor.size = [width, height];
+		}
+		descriptor.format = 'rgba16float';
+		const mipLevelCount = generateMipmaps ? calculateMipLevels(width, height) : 1;
+		descriptor.mipLevelCount = mipLevelCount;
+		const texture = wgctx.device.createTexture(descriptor);
 		wgctx.device.queue.writeTexture({ texture }, data, {bytesPerRow: width * 8, rowsPerImage: height}, { width, height });
+		if (generateMipmaps) {
+			this.mipmapGenerator.generateMipmap(texture, descriptor);
+		}
 		return texture;
 	}
 

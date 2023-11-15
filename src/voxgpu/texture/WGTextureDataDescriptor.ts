@@ -15,6 +15,7 @@ interface DataTextureDataDescriptor {
 	height?: number;
 	texture?: GPUTexture;
 	textureView?: GPUTextureView;
+	data?: NumberArrayType;
 	type?: string;
 }
 interface TextureDataDescriptor {
@@ -114,6 +115,7 @@ function texDescriptorFilter(d: WGTextureDataDescriptor): TextureDataDescriptor 
 export {
 	texDescriptorFilter,
 	RTTTextureDataDescriptor,
+	DataTextureDataDescriptor,
 	TextureDataDescriptor,
 	WGTextureDataDescriptor
 };

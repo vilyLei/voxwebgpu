@@ -2,7 +2,7 @@ import { WebGPUContext } from "../gpu/WebGPUContext";
 import { GPUSampler } from "../gpu/GPUSampler";
 import { GPUTexture } from "../gpu/GPUTexture";
 import { GPUTextureView } from "../gpu/GPUTextureView";
-import { texDescriptorFilter, RTTTextureDataDescriptor, TextureDataDescriptor, WGTextureDataDescriptor } from "./WGTextureDataDescriptor";
+import { texDescriptorFilter, RTTTextureDataDescriptor, DataTextureDataDescriptor, TextureDataDescriptor, WGTextureDataDescriptor } from "./WGTextureDataDescriptor";
 
 interface WGTextureDataType {
 	generateMipmaps?: boolean;
@@ -14,7 +14,7 @@ interface WGTextureDataType {
 }
 class WGTextureData implements WGTextureDataType {
 	protected mTex: GPUTexture;
-
+	protected mDesc: TextureDataDescriptor;
 	generateMipmaps = true;
 	flipY = false;
 	format = "rgba8unorm";
@@ -26,6 +26,7 @@ class WGTextureData implements WGTextureDataType {
 		if (descriptor.flipY) this.flipY = descriptor.flipY;
 		if (descriptor.format) this.format = descriptor.format;
 		if (descriptor.dimension) this.dimension = descriptor.dimension;
+		this.mDesc = descriptor;
 		return this;
 	}
 	build(ctx: WebGPUContext): GPUTexture {
@@ -80,7 +81,8 @@ class WGRTTTextureData extends WGTextureData {
 	}
 }
 class WGDataTextureData extends WGTextureData {
-	private mTexData: RTTTextureDataDescriptor;
+	private mTexData: DataTextureDataDescriptor;
+	private mData: NumberArrayType;
 	constructor() {
 		super();
 	}
@@ -90,13 +92,31 @@ class WGDataTextureData extends WGTextureData {
 		return this;
 	}
 	build(ctx: WebGPUContext): GPUTexture {
+		const desc = this.mDesc;
 		const td = this.mTexData;
-		if (td && !this.mTex) {
-			if (td.texture) {
-				console.log("apply a data texture into a WGDataTextureData instance.");
-				this.mTex = td.texture;
+		if(td && desc) {
+			if (!this.mTex) {
+				if (td.texture) {
+					console.log("apply a texture into the WGDataTextureData instance.");
+					this.mTex = td.texture;
+				}else if(td.data){
+					console.log("create a texture into the WGDataTextureData instance.");
+					switch(desc.format) {
+						case 'rgba16float':
+							this.mTex = ctx.texture.createFloat16Texture(td.data, td.width, td.height,{}, desc.generateMipmaps);
+							break;
+						default:
+							break;
+					}
+				}
 			}
 		}
+		// if (td && !this.mTex) {
+		// 	if (td.texture) {
+		// 		console.log("apply a data texture into a WGDataTextureData instance.");
+		// 		this.mTex = td.texture;
+		// 	}
+		// }
 		return this.mTex;
 	}
 }
