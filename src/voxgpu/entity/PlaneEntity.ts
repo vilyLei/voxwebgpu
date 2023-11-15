@@ -1,7 +1,7 @@
 import { Entity3DParam, PrimitiveEntity } from "./PrimitiveEntity";
 import GeometryBase from "../geometry/primitive/GeometryBase";
 import RectPlaneGeometry from "../geometry/primitive/RectPlaneGeometry";
-import Extent2 from "../math/Extent2";
+import Extent2 from "../cgeom/Extent2";
 
 interface PlaneEntityParam extends Entity3DParam {
 	x?: number;

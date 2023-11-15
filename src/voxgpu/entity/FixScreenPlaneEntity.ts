@@ -9,7 +9,7 @@ import Color4 from "../material/Color4";
 import vertWGSL from "../material/shader/wgsl/fixScreenPlane.vert.wgsl";
 import fragWGSL from "../material/shader/wgsl/fixScreenPlane.frag.wgsl";
 import texFragWGSL from "../material/shader/wgsl/fixScreenPlaneTex.frag.wgsl";
-import Extent2 from "../math/Extent2";
+import Extent2 from "../cgeom/Extent2";
 
 interface FixScreenPlaneEntityParam extends Entity3DParam {
 	x?: number;

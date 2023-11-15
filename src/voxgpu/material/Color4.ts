@@ -78,7 +78,6 @@ export default class Color4 implements IColor4 {
 			const vs = v as number[];
 			if (vs.length !== undefined) {
 				const len = vs.length;
-				console.log("hhhhhh len: ", len);
 				if (len > 0) c.r = vs[0];
 				if (len > 1) c.g = vs[1];
 				if (len > 2) c.b = vs[2];
