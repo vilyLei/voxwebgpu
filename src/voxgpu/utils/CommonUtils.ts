@@ -1,3 +1,5 @@
+import { GPUTexture } from "../gpu/GPUTexture";
+
 function copyFromObjectValueWithKey(src: any, dst: any): void {
 	for(var k in src) {
 		if(src[k] != undefined) {
@@ -61,4 +63,44 @@ const toFloat16 = (function() {
 	};
 
  }());
+
+
+ function createSolidColorTexture(r: number, g: number, b: number, a: number): GPUTexture {
+	let rc: any;
+	let wgctx = rc.getWGCtx();
+	const data = new Uint8Array([r * 255, g * 255, b * 255, a * 255]);
+	const texture = wgctx.device.createTexture({
+		size: { width: 1, height: 1 },
+		format: "rgba8unorm",
+		usage: GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST
+	});
+	wgctx.device.queue.writeTexture({ texture }, data, {}, { width: 1, height: 1 });
+	return texture;
+}
+function createFloatColorTexture(width: number, height: number): GPUTexture {
+	let rc: any;
+	let wgctx = rc.getWGCtx();
+
+	let data = new Uint16Array(width * height * 4);
+	let scale = 10.0;
+	let k = 0;
+	for (let i = 0; i < height; ++i) {
+		for (let j = 0; j < width; ++j) {
+			k = (width * i + j) * 4;
+			data[k] = toFloat16(scale * (j/width));
+			data[k+1] = toFloat16(scale * (0.5 + 0.5 * Math.sin(10.0 * (1.0 - j/width))));
+			data[k+2] = toFloat16(scale * (1.0 - (i * j)/(width * height)));
+			data[k+3] = toFloat16(scale * 1.0);
+		}
+	}
+
+	const texture = wgctx.device.createTexture({
+		size: { width, height },
+		format: "rgba16float",
+		usage: GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST
+	});
+	wgctx.device.queue.writeTexture({ texture }, data, {bytesPerRow: width * 8, rowsPerImage: height}, { width, height });
+	return texture;
+}
+
 export {toFloat16, copyFromObjectValueWithKey, createIndexArrayWithSize, createIndexArray}

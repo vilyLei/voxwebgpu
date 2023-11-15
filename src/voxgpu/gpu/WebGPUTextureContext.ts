@@ -2,6 +2,7 @@ import { GPUTexture } from "./GPUTexture";
 import { WebGPUContextImpl } from "./WebGPUContextImpl";
 import { calculateMipLevels, GPUMipmapGenerator } from "../texture/GPUMipmapGenerator";
 import { GPUTextureDescriptor } from "./GPUTextureDescriptor";
+import { toFloat16 } from "../utils/CommonUtils";
 
 class WebGPUTextureContext {
 	private mWGCtx: WebGPUContextImpl;
@@ -131,5 +132,25 @@ class WebGPUTextureContext {
 		}
 		return tex;
 	}
+
+	createFloat16Texture(dataF32: Float32Array, width: number, height: number, usage?: number): GPUTexture {
+
+		let wgctx =  this.mWGCtx;
+		let data = new Uint16Array(dataF32.length);
+		for(let i = 0; i < dataF32.length; ++i) {
+			data[i] = toFloat16( dataF32[i] );
+		}
+		if(!usage) {
+			usage = GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST;
+		}
+		const texture = wgctx.device.createTexture({
+			size: { width, height },
+			format: "rgba16float",
+			usage
+		});
+		wgctx.device.queue.writeTexture({ texture }, data, {bytesPerRow: width * 8, rowsPerImage: height}, { width, height });
+		return texture;
+	}
+
 }
 export { WebGPUTextureContext };

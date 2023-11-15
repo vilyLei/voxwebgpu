@@ -34,7 +34,7 @@ export class FloatTextureTest {
 		wgctx.device.queue.writeTexture({ texture }, data, {}, { width: 1, height: 1 });
 		return texture;
 	}
-	private createFloatColorTexture(width: number, height: number): GPUTexture {
+	private createFloat16Texture(width: number, height: number): GPUTexture {
 		let rc = this.mRscene;
 		let wgctx = rc.getWGCtx();
 
@@ -59,6 +59,28 @@ export class FloatTextureTest {
 		wgctx.device.queue.writeTexture({ texture }, data, {bytesPerRow: width * 8, rowsPerImage: height}, { width, height });
 		return texture;
 	}
+
+	private createFloatColorTexture(width: number, height: number): GPUTexture {
+
+		let rc = this.mRscene;
+		let wgctx = rc.getWGCtx();
+
+		let data = new Float32Array(width * height * 4);
+		let scale = 10.0;
+		let k = 0;
+		for (let i = 0; i < height; ++i) {
+			for (let j = 0; j < width; ++j) {
+				k = (width * i + j) * 4;
+				data[k] = scale * (j/width);
+				data[k+1] = (scale * (0.5 + 0.5 * Math.sin(10.0 * (1.0 - j/width))));
+				data[k+2] = (scale * (1.0 - (i * j)/(width * height)));
+				data[k+3] = (scale * 1.0);
+			}
+		}
+
+		let texture = wgctx.texture.createFloat16Texture(data, width, height);
+		return texture;
+	}
 	private applyFloatTex(): void {
 		// webgpu hdr usage: https://stackoverflow.com/questions/77032862/load-hdr-10-bit-avif-image-into-a-rgba16float-texture-in-webgpu
 		let rc = this.mRscene;
@@ -70,11 +92,7 @@ export class FloatTextureTest {
 		let height = 128;
 
 		const floatTex = {
-			diffuse: {
-				uuid: "rtt0",
-				dataTexture: { texture: f32Tex0, textureView: f32Tex0.createView(), width, height },
-				format: "rgba16float"
-			}
+			diffuse: { uuid: "rtt0", dataTexture: { texture: f32Tex0, textureView: f32Tex0.createView(), width, height }, format: "rgba16float" }
 		};
 
 		let entity = new FixScreenPlaneEntity({ extent: [-0.8, -0.8, 0.8, 0.8], textures: [floatTex] });
