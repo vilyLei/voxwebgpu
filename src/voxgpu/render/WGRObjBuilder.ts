@@ -13,6 +13,7 @@ import { WGRBufferData } from "../render/buffer/WGRBufferData";
 import { findShaderEntryPoint, WGRShderSrcType } from "../render/pipeline/WGRPipelineCtxParams";
 import { WGREntityNode } from "./WGREntityNode";
 import { WebGPUContext } from "../gpu/WebGPUContext";
+import { IWGMaterial } from "../material/IWGMaterial";
 
 type GeomType = { indexBuffer?: GPUBuffer, vertexBuffers: GPUBuffer[], indexCount?: number, vertexCount?: number };
 
@@ -56,6 +57,20 @@ class WGRObjBuilder {
 			}
 		}
 	}
+	private checkMaterial(material: IWGMaterial, primitive: WGRPrimitive): void {
+		if(!material.shaderCodeSrc.compShaderSrc) {
+			const vtxParam = material.pipelineVtxParam;
+			if (primitive && vtxParam) {
+				const vert = vtxParam.vertex;
+				vert.buffers = primitive.vbufs;
+				vert.drawMode = primitive.drawMode;
+			}
+			const pipeDef = material.pipelineDefParam;
+			if(material.doubleFace !== undefined) {
+				pipeDef.faceCullMode = material.doubleFace === true ? 'none' : pipeDef.faceCullMode;
+			}
+		}
+	}
 	createRPass(entity: Entity3D, builder: IWGRPassNodeBuilder, primitive: WGRPrimitive, materialIndex = 0, blockUid = 0): IWGRUnit {
 
 		const material = entity.materials[materialIndex];
@@ -66,12 +81,23 @@ class WGRObjBuilder {
 		// if (!pctx) {
 		if (!builder.hasMaterial(material)) {
 			if (!pctx) {
-				if (material.pipelineVtxParam) {
-					material.pipelineVtxParam.vertex.buffers = primitive.vbufs;
-					material.pipelineVtxParam.vertex.drawMode = primitive.drawMode;
-				} else {
+				this.testShaderSrc(material.shaderCodeSrc);
+				// if (material.pipelineVtxParam) {
+				// 	material.pipelineVtxParam.vertex.buffers = primitive.vbufs;
+				// 	material.pipelineVtxParam.vertex.drawMode = primitive.drawMode;
+				// } else {
+				// 	if (primitive) {
+				// 		material.pipelineVtxParam = { vertex: { buffers: primitive.vbufs, attributeIndicesArray: [], drawMode: primitive.drawMode } };
+				// 		const ls = [];
+				// 		for (let i = 0; i < primitive.vbufs.length; ++i) {
+				// 			ls.push([0]);
+				// 		}
+				// 		material.pipelineVtxParam.vertex.attributeIndicesArray = ls;
+				// 	}
+				// }
+				if (!material.pipelineVtxParam) {
 					if (primitive) {
-						material.pipelineVtxParam = { vertex: { buffers: primitive.vbufs, attributeIndicesArray: [], drawMode: primitive.drawMode } };
+						material.pipelineVtxParam = { vertex: { attributeIndicesArray: [] } };
 						const ls = [];
 						for (let i = 0; i < primitive.vbufs.length; ++i) {
 							ls.push([0]);
@@ -79,8 +105,12 @@ class WGRObjBuilder {
 						material.pipelineVtxParam.vertex.attributeIndicesArray = ls;
 					}
 				}
+				// if (primitive && material.pipelineVtxParam) {
+				// 	material.pipelineVtxParam.vertex.buffers = primitive.vbufs;
+				// 	material.pipelineVtxParam.vertex.drawMode = primitive.drawMode;
+				// }
 			}
-			this.testShaderSrc(material.shaderCodeSrc);
+			this.checkMaterial(material, primitive);
 			const node = builder.getPassNodeWithMaterial(material);
 			// console.log('WGRObjBuilder::createRPass(), node.uid: ', node.uid, ", node: ", node);
 			pctx = node.createRenderPipelineCtxWithMaterial(material);
@@ -214,7 +244,7 @@ class WGRObjBuilder {
 		} else {
 			ru = this.createRPass(entity, builder, primitive);
 		}
-		ru.bounds = entity.getGlobalBounds();
+		ru.bounds = entity.globalBounds;
 		ru.st = entity.rstate;
 		ru.st.__$rendering = true;
 

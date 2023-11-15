@@ -16,7 +16,7 @@ interface AxisEntityParam extends Line3DEntityParam {
 
 function buildPosData(param: AxisEntityParam): void {
 
-	let size = param.axisLength !== undefined ? param.axisLength : 100;
+	let size = param.axisLength !== undefined ? param.axisLength : 200;
 	let sizeX = param.xAxisLength;
 	let sizeY = param.yAxisLength;
 	let sizeZ = param.zAxisLength;

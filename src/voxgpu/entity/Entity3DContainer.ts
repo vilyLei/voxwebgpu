@@ -181,13 +181,13 @@ class Entity3DContainer implements IRenderableEntityContainer {
 	isDrawEnabled(): boolean {
 		return true;
 	}
-	getGlobalBounds(): IAABB {
+	get globalBounds(): IAABB {
 		return this.mGlobalBounds;
 	}
-	getLocalBounds(): IAABB {
+	get localBounds(): IAABB {
 		return null;
 	}
-	getGlobalBoundsVer(): number {
+	get globalBoundsVer(): number {
 		if (this.mGlobalBounds != null) {
 			return this.mGlobalBounds.version;
 		}
@@ -447,6 +447,12 @@ class Entity3DContainer implements IRenderableEntityContainer {
 	isVisible(): boolean {
 		return this.mVisible;
 	}
+	set visible(v: boolean) {
+		this.mVisible = v;
+	}
+	get visible(): boolean {
+		return this.mVisible;
+	}
 
 	getREType(): number {
 		return this.mRenderingFlow ? 20 : 12;
@@ -689,19 +695,19 @@ class Entity3DContainer implements IRenderableEntityContainer {
 				this.mGlobalBounds.reset();
 				let bounds: IAABB = null;
 				for (; i < this.m_entitiesTotal; ++i) {
-					bounds = this.m_entities[i].getGlobalBounds();
+					bounds = this.m_entities[i].globalBounds;
 					if (bounds != null) {
 						this.mGlobalBounds.union(bounds);
 					}
-					this.m_ebvers[i] != this.m_entities[i].getGlobalBoundsVer();
+					this.m_ebvers[i] != this.m_entities[i].globalBoundsVer;
 				}
 				for (i = 0; i < this.m_childrenTotal; ++i) {
 					this.m_children[i].__$updateBoundsDo();
-					bounds = this.m_children[i].getGlobalBounds();
+					bounds = this.m_children[i].globalBounds;
 					if (bounds != null) {
 						this.mGlobalBounds.union(bounds);
 					}
-					this.m_cbvers[i] != this.m_children[i].getGlobalBoundsVer();
+					this.m_cbvers[i] != this.m_children[i].globalBoundsVer;
 				}
 				this.mGlobalBounds.update();
 			}
@@ -728,18 +734,18 @@ class Entity3DContainer implements IRenderableEntityContainer {
 			i = 0;
 			let bounds: IAABB = null;
 			for (; i < this.m_entitiesTotal; ++i) {
-				bounds = this.m_entities[i].getGlobalBounds();
+				bounds = this.m_entities[i].globalBounds;
 				if (bounds != null) {
 					gb.union(bounds);
 				}
-				this.m_ebvers[i] = this.m_entities[i].getGlobalBoundsVer();
+				this.m_ebvers[i] = this.m_entities[i].globalBoundsVer;
 			}
 			for (i = 0; i < this.m_childrenTotal; ++i) {
-				bounds = this.m_children[i].getGlobalBounds();
+				bounds = this.m_children[i].globalBounds;
 				if (bounds != null) {
 					gb.union(bounds);
 				}
-				this.m_cbvers[i] = this.m_children[i].getGlobalBoundsVer();
+				this.m_cbvers[i] = this.m_children[i].globalBoundsVer;
 			}
 			gb.update();
 			if (this.__$parent != null) {
@@ -805,7 +811,7 @@ class Entity3DContainer implements IRenderableEntityContainer {
 				if (this.m_entitiesTotal > 0) {
 					for (; i < this.m_entitiesTotal; ++i) {
 						this.m_entities[i].update();
-						if (this.m_ebvers[i] != this.m_entities[i].getGlobalBoundsVer()) {
+						if (this.m_ebvers[i] != this.m_entities[i].globalBoundsVer) {
 							this.mGboundsStatus = 2;
 						}
 					}
@@ -814,7 +820,7 @@ class Entity3DContainer implements IRenderableEntityContainer {
 				if (this.m_childrenTotal > 0) {
 					for (i = 0; i < this.m_childrenTotal; ++i) {
 						this.m_children[i].update();
-						if (this.m_cbvers[i] != this.m_children[i].getGlobalBoundsVer()) {
+						if (this.m_cbvers[i] != this.m_children[i].globalBoundsVer) {
 							this.mGboundsStatus = 2;
 							//break;
 						}

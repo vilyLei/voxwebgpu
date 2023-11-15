@@ -14,17 +14,17 @@ interface BoundsFrameEntityParam extends Line3DEntityParam {
 	bounds?: IAABB;
 
 	frameColors?: ColorDataType[];
-	posList8?: Vector3DataType[];
+	vertices8?: Vector3DataType[];
 }
 const __v8List = [
 	new Vector3(), new Vector3(), new Vector3(), new Vector3(),
 	new Vector3(), new Vector3(), new Vector3(), new Vector3()
 ];
-function createPosDataWith8Pos(posList8: Vector3DataType[]): Vector3DataType[] {
+function createPosDataWith8Pos(vertices8: Vector3DataType[]): Vector3DataType[] {
 	const vps = __v8List;
-	let len = posList8.length < 8 ? posList8.length : 8;
+	let len = vertices8.length < 8 ? vertices8.length : 8;
 	for(let i = 0; i < len; ++i) {
-		vps[i].setXYZ(0,0,0).setVector3(posList8[i]);
+		vps[i].setXYZ(0,0,0).setVector3(vertices8[i]);
 	}
 	// let posarr = [
 	// 	// bottom frame
@@ -84,10 +84,10 @@ function createPosList8WithOBB(obb: IOBB, scale: number = 1.0): Vector3DataType[
 function buildPosData(param: BoundsFrameEntityParam): void {
 	if(param.obb) {
 		let scale = param.obbFrameScale !== undefined ? param.obbFrameScale : 1;
-		param.posList8 = createPosList8WithOBB( param.obb, scale );
+		param.vertices8 = createPosList8WithOBB( param.obb, scale );
 	}
-	if(param.posList8) {
-		param.linePositions = createPosDataWith8Pos( param.posList8 );
+	if(param.vertices8) {
+		param.linePositions = createPosDataWith8Pos( param.vertices8 );
 		return;
 	}
 	let min = new Vector3();
@@ -137,7 +137,8 @@ function buildColorData(param: BoundsFrameEntityParam): void {
 	let len = param.linePositions.length;
 	param.lineColors = new Array(len) as ColorDataType[];
 	let cs = param.frameColors;
-	for(let i = 0; i < cs.length; ++i) {
+	let csLen = Math.min(Math.floor(len/2), cs.length);
+	for(let i = 0; i < csLen; ++i) {
 		const k = i * 2;
 		if(cs[i]) {
 			param.lineColors[ k ] = cs[i];
@@ -147,8 +148,8 @@ function buildColorData(param: BoundsFrameEntityParam): void {
 			param.lineColors[ k  + 1] = c;
 		}
 	}
-	
-	for(let i = cs.length * 2; i < len; ++i) {
+
+	for(let i = csLen * 2; i < len; ++i) {
 		param.lineColors[i] = c;
 	}
 }

@@ -1,5 +1,5 @@
 # voxwebgpu
-A lightweight WebGPU computing and 2d/3d rendering system
+A lightweight WebGPU computing and 2d/3d rendering system.
 
 Features:
 
@@ -7,22 +7,26 @@ Features:
 
    2. 基于算力驱动的系统设计。
 
-   3. 高频调用与低频调用隔离。
+   3. 高性能，高吞吐量。
 
-   4. 面向用户的易用性封装，保证易用性与灵活性。
+   4. 高频调用与低频调用隔离。
 
-   5. 渲染数据(内外部相关资源)和渲染机制分离。
+   5. 面向用户的易用性封装，保证易用性与灵活性。
 
-   6. 用户操作和渲染系统调度并行机制。
+   6. 渲染数据(内外部相关资源)和渲染机制分离。
 
-   7. 保持稀疏松散的架构形态，数据/语义驱动。
+   7. 用户操作和渲染系统调度并行机制。
 
-   8. 异步并行的场景/模型载入。
+   8. 保持稀疏松散的架构形态，数据/语义驱动。
 
-   9. 保持computing与rendering机制一致性。
-         1). 构造致性。
-         2). 使用致性。
-         3). 自动兼容materialmulti-pass、material graph、pass(pass node) graph机制。
+   9. 异步并行的场景/模型数据处理。
+
+   10. CAD或几何编辑支持。
+
+   11. 保持computing与rendering机制一致性。
+         1). 构造一致性。
+         2). 使用一致性。
+         3). 自动兼容material multi-pass、material graph、pass(pass node) graph机制。
 
 
 Installation and running:

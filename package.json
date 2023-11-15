@@ -7,7 +7,7 @@
   "license": "MIT",
   "scripts": {
 
-    "build": "vue-cli-service build --target lib --name VoxApp --dest dist ./src/main.ts",
+    "build:vox": "vue-cli-service build --target lib --name VoxWebGPU --dest dist ./src/main.ts",
     "dev:vox": "vue-cli-service serve --type=dev[./src/main.ts]"
   },
   "dependencies": {

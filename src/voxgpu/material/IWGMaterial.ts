@@ -27,6 +27,8 @@ interface IWGMaterial extends WGMaterialDescripter {
 	rpass: WGRMaterialPassViewImpl;
 
 	wireframe?: boolean;
+	doubleFace?: boolean;
+
 	visible: boolean;
 	graph?: IWGMaterialGraph;
 

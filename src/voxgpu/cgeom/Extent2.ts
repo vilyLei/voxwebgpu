@@ -18,6 +18,13 @@ export default class Extent2 {
 	clone(): Extent2 {
 		return new Extent2(this);
 	}
+	setXYWH(x: number, y: number, width: number, height: number): Extent2 {
+		this.x = x;
+		this.y = y;
+		this.width = width;
+		this.height = height;
+		return this;
+	}
 	setExtent(extent: Extent2DataType): Extent2 {
 		let v = extent;
 		if (v) {
@@ -89,5 +96,8 @@ export default class Extent2 {
 		this.width *= s;
 		this.height *= s;
 		return this;
+	}
+	update(): void {
+
 	}
 }

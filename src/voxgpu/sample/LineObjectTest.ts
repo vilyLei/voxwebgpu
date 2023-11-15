@@ -39,7 +39,7 @@ export class LineObjectTest {
 		rsc.addEntity( box );
 
 		let obb = new OBB();
-		obb.fromAABB(box.getLocalBounds(), box.transform.getMatrix());
+		obb.fromAABB(box.localBounds, box.transform.getMatrix());
 
 		let boxFrame = new BoundsFrameEntity({obb, obbFrameScale: 1.01});
 		boxFrame.setColor([0.1, 0.8, 0.7]);
@@ -50,7 +50,7 @@ export class LineObjectTest {
 		const cam = new Camera({eye: new Vector3(500, 500, -300), near: 50, far: 200});
 		const rsc = this.mRscene;
 		let frameColors = [[1.0, 0.0, 1.0], [0.0, 1.0, 1.0], [1.0, 0.0, 1.0], [0.0, 1.0, 1.0]];
-		let boxFrame = new BoundsFrameEntity({ posList8: cam.getWordFrustumVtxArr(), frameColors });
+		let boxFrame = new BoundsFrameEntity({ vertices8: cam.frustum.vertices, frameColors });
 		rsc.addEntity( boxFrame );
 	}
 	private mouseDown = (evt: MouseEvent): void => {};
@@ -99,7 +99,7 @@ export class LineObjectTest {
 
 		this.testFrustumFrame();
 
-		let boxFrame = new BoundsFrameEntity({bounds: sph.getGlobalBounds()});
+		let boxFrame = new BoundsFrameEntity({bounds: sph.globalBounds});
 		rsc.addEntity( boxFrame );
 
 		let tor = new TorusEntity();
@@ -107,10 +107,10 @@ export class LineObjectTest {
 		tor.transform.setXYZ(-300, 200, 300);
 		tor.transform.setRotationXYZ(60, 130, 70);
 		rsc.addEntity( tor );
-		boxFrame = new BoundsFrameEntity({bounds: tor.getGlobalBounds()});
+		boxFrame = new BoundsFrameEntity({bounds: tor.globalBounds});
 		rsc.addEntity( boxFrame );
 		let obb = new OBB();
-		obb.fromAABB(tor.getLocalBounds(), tor.transform.getMatrix());
+		obb.fromAABB(tor.localBounds, tor.transform.getMatrix());
 		boxFrame = new BoundsFrameEntity({obb, obbFrameScale: 1.01});
 		boxFrame.color = [0.6, 0.8, 0.3];
 		rsc.addEntity( boxFrame );

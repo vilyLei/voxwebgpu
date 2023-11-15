@@ -31,6 +31,7 @@ interface Entity3DParam {
 	uniformValues?: WGRBufferData[];
 	shadinguuid?: string;
 	instanceCount?: number;
+	doubleFace?: boolean;
 	rpasses?: WGRMaterialPassViewImpl[];
 	/**
 	 * build geometry/material object, yes or no
@@ -326,13 +327,13 @@ class Entity3D implements IRenderableEntity {
 		return this.rstate.__$rendering;
 	}
 
-	getGlobalBounds(): IAABB {
+	get globalBounds(): IAABB {
 		return this.mGBs;
 	}
-	getLocalBounds(): IAABB {
+	get localBounds(): IAABB {
 		return this.mLBs;
 	}
-	getGlobalBoundsVer(): number {
+	get globalBoundsVer(): number {
 		if (this.mGBs) {
 			return this.mGBs.version;
 		}

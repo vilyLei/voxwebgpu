@@ -96,6 +96,10 @@ export default class Color4 implements IColor4 {
 		this.r = this.g = this.b = brn;
 		return this;
 	}
+	toWhite(brn = 1.0): Color4 {
+		this.r = this.g = this.b = brn;
+		return this;
+	}
 	gammaCorrect(): Color4 {
 		const f = 1.0 / 2.2;
 		this.r = Math.pow(this.r, f);

@@ -40,9 +40,9 @@ interface IRenderableObject {
 	isRendering(): boolean;
 	isInRenderer(): boolean;
 
-	getGlobalBounds(): IAABB;
-	getLocalBounds(): IAABB;
-	getGlobalBoundsVer(): number;
+	globalBounds: IAABB;
+	localBounds: IAABB;
+	globalBoundsVer: number;
 
 	localToGlobal(pv: IVector3): IRenderableObject;
 	globalToLocal(pv: IVector3): IRenderableObject;

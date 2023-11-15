@@ -28,7 +28,7 @@ interface IRenderableEntityContainer extends IRenderableObject {
 
 	getParent(): IRenderableEntityContainer;
 
-	getGlobalBounds(): IAABB;
+	// globalBounds: IAABB;
 	getChildrenTotal(): number;
 	getEntitiesTotal(): number;
 	getEntities(): IRenderableEntity[];

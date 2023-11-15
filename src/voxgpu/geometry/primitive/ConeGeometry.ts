@@ -36,12 +36,7 @@ export default class ConeGeometry extends GeometryBase {
 		return this.mivs;
 	}
 
-	initialize(
-		radius: number,
-		height: number,
-		longitudeNumSegments: number,
-		alignYRatio: number = -0.5
-	) {
+	initialize(radius: number, height: number, longitudeNumSegments: number, alignYRatio = -0.5) {
 		if (this.vtxTotal < 1) {
 			if (radius < 0.01) radius = 0.01;
 			if (longitudeNumSegments < 2) longitudeNumSegments = 2;
@@ -68,7 +63,7 @@ export default class ConeGeometry extends GeometryBase {
 			let vtxRows: GeometryVertex[][] = [];
 			vtxRows.push([]);
 			let vtxRow: GeometryVertex[] = vtxRows[0];
-            vtx.f = 0;
+			vtx.f = 0;
 			vtx.u = 0.5;
 			vtx.v = 0.5;
 			vtx.nx = 0.0;
@@ -83,6 +78,10 @@ export default class ConeGeometry extends GeometryBase {
 			}
 			py = minY;
 			let py2 = 0.499;
+
+			let pos0 = new Vector3(0, minY + height, 0);
+			let pos1 = new Vector3(0, minY + height, 0);
+			let pos2 = new Vector3(0, minY + height, 0);
 			for (; i < latitudeNumSegments; ++i) {
 				yRad = (Math.PI * i) / latitudeNumSegments;
 				vtx.y = py;
@@ -104,10 +103,20 @@ export default class ConeGeometry extends GeometryBase {
 					py *= py2;
 					vtx.u = 0.5 + px;
 					vtx.v = 0.5 + py;
-					vtx.nx = vtx.x;
-					vtx.ny = 0.0;
-					vtx.nz = vtx.z;
 					vtx.f = 0;
+
+					pos1.copyFrom(pos0);
+					pos2.setXYZ(vtx.x, vtx.y, vtx.z);
+					pos2.subtractBy(pos1);
+					pos2.normalize();
+					pos1.setXYZ(vtx.x, 0, vtx.z);
+					pos1.normalize();
+					pos1.addBy(pos2);
+					pos1.normalize();
+
+					vtx.nx = pos1.x;
+					vtx.ny = pos1.y;
+					vtx.nz = pos1.z;
 
 					rowa.push(vtx.cloneVertex());
 					vtxVec.push(rowa[j]);
@@ -118,10 +127,10 @@ export default class ConeGeometry extends GeometryBase {
 			vtxRows.push([]);
 			let rowa: GeometryVertex[] = vtxRows[vtxRows.length - 1];
 			let rowb: GeometryVertex[] = vtxRows[vtxRows.length - 2];
-			for (j = 0; j < longitudeNumSegments; ++j) {
 
+			for (j = 0; j < longitudeNumSegments; ++j) {
 				let pv = rowb[j].cloneVertex();
-                pv.f = 1;
+				pv.f = 1;
 
 				rowa.push(pv);
 
@@ -129,24 +138,24 @@ export default class ConeGeometry extends GeometryBase {
 				++trisTot;
 				vtxVec.push(rowa[j]);
 
-                pv = rowb[j];
+				pv = rowb[j];
 				pv.nx = 0.0;
 				pv.ny = -1.0;
 				pv.nz = 0.0;
 			}
 			rowa.push(rowa[0]);
 
-            vtx.f = 0;
+			vtx.f = 0;
 			vtx.x = 0.0;
 			vtx.y = minY + height;
 			vtx.z = 0.0;
 			vtx.u = 0.5;
 			vtx.v = 0.5;
-            vtx.nx = 0.0;
-            vtx.ny = 1.0;
-            vtx.nz = 0.0;
+			vtx.nx = 0.0;
+			vtx.ny = 1.0;
+			vtx.nz = 0.0;
 			vtxRows.push([]);
-			let lastRow: GeometryVertex[] = vtxRows[vtxRows.length - 1];
+			let lastRow = vtxRows[vtxRows.length - 1];
 			for (j = 0; j < longitudeNumSegments; ++j) {
 				vtx.index = trisTot;
 				++trisTot;
@@ -154,15 +163,16 @@ export default class ConeGeometry extends GeometryBase {
 				vtxVec.push(lastRow[j]);
 			}
 			lastRow.push(lastRow[0]);
-			let pvtx: GeometryVertex = null;
+
+			let pvtx: GeometryVertex;
 			///////////////////////////   ///////////////////////////    ////////////////
 			let pivs: number[] = [];
 
 			i = 1;
 			latitudeNumSegments += 1;
 			for (; i <= latitudeNumSegments; ++i) {
-				let rowa: GeometryVertex[] = vtxRows[i - 1];
-				let rowb: GeometryVertex[] = vtxRows[i];
+				let rowa = vtxRows[i - 1];
+				let rowb = vtxRows[i];
 				for (j = 1; j <= longitudeNumSegments; ++j) {
 					if (i == 1) {
 						pivs.push(rowa[0].index);
@@ -209,35 +219,16 @@ export default class ConeGeometry extends GeometryBase {
 			}
 			if (true) {
 				this.mnvs = new Float32Array(this.vtxTotal * 3);
-				// i = 0;
-				// for (j = 0; j < this.vtxTotal; ++j) {
-				//     pvtx = vtxVec[j];
-				//     this.mnvs[i] = pvtx.nx; this.mnvs[i + 1] = pvtx.ny; this.mnvs[i + 2] = pvtx.nz;
-				//     i += 3;
-				// }
-				// let nvs = new Float32Array(vtxTotal * 3);
 				let trisNumber = this.mivs.length / 3;
 				if (this.normalType == 0) {
 					SurfaceNormalCalc.ClacTrisNormal(this.mvs, this.mvs.length, trisNumber, this.mivs, this.mnvs);
 				} else {
-					SurfaceNormalCalc.ClacTrisNormal(this.mvs, this.mvs.length, trisNumber, this.mivs, this.mnvs);
 					i = 0;
-					let nv = new Vector3();
 					for (j = 0; j < this.vtxTotal; ++j) {
 						pvtx = vtxVec[j];
-						if (pvtx.f > 0) {
-							nv.x = pvtx.nx + this.mnvs[i];
-							nv.y = pvtx.ny + this.mnvs[i + 1];
-							nv.z = pvtx.nz + this.mnvs[i + 2];
-                            nv.normalize();
-							this.mnvs[i] = nv.x;
-							this.mnvs[i + 1] = nv.y;
-							this.mnvs[i + 2] = nv.z;
-						} else {
-							this.mnvs[i] = pvtx.nx;
-							this.mnvs[i + 1] = pvtx.ny;
-							this.mnvs[i + 2] = pvtx.nz;
-						}
+						this.mnvs[i] = pvtx.nx;
+						this.mnvs[i + 1] = pvtx.ny;
+						this.mnvs[i + 2] = pvtx.nz;
 						i += 3;
 					}
 				}

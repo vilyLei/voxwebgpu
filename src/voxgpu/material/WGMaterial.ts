@@ -40,6 +40,9 @@ class WGMaterial implements IWGMaterial {
 
 	instanceCount = 1;
 
+	wireframe?: boolean;
+	doubleFace?: boolean;
+
 	// textures: { [key: string]: WGTextureWrapper } = {};
 	textures: WGTextureWrapper[];
 

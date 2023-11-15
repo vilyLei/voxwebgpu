@@ -20,6 +20,7 @@ interface WGRPipelineContextDefParam {
 	faceCullMode?: string;
 	depthStencilEnabled?: boolean;
 	pipelineAppend?: boolean;
+	// doubleFace?: boolean;
 }
 interface WGRPipelineParamType {
 	sampleCount?: number;

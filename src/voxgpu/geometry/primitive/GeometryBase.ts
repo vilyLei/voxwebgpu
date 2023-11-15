@@ -21,10 +21,7 @@ export default class GeometryBase {
 	 * 强制更新 vertex indices buffer 数据, 默认值为false
 	 */
 	forceUpdateIVS = false;
-	/**
-	 * 是否启用线框模式数据, 默认值为false
-	 */
-	wireframe = false;
+
 	/**
 	 * 是否启用形状模式数据, 默认值为true
 	 */

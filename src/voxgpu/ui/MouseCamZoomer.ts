@@ -164,7 +164,7 @@ export default class MouseCamZoomer {
                 v = this.m_lookAt;
             }
             let disFunc = Vector3.DistanceSquared;
-            let pv = this.m_camera.getLookAtPosition();
+            let pv = this.m_camera.lookPosition;
             if(disFunc(v, this.m_lookAtPos) > 0.0001 || disFunc(pv, v) > 0.0001) {
                 this.m_camera.setLookAtPosition(v);
                 this.m_lookAtPos.copyFrom(v);
@@ -180,7 +180,7 @@ export default class MouseCamZoomer {
             if (this.m_flagType == 2) {
                 // camera foward update
                 if (Math.abs(this.m_fowardDis) > 0.001) {
-                    let dis = Vector3.Distance(this.m_camera.getPosition(), this.m_camera.getLookAtPosition());
+                    let dis = Vector3.Distance(this.m_camera.position, this.m_camera.lookPosition);
                     let pd = this.m_fowardDis;
                     if (this.m_fowardDis > 0) {
                         if (dis > minDis) {
