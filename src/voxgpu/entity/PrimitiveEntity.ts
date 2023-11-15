@@ -10,9 +10,11 @@ import texFragWGSL from "../material/shader/wgsl/primitiveTex.frag.wgsl";
 
 import GeometryBase from "../geometry/primitive/GeometryBase";
 import { WGGeometry } from "../geometry/WGGeometry";
+import Arms from "../material/Arms";
 
 class PrimitiveEntity extends Entity3D {
 	private mColor = new Color4();
+	private mArms = new Arms();
 	protected albedoV: WGRBufferData;
 	protected armV: WGRBufferData;
 	constructor(param?: Entity3DParam) {
@@ -50,6 +52,17 @@ class PrimitiveEntity extends Entity3D {
 			this.armV.version++;
 		}
 		return this;
+	}
+	set arm(p: ArmsDataType) {
+		const t = this.mArms;
+		t.setArms(p);
+		if (this.armV) {
+			t.toArray3(this.armV.data as Float32Array);
+			this.armV.version++;
+		}
+	}
+	get arm(): ArmsDataType {
+		return this.mArms;
 	}
 	protected getGeometryData(param: Entity3DParam): GeometryBase {
 		return null;
@@ -134,9 +147,18 @@ class PrimitiveEntity extends Entity3D {
 		if(param.doubleFace !== undefined) {
 			let flag = param.doubleFace === true;
 			for(let i = 0; i < ms.length; ++i) {
-				if(ms[i].doubleFace === undefined) {
+				if(ms[i].doubleFace === undefined && flag) {
 					ms[i].doubleFace = flag;
 					ms[i].shadinguuid += '-dface';
+				}
+			}
+		}
+		if(param.wireframe !== undefined) {
+			let flag = param.wireframe === true;
+			for(let i = 0; i < ms.length; ++i) {
+				if(ms[i].wireframe === undefined && flag) {
+					ms[i].wireframe = flag;
+					ms[i].shadinguuid += '-wframe';
 				}
 			}
 		}

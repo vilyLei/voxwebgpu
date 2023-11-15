@@ -32,6 +32,7 @@ interface Entity3DParam {
 	shadinguuid?: string;
 	instanceCount?: number;
 	doubleFace?: boolean;
+	wireframe?: boolean;
 	rpasses?: WGRMaterialPassViewImpl[];
 	/**
 	 * build geometry/material object, yes or no
@@ -53,6 +54,7 @@ class Entity3D implements IRenderableEntity {
 	private static sUid = 0;
 	private mUid = Entity3D.sUid++;
 
+	private mTransVer = -1;
 	protected mParent: IRenderableEntityContainer;
 	protected mLBs: IAABB;
 	protected mGBs: IAABB;
@@ -129,9 +131,7 @@ class Entity3D implements IRenderableEntity {
 			}
 			this.materials = param.materials;
 			this.geometry = param.geometry;
-			if (this.geometry) {
-				this.update();
-			}
+			this.update();
 		}
 	}
 
@@ -258,8 +258,9 @@ class Entity3D implements IRenderableEntity {
 			const gb = this.mGBs;
 			const DE = Entity3D;
 
-			if (trans.isDirty() || lb.version != slb.version) {
+			if (trans.isDirty() || this.mTransVer != trans.version || lb.version != slb.version) {
 
+				this.mTransVer = trans.version;
 				lb.version = slb.version;
 				trans.update();
 

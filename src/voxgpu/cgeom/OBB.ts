@@ -9,16 +9,15 @@ import Vector3 from "../math/Vector3";
 import IOBB from "../cgeom/IOBB";
 import IAABB from "./IAABB";
 import IMatrix4 from "../math/IMatrix4";
-// import IRenderEntityBase from "../render/IRenderEntityBase";
 import MathConst from "../math/MathConst";
 
 let OR = [new Float32Array(3), new Float32Array(3), new Float32Array(3)];
 let OAbsR = [new Float32Array(3), new Float32Array(3), new Float32Array(3)];
 
 class OBB implements IOBB {
-	private static s_obb = new OBB();
-	private m_pv = new Vector3();
-	private m_pv1 = new Vector3();
+	private static sOBB = new OBB();
+	private mPv = new Vector3();
+	private mPv1 = new Vector3();
 
 	/**
 	 * three axes normalization 3d vectors
@@ -37,7 +36,7 @@ class OBB implements IOBB {
 
 	reset(): void { }
 	equals(ob: IOBB): boolean {
-		if (ob != this && ob != null) {
+		if (ob != this && ob) {
 			if (!this.center.equalsXYZ(ob.center)) return false;
 			if (!this.extent.equalsXYZ(ob.extent)) return false;
 			for (let i = 0; i < 3; ++i) {
@@ -54,19 +53,12 @@ class OBB implements IOBB {
 		this.radius = et.getLength();
 		this.extents.set([et.x, et.y, et.z]);
 	}
-	getSize(v3: Vector3 = null): Vector3 {
+	getSize(v3?: Vector3): Vector3 {
 		if (!v3) {
 			v3 = new Vector3();
 		}
 		return v3.copyFrom(this.extent).scaleBy(2.0);
 	}
-	/**
-	 * @param entity entity or entity container
-	 */
-	// fromEntity(entity: IRenderEntityBase): void {
-	// 	entity.update();
-	// 	this.fromAABB(entity.getLocalBounds(), entity.getMatrix());
-	// }
 
 	/**
 	 * @param ob IAABB instance
@@ -89,7 +81,7 @@ class OBB implements IOBB {
 			ls[2].normalize();
 
 			const pv0 = this.center.copyFrom(ob.center);
-			const pv1 = this.m_pv.copyFrom(ob.max);
+			const pv1 = this.mPv.copyFrom(ob.max);
 
 			transform.transformVector3Self(pv0);
 			transform.transformVector3Self(pv1);
@@ -111,12 +103,12 @@ class OBB implements IOBB {
 		const et = this.extent;
 
 		const axes = this.axes;
-		const v0 = this.m_pv.subVecsTo(pv, this.center);
+		const v0 = this.mPv.subVecsTo(pv, this.center);
 		if (!result) result = new Vector3();
 		result.copyFrom(this.center);
 
 		const clamp = MathConst.Clamp;
-		const v1 = this.m_pv1;
+		const v1 = this.mPv1;
 		const x = clamp(v0.dot(v1.copyFrom(axes[0])), -et.x, et.x);
 		result.add(v1.scaleBy(x));
 
@@ -130,17 +122,17 @@ class OBB implements IOBB {
 	}
 
 	intersectAABB(ob: IAABB, transform: IMatrix4 = null): boolean {
-		const obb = OBB.s_obb;
+		const obb = OBB.sOBB;
 		obb.fromAABB(ob, transform);
 		return this.intersect(obb);
 	}
 	intersectSphere(cv: Vector3, radius: number): boolean {
-		const v1 = this.m_pv1;
+		const v1 = this.mPv1;
 		this.getClosePosition(cv, v1);
 		return v1.subtractBy(cv).getLengthSquared() <= radius * radius;
 	}
 	containsV(pv: Vector3): boolean {
-		const v0 = this.m_pv.subVecsTo(pv, this.center);
+		const v0 = this.mPv.subVecsTo(pv, this.center);
 		const axes = this.axes;
 		const abs = Math.abs;
 		const et = this.extent;
@@ -162,7 +154,7 @@ class OBB implements IOBB {
 
 		return Math.abs(d) <= r;
 	}
-	private m_ts = [0, 0, 0];
+	private mts = [0, 0, 0];
 	intersect(a: OBB, b: OBB = null, epsilon = 1e-6): boolean {
 		if (!b) {
 			b = a;
@@ -171,7 +163,7 @@ class OBB implements IOBB {
 
 		const abs = Math.abs;
 		// 计算距离向量tv
-		const tv = this.m_pv.subVecsTo(b.center, a.center);
+		const tv = this.mPv.subVecsTo(b.center, a.center);
 		if (tv.getLength() - (a.radius + b.radius) > epsilon) {
 			return false;
 		}
@@ -186,7 +178,7 @@ class OBB implements IOBB {
 		}
 
 		// 应用距离向量tv
-		const ts = this.m_ts;
+		const ts = this.mts;
 		ts[0] = tv.dot(a.axes[0]);
 		ts[1] = tv.dot(a.axes[1]);
 		ts[2] = tv.dot(a.axes[2]);

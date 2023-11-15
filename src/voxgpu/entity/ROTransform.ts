@@ -451,7 +451,6 @@ export default class ROTransform implements IROTransform {
 			}
 		}
 		unit.uniformv = new WGRUniformValue({data: unit.mOMat.getLocalFS32(), shdVarName:"objMat"});
-        // unit.uniformv.visibility.toVisibleVert();
 		return unit;
 	}
 

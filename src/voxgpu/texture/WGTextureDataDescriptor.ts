@@ -9,6 +9,14 @@ interface RTTTextureDataDescriptor {
 	textureView?: GPUTextureView;
 	type?: string;
 }
+interface DataTextureDataDescriptor {
+	uuid?: string;
+	width?: number;
+	height?: number;
+	texture?: GPUTexture;
+	textureView?: GPUTextureView;
+	type?: string;
+}
 interface TextureDataDescriptor {
 	uuid?: string;
 	generateMipmaps?: boolean;
@@ -20,6 +28,7 @@ interface TextureDataDescriptor {
 	image?: WebImageType;
 	images?: WebImageType[];
 	rttTexture?: RTTTextureDataDescriptor;
+	dataTexture?: DataTextureDataDescriptor;
 	shdVarName?: string;
 }
 interface WGTextureDataDescriptor extends TextureDataDescriptor {

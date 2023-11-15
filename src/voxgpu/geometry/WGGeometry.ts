@@ -3,6 +3,8 @@ import { GPUBuffer } from "../gpu/GPUBuffer";
 import { VtxPipelinDescParam } from "../render/pipeline/WGRPipelineContextImpl";
 import { WGRDrawMode } from "../render/Define";
 import GeometryBase from "./primitive/GeometryBase";
+import {createIndexArray, createIndexArrayWithSize} from "../utils/CommonUtils";
+import { WGRPrimitive } from "../render/WGRPrimitive";
 interface WGGeomAttributeParam {
 	shdVarName?: string;
 	data?: NumberArrayViewType;
@@ -27,14 +29,51 @@ class WGGeomAttributeBlock {
 }
 class WGGeomIndexBuffer {
 	name? = "";
+	wireframeData: IndexArrayViewType;
 	data: IndexArrayViewType;
 	gpuibuf?: GPUBuffer;
+	/**
+	 * wireframe ibuf
+	 */
+	gpuwibuf?: GPUBuffer;
 	constructor(param: { name?: string; data: IndexArrayViewType }) {
 		this.name = param.name;
 		this.data = param.data;
 	}
-}
 
+	private createWireframeIvs(ivs: IndexArrayViewType): IndexArrayViewType {
+		if (ivs) {
+			const len = ivs.length * 2;
+			const wivs = createIndexArrayWithSize(len);
+			let a: number;
+			let b: number;
+			let c: number;
+			let k = 0;
+			for (let i = 0, l = ivs.length; i < l; i += 3) {
+				a = ivs[i + 0];
+				b = ivs[i + 1];
+				c = ivs[i + 2];
+
+				wivs[k] = a;
+				wivs[k + 1] = b;
+				wivs[k + 2] = b;
+				wivs[k + 3] = c;
+				wivs[k + 4] = c;
+				wivs[k + 5] = a;
+				k += 6;
+			}
+			// console.log("createWireframeIvs(), wivs.length:", wivs.length);
+			return wivs;
+		}
+		return ivs;
+	}
+	toWirframe(): void {
+		if(!this.wireframeData) {
+			this.wireframeData = this.createWireframeIvs(this.data);
+		}
+	}
+}
+type WGRPrimitiveDict = {default?: WGRPrimitive, wireframe?: WGRPrimitive};
 class WGGeometry {
 	name = "WGGeometry";
 
@@ -43,8 +82,10 @@ class WGGeometry {
 	gpuvbufs?: GPUBuffer[];
 	indexBuffer: WGGeomIndexBuffer;
 	bounds: AABB;
-	drawMode = WGRDrawMode.TRIANGLES;
 	geometryData: GeometryBase;
+	// readonly primitive = {};
+	primitive: WGRPrimitiveDict;
+	drawMode = WGRDrawMode.TRIANGLES;
 	setIndexBuffer(param: { name?: string, data: IndexArrayViewType }): WGGeometry {
 		this.indexBuffer = new WGGeomIndexBuffer(param);
 		return this;
@@ -115,4 +156,4 @@ class WGGeometry {
 	}
 	destroy(): void {}
 }
-export { WGGeomAttributeParam, WGGeomIndexBuffer, WGGeomAttributeBlock, WGGeometry };
+export { WGRPrimitiveDict, WGGeomAttributeParam, WGGeomIndexBuffer, WGGeomAttributeBlock, WGGeometry };

@@ -59,7 +59,7 @@ class WGRBufferVisibility implements GPUBindGroupLayoutEntity {
 		return this;
 	}
 	toBufferForUniform(): WGRBufferVisibility {
-		this.buffer = { type: 'uniform' };
+		this.buffer = { type: 'uniform', hasDynamicOffset: false, minBindingSize: 0 };
 		return this;
 	}
 	toBufferForStorage(): WGRBufferVisibility {

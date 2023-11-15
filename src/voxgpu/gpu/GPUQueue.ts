@@ -5,6 +5,7 @@ import { GPUImageCopyTexture } from "./GPUImageCopyTexture";
 import { GPUImageCopyExternalImage } from "./GPUImageCopyExternalImage";
 import { GPUImageCopyTextureTagged } from "./GPUImageCopyTextureTagged";
 import { GPUExtent3D } from "./GPUExtent3D";
+// import { GPUExtent3DDict } from "./GPUExtent3DDict";
 
 declare type OffscreenCanvas = {width: number, height: number};
 
@@ -50,7 +51,7 @@ interface GPUQueue {
 	 * See: https://developer.mozilla.org/en-US/docs/Web/API/GPUQueue/writeTexture
 	 * 		https://gpuweb.github.io/gpuweb/#dom-gpuqueue-writetexture
 	 */
-	writeTexture(destination: GPUImageCopyTexture, data: ArrayBuffer | DataView, dataLayout: GPUImageDataLayout, size: number): void;
+	writeTexture(destination: GPUImageCopyTexture, data: ArrayBuffer | DataView, dataLayout: GPUImageDataLayout, size: GPUExtent3D): void;
 	submit(cmds: GPUCommandBuffer[]): void;
 	onSubmittedWorkDone(): void;
 }

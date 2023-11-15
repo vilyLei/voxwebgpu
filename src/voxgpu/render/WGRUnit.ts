@@ -43,15 +43,7 @@ class WGRUnit implements IWGRUnit {
 	rp: WGRendererPassImpl;
 
 	material: IWGMaterial;
-	// clone(): WGRUnit {
-	// 	const r = new WGRUnit();
-	// 	r.uniforms			= this.uniforms;
-	// 	r.pipelinectx		= this.pipelinectx;
-	// 	r.geometry			= this.geometry;
-	// 	r.passes			= this.passes;
-	// 	r.rp				= this.rp;
-	// 	return r;
-	// }
+
 	getRF(): boolean {
 		// console.log("this.st.isDrawable(): ", this.st.isDrawable());
 		return this.enabled && this.st.isDrawable();

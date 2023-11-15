@@ -62,7 +62,7 @@ class WGRPipelineContext implements WGRPipelineContextImpl {
 					// console.log("CCCCCCCCCC 01 bindGLayout: ", bindGLayout);
 					// console.log("CCCCCCCCCC 02 pipeGLayout: ", pipeGLayout);
 					// console.log("CCCCCCCCCC 03 pipeline use spec layout !!!");
-				}else {
+				} else {
 					pipeGLayout = ctx.device.createPipelineLayout({
 						label: p.label,
 						bindGroupLayouts: []
@@ -77,7 +77,7 @@ class WGRPipelineContext implements WGRPipelineContextImpl {
 					};
 					// console.log("GPUShaderStage.COMPUTE: ", GPUShaderStage.COMPUTE);
 					console.log("WGRPipelineContext::init(), create compute pieline desc: ", desc);
-					this.comppipeline = ctx.device.createComputePipeline( desc );
+					this.comppipeline = ctx.device.createComputePipeline(desc);
 					this.type = "compute";
 					this.bindGroupCtx.comppipeline = this.comppipeline;
 				} else {
@@ -91,7 +91,7 @@ class WGRPipelineContext implements WGRPipelineContextImpl {
 		}
 	}
 	destroy(): void {
-		if(this.mWGCtx) {
+		if (this.mWGCtx) {
 			this.mWGCtx = null;
 		}
 	}
@@ -114,42 +114,58 @@ class WGRPipelineContext implements WGRPipelineContextImpl {
 	getWGCtx(): WebGPUContext {
 		return this.mWGCtx;
 	}
-	createRenderPipeline(pipelineParams: WGRPipelineCtxParams, descParams: VtxDescParam[], vtxDesc?: VtxPipelinDescParam): GPURenderPipeline {
+	createRenderingPipeline(pipelineParams: WGRPipelineCtxParams, descParams: VtxDescParam[], vtxDesc?: VtxPipelinDescParam): GPURenderPipeline {
 		const ctx = this.mWGCtx;
 		if (descParams) {
-			if(!pipelineParams.compShaderSrc) {
-				let location = 0;
-				for (let k = 0; k < descParams.length; ++k) {
-					const vtx = descParams[k].vertex;
-					pipelineParams.addVertexBufferLayout({ arrayStride: vtx.arrayStride, attributes: [], stepMode: "vertex" });
-					const params = vtx.params;
-					for (let i = 0; i < params.length; ++i) {
-						const p = params[i];
-						pipelineParams.addVertexBufferAttribute(
-							{
-								shaderLocation: location++,
-								offset: p.offset,
-								format: p.format
-							},
-							k
-						);
-					}
+			// if(!pipelineParams.compShaderSrc) {
+			let location = 0;
+			for (let k = 0; k < descParams.length; ++k) {
+				const vtx = descParams[k].vertex;
+				pipelineParams.addVertexBufferLayout({ arrayStride: vtx.arrayStride, attributes: [], stepMode: "vertex" });
+				const params = vtx.params;
+				for (let i = 0; i < params.length; ++i) {
+					const p = params[i];
+					pipelineParams.addVertexBufferAttribute(
+						{
+							shaderLocation: location++,
+							offset: p.offset,
+							format: p.format
+						},
+						k
+					);
 				}
-				if(vtxDesc) {
-					const primitive = pipelineParams.primitive;
-					if(primitive && vtxDesc.vertex) {
-						// console.log("vtxDesc.vertex.drawMode: ", vtxDesc.vertex.drawMode);
-						switch(vtxDesc.vertex.drawMode) {
-							case WGRDrawMode.LINES:
-								primitive.topology = 'line-list';
-								break;
-							default:
-								break;
-						}
+			}
+			if (vtxDesc) {
+				const primitive = pipelineParams.primitive;
+				if (primitive && vtxDesc.vertex) {
+					// console.log("vtxDesc.vertex.drawMode: ", vtxDesc.vertex.drawMode);
+					switch (vtxDesc.vertex.drawMode) {
+						case WGRDrawMode.LINES:
+							primitive.topology = "line-list";
+							break;
+						default:
+							break;
 					}
 				}
 			}
+			// }
 		}
+		return this.createRenderPipeline(pipelineParams);
+		/*
+		if (pipelineParams.buildDeferred) {
+			this.mPipelineParams = pipelineParams;
+		} else {
+			this.mShader.build(pipelineParams, this.rpass);
+		}
+		// console.log("createRenderPipeline(), pipelineParams:\n", pipelineParams);
+		if (!this.mPipelineParams) {
+			this.pipeline = ctx.device.createRenderPipeline(pipelineParams);
+		}
+		return this.pipeline;
+		//*/
+	}
+	createRenderPipeline(pipelineParams: WGRPipelineCtxParams): GPURenderPipeline {
+		const ctx = this.mWGCtx;
 		if (pipelineParams.buildDeferred) {
 			this.mPipelineParams = pipelineParams;
 		} else {
@@ -161,15 +177,19 @@ class WGRPipelineContext implements WGRPipelineContextImpl {
 		}
 		return this.pipeline;
 	}
-
 	createRenderPipelineWithBuf(pipelineParams: WGRPipelineCtxParams, vtxDesc: VtxPipelinDescParam): GPURenderPipeline {
-		if(vtxDesc) {
-			const vtx = vtxDesc.vertex;
-			const vtxDescParams = vtx ? this.createRenderPipelineVtxParams(vtx.buffers, vtx.attributeIndicesArray): [{}] as VtxDescParam[];
-			// console.log("vtxDescParams: ", vtxDescParams);
-			return this.createRenderPipeline(pipelineParams, vtxDescParams, vtxDesc);
-		}else {
-			return this.createRenderPipeline(pipelineParams, [{}] as VtxDescParam[]);
+		if (pipelineParams.compShaderSrc) {
+			return this.createRenderPipeline(pipelineParams);
+		} else {
+			if (vtxDesc) {
+				const vtx = vtxDesc.vertex;
+
+				const vtxDescParams = vtx ? this.createRenderPipelineVtxParams(vtx.buffers, vtx.attributeIndicesArray) : ([{}] as VtxDescParam[]);
+				// console.log("vtxDescParams: ", vtxDescParams);
+				return this.createRenderingPipeline(pipelineParams, vtxDescParams, vtxDesc);
+			} else {
+				return this.createRenderingPipeline(pipelineParams, [{}] as VtxDescParam[]);
+			}
 		}
 	}
 	createRenderPipelineVtxParam(vtxBuf: GPUBuffer, attributeIndices: number[]): VtxDescParam {

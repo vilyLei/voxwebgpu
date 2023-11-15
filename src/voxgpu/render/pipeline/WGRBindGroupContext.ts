@@ -224,6 +224,11 @@ class WGRBindGroupContext {
 				minFilter: "linear",
 				mipmapFilter: "linear"
 			});
+			// const sampler = device.createSampler({
+			// 	magFilter: 'nearest',
+			// 	minFilter: 'nearest',
+			// 	mipmapFilter: 'nearest'
+			// });
 
 			for (let i = 0; i < texParams.length; ++i) {
 				const t = texParams[i];
@@ -236,6 +241,7 @@ class WGRBindGroupContext {
 						binding: bindIndex + bindI++,
 						resource: t.texView
 					};
+					console.log('es, et: ', es, et);
 					desc.entries.push(es, et);
 				}
 			}

@@ -122,6 +122,9 @@ declare type Extent2DataType = Extent2Type | number[] | Float32Array;
 declare type Vector3Type = {x?: number, y?: number, z?: number, w?: number};
 declare type Vector3DataType = Vector3Type | number[] | Float32Array;
 
+declare type ArmsType = {a?: number, r?: number, m?: number, s?: number};
+declare type ArmsDataType = ArmsType | number[] | Float32Array;
+
 declare enum GPUBufferBindingType {
     "uniform",
     "storage",

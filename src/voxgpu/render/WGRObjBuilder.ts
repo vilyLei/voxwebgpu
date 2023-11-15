@@ -14,8 +14,10 @@ import { findShaderEntryPoint, WGRShderSrcType } from "../render/pipeline/WGRPip
 import { WGREntityNode } from "./WGREntityNode";
 import { WebGPUContext } from "../gpu/WebGPUContext";
 import { IWGMaterial } from "../material/IWGMaterial";
+import { WGRPrimitiveDict, WGGeometry } from "../geometry/WGGeometry";
+import { WGRDrawMode } from "./Define";
 
-type GeomType = { indexBuffer?: GPUBuffer, vertexBuffers: GPUBuffer[], indexCount?: number, vertexCount?: number };
+type GeomType = { indexBuffer?: GPUBuffer, vertexBuffers: GPUBuffer[], indexCount?: number, vertexCount?: number, drawMode?: WGRDrawMode };
 
 class WGRObjBuilder {
 
@@ -23,6 +25,7 @@ class WGRObjBuilder {
 
 	constructor() { }
 	createPrimitive(geomParam?: GeomType): WGRPrimitive {
+		// console.log('XXXXXX createPrimitive() ...');
 		const g = new WGRPrimitive();
 		g.ibuf = geomParam.indexBuffer;
 		g.vbufs = geomParam.vertexBuffers;
@@ -31,6 +34,9 @@ class WGRObjBuilder {
 		}
 		if (geomParam.vertexCount !== undefined) {
 			g.vertexCount = geomParam.vertexCount;
+		}
+		if (geomParam.drawMode !== undefined) {
+			g.drawMode = geomParam.drawMode;
 		}
 		return g;
 	}
@@ -71,11 +77,43 @@ class WGRObjBuilder {
 			}
 		}
 	}
-	createRPass(entity: Entity3D, builder: IWGRPassNodeBuilder, primitive: WGRPrimitive, materialIndex = 0, blockUid = 0): IWGRUnit {
+	createRPass(entity: Entity3D, builder: IWGRPassNodeBuilder, geometry: WGGeometry, materialIndex = 0, blockUid = 0): IWGRUnit {
 
 		const material = entity.materials[materialIndex];
-
+		// console.log("XXXXXXX material: ", material);
+		let primitive: WGRPrimitive;
 		let pctx = material.getRCtx();
+		if(geometry) {
+			const wgctx = builder.getWGCtx();
+			const dict = geometry.primitive;
+			const vertexBuffers = geometry.gpuvbufs;
+			const vertexCount = vertexBuffers[0].vectorCount;
+			const gibuf = geometry.indexBuffer;
+			if(material.wireframe === true) {
+				primitive = dict.wireframe;
+				if(!primitive) {
+					gibuf.toWirframe();
+					const indexBuffer = gibuf ? (gibuf.gpuwibuf ? gibuf.gpuwibuf : wgctx.buffer.createIndexBuffer(gibuf.wireframeData)) : null;
+					if (indexBuffer) gibuf.gpuwibuf = indexBuffer;
+
+					const indexCount = indexBuffer ? indexBuffer.elementCount : 0;
+					primitive = this.createPrimitive({ vertexBuffers, indexBuffer, indexCount, vertexCount, drawMode: WGRDrawMode.LINES });
+					dict.wireframe = primitive;
+					// console.log("wireframe primitive.drawMode: ", primitive.drawMode, primitive);
+				}
+			}else {
+				primitive = dict.default;
+				if(!primitive) {
+					const indexBuffer = gibuf ? (gibuf.gpuibuf ? gibuf.gpuibuf : wgctx.buffer.createIndexBuffer(gibuf.data)) : null;
+					if (indexBuffer) gibuf.gpuibuf = indexBuffer;
+
+					const indexCount = indexBuffer ? indexBuffer.elementCount : 0;
+					primitive = this.createPrimitive({ vertexBuffers, indexBuffer, indexCount, vertexCount, drawMode: geometry.drawMode });
+					dict.default = primitive;
+					// console.log("default primitive.drawMode: ", primitive.drawMode, primitive);
+				}
+			}
+		}
 		// console.log('WGRObjBuilder::createRPass(), !pctx: ', !pctx);
 		// console.log('WGRObjBuilder::createRPass(), builder: ', builder);
 		// if (!pctx) {
@@ -177,6 +215,7 @@ class WGRObjBuilder {
 					if (!tex.view) {
 						tex.view = tex.texture.createView({ dimension: tex.dimension });
 					}
+					console.log('xxx xxxx xx tex.view: ', tex.view);
 					tex.view.dimension = tex.dimension
 					utexes[i] = { texView: tex.view };
 				}
@@ -200,34 +239,42 @@ class WGRObjBuilder {
 
 		const wgctx = builder.getWGCtx();
 
-		let primitive: WGRPrimitive;
-		if (entity.geometry) {
+		const geometry = entity.geometry;
+		let primitiveDict: WGRPrimitiveDict;
+		if(entity.geometry) {
+			primitiveDict = geometry.primitive;
+			// console.log('>>> primitiveDict: ', primitiveDict);
+			if (!primitiveDict) {
 
-			const geometry = entity.geometry;
-			const gts = geometry.attributes;
+				const gts = geometry.attributes;
 
-			// console.log("########## geometry.gpuvbufs: ", geometry.gpuvbufs);
-			// console.log("########## geometry.gpuibuf: ", geometry.indexBuffer.gpuibuf);
+				// console.log("########## geometry.gpuvbufs: ", geometry.gpuvbufs);
+				// console.log("########## geometry.gpuibuf: ", geometry.indexBuffer.gpuibuf);
 
-			const gvbufs = geometry.gpuvbufs;
+				const gvbufs = geometry.gpuvbufs;
 
-			const vertexBuffers: GPUBuffer[] = gvbufs ? gvbufs : new Array(gts.length);
-			if (!gvbufs) {
-				for (let i = 0; i < gts.length; ++i) {
-					const gt = gts[i];
-					vertexBuffers[i] = wgctx.buffer.createVertexBuffer(gt.data, gt.bufferOffset, gt.strides);
+				const vertexBuffers: GPUBuffer[] = gvbufs ? gvbufs : new Array(gts.length);
+				if (!gvbufs) {
+					for (let i = 0; i < gts.length; ++i) {
+						const gt = gts[i];
+						vertexBuffers[i] = wgctx.buffer.createVertexBuffer(gt.data, gt.bufferOffset, gt.strides);
+					}
+					geometry.gpuvbufs = vertexBuffers;
 				}
-				geometry.gpuvbufs = vertexBuffers;
+				/*
+				const gibuf = geometry.indexBuffer;
+				const indexBuffer = gibuf ? (gibuf.gpuibuf ? gibuf.gpuibuf : wgctx.buffer.createIndexBuffer(gibuf.data)) : null;
+				if (indexBuffer) gibuf.gpuibuf = indexBuffer;
+
+				const indexCount = indexBuffer ? indexBuffer.elementCount : 0;
+				const vertexCount = vertexBuffers[0].vectorCount;
+				primitive = this.createPrimitive({ vertexBuffers, indexBuffer, indexCount, vertexCount });
+				primitive.drawMode = geometry.drawMode;
+				geometry.primitive = primitive;
+				//*/
+				primitiveDict = {};
+				geometry.primitive = primitiveDict;
 			}
-
-			const gibuf = geometry.indexBuffer;
-			const indexBuffer = gibuf ? (gibuf.gpuibuf ? gibuf.gpuibuf : wgctx.buffer.createIndexBuffer(gibuf.data)) : null;
-			if (indexBuffer) gibuf.gpuibuf = indexBuffer;
-
-			const indexCount = indexBuffer ? indexBuffer.elementCount : 0;
-			const vertexCount = vertexBuffers[0].vectorCount;
-			primitive = this.createPrimitive({ vertexBuffers, indexBuffer, indexCount, vertexCount });
-			primitive.drawMode = geometry.drawMode;
 		}
 
 		let ru: IWGRUnit;
@@ -235,14 +282,14 @@ class WGRObjBuilder {
 		if (mts.length > 1) {
 			const passes: IWGRUnit[] = new Array(mts.length);
 			for (let i = 0; i < mts.length; ++i) {
-				passes[i] = this.createRPass(entity, builder, primitive, i, blockUid);
+				passes[i] = this.createRPass(entity, builder, geometry, i, blockUid);
 				// passes[i].etuuid = entity.uuid + '-[block(' + blockUid+')]';
 			}
 			ru = new WGRUnit();
 			// console.log("xxxxxxxxx passes: ", passes);
 			ru.passes = passes;
 		} else {
-			ru = this.createRPass(entity, builder, primitive);
+			ru = this.createRPass(entity, builder, geometry);
 		}
 		ru.bounds = entity.globalBounds;
 		ru.st = entity.rstate;

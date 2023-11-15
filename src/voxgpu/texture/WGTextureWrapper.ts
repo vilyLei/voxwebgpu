@@ -79,6 +79,27 @@ class WGRTTTextureData extends WGTextureData {
 		return this.mTex;
 	}
 }
+class WGDataTextureData extends WGTextureData {
+	private mTexData: RTTTextureDataDescriptor;
+	constructor() {
+		super();
+	}
+	setDescripter(descriptor: TextureDataDescriptor): WGDataTextureData {
+		super.setDescripter(descriptor);
+		this.mTexData = descriptor.dataTexture;
+		return this;
+	}
+	build(ctx: WebGPUContext): GPUTexture {
+		const td = this.mTexData;
+		if (td && !this.mTex) {
+			if (td.texture) {
+				console.log("apply a data texture into a WGDataTextureData instance.");
+				this.mTex = td.texture;
+			}
+		}
+		return this.mTex;
+	}
+}
 class WGImage2DTextureData extends WGImageTextureData {
 	constructor(url?: string) {
 		super();
@@ -242,7 +263,9 @@ class WGTextureWrapper {
 
 const __$texDataMap: Map<string, WGTextureData> = new Map();
 function createDataWithDescriptor(descriptor: WGTextureDataDescriptor): WGTextureData {
+
 	let dimension = descriptor.dimension ? descriptor.dimension : "2d";
+
 	let td: WGTextureData;
 	const dpt = texDescriptorFilter(descriptor);
 	const map = __$texDataMap;
@@ -266,13 +289,16 @@ function createDataWithDescriptor(descriptor: WGTextureDataDescriptor): WGTextur
 	switch (dimension) {
 		case "2d":
 			if (dpt.rttTexture) {
-				td = new WGRTTTextureData().setDescripter(dpt);
+				td = new WGRTTTextureData().setDescripter( dpt );
+			} else if (dpt.dataTexture) {
+				console.log("apply a data texture instance ...");
+				td = new WGDataTextureData().setDescripter( dpt );
 			} else {
-				td = new WGImage2DTextureData().setDescripter(dpt);
+				td = new WGImage2DTextureData().setDescripter( dpt );
 			}
 			break;
 		case "cube":
-			td = new WGImageCubeTextureData().setDescripter(dpt);
+			td = new WGImageCubeTextureData().setDescripter( dpt );
 			break;
 		default:
 			throw Error("Illegal Operation !!!");

@@ -153,36 +153,24 @@ export class GameOfLife3DPBR {
 
 		const instanceCount = gridSize * gridSize;
 		let shaderCodeSrc = {
-			vert: {
-				code: vertWGSL,
-				uuid: "vert-gameOfLife",
-			},
-			frag: {
-				code: fragWGSL,
-				uuid: "frag-gameOfLife",
-			}
-		} as WGRShderSrcType;
+			vert: { code: vertWGSL, uuid: "vert-gameOfLife" },
+			frag: { code: fragWGSL, uuid: "frag-gameOfLife" }
+		};
 		return new WGMaterial({
 			shadinguuid: 'rendering',
-			shaderCodeSrc,
-			instanceCount,
-			uniformValues,
-			uniformAppend: false
+			shaderCodeSrc, instanceCount,
+			uniformValues, uniformAppend: false
 		});
 	}
 	private createCompMaterial(uniformValues: WGRBufferData[]): WGCompMaterial {
 
 		const workgroupCount = Math.ceil(gridSize / shdWorkGroupSize);
-		let shaderCodeSrc = {
-			code: compShdCode,
-			uuid: "shader-computing",
-		};
+		let shaderCodeSrc = { code: compShdCode, uuid: "shader-computing" };
 		return new WGCompMaterial({
 			shadinguuid: 'computing',
-			shaderCodeSrc,
-			uniformValues,
-			uniformAppend: false
-		}).setWorkcounts(workgroupCount, workgroupCount);
+			shaderCodeSrc, uniformValues,
+			uniformAppend: false, workcounts:[workgroupCount, workgroupCount]
+		});
 	}
 	private initScene(): void {
 		const rc = this.mRscene;

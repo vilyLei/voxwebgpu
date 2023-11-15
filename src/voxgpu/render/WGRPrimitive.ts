@@ -1,7 +1,8 @@
 import { GPUBuffer } from "../gpu/GPUBuffer";
 import { GPURenderPassEncoder } from "../gpu/GPURenderPassEncoder";
 import { WGRDrawMode } from "./Define";
-
+// dynamic or static for materials?
+// shared or private for materials?
 class WGRPrimitive {
 
 	vbufs: GPUBuffer[];
