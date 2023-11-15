@@ -4,6 +4,7 @@ import { MouseInteraction } from "../ui/MouseInteraction";
 import { FixScreenPlaneEntity } from "../entity/FixScreenPlaneEntity";
 import { GPUTexture } from "../gpu/GPUTexture";
 import { toFloat16 } from "../utils/CommonUtils";
+import { CubeEntity } from "../entity/CubeEntity";
 
 
 export class FloatTextureTest {
@@ -82,7 +83,6 @@ export class FloatTextureTest {
 		return texture;
 	}
 	private applyFloatTex(): void {
-		// webgpu hdr usage: https://stackoverflow.com/questions/77032862/load-hdr-10-bit-avif-image-into-a-rgba16float-texture-in-webgpu
 		let rc = this.mRscene;
 
 		// let solidColorTex = this.createSolidColorTexture(1.0, 0.0, 0.0, 1.0);
@@ -92,12 +92,14 @@ export class FloatTextureTest {
 		let height = 128;
 
 		const floatTex = {
-			diffuse: { uuid: "rtt0", dataTexture: { texture: f32Tex0, textureView: f32Tex0.createView(), width, height }, format: "rgba16float" }
+			diffuse: { uuid: "rtt0", dataTexture: { texture: f32Tex0, width, height }, format: "rgba16float" }
 		};
 
 		let entity = new FixScreenPlaneEntity({ extent: [-0.8, -0.8, 0.8, 0.8], textures: [floatTex] });
 		entity.color = [0.1, 0.1, 0.1, 0.1];
 		rc.addEntity(entity);
+		// let cube = new CubeEntity({textures:[floatTex]});
+		// rc.addEntity(cube);
 	}
 	private mouseDown = (evt: MouseEvent): void => {};
 	private initScene(): void {
