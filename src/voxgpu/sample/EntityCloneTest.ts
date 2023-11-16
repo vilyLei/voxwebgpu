@@ -68,7 +68,7 @@ export class EntityCloneTest {
 		for (let i = 0; i < entities.length; ++i) {
 			let rad = (2.0 * Math.PI * i) / entities.length + 0.4;
 
-			let entity = entities[i].clone({ geometry: entities[i].geometry, doubleFace: true, wireframe: true });
+			let entity = entities[i].clone({ doubleFace: true, wireframe: true });
 			entity.albedo = entities[i].albedo;
 			entity.arm = entities[i].arm;
 			entity.transform.setPosition([radius * Math.cos(rad), 0, radius * Math.sin(rad)]).setScaleAll(0.7);

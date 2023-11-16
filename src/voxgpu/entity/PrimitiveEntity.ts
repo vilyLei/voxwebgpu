@@ -28,10 +28,12 @@ class PrimitiveEntity extends Entity3D {
 	}
 	clone(param?: Entity3DParam): PrimitiveEntity {
 		if(param) {
+			if(!param.geometry) param.geometry = this.geometry;
 			return new PrimitiveEntity( param );
 		}
-		this.mDescParam.materials = this.materials;
-		this.mDescParam.geometry = this.geometry;
+		param = this.mDescParam;
+		param.materials = this.materials;
+		param.geometry = this.geometry;
 		return new PrimitiveEntity( this.mDescParam  );
 	}
 	setColor(c: ColorDataType): PrimitiveEntity {

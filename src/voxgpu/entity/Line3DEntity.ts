@@ -38,10 +38,12 @@ class Line3DEntity extends Entity3D {
 	}
 	clone(param?: Entity3DParam): Line3DEntity {
 		if(param) {
+			if(!param.geometry) param.geometry = this.geometry;
 			return new Line3DEntity( param );
 		}
-		this.mDescParam.materials = this.materials;
-		this.mDescParam.geometry = this.geometry;
+		param = this.mDescParam;
+		param.materials = this.materials;
+		param.geometry = this.geometry;
 		return new Line3DEntity( this.mDescParam  );
 	}
 	setColor(c: ColorDataType): Line3DEntity {
