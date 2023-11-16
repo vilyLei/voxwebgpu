@@ -15,12 +15,13 @@ export class DataTextureTest {
 		let width = 256;
 		let height = 256;
 
-		let dataFs32 = new Float32Array(width * height * 4);
+		let stride = 4;
+		let dataFs32 = new Float32Array(width * height * stride);
 		let scale = 10.0;
 		let k = 0;
 		for (let i = 0; i < height; ++i) {
 			for (let j = 0; j < width; ++j) {
-				k = (width * i + j) * 4;
+				k = (width * i + j) * stride;
 				dataFs32[k] = scale * (j / width);
 				dataFs32[k + 1] = scale * (0.5 + 0.5 * Math.sin(10.0 * (1.0 - j / width)));
 				dataFs32[k + 2] = scale * (1.0 - (i * j) / (width * height));
@@ -42,7 +43,8 @@ export class DataTextureTest {
 		let width = 256;
 		let height = 256;
 
-		let dataU8 = new Uint8Array(width * height * 4);
+		let stride = 4;
+		let dataU8 = new Uint8Array(width * height * stride);
 		let k = 0;
 		for (let i = 0; i < height; ++i) {
 			for (let j = 0; j < width; ++j) {

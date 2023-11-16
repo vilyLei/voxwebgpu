@@ -3,6 +3,7 @@ import { WebGPUContextImpl } from "./WebGPUContextImpl";
 import { calculateMipLevels, GPUMipmapGenerator } from "../texture/GPUMipmapGenerator";
 import { GPUTextureDescriptor } from "./GPUTextureDescriptor";
 import { toFloat16 } from "../utils/CommonUtils";
+import { packRGB9E5UFloat } from "../utils/Conversion";
 
 class WebGPUTextureContext {
 	private mWGCtx: WebGPUContextImpl;
@@ -24,21 +25,21 @@ class WebGPUTextureContext {
 	createFloatRTTTexture(descriptor?: GPUTextureDescriptor): GPUTexture {
 		if (!descriptor) descriptor = {};
 		if (descriptor.format === undefined) {
-			descriptor.format = 'rgba16float';
+			descriptor.format = "rgba16float";
 		}
 		return this.createRTTTexture(descriptor);
 	}
 	createColorRTTTexture(descriptor?: GPUTextureDescriptor): GPUTexture {
 		if (!descriptor) descriptor = {};
 		if (descriptor.format === undefined) {
-			descriptor.format = 'bgra8unorm';
+			descriptor.format = "bgra8unorm";
 		}
 		return this.createRTTTexture(descriptor);
 	}
 	createDepthRTTTexture(descriptor?: GPUTextureDescriptor): GPUTexture {
 		if (!descriptor) descriptor = {};
 		if (descriptor.format === undefined) {
-			descriptor.format = 'depth24plus';
+			descriptor.format = "depth24plus";
 		}
 		return this.createRTTTexture(descriptor);
 	}
@@ -131,92 +132,132 @@ class WebGPUTextureContext {
 		}
 		return tex;
 	}
-	createDataTexture(srcData: NumberArrayType,width: number, height: number, descriptor?: GPUTextureDescriptor, generateMipmaps = false): GPUTexture {
-
-		if(!descriptor) descriptor = {};
+	createDataTexture(
+		srcData: NumberArrayType,
+		width: number,
+		height: number,
+		descriptor?: GPUTextureDescriptor,
+		generateMipmaps = false
+	): GPUTexture {
+		if (!descriptor) descriptor = {};
 		if (descriptor.format === undefined) {
-			descriptor.format = 'rgba8unorm';
+			descriptor.format = "rgba8unorm";
 		}
-		switch(descriptor.format) {
-			case 'rgba16float':
-			case 'rgb9e5ufloat':
-				return this.createFloat32BitsTexture(srcData, width, height, {}, generateMipmaps);
+		console.log("descriptor.format: ", descriptor.format);
+		switch (descriptor.format) {
+			case "rgba16float":
+				return this.create64BitsTexture(srcData, width, height, descriptor, generateMipmaps);
 				break;
-			case 'bgra8unorm':
-			case 'rgba8unorm':
-				return this.create4BytesTexture(srcData, width, height, {}, generateMipmaps);
+			case "bgra8unorm":
+			case "rgba8unorm":
+			case "rgb9e5ufloat":
+				return this.create32BitsTexture(srcData, width, height, descriptor, generateMipmaps);
 			default:
 				break;
 		}
+		throw Error('Illegal operation !!!');
 	}
 
-	create4BytesTexture(srcData: NumberArrayType,width: number, height: number, descriptor?: GPUTextureDescriptor, generateMipmaps = false): GPUTexture {
-
+	create32BitsTexture(
+		srcData: NumberArrayType,
+		width: number,
+		height: number,
+		descriptor?: GPUTextureDescriptor,
+		generateMipmaps = false
+	): GPUTexture {
 		generateMipmaps = generateMipmaps === true ? true : false;
-
-		let wgctx =  this.mWGCtx;
-		let data = srcData as Uint8Array;
-		if(data.byteLength === undefined) {
-			data = new Uint8Array(srcData);
+		if (!descriptor) descriptor = {};
+		if (descriptor.format === undefined) {
+			descriptor.format = "rgba8unorm";
 		}
-		if(!descriptor) descriptor = {};
-		if(!descriptor.usage) {
+		let wgctx = this.mWGCtx;
+
+		let data: Uint16Array | Float32Array | Uint8Array | Int32Array;
+
+		if (!descriptor) descriptor = {};
+		if (!descriptor.usage) {
 			descriptor.usage = GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST;
 		}
-		if(!descriptor.size) {
+		if (!descriptor.size) {
 			descriptor.size = [width, height];
 		}
-		if(descriptor.format === undefined) {
-			descriptor.format = 'rgba8unorm';
+		console.log('this.create32BitsTexture(), descriptor.format: ', descriptor.format);
+		let bytesPerRow = width * 4;
+		let rowsPerImage = height;
+		switch (descriptor.format) {
+			case 'rgb9e5ufloat':
+				generateMipmaps = false;
+				let tot = srcData.length / 3;
+				let k = 0;
+				data = new Int32Array(tot);
+				for (let i = 0; i < tot; ++i) {
+					data[i] = packRGB9E5UFloat(srcData[k], srcData[k + 1], srcData[k + 2]);
+					k += 3;
+				}
+				break;
+			default:
+				data = srcData as Uint8Array;
+				if (data.byteLength === undefined) {
+					data = new Uint8Array(srcData);
+				}
+				break;
 		}
-		const mipLevelCount = generateMipmaps ? calculateMipLevels(width, height) : 1;
+
+		let mipLevelCount = generateMipmaps ? calculateMipLevels(width, height) : 1;
+		if(mipLevelCount < 1) mipLevelCount = 1;
 		descriptor.mipLevelCount = mipLevelCount;
 		const texture = wgctx.device.createTexture(descriptor);
 
-		wgctx.device.queue.writeTexture({ texture }, data, {bytesPerRow: width * 4, rowsPerImage: height}, { width, height });
-		if (generateMipmaps) {
+		wgctx.device.queue.writeTexture({ texture }, data, { bytesPerRow, rowsPerImage }, { width, height });
+
+		console.log('this.create32BitsTexture(), mipmapGenerator: ', (generateMipmaps && mipLevelCount > 1));
+		if (generateMipmaps && mipLevelCount > 1) {
 			this.mipmapGenerator.generateMipmap(texture, descriptor);
 		}
 		return texture;
 	}
-	createFloat32BitsTexture(srcData: NumberArrayType,width: number, height: number, descriptor?: GPUTextureDescriptor, generateMipmaps = false): GPUTexture {
-
+	create64BitsTexture(
+		srcData: NumberArrayType,
+		width: number,
+		height: number,
+		descriptor?: GPUTextureDescriptor,
+		generateMipmaps = false
+	): GPUTexture {
 		generateMipmaps = generateMipmaps === true ? true : false;
-		if(!descriptor.format) {
-			descriptor.format = 'rgba16float';
+		if (!descriptor.format) {
+			descriptor.format = "rgba16float";
 		}
 
-		let wgctx =  this.mWGCtx;
-		let data: Uint16Array | Float32Array;
-		data = new Uint16Array(srcData.length);
-		switch(descriptor.format) {
-			case 'rgba16float':
-				for(let i = 0; i < srcData.length; ++i) {
-					data[i] = toFloat16( srcData[i] );
+		let wgctx = this.mWGCtx;
+		let data: Uint16Array | Float32Array | Int32Array;
+		switch (descriptor.format) {
+			case "rgba16float":
+				data = new Uint16Array(srcData.length);
+				for (let i = 0; i < srcData.length; ++i) {
+					data[i] = toFloat16(srcData[i]);
 				}
 				break;
-			case 'rgb9e5ufloat':
-
+			default:
 				break;
 		}
-		if(!descriptor) descriptor = {};
-		if(!descriptor.usage) {
+		if (!descriptor) descriptor = {};
+		if (!descriptor.usage) {
 			descriptor.usage = GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST;
 		}
-		if(!descriptor.size) {
+		if (!descriptor.size) {
 			descriptor.size = [width, height];
 		}
 		let bytesPerRow = width * 8;
 
-		const mipLevelCount = generateMipmaps ? calculateMipLevels(width, height) : 1;
+		let mipLevelCount = generateMipmaps ? calculateMipLevels(width, height) : 1;
+		if(mipLevelCount < 1) mipLevelCount = 1;
 		descriptor.mipLevelCount = mipLevelCount;
 		const texture = wgctx.device.createTexture(descriptor);
-		wgctx.device.queue.writeTexture({ texture }, data, {bytesPerRow, rowsPerImage: height}, { width, height });
-		if (generateMipmaps) {
+		wgctx.device.queue.writeTexture({ texture }, data, { bytesPerRow, rowsPerImage: height }, { width, height });
+		if (generateMipmaps && mipLevelCount > 1) {
 			this.mipmapGenerator.generateMipmap(texture, descriptor);
 		}
 		return texture;
 	}
-
 }
 export { WebGPUTextureContext };
