@@ -8,7 +8,6 @@ import { CylinderEntity } from "../entity/CylinderEntity";
 import { CubeEntity } from "../entity/CubeEntity";
 import { TorusEntity } from "../entity/TorusEntity";
 import { PlaneEntity } from "../entity/PlaneEntity";
-import { PrimitiveEntity } from "../entity/PrimitiveEntity";
 import { ConeEntity } from "../entity/ConeEntity";
 import { AxisEntity } from "../entity/AxisEntity";
 
@@ -66,9 +65,7 @@ export class WireframeEntityTest {
 		for (let i = 0; i < entities.length; ++i) {
 			let rad = (2.0 * Math.PI * i) / entities.length + 0.5;
 
-			let entity = new PrimitiveEntity({ geometry: entities[i].geometry, doubleFace: true, wireframe: true });
-			entity.albedo = entities[i].albedo;
-			entity.arm = entities[i].arm;
+			let entity = entities[i].clone({ geometry: entities[i].geometry, doubleFace: true, wireframe: true });
 			entity.transform.setPosition([radius * Math.cos(rad), 0, radius * Math.sin(rad)]);
 			rc.addEntity(entity);
 		}

@@ -26,6 +26,7 @@ class Line3DEntity extends Entity3D {
 	private mHaveCVS = false;
 	private mColor = new Color4();
 	protected mColorV: WGRBufferData;
+	
 	constructor(param?: Line3DEntityParam) {
 		super(param);
 
@@ -35,16 +36,18 @@ class Line3DEntity extends Entity3D {
 			this.createMaterial(param);
 		}
 		this.mDescParam = param;
-	}
+	}	
 	clone(param?: Entity3DParam): Line3DEntity {
 		if(param) {
 			if(!param.geometry) param.geometry = this.geometry;
-			return new Line3DEntity( param );
+		}else {
+			param = this.mDescParam;
+			param.materials = this.materials;
+			param.geometry = this.geometry;
 		}
-		param = this.mDescParam;
-		param.materials = this.materials;
-		param.geometry = this.geometry;
-		return new Line3DEntity( this.mDescParam  );
+		let p = new Line3DEntity( param  );
+		p.color = this.color;
+		return p;
 	}
 	setColor(c: ColorDataType): Line3DEntity {
 		if (c && this.mColorV) {

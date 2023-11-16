@@ -8,7 +8,6 @@ import { CylinderEntity } from "../entity/CylinderEntity";
 import { CubeEntity } from "../entity/CubeEntity";
 import { TorusEntity } from "../entity/TorusEntity";
 import { PlaneEntity } from "../entity/PlaneEntity";
-import { PrimitiveEntity } from "../entity/PrimitiveEntity";
 import { ConeEntity } from "../entity/ConeEntity";
 import { AxisEntity } from "../entity/AxisEntity";
 import Vector3 from "../math/Vector3";
