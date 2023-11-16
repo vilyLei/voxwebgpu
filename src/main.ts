@@ -57,7 +57,8 @@
 // import { LineEntityTest as Demo } from "./voxgpu/sample/LineEntityTest";
 // import { LineObjectTest as Demo } from "./voxgpu/sample/LineObjectTest";
 // import { WireframeEntityTest as Demo } from "./voxgpu/sample/WireframeEntityTest";
-import { FloatTextureTest as Demo } from "./voxgpu/sample/FloatTextureTest";
+// import { FloatTextureTest as Demo } from "./voxgpu/sample/FloatTextureTest";
+import { DataTextureTest as Demo } from "./voxgpu/sample/DataTextureTest";
 
 
 

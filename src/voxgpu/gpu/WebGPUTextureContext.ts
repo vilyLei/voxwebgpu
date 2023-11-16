@@ -108,6 +108,7 @@ class WebGPUTextureContext {
 		tex.url = urls[0];
 		return tex;
 	}
+
 	createTexCubeByImages(images: WebImageType[], generateMipmaps = true, flipY = false, format = "rgba8unorm", label?: string): GPUTexture {
 		let image = images[0];
 
@@ -130,7 +131,49 @@ class WebGPUTextureContext {
 		}
 		return tex;
 	}
+	createDataTexture(srcData: NumberArrayType,width: number, height: number, descriptor?: GPUTextureDescriptor, generateMipmaps = false): GPUTexture {
 
+		if(!descriptor) descriptor = {};
+		if (descriptor.format === undefined) {
+			descriptor.format = 'rgba8unorm';
+		}
+		switch(descriptor.format) {
+			case 'rgba16float':
+				return this.createFloat16Texture(srcData, width, height, {}, generateMipmaps);
+				break;
+			default:
+				break;
+		}
+		return this.createRGBA8Texture(srcData, width, height, {}, generateMipmaps);
+	}
+
+	createRGBA8Texture(srcData: NumberArrayType,width: number, height: number, descriptor?: GPUTextureDescriptor, generateMipmaps = false): GPUTexture {
+
+		generateMipmaps = generateMipmaps === true ? true : false;
+
+		let wgctx =  this.mWGCtx;
+		let data = srcData as Uint8Array;
+		if(data.byteLength === undefined) {
+			data = new Uint8Array(srcData);
+		}
+		if(!descriptor) descriptor = {};
+		if(!descriptor.usage) {
+			descriptor.usage = GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST;
+		}
+		if(!descriptor.size) {
+			descriptor.size = [width, height];
+		}
+		descriptor.format = 'rgba8unorm';
+		const mipLevelCount = generateMipmaps ? calculateMipLevels(width, height) : 1;
+		descriptor.mipLevelCount = mipLevelCount;
+		const texture = wgctx.device.createTexture(descriptor);
+		console.log("createRGBA8Texture() .....");
+		wgctx.device.queue.writeTexture({ texture }, data, {bytesPerRow: width * 4, rowsPerImage: height}, { width, height });
+		if (generateMipmaps) {
+			this.mipmapGenerator.generateMipmap(texture, descriptor);
+		}
+		return texture;
+	}
 	createFloat16Texture(srcData: NumberArrayType,width: number, height: number, descriptor?: GPUTextureDescriptor, generateMipmaps = false): GPUTexture {
 
 		generateMipmaps = generateMipmaps === true ? true : false;

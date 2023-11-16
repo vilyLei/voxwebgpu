@@ -23,7 +23,9 @@ Features:
 
    10. CAD或几何编辑支持。
 
-   11. 保持computing与rendering机制一致性。
+   11. 渲染与计算混合系统。
+
+   12. 保持computing与rendering机制一致性。
          1). 构造一致性。
          2). 使用一致性。
          3). 自动兼容material multi-pass、material graph、pass(pass node) graph机制。

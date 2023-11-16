@@ -1,11 +1,11 @@
 import { RendererScene } from "../rscene/RendererScene";
 import { FixScreenPlaneEntity } from "../entity/FixScreenPlaneEntity";
 
-export class FloatTextureTest {
+export class DataTextureTest {
 	private mRscene = new RendererScene();
 
 	initialize(): void {
-		console.log("FloatTextureTest::initialize() ...");
+		console.log("DataTextureTest::initialize() ...");
 
 		this.initScene();
 	}
@@ -36,8 +36,34 @@ export class FloatTextureTest {
 		rc.addEntity(entity);
 	}
 
+	private applyRGBA8Tex(): void {
+		let rc = this.mRscene;
+
+		let width = 256;
+		let height = 256;
+
+		let dataU8 = new Uint8Array(width * height * 4);
+		let k = 0;
+		for (let i = 0; i < height; ++i) {
+			for (let j = 0; j < width; ++j) {
+				k = (width * i + j) * 4;
+				dataU8[k] = ((j / width) * 255) | 0;
+				dataU8[k + 1] = ((0.5 + 0.5 * Math.sin(10.0 * (1.0 - j / width))) * 255) | 0;
+				dataU8[k + 2] = ((1.0 - (i * j) / (width * height)) * 255) | 0;
+				dataU8[k + 3] = 255;
+			}
+		}
+
+		let tex = {
+			diffuse: { uuid: "rtt1", dataTexture: { data: dataU8, width, height }, format: "rgba8unorm", generateMipmaps: true }
+		};
+
+		let entity = new FixScreenPlaneEntity({ extent: [0.0, 0.0, 0.8, 0.8], textures: [tex] });
+		rc.addEntity(entity);
+	}
 	private initScene(): void {
 		this.applyRGBAFloat16Tex();
+		this.applyRGBA8Tex();
 	}
 
 	run(): void {
