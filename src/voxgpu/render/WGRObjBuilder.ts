@@ -114,25 +114,9 @@ class WGRObjBuilder {
 				}
 			}
 		}
-		// console.log('WGRObjBuilder::createRPass(), !pctx: ', !pctx);
-		// console.log('WGRObjBuilder::createRPass(), builder: ', builder);
-		// if (!pctx) {
 		if (!builder.hasMaterial(material)) {
 			if (!pctx) {
 				this.testShaderSrc(material.shaderCodeSrc);
-				// if (material.pipelineVtxParam) {
-				// 	material.pipelineVtxParam.vertex.buffers = primitive.vbufs;
-				// 	material.pipelineVtxParam.vertex.drawMode = primitive.drawMode;
-				// } else {
-				// 	if (primitive) {
-				// 		material.pipelineVtxParam = { vertex: { buffers: primitive.vbufs, attributeIndicesArray: [], drawMode: primitive.drawMode } };
-				// 		const ls = [];
-				// 		for (let i = 0; i < primitive.vbufs.length; ++i) {
-				// 			ls.push([0]);
-				// 		}
-				// 		material.pipelineVtxParam.vertex.attributeIndicesArray = ls;
-				// 	}
-				// }
 				if (!material.pipelineVtxParam) {
 					if (primitive) {
 						material.pipelineVtxParam = { vertex: { attributeIndicesArray: [] } };
@@ -143,10 +127,6 @@ class WGRObjBuilder {
 						material.pipelineVtxParam.vertex.attributeIndicesArray = ls;
 					}
 				}
-				// if (primitive && material.pipelineVtxParam) {
-				// 	material.pipelineVtxParam.vertex.buffers = primitive.vbufs;
-				// 	material.pipelineVtxParam.vertex.drawMode = primitive.drawMode;
-				// }
 			}
 			this.checkMaterial(material, primitive);
 			const node = builder.getPassNodeWithMaterial(material);
@@ -215,7 +195,6 @@ class WGRObjBuilder {
 					if (!tex.view) {
 						tex.view = tex.texture.createView({ dimension: tex.dimension });
 					}
-					console.log('xxx xxxx xx tex.view: ', tex.view);
 					tex.view.dimension = tex.dimension
 					utexes[i] = { texView: tex.view };
 				}
@@ -247,12 +226,7 @@ class WGRObjBuilder {
 			if (!primitiveDict) {
 
 				const gts = geometry.attributes;
-
-				// console.log("########## geometry.gpuvbufs: ", geometry.gpuvbufs);
-				// console.log("########## geometry.gpuibuf: ", geometry.indexBuffer.gpuibuf);
-
 				const gvbufs = geometry.gpuvbufs;
-
 				const vertexBuffers: GPUBuffer[] = gvbufs ? gvbufs : new Array(gts.length);
 				if (!gvbufs) {
 					for (let i = 0; i < gts.length; ++i) {
@@ -261,17 +235,6 @@ class WGRObjBuilder {
 					}
 					geometry.gpuvbufs = vertexBuffers;
 				}
-				/*
-				const gibuf = geometry.indexBuffer;
-				const indexBuffer = gibuf ? (gibuf.gpuibuf ? gibuf.gpuibuf : wgctx.buffer.createIndexBuffer(gibuf.data)) : null;
-				if (indexBuffer) gibuf.gpuibuf = indexBuffer;
-
-				const indexCount = indexBuffer ? indexBuffer.elementCount : 0;
-				const vertexCount = vertexBuffers[0].vectorCount;
-				primitive = this.createPrimitive({ vertexBuffers, indexBuffer, indexCount, vertexCount });
-				primitive.drawMode = geometry.drawMode;
-				geometry.primitive = primitive;
-				//*/
 				primitiveDict = {};
 				geometry.primitive = primitiveDict;
 			}

@@ -28,7 +28,7 @@ export class FloatTextureTest {
 			}
 		}
 		const tex = {
-			diffuse: { uuid: "rtt0", dataTexture: { data: dataFs32, width, height }, format: "rgba16float", generateMipmaps: true }
+			diffuse: { uuid: "tex0", dataTexture: { data: dataFs32, width, height }, format: "rgba16float", generateMipmaps: true }
 		};
 
 		let entity = new FixScreenPlaneEntity({ extent: [-0.8, -0.8, 0.8, 0.8], textures: [tex] });

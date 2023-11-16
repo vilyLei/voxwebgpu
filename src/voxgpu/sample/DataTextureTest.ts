@@ -28,7 +28,7 @@ export class DataTextureTest {
 			}
 		}
 		const tex = {
-			diffuse: { uuid: "rtt0", dataTexture: { data: dataFs32, width, height }, format: "rgba16float", generateMipmaps: true }
+			diffuse: { uuid: "tex0", dataTexture: { data: dataFs32, width, height }, format: "rgba16float", generateMipmaps: true }
 		};
 
 		let entity = new FixScreenPlaneEntity({ extent: [-0.8, -0.8, 0.8, 0.8], textures: [tex] });
@@ -55,7 +55,7 @@ export class DataTextureTest {
 		}
 
 		let tex = {
-			diffuse: { uuid: "rtt1", dataTexture: { data: dataU8, width, height }, format: "rgba8unorm", generateMipmaps: true }
+			diffuse: { uuid: "tex1", dataTexture: { data: dataU8, width, height }, format: "rgba8unorm", generateMipmaps: true }
 		};
 
 		let entity = new FixScreenPlaneEntity({ extent: [0.0, 0.0, 0.8, 0.8], textures: [tex] });
