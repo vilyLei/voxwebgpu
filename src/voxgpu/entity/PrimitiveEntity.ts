@@ -24,6 +24,15 @@ class PrimitiveEntity extends Entity3D {
 			this.createGeometry(param);
 			this.createMaterial(param);
 		}
+		this.mDescParam = param;
+	}
+	clone(param?: Entity3DParam): PrimitiveEntity {
+		if(param) {
+			return new PrimitiveEntity( param );
+		}
+		this.mDescParam.materials = this.materials;
+		this.mDescParam.geometry = this.geometry;
+		return new PrimitiveEntity( this.mDescParam  );
 	}
 	setColor(c: ColorDataType): PrimitiveEntity {
 		return this.setAlbedo( c );
@@ -43,14 +52,14 @@ class PrimitiveEntity extends Entity3D {
 		}
 		return this;
 	}
-	setARM(ao: number, roughness: number, metallic: number): PrimitiveEntity {
-		if (this.armV) {
-			const vs = this.armV.data as Float32Array;
-			vs[0] = ao;
-			vs[1] = roughness;
-			vs[2] = metallic;
-			this.armV.version++;
-		}
+	set albedo(c: ColorDataType) {
+		this.setColor(c);
+	}
+	get albedo(): ColorDataType {
+		return this.mColor;
+	}
+	setARM(p: ArmsDataType): PrimitiveEntity {
+		this.arm = p;
 		return this;
 	}
 	set arm(p: ArmsDataType) {

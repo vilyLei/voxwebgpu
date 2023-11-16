@@ -11,7 +11,6 @@ import { PlaneEntity } from "../entity/PlaneEntity";
 import { PrimitiveEntity } from "../entity/PrimitiveEntity";
 import { ConeEntity } from "../entity/ConeEntity";
 import { AxisEntity } from "../entity/AxisEntity";
-import Vector3 from "../math/Vector3";
 
 export class WireframeEntityTest {
 	private mRscene = new RendererScene();
@@ -30,16 +29,16 @@ export class WireframeEntityTest {
 		const rc = this.mRscene;
 
 		let axis = new AxisEntity();
-		rc.addEntity( axis );
+		rc.addEntity(axis);
 
 		let entities = [
 			new SphereEntity(),
 			new BoxEntity(),
-			new CylinderEntity({alignYRatio : 0.0}),
-			new CubeEntity({cubeSize: 130}),
-			new TorusEntity({radius: 110, axisType: 1}),
-			new PlaneEntity({axisType: 1, extent: [-80, -80, 160, 160], doubleFace: true}),
-			new ConeEntity({alignYRatio : 0.0})
+			new CylinderEntity({ alignYRatio: 0.0 }),
+			new CubeEntity({ cubeSize: 130 }),
+			new TorusEntity({ radius: 110, axisType: 1 }),
+			new PlaneEntity({ axisType: 1, extent: [-80, -80, 160, 160], doubleFace: true }),
+			new ConeEntity({ alignYRatio: 0.0 })
 		];
 
 		let ls = entities;
@@ -47,35 +46,30 @@ export class WireframeEntityTest {
 
 		// random sorting
 		for (let i = 0, ln = ls.length; i < ln; ++i) {
-			const k = Math.round(Math.random() * 888)%ls.length;
-			const t = ls[k];
+			const k = Math.round(Math.random() * 888) % ls.length;
 			entities.push(ls[k]);
-			ls.splice(k,1);
+			ls.splice(k, 1);
 		}
 
 		let radius = 300.0;
 
 		for (let i = 0; i < entities.length; ++i) {
-
-			let rad = 2.0 * Math.PI * i / entities.length;
-			let pos = new Vector3(radius * Math.cos(rad), 0, radius * Math.sin(rad));
+			let rad = (2.0 * Math.PI * i) / entities.length;
 
 			let entity = entities[i].setAlbedo(new Color4().randomRGB(1.5, 0.1));
 			entity.arm = [1.1, Math.random() * 0.95 + 0.05, Math.random() * 0.9 + 0.1];
-			entity.transform.setPosition( pos );
+			entity.transform.setPosition([radius * Math.cos(rad), 0, radius * Math.sin(rad)]);
 			rc.addEntity(entity);
 		}
 
 		radius += 230;
 		for (let i = 0; i < entities.length; ++i) {
+			let rad = (2.0 * Math.PI * i) / entities.length + 0.5;
 
-			let rad = 2.0 * Math.PI * i / entities.length + 0.5;
-			let pos = new Vector3(radius * Math.cos(rad), 0, radius * Math.sin(rad));
-
-			let entity = new PrimitiveEntity({geometry: entities[i].geometry, doubleFace: true, wireframe: true})
-			entity.color = entities[i].color;
+			let entity = new PrimitiveEntity({ geometry: entities[i].geometry, doubleFace: true, wireframe: true });
+			entity.albedo = entities[i].albedo;
 			entity.arm = entities[i].arm;
-			entity.transform.setPosition( pos );
+			entity.transform.setPosition([radius * Math.cos(rad), 0, radius * Math.sin(rad)]);
 			rc.addEntity(entity);
 		}
 	}

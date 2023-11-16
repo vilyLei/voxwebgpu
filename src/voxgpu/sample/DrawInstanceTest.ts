@@ -85,8 +85,8 @@ export class DrawInstanceTest {
 			armV
 		];
 		let shaderSrc = {
-			vertShaderSrc: { code: vertWGSL, uuid: "vert-primitive-ins" },
-			fragShaderSrc: { code: fragWGSL, uuid: "frag-primitive-ins" }
+			vert: { code: vertWGSL, uuid: "vert-primitive-ins" },
+			frag: { code: fragWGSL, uuid: "frag-primitive-ins" }
 		};
 
 		const rc = this.mRscene;

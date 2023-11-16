@@ -120,7 +120,7 @@ declare type Extent2Type = {x?: number, y?: number, width?: number, height?: num
 declare type Extent2DataType = Extent2Type | number[] | Float32Array;
 
 declare type Vector3Type = {x?: number, y?: number, z?: number, w?: number};
-declare type Vector3DataType = Vector3Type | number[] | Float32Array;
+declare type Vector3DataType = Vector3Type | number[] | Float32Array | Uint16Array | Uint32Array | Int16Array | Int32Array;
 
 declare type ArmsType = {a?: number, r?: number, m?: number, s?: number};
 declare type ArmsDataType = ArmsType | number[] | Float32Array;

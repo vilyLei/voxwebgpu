@@ -139,15 +139,18 @@ class WebGPUTextureContext {
 		}
 		switch(descriptor.format) {
 			case 'rgba16float':
-				return this.createFloat16Texture(srcData, width, height, {}, generateMipmaps);
+			case 'rgb9e5ufloat':
+				return this.createFloat32BitsTexture(srcData, width, height, {}, generateMipmaps);
 				break;
+			case 'bgra8unorm':
+			case 'rgba8unorm':
+				return this.create4BytesTexture(srcData, width, height, {}, generateMipmaps);
 			default:
 				break;
 		}
-		return this.createRGBA8Texture(srcData, width, height, {}, generateMipmaps);
 	}
 
-	createRGBA8Texture(srcData: NumberArrayType,width: number, height: number, descriptor?: GPUTextureDescriptor, generateMipmaps = false): GPUTexture {
+	create4BytesTexture(srcData: NumberArrayType,width: number, height: number, descriptor?: GPUTextureDescriptor, generateMipmaps = false): GPUTexture {
 
 		generateMipmaps = generateMipmaps === true ? true : false;
 
@@ -163,25 +166,38 @@ class WebGPUTextureContext {
 		if(!descriptor.size) {
 			descriptor.size = [width, height];
 		}
-		descriptor.format = 'rgba8unorm';
+		if(descriptor.format === undefined) {
+			descriptor.format = 'rgba8unorm';
+		}
 		const mipLevelCount = generateMipmaps ? calculateMipLevels(width, height) : 1;
 		descriptor.mipLevelCount = mipLevelCount;
 		const texture = wgctx.device.createTexture(descriptor);
-		console.log("createRGBA8Texture() .....");
+
 		wgctx.device.queue.writeTexture({ texture }, data, {bytesPerRow: width * 4, rowsPerImage: height}, { width, height });
 		if (generateMipmaps) {
 			this.mipmapGenerator.generateMipmap(texture, descriptor);
 		}
 		return texture;
 	}
-	createFloat16Texture(srcData: NumberArrayType,width: number, height: number, descriptor?: GPUTextureDescriptor, generateMipmaps = false): GPUTexture {
+	createFloat32BitsTexture(srcData: NumberArrayType,width: number, height: number, descriptor?: GPUTextureDescriptor, generateMipmaps = false): GPUTexture {
 
 		generateMipmaps = generateMipmaps === true ? true : false;
+		if(!descriptor.format) {
+			descriptor.format = 'rgba16float';
+		}
 
 		let wgctx =  this.mWGCtx;
-		let data = new Uint16Array(srcData.length);
-		for(let i = 0; i < srcData.length; ++i) {
-			data[i] = toFloat16( srcData[i] );
+		let data: Uint16Array | Float32Array;
+		data = new Uint16Array(srcData.length);
+		switch(descriptor.format) {
+			case 'rgba16float':
+				for(let i = 0; i < srcData.length; ++i) {
+					data[i] = toFloat16( srcData[i] );
+				}
+				break;
+			case 'rgb9e5ufloat':
+
+				break;
 		}
 		if(!descriptor) descriptor = {};
 		if(!descriptor.usage) {
@@ -190,11 +206,12 @@ class WebGPUTextureContext {
 		if(!descriptor.size) {
 			descriptor.size = [width, height];
 		}
-		descriptor.format = 'rgba16float';
+		let bytesPerRow = width * 8;
+
 		const mipLevelCount = generateMipmaps ? calculateMipLevels(width, height) : 1;
 		descriptor.mipLevelCount = mipLevelCount;
 		const texture = wgctx.device.createTexture(descriptor);
-		wgctx.device.queue.writeTexture({ texture }, data, {bytesPerRow: width * 8, rowsPerImage: height}, { width, height });
+		wgctx.device.queue.writeTexture({ texture }, data, {bytesPerRow, rowsPerImage: height}, { width, height });
 		if (generateMipmaps) {
 			this.mipmapGenerator.generateMipmap(texture, descriptor);
 		}

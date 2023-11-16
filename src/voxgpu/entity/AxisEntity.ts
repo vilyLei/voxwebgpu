@@ -35,11 +35,11 @@ function buildPosData(param: AxisEntityParam): void {
 function buildColorData(param: AxisEntityParam): void {
 
 	let c = new Color4(1.0, 0.0, 0.0);
-	let cx = param.xAxisColor ? c.setRGBA4f(1,1,1,1).setColor(param.xAxisColor) : c;
+	let cx = param.xAxisColor ? c.toWhite().setColor(param.xAxisColor) : c;
 	c = new Color4(0.0, 1.0, 0.0);
-	let cy = param.yAxisColor ? c.setRGBA4f(1,1,1,1).setColor(param.xAxisColor) : c;
+	let cy = param.yAxisColor ? c.toWhite().setColor(param.yAxisColor) : c;
 	c = new Color4(0.0, 0.0, 1.0);
-	let cz = param.zAxisColor ? c.setRGBA4f(1,1,1,1).setColor(param.xAxisColor) : c;
+	let cz = param.zAxisColor ? c.toWhite().setColor(param.zAxisColor) : c;
 
 	let lineColors = [cx, cx, cy, cy, cz, cz];
 	param.lineColors = lineColors;

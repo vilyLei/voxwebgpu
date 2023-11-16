@@ -58,11 +58,18 @@ class WebGPUContext implements WebGPUContextImpl {
 		if (gpu) {
 			console.log("WebGPU is supported on this browser.");
 			selfT.gpu = gpu;
-
+			if(!deviceDescriptor) deviceDescriptor = {};
 			const adapter = await gpu.requestAdapter();
 			if (adapter) {
 				selfT.gpuAdapter = adapter;
 				console.log("Appropriate GPUAdapter found, adapter: ", adapter);
+				if(deviceDescriptor.requiredFeatures === undefined) {
+					deviceDescriptor.requiredFeatures = [
+						// 'texture-compression-bc',
+						// 'texture-compression-etc2',
+						// 'texture-compression-astc'
+					];
+				}
 				const device = await adapter.requestDevice(deviceDescriptor);
 				if (device) {
 

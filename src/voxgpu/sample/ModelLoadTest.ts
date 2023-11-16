@@ -51,7 +51,7 @@ export class ModelLoadTest {
 		const geometry = this.createGeometry(model, true);
 		let entity = new PrimitiveEntity({ geometry })
 		.setAlbedo(new Color4().randomRGB(1.5, 0.1))
-		.setARM(1.1, Math.random() * 0.95 + 0.05, Math.random() * 0.9 + 0.1);
+		.setARM([1.1, Math.random() * 0.95 + 0.05, Math.random() * 0.9 + 0.1]);
 		rc.addEntity( entity );
 	}
 	run(): void {

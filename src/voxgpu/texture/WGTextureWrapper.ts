@@ -90,7 +90,6 @@ class WGRTTTextureData extends WGTextureData {
 }
 class WGDataTextureData extends WGTextureData {
 	private mTexData: DataTextureDataDescriptor;
-	private mData: NumberArrayType;
 	constructor() {
 		super();
 	}
@@ -105,18 +104,11 @@ class WGDataTextureData extends WGTextureData {
 		if (td && desc) {
 			if (!this.mTex) {
 				if (td.texture) {
-					console.log("apply a texture into the WGDataTextureData instance.");
+					console.log("apply a texture in the WGDataTextureData instance.");
 					this.mTex = td.texture;
 				} else if (td.data) {
-					console.log("create a texture into the WGDataTextureData instance.");
+					console.log("create a texture in the WGDataTextureData instance.");
 					this.mTex = ctx.texture.createDataTexture(td.data, td.width, td.height, {format: desc.format}, desc.generateMipmaps);
-					// switch(desc.format) {
-					// 	case 'rgba16float':
-					// 		this.mTex = ctx.texture.createFloat16Texture(td.data, td.width, td.height,{}, desc.generateMipmaps);
-					// 		break;
-					// 	default:
-					// 		break;
-					// }
 				}
 			}
 		}

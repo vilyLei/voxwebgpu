@@ -55,6 +55,7 @@ class Entity3D implements IRenderableEntity {
 	private mUid = Entity3D.sUid++;
 
 	private mTransVer = -1;
+	protected mDescParam: Entity3DParam;
 	protected mParent: IRenderableEntityContainer;
 	protected mLBs: IAABB;
 	protected mGBs: IAABB;
@@ -97,6 +98,7 @@ class Entity3D implements IRenderableEntity {
 		if (!(param.building === false)) {
 			this.init(param);
 		}
+		this.mDescParam = param;
 	}
 	protected init(param?: Entity3DParam): void {
 		this.cameraViewing = param.cameraViewing === false ? false : true;
@@ -307,7 +309,11 @@ class Entity3D implements IRenderableEntity {
 		this.transform.update();
 		return this;
 	}
-	destroy(): void {}
+	destroy(): void {
+		if(this.mDescParam) {
+			this.mDescParam = null;
+		}
+	}
 
 	/**
 	 * 表示没有加入任何渲染场景或者渲染器

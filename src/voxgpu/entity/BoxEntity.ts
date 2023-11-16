@@ -14,11 +14,9 @@ class BoxEntity extends PrimitiveEntity {
 
 	protected getGeometryData(param: BoxEntityParam): GeometryBase {
 		if (!param) param = {};
-		if (param.minPos === undefined) param.minPos = new Vector3(-50,-50,-50);
-		if (param.maxPos === undefined) param.maxPos = new Vector3(50,50,50);
-		let box = new BoxGeometry();
-		box.initialize(param.minPos, param.maxPos);
-		return box;
+		if (param.minPos === undefined) param.minPos = [-50,-50,-50];
+		if (param.maxPos === undefined) param.maxPos = [50,50,50];
+		return new BoxGeometry().initialize(param.minPos, param.maxPos);
 	}
 }
 export { BoxEntity };

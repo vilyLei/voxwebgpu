@@ -13,21 +13,31 @@ function createIndexArrayWithSize(size: number): IndexArrayViewType {
 function createIndexArray(array: IndexArrayDataType): IndexArrayViewType {
 	return array.length > 65536 ? new Uint32Array(array) : new Uint16Array(array);
 }
-
+/**
+ * Determines the number of mip levels needed for a full mip chain given the width and height of texture level 0.
+ *
+ * @param {number} width of texture level 0.
+ * @param {number} height of texture level 0.
+ * @returns {number} Ideal number of mip levels.
+ */
+function calculateMipLevels(width: number, height: number): number {
+	return Math.floor(Math.log2(Math.max(width, height))) + 1;
+}
+// thanks: http://stackoverflow.com/questions/32633585/how-do-you-convert-to-half-floats-in-javascript
 // thanks: https://esdiscuss.org/topic/float16array
 const toFloat16 = (function() {
-	var floatView = new Float32Array(1);
-	var int32View = new Int32Array(floatView.buffer);
+	const floatView = new Float32Array(1);
+	const int32View = new Int32Array(floatView.buffer);
 	/* This method is faster than the OpenEXR implementation (very often
 	 * used, eg. in Ogre), with the additional benefit of rounding, inspired
 	 * by James Tursa?s half-precision code. */
 	return function toHalf(val: number) {
 		floatView[0] = val;
-		var x = int32View[0];
+		let x = int32View[0];
 
-		var bits = (x >> 16) & 0x8000; /* Get the sign */
-		var m = (x >> 12) & 0x07ff; /* Keep one extra bit for rounding */
-		var e = (x >> 23) & 0xff; /* Using int is faster here */
+		let bits = (x >> 16) & 0x8000; /* Get the sign */
+		let m = (x >> 12) & 0x07ff; /* Keep one extra bit for rounding */
+		let e = (x >> 23) & 0xff; /* Using int is faster here */
 
 		/* If zero, or denormal, or exponent underflows too much for a denormal
 		 * half, return signed zero. */
@@ -101,4 +111,4 @@ function createFloatColorTexture(width: number, height: number): GPUTexture {
 	return texture;
 }
 
-export { toFloat16, copyFromObjectValueWithKey, createIndexArrayWithSize, createIndexArray };
+export { calculateMipLevels, toFloat16, copyFromObjectValueWithKey, createIndexArrayWithSize, createIndexArray };

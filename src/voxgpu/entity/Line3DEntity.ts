@@ -34,6 +34,15 @@ class Line3DEntity extends Entity3D {
 			this.createGeometry(param);
 			this.createMaterial(param);
 		}
+		this.mDescParam = param;
+	}
+	clone(param?: Entity3DParam): Line3DEntity {
+		if(param) {
+			return new Line3DEntity( param );
+		}
+		this.mDescParam.materials = this.materials;
+		this.mDescParam.geometry = this.geometry;
+		return new Line3DEntity( this.mDescParam  );
 	}
 	setColor(c: ColorDataType): Line3DEntity {
 		if (c && this.mColorV) {
@@ -127,20 +136,8 @@ class Line3DEntity extends Entity3D {
 			}
 			this.materials = [material];
 		}
-		
+
 		checkMaterialRPasses(this.materials, param.rpasses);
-		// const rpasses = param.rpasses;
-		// if (rpasses) {
-		// 	const ms = this.materials;
-		// 	// 这里的实现需要优化, 因为一个material实际上可以加入到多个rpass中去
-		// 	let len = Math.min(rpasses.length, ms.length);
-		// 	for (let i = 0; i < len; ++i) {
-		// 		const rpass = ms[i].rpass;
-		// 		if (!rpass || !rpass.rpass.node) {
-		// 			ms[i].rpass = rpasses[i];
-		// 		}
-		// 	}
-		// }
 	}
 }
 
@@ -151,7 +148,6 @@ function createCircleData(ix: number, iy: number, iz: number, radius: number, se
 	if (segsTotal < 3) segsTotal = 3;
 	if (!center) center = new Vector3();
 
-	// let vs = new Array((segsTotal + 1) * 3);
 	let posList = new Array(segsTotal + 1);
 	let vs = new Array(3);
 	let j = 0;
@@ -161,9 +157,6 @@ function createCircleData(ix: number, iy: number, iz: number, radius: number, se
 	let i = 0;
 	for (; i < segsTotal; ++i) {
 		rad = beginRad + range * i / segsTotal;
-		// vs[j + ix] = cvs[ix] + radius * Math.cos(rad);
-		// vs[j + iy] = cvs[iy] + radius * Math.sin(rad);
-		// vs[j + iz] = cvs[iz];
 		vs[ix] = cvs[ix] + radius * Math.cos(rad);
 		vs[iy] = cvs[iy] + radius * Math.sin(rad);
 		vs[iz] = cvs[iz];

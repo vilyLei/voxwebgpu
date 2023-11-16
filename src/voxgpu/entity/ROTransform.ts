@@ -13,7 +13,9 @@ import Matrix4Pool from "../math/Matrix4Pool";
 import IROTransform from "./IROTransform";
 import { WGRUniformValue } from "../render/uniform/WGRUniformValue";
 import { IdentityMat4Data } from "../math/MatrixUtils";
+import Vector3 from "../math/Vector3";
 
+const v3 = new Vector3();
 export default class ROTransform implements IROTransform {
 
 	private static sUid = 0;
@@ -77,54 +79,64 @@ export default class ROTransform implements IROTransform {
 	getZ(): number {
 		return this.mFS32[14];
 	}
-	setX(p: number): void {
+	setX(p: number): ROTransform {
 		this.updateStatus |= 1;
 		this.updatedStatus |= 1;
 		this.mFS32[12] = p;
 		this.updateTo();
+		return this;
 	}
-	setY(p: number): void {
+	setY(p: number): ROTransform {
 		this.updateStatus |= 1;
 		this.updatedStatus |= 1;
 		this.mFS32[13] = p;
 		this.updateTo();
+		return this;
 	}
-	setZ(p: number): void {
+	setZ(p: number): ROTransform {
 		this.updateStatus |= 1;
 		this.updatedStatus |= 1;
 		this.mFS32[14] = p;
 		this.updateTo();
+		return this;
 	}
-	setXYZ(px: number, py: number, pz: number): void {
+	setXYZ(px: number, py: number, pz: number): ROTransform {
 		this.mFS32[12] = px;
 		this.mFS32[13] = py;
 		this.mFS32[14] = pz;
 		this.updateStatus |= 1;
 		this.updatedStatus |= 1;
 		this.updateTo();
+		return this;
 	}
-	offsetPosition(pv: IVector3): void {
-		this.mFS32[12] += pv.x;
-		this.mFS32[13] += pv.y;
-		this.mFS32[14] += pv.z;
+	offsetPosition(pv: Vector3DataType): ROTransform {
+		v3.setXYZ(0,0,0).setVector3(pv);
+		this.mFS32[12] += v3.x;
+		this.mFS32[13] += v3.y;
+		this.mFS32[14] += v3.z;
 		this.updateStatus |= 1;
 		this.updatedStatus |= 1;
 		this.updateTo();
+		return this;
 	}
-	setPosition(pv: IVector3): void {
-		this.mFS32[12] = pv.x;
-		this.mFS32[13] = pv.y;
-		this.mFS32[14] = pv.z;
+	setPosition(pv: Vector3DataType): ROTransform {
+		v3.setXYZ(0,0,0).setVector3(pv);
+		this.mFS32[12] = v3.x;
+		this.mFS32[13] = v3.y;
+		this.mFS32[14] = v3.z;
 		this.updateStatus |= 1;
 		this.updatedStatus |= 1;
 		this.updateTo();
+		return this;
 	}
-	getPosition(pv: IVector3): void {
+	getPosition(pv?: Vector3Type): Vector3Type {
+		if(!pv) pv = new Vector3();
 		pv.x = this.mFS32[12];
 		pv.y = this.mFS32[13];
 		pv.z = this.mFS32[14];
+		return pv;
 	}
-	copyPositionFrom(t: ROTransform): void {
+	copyPositionFrom(t: ROTransform): ROTransform {
 		if (t) {
 			this.mFS32[12] = t.mFS32[12];
 			this.mFS32[13] = t.mFS32[13];
@@ -133,6 +145,7 @@ export default class ROTransform implements IROTransform {
 			this.updatedStatus |= ROTransform.POSITION;
 			this.updateTo();
 		}
+		return this;
 	}
 	getRotationX(): number {
 		return this.mFS32[1];
@@ -143,28 +156,31 @@ export default class ROTransform implements IROTransform {
 	getRotationZ(): number {
 		return this.mFS32[9];
 	}
-	setRotationX(degrees: number): void {
+	setRotationX(degrees: number): ROTransform {
 		this.mFS32[1] = degrees;
 		this.mRot = true;
 		this.updateStatus |= ROTransform.ROTATION;
 		this.updatedStatus |= ROTransform.ROTATION;
 		this.updateTo();
+		return this;
 	}
-	setRotationY(degrees: number): void {
+	setRotationY(degrees: number): ROTransform {
 		this.mFS32[6] = degrees;
 		this.mRot = true;
 		this.updateStatus |= ROTransform.ROTATION;
 		this.updatedStatus |= ROTransform.ROTATION;
 		this.updateTo();
+		return this;
 	}
-	setRotationZ(degrees: number): void {
+	setRotationZ(degrees: number): ROTransform {
 		this.mFS32[9] = degrees;
 		this.mRot = true;
 		this.updateStatus |= ROTransform.ROTATION;
 		this.updatedStatus |= ROTransform.ROTATION;
 		this.updateTo();
+		return this;
 	}
-	setRotationXYZ(rx: number, ry: number, rz: number): void {
+	setRotationXYZ(rx: number, ry: number, rz: number): ROTransform {
 		this.mFS32[1] = rx;
 		this.mFS32[6] = ry;
 		this.mFS32[9] = rz;
@@ -172,14 +188,19 @@ export default class ROTransform implements IROTransform {
 		this.updatedStatus |= ROTransform.ROTATION;
 		this.mRot = true;
 		this.updateTo();
+		return this;
 	}
-	setRotation(pv: IVector3): void {
-		this.setRotationXYZ(pv.x, pv.y, pv.z);
+	setRotation(pv: Vector3DataType): ROTransform {
+		v3.setXYZ(0,0,0).setVector3(pv);
+		this.setRotationXYZ(v3.x, v3.y, v3.z);
+		return this;
 	}
-	getRotation(pv: IVector3): void {
+	getRotation(pv?: Vector3Type): Vector3Type {
+		if(!pv) pv = new Vector3();
 		pv.x = this.mFS32[1];
 		pv.y = this.mFS32[6];
 		pv.z = this.mFS32[9];
+		return pv;
 	}
 
 	getScaleX(): number {
@@ -191,22 +212,25 @@ export default class ROTransform implements IROTransform {
 	getScaleZ(): number {
 		return this.mFS32[10];
 	}
-	setScaleX(p: number): void {
+	setScaleX(p: number): ROTransform {
 		this.mFS32[0] = p;
 		this.updateStatus |= ROTransform.SCALE;
 		this.updatedStatus |= ROTransform.SCALE;
+		return this;
 	}
-	setScaleY(p: number): void {
+	setScaleY(p: number): ROTransform {
 		this.mFS32[5] = p;
 		this.updateStatus |= ROTransform.SCALE;
 		this.updatedStatus |= ROTransform.SCALE;
+		return this;
 	}
-	setScaleZ(p: number): void {
+	setScaleZ(p: number): ROTransform {
 		this.mFS32[10] = p;
 		this.updateStatus |= ROTransform.SCALE;
 		this.updatedStatus |= ROTransform.SCALE;
+		return this;
 	}
-	setScaleXYZ(sx: number, sy: number, sz: number): void {
+	setScaleXYZ(sx: number, sy: number, sz: number): ROTransform {
 		this.mFS32[0] = sx;
 		this.mFS32[5] = sy;
 		this.mFS32[10] = sz;
@@ -214,23 +238,29 @@ export default class ROTransform implements IROTransform {
 		this.updateStatus |= ROTransform.SCALE;
 		this.updatedStatus |= ROTransform.SCALE;
 		this.updateTo();
+		return this;
 	}
-	setScale(v3: IVector3): void {
+	setScale(pv: Vector3DataType): ROTransform {
+		v3.setXYZ(1,1,1).setVector3(pv);
 		this.setScaleXYZ(v3.x, v3.y, v3.z);
+		return this;
 	}
-	getScale(v3: IVector3): void {
-		v3.x = this.mFS32[0];
-		v3.y = this.mFS32[5];
-		v3.z = this.mFS32[10];
+	getScale(pv?: Vector3Type): Vector3Type {
+		if(!pv) pv = new Vector3();
+		pv.x = this.mFS32[0];
+		pv.y = this.mFS32[5];
+		pv.z = this.mFS32[10];
+		return pv;
 	}
 
-	setScaleAll(s: number): void {
+	setScaleAll(s: number): ROTransform {
 		this.mFS32[0] = s;
 		this.mFS32[5] = s;
 		this.mFS32[10] = s;
 		this.updateStatus |= ROTransform.SCALE;
 		this.updatedStatus |= ROTransform.SCALE;
 		this.updateTo();
+		return this;
 	}
 
 	// local to world space matrix
@@ -289,7 +319,7 @@ export default class ROTransform implements IROTransform {
 		return this.mOMat;
 	}
 	// local to world matrix, 使用的时候注意数据安全->防止多个显示对象拥有而出现多次修改的问题,因此此函数尽量不要用
-	setParentMatrix(matrix: Matrix4): void {
+	setParentMatrix(matrix: Matrix4): ROTransform {
 		//  console.log("sTOTransform::etParentMatrix(), this.mParentMat != matrix: ",(this.mParentMat != matrix),this.mUid);
 
 		this.mParentMat = matrix;
@@ -305,17 +335,19 @@ export default class ROTransform implements IROTransform {
 			}
 			this.updateTo();
 		}
+		return this;
 	}
 	getParentMatrix(): Matrix4 {
 		return this.mParentMat;
 	}
-	updateMatrixData(matrix: Matrix4): void {
+	updateMatrixData(matrix: Matrix4): ROTransform {
 		if (matrix) {
 			this.updateStatus = ROTransform.NONE;
 			this.mInvMat = true;
 			this.mOMat.copyFrom(matrix);
 			this.updateTo();
 		}
+		return this;
 	}
 	__$setMatrix(matrix: Matrix4): void {
 		if (matrix != null) {
@@ -349,16 +381,18 @@ export default class ROTransform implements IROTransform {
 		// this.wrapper = null;
 	}
 
-	copyFrom(src: ROTransform): void {
+	copyFrom(src: ROTransform): ROTransform {
 		this.mFS32.set(src.mFS32, 0);
 		this.updatedStatus |= 1;
 		this.updateStatus |= ROTransform.TRANSFORM;
 		this.mRot = src.mRot;
 		this.updateTo();
+		return;
 	}
-	forceUpdate(): void {
+	forceUpdate(): ROTransform {
 		this.updateStatus |= ROTransform.TRANSFORM;
 		this.update();
+		return;
 	}
 	private updateTo(): void {
 		// if (this.wrapper) this.wrapper.updateTo();

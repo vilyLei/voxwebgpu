@@ -186,7 +186,7 @@ export default class BoxGeometry extends MeshBase {
 	}
 	private minV = new Vector3();
 	private maxV = new Vector3();
-	initialize(minV: Vector3DataType, maxV: Vector3DataType): void {
+	initialize(minV: Vector3DataType, maxV: Vector3DataType): BoxGeometry {
 
 		const min = this.minV;
 		const max = this.maxV;
@@ -213,6 +213,7 @@ export default class BoxGeometry extends MeshBase {
 		this.mList[7] = [min.x, max.y, max.z];
 
 		this.initData();
+		return this;
 	}
 
 	scaleUVFaceAt(faceI: number, u: number, v: number, du: number, dv: number) {
