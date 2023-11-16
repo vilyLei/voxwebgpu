@@ -1,13 +1,16 @@
 import { Entity3DParam } from "../../entity/Entity3DParam"
 
 interface DataDrivenEntityParam {
-    entity?: Entity3DParam;
+    uuid?: string;
+    entity?: Entity3DParam | unknown;
+    entityType?: string;
 }
-interface PrimitiveDDEParam {
+interface PrimitiveDDEParam extends DataDrivenEntityParam {
     axis?: DataDrivenEntityParam;
-    plane?: DataDrivenEntityParam;
     line?: DataDrivenEntityParam;
+    rectLineGrid?: DataDrivenEntityParam;
     boundsFrame?: DataDrivenEntityParam;
+    plane?: DataDrivenEntityParam;
     box?: DataDrivenEntityParam;
     cube?: DataDrivenEntityParam;
     sphere?: DataDrivenEntityParam;

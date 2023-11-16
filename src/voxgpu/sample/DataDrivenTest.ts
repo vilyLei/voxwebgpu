@@ -11,6 +11,7 @@ import { PlaneEntity } from "../entity/PlaneEntity";
 import { ConeEntity } from "../entity/ConeEntity";
 import { AxisEntity } from "../entity/AxisEntity";
 import { Line3DEntity } from "../entity/Line3DEntity";
+import { DataDrivenEntityBuilder } from "../rscene/dataDriven/DataDrivenEntityBuilder";
 
 export class DataDrivenTest {
 	private mRscene = new RendererScene();
@@ -27,6 +28,12 @@ export class DataDrivenTest {
 	private mouseDown = (evt: MouseEvent): void => {};
 	private initScene(): void {
 		const rc = this.mRscene;
+
+
+		let ddeParam = {axis: {entity: {axisLength: 100}}};
+		let builder = new DataDrivenEntityBuilder();
+		builder.createEntity(ddeParam);
+		return;
 
 		let axis = new AxisEntity();
 		rc.addEntity(axis);

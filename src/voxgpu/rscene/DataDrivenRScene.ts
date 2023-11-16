@@ -1,14 +1,14 @@
-import { Entity3DParam } from "../entity/Entity3DParam";
 import { RendererScene } from "./RendererScene";
 import { WGRendererConfig } from "./WGRendererParam";
+import { DataDrivenEntityParam } from "./dataDriven/DataDrivenEntityParam";
 
 class DataDrivenRScene  {
-    private mRscene: RendererScene;
-    constructor(uidBase = 0) { this.mRscene = new RendererScene(uidBase); }
+    scene: RendererScene;
+    constructor(uidBase = 0) { this.scene = new RendererScene(uidBase); }
     initialize(config?: WGRendererConfig): void {
-        this.mRscene.initialize(config);
+        this.scene.initialize(config);
     }
-    addEntity(param: Entity3DParam, processIndex?: number): DataDrivenRScene {
+    addEntity(entityParam: DataDrivenEntityParam, processIndex?: number): DataDrivenRScene {
         
         return this;
     }
