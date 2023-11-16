@@ -10,6 +10,7 @@ import { TorusEntity } from "../entity/TorusEntity";
 import { PlaneEntity } from "../entity/PlaneEntity";
 import { ConeEntity } from "../entity/ConeEntity";
 import { AxisEntity } from "../entity/AxisEntity";
+import { Line3DEntity } from "../entity/Line3DEntity";
 
 export class DataDrivenTest {
 	private mRscene = new RendererScene();
@@ -29,6 +30,22 @@ export class DataDrivenTest {
 
 		let axis = new AxisEntity();
 		rc.addEntity(axis);
+
+		// let line = new Line3DEntity({lineColor: [1,0,0]});
+		// rc.addEntity(line);
+
+		let transform = {
+			rotation: [0,45, 0],
+			position: [0,0,100],
+			scale: [2, 1, 3]
+		};
+		let box = new BoxEntity({transform});
+		rc.addEntity( box );
+
+		
+		return;
+
+		
 		axis = axis.clone();
 		axis.transform.setScaleAll(0.3).setXYZ(50, 0, 50);
 		rc.addEntity(axis);

@@ -12,7 +12,7 @@ import AABB from "../cgeom/AABB";
 import { WGRUnitState } from "../render/WGRUnitState";
 import Vector3 from "../math/Vector3";
 import { EntityVolume } from "../space/EntityVolume";
-import { getUniformValueFromParam, Entity3DParam } from "./Entity3DParam";
+import { TransformParam, getUniformValueFromParam, Entity3DParam } from "./Entity3DParam";
 
 class Entity3D implements IRenderableEntity {
 	private static sUid = 0;
@@ -78,13 +78,23 @@ class Entity3D implements IRenderableEntity {
 				if (fs32.byteLength !== undefined) {
 					this.transform = ROTransform.Create({ fs32 });
 				}
-				const matrix = transform as IMatrix4;
-				if (matrix.identity !== undefined) {
-					this.transform = ROTransform.Create({ matrix });
+				if (!this.transform) {
+					const matrix = transform as IMatrix4;
+					if (matrix.identity !== undefined) {
+						this.transform = ROTransform.Create({ matrix });
+					}
 				}
-				const trans = transform as ROTransform;
-				if (trans.getMatrixFS32 !== undefined) {
-					this.transform = trans;
+				if (!this.transform) {
+					const trans = transform as ROTransform;
+					if (trans.getMatrixFS32 !== undefined) {
+						this.transform = trans;
+					}
+				}
+				if (!this.transform) {
+					const trans = transform as TransformParam;
+					if (!trans.scale || !trans.rotation || !trans.position || !trans.matrix) {
+						this.transform = ROTransform.Create({ transform: trans });
+					}
 				}
 			} else {
 				this.transform = ROTransform.Create();
@@ -161,7 +171,7 @@ class Entity3D implements IRenderableEntity {
 			const g = this.geometry;
 			if (g) {
 				const slb = g.bounds;
-				if(lb.version != slb.version) {
+				if (lb.version != slb.version) {
 
 					lb.reset();
 					const gd = g.geometryData;
@@ -274,7 +284,7 @@ class Entity3D implements IRenderableEntity {
 		return this;
 	}
 	destroy(): void {
-		if(this.mDescParam) {
+		if (this.mDescParam) {
 			this.mDescParam = null;
 		}
 	}
@@ -390,4 +400,4 @@ class Entity3D implements IRenderableEntity {
 		return true;
 	}
 }
-export { Entity3DParam, getUniformValueFromParam, Entity3D };
+export { TransformParam, Entity3DParam, getUniformValueFromParam, Entity3D };

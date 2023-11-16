@@ -17,6 +17,7 @@ import IVector3 from "../math/IVector3";
 interface Line3DEntityParam extends Entity3DParam {
 	linePositions?: Vector3DataType[];
 	lineColors?: ColorDataType[];
+	lineColor?: ColorDataType;
 	/**
 	 * The default value is false
 	 */
@@ -36,6 +37,9 @@ class Line3DEntity extends Entity3D {
 			this.createMaterial(param);
 		}
 		this.mDescParam = param;
+		if(param.lineColor) {
+			this.color = param.lineColor;
+		}
 	}	
 	clone(param?: Entity3DParam): Line3DEntity {
 		if(param) {

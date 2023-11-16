@@ -473,7 +473,7 @@ export default class ROTransform implements IROTransform {
 		}
 		return -1;
 	}
-	static Create(param?: { matrix?: IMatrix4, fs32?: Float32Array }): ROTransform {
+	static Create(param?: { matrix?: IMatrix4, fs32?: Float32Array, transform?: TransformParam }): ROTransform {
 		param = param ? param : {};
 		let unit: ROTransform;
 		const index = param.fs32 ? -1 : ROTransform.GetFreeId();
@@ -502,6 +502,9 @@ export default class ROTransform implements IROTransform {
 			}
 		}
 		unit.uniformv = new WGRUniformValue({ data: unit.mOMat.getLocalFS32(), shdVarName: "objMat" });
+		if(param.transform) {
+			unit.transform = param.transform;
+		}
 		return unit;
 	}
 

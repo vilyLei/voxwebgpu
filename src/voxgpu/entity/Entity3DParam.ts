@@ -5,11 +5,12 @@ import { WGTextureDataDescriptor, WGMaterial } from "../material/WGMaterial";
 import { WGRShderSrcType } from "../material/WGMaterialDescripter";
 import { WGRBufferData } from "../render/buffer/WGRBufferData";
 import { WGRMaterialPassViewImpl } from "../render/pipeline/WGRMaterialPassViewImpl";
+import { TransformParam } from "./TransformParam";
 
 interface Entity3DParam {
 	cameraViewing?: boolean;
 	transformEnabled?: boolean;
-	transform?: ROTransform | IMatrix4 | Float32Array;
+	transform?: ROTransform | IMatrix4 | Float32Array | TransformParam;
 	transufvShared?: boolean;
 	materials?: WGMaterial[];
 	geometry?: WGGeometry;
@@ -40,4 +41,4 @@ function getUniformValueFromParam(key: string, param: Entity3DParam, defaultV?: 
 	}
 	return defaultV;
 }
-export { Entity3DParam, getUniformValueFromParam };
+export { TransformParam, Entity3DParam, getUniformValueFromParam };
