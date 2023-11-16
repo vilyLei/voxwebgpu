@@ -7,14 +7,18 @@
 
 import IVector3 from "../math/IVector3";
 import IMatrix4 from "../math/IMatrix4";
+import { TransformParam } from "./TransformParam";
 // import ITransUpdater from "../../vox/scene/ITransUpdater";
 // import IROTransUpdateWrapper from "./IROTransUpdateWrapper";
 export default interface IROTransform {
     updateStatus: number;
     updatedStatus: number;
     version: number;
-    getUid(): number;
-    getFS32Data(): Float32Array;
+
+    uid: number;
+
+    fs32Data: Float32Array;
+    transform: TransformParam;
     getRotationFlag(): boolean;
     getX(): number;
     getY(): number;

@@ -111,7 +111,8 @@ declare namespace GPUShaderStage {
 declare type IndexArrayViewType = Uint32Array | Uint16Array;
 declare type IndexArrayDataType = number[] | IndexArrayViewType;
 declare type NumberArrayViewType = Float32Array | Int32Array | Int16Array | Uint8Array | Int8Array | IndexArrayViewType;
-declare type NumberArrayType = number[] | Float32Array | Uint32Array | Uint16Array | Int32Array | Int16Array | Uint8Array | Int8Array;
+declare type FloatArrayType = number[] | Float32Array;
+declare type NumberArrayType = FloatArrayType | Uint32Array | Uint16Array | Int32Array | Int16Array | Uint8Array | Int8Array;
 declare type NumberArrayDataType = DataView | Float32Array | Uint32Array | Uint16Array | Int32Array | Int16Array | Uint8Array | Int8Array;
 declare type WebImageType = HTMLImageElement | HTMLCanvasElement | HTMLVideoElement | ImageBitmap;
 declare type ColorRGBAType = {r?: number, g?: number, b?: number, a?: number};

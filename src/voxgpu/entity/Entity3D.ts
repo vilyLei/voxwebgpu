@@ -5,51 +5,15 @@ import IVector3 from "../math/IVector3";
 import IMatrix4 from "../math/IMatrix4";
 import IAABB from "../cgeom/IAABB";
 import { WGGeometry } from "../geometry/WGGeometry";
-import { WGTextureDataDescriptor, WGMaterial } from "../material/WGMaterial";
+import { WGMaterial } from "../material/WGMaterial";
 import { IRenderableEntity } from "../render/IRenderableEntity";
 import { IRenderableEntityContainer } from "../render/IRenderableEntityContainer";
 import AABB from "../cgeom/AABB";
 import { WGRUnitState } from "../render/WGRUnitState";
-import { WGRShderSrcType } from "../material/WGMaterialDescripter";
-import { WGRBufferData } from "../render/buffer/WGRBufferData";
-import { WGRMaterialPassViewImpl } from "../render/pipeline/WGRMaterialPassViewImpl";
 import Vector3 from "../math/Vector3";
 import { EntityVolume } from "../space/EntityVolume";
+import { getUniformValueFromParam, Entity3DParam } from "./Entity3DParam";
 
-interface Entity3DParam {
-	cameraViewing?: boolean;
-	transformEnabled?: boolean;
-	transform?: ROTransform | IMatrix4 | Float32Array;
-	transufvShared?: boolean;
-	materials?: WGMaterial[];
-	geometry?: WGGeometry;
-	textures?: WGTextureDataDescriptor[];
-	blendModes?: string[];
-	faceCullMode?: string;
-	depthWriteEnabled?: boolean;
-	shaderSrc?: WGRShderSrcType;
-	uniformValues?: WGRBufferData[];
-	shadinguuid?: string;
-	instanceCount?: number;
-	doubleFace?: boolean;
-	wireframe?: boolean;
-	rpasses?: WGRMaterialPassViewImpl[];
-	/**
-	 * build geometry/material object, yes or no
-	 */
-	building?: boolean;
-}
-function getUniformValueFromParam(key: string, param: Entity3DParam, defaultV?: WGRBufferData): WGRBufferData {
-	const ufvs = param.uniformValues;
-	if (param.uniformValues) {
-		for (let i = 0; i < ufvs.length; ++i) {
-			if (ufvs[i].shdVarName == key) {
-				return ufvs[i];
-			}
-		}
-	}
-	return defaultV;
-}
 class Entity3D implements IRenderableEntity {
 	private static sUid = 0;
 	private mUid = Entity3D.sUid++;

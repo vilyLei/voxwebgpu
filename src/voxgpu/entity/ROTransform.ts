@@ -14,12 +14,12 @@ import IROTransform from "./IROTransform";
 import { WGRUniformValue } from "../render/uniform/WGRUniformValue";
 import { IdentityMat4Data } from "../math/MatrixUtils";
 import Vector3 from "../math/Vector3";
+import { TransformParam } from "./TransformParam";
 
 const v3 = new Vector3();
 export default class ROTransform implements IROTransform {
 
 	private static sUid = 0;
-	// private static sInitData = new Float32Array([1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0]);
 
 	static readonly NONE = 0;
 	static readonly POSITION = 1;
@@ -52,10 +52,27 @@ export default class ROTransform implements IROTransform {
 		this.mDt = fs32 ? 1 : 0;
 		this.mFS32 = fs32 ? fs32 : new Float32Array(16);
 	}
-	getUid(): number {
+	set transform(t: TransformParam) {
+		if (t) {
+			this.setScale(t.scale);
+			this.setRotation(t.rotation);
+			this.setPosition(t.position);
+			if(t.matrix && t.matrix.length == 16) {
+				this.mFS32.set(t.matrix);
+			}
+		}
+	}
+	get transform(): TransformParam {
+		return {
+			scale: this.getScale(),
+			rotation: this.getRotation(),
+			position: this.getPosition()
+		}
+	}
+	get uid(): number {
 		return this.mUid;
 	}
-	getFS32Data(): Float32Array {
+	get fs32Data(): Float32Array {
 		return this.mFS32;
 	}
 	/**
@@ -110,7 +127,7 @@ export default class ROTransform implements IROTransform {
 		return this;
 	}
 	offsetPosition(pv: Vector3DataType): ROTransform {
-		v3.setXYZ(0,0,0).setVector3(pv);
+		v3.setXYZ(0, 0, 0).setVector3(pv);
 		this.mFS32[12] += v3.x;
 		this.mFS32[13] += v3.y;
 		this.mFS32[14] += v3.z;
@@ -120,7 +137,7 @@ export default class ROTransform implements IROTransform {
 		return this;
 	}
 	setPosition(pv: Vector3DataType): ROTransform {
-		v3.setXYZ(0,0,0).setVector3(pv);
+		v3.setXYZ(0, 0, 0).setVector3(pv);
 		this.mFS32[12] = v3.x;
 		this.mFS32[13] = v3.y;
 		this.mFS32[14] = v3.z;
@@ -130,7 +147,7 @@ export default class ROTransform implements IROTransform {
 		return this;
 	}
 	getPosition(pv?: Vector3Type): Vector3Type {
-		if(!pv) pv = new Vector3();
+		if (!pv) pv = new Vector3();
 		pv.x = this.mFS32[12];
 		pv.y = this.mFS32[13];
 		pv.z = this.mFS32[14];
@@ -191,12 +208,12 @@ export default class ROTransform implements IROTransform {
 		return this;
 	}
 	setRotation(pv: Vector3DataType): ROTransform {
-		v3.setXYZ(0,0,0).setVector3(pv);
+		v3.setXYZ(0, 0, 0).setVector3(pv);
 		this.setRotationXYZ(v3.x, v3.y, v3.z);
 		return this;
 	}
 	getRotation(pv?: Vector3Type): Vector3Type {
-		if(!pv) pv = new Vector3();
+		if (!pv) pv = new Vector3();
 		pv.x = this.mFS32[1];
 		pv.y = this.mFS32[6];
 		pv.z = this.mFS32[9];
@@ -241,12 +258,12 @@ export default class ROTransform implements IROTransform {
 		return this;
 	}
 	setScale(pv: Vector3DataType): ROTransform {
-		v3.setXYZ(1,1,1).setVector3(pv);
+		v3.setXYZ(1, 1, 1).setVector3(pv);
 		this.setScaleXYZ(v3.x, v3.y, v3.z);
 		return this;
 	}
 	getScale(pv?: Vector3Type): Vector3Type {
-		if(!pv) pv = new Vector3();
+		if (!pv) pv = new Vector3();
 		pv.x = this.mFS32[0];
 		pv.y = this.mFS32[5];
 		pv.z = this.mFS32[10];
@@ -456,7 +473,7 @@ export default class ROTransform implements IROTransform {
 		}
 		return -1;
 	}
-	static Create(param?: {matrix?: IMatrix4, fs32?: Float32Array}): ROTransform {
+	static Create(param?: { matrix?: IMatrix4, fs32?: Float32Array }): ROTransform {
 		param = param ? param : {};
 		let unit: ROTransform;
 		const index = param.fs32 ? -1 : ROTransform.GetFreeId();
@@ -484,15 +501,15 @@ export default class ROTransform implements IROTransform {
 				unit.mFS32 = ida.slice(0);
 			}
 		}
-		unit.uniformv = new WGRUniformValue({data: unit.mOMat.getLocalFS32(), shdVarName:"objMat"});
+		unit.uniformv = new WGRUniformValue({ data: unit.mOMat.getLocalFS32(), shdVarName: "objMat" });
 		return unit;
 	}
 
 	static Restore(pt: ROTransform): void {
 
-		if (pt && ROTransform.sFlags[pt.getUid()] == ROTransform.sFBUSY) {
+		if (pt && ROTransform.sFlags[pt.uid] == ROTransform.sFBUSY) {
 
-			const uid = pt.getUid();
+			const uid = pt.uid;
 			ROTransform.sFreeIds.push(uid);
 			ROTransform.sFlags[uid] = ROTransform.sFFREE;
 
