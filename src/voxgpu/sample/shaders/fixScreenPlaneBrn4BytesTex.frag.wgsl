@@ -10,7 +10,8 @@ fn main(
 	@location(0) uv: vec2f
 	) -> @location(0) vec4f {
 	// var color4 = vec4f(textureSample(texture0, sampler0, uv).xyz, 1.0) * color;
-	let brn3 = vec3f(rgbaToHdrBrn(textureSample(texture0, sampler0, uv)));
-	var color4 = vec4f(brn3, 1.0) * color;
+	// let brn3 = vec3f(rgbaToHdrBrn(textureSample(texture0, sampler0, uv)));
+	let brn3 = vec3f(rgbaToHdrBrn(textureSampleLevel(texture0, sampler0, uv, color.w)));
+	var color4 = vec4f(brn3, 1.0) * vec4f(color.xyz,1.0);
     return color4;
 }

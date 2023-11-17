@@ -192,10 +192,11 @@ class WGRObjBuilder {
 				utexes = new Array(texList.length);
 				for (let i = 0; i < texList.length; i++) {
 					const tex = texList[i].texture;
+					let dimension = texList[i].texture.viewDimension;
 					if (!tex.view) {
-						tex.view = tex.texture.createView({ dimension: tex.dimension });
+						tex.view = tex.texture.createView({ dimension });
 					}
-					tex.view.dimension = tex.dimension
+					tex.view.dimension = dimension;
 					utexes[i] = { texView: tex.view };
 				}
 			}

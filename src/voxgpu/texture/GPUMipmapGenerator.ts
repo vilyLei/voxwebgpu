@@ -8,24 +8,14 @@ import { GPUExtent3DDict, GPUTextureDescriptor } from "../gpu/GPUTextureDescript
 import { calculateMipLevels } from "../utils/CommonUtils";
 
 /**
- * Determines the number of mip levels needed for a full mip chain given the width and height of texture level 0.
- *
- * @param {number} width of texture level 0.
- * @param {number} height of texture level 0.
- * @returns {number} Ideal number of mip levels.
- */
-// export function calculateMipLevels(width: number, height: number): number {
-// 	return Math.floor(Math.log2(Math.max(width, height))) + 1;
-// }
-/**
  * thanks: https://github.com/toji/web-texture-tool/blob/main/src/webgpu-mipmap-generator.js
  */
 class GPUMipmapGenerator {
-	private device: GPUDevice | null = null;
-	private sampler: GPUSampler | null = null;
-	private mipmapShaderModule: GPUShaderModule | null = null;
-	private bindGroupLayout: GPUBindGroupLayout | null = null;
-	private pipelineLayout: GPUPipelineLayout | null = null;
+	private device: GPUDevice;
+	private sampler: GPUSampler;
+	private mipmapShaderModule: GPUShaderModule;
+	private bindGroupLayout: GPUBindGroupLayout;
+	private pipelineLayout: GPUPipelineLayout;
 	private pipelines: any = {};
 
 	constructor(device?: GPUDevice) {
@@ -148,6 +138,7 @@ class GPUMipmapGenerator {
 
 		// If the texture was created with RENDER_ATTACHMENT usage we can render directly between mip levels.
 		const renderToSource = textureDescriptor.usage & GPUTextureUsage.RENDER_ATTACHMENT;
+		// console.log('GPUMipmapGenerator::generateMipmap(), AAA, !renderToSource: ', !renderToSource);
 		if (!renderToSource) {
 			// Otherwise we have to use a separate texture to render into. It can be one mip level smaller than the source
 			// texture, since we already have the top level.
@@ -173,7 +164,6 @@ class GPUMipmapGenerator {
 				baseArrayLayer: arrayLayer,
 				arrayLayerCount: 1
 			});
-
 			let dstMipLevel = renderToSource ? 1 : 0;
 			for (let i = 1; i < textureDescriptor.mipLevelCount; ++i) {
 				const dstView = mipTexture.createView({
@@ -219,6 +209,7 @@ class GPUMipmapGenerator {
 
 		// If we didn't render to the source texture, finish by copying the mip results from the temporary mipmap texture
 		// to the source.
+		// console.log('GPUMipmapGenerator::generateMipmap(), BBB, !renderToSource: ', !renderToSource);
 		if (!renderToSource) {
 			const mipLevelSize = {
 				width: Math.max(1, texSizeDesc.width >>> 1),

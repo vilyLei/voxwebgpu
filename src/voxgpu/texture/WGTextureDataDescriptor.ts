@@ -16,6 +16,7 @@ interface DataTextureDataDescriptor {
 	texture?: GPUTexture;
 	textureView?: GPUTextureView;
 	data?: NumberArrayType;
+	datas?: NumberArrayType[];
 	type?: string;
 }
 interface TextureDataDescriptor {
@@ -24,6 +25,7 @@ interface TextureDataDescriptor {
 	flipY?: boolean;
 	format?: string;
 	dimension?: string;
+	viewDimension?: string;
 	url?: string;
 	urls?: string[];
 	image?: WebImageType;
@@ -43,7 +45,6 @@ interface WGTextureDataDescriptor extends TextureDataDescriptor {
 	specularEnv?: TextureDataDescriptor;
 	arm?: TextureDataDescriptor;
 	parallax?: TextureDataDescriptor;
-	height?: TextureDataDescriptor;
 	displacement?: TextureDataDescriptor;
 	specular?: TextureDataDescriptor;
 }
@@ -96,10 +97,10 @@ function texDescriptorFilter(d: WGTextureDataDescriptor): TextureDataDescriptor 
 		rd = d.parallax;
 		rd.shdVarName = "parallax";
 	}
-	if (d.height) {
-		rd = d.height;
-		rd.shdVarName = "height";
-	}
+	// if (d.height) {
+	// 	rd = d.height;
+	// 	rd.shdVarName = "height";
+	// }
 	if (d.displacement) {
 		rd = d.displacement;
 		rd.shdVarName = "displacement";

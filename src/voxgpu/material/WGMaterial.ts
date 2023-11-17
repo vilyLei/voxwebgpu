@@ -88,16 +88,18 @@ class WGMaterial implements IWGMaterial {
 		}
 	}
 
-	addTexture(descriptor: WGTextureDataDescriptor): void {
+	addTexture(descriptor: WGTextureDataDescriptor): WGMaterial {
 		const td = createDataWithDescriptor(descriptor);
 		this.addTextureWithData(td, descriptor.shdVarName);
+		return this;
 	}
-	addTextures(descriptors: WGTextureDataDescriptor[]): void {
+	addTextures(descriptors: WGTextureDataDescriptor[]): WGMaterial {
 		if (descriptors) {
 			for (let i = 0; i < descriptors.length; ++i) {
 				this.addTexture(descriptors[i]);
 			}
 		}
+		return this;
 	}
 	isREnabled(): boolean {
 		if (this.mREnabled) {
@@ -149,4 +151,4 @@ class WGMaterial implements IWGMaterial {
 		}
 	}
 }
-export { checkMaterialRPasses, WGTextureDataDescriptor, WGMaterial };
+export { WGRShderSrcType, checkMaterialRPasses, WGTextureDataDescriptor, WGMaterial };

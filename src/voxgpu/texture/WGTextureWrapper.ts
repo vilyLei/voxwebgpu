@@ -9,12 +9,14 @@ import {
 	TextureDataDescriptor,
 	WGTextureDataDescriptor
 } from "./WGTextureDataDescriptor";
+import { GPUExtent3DDict, GPUTextureDescriptor } from "../gpu/GPUTextureDescriptor";
 
 interface WGTextureDataType {
 	generateMipmaps?: boolean;
 	flipY?: boolean;
 	format?: string;
 	dimension?: string;
+	viewDimension?: string;
 	build(ctx: WebGPUContext): GPUTexture;
 	destroy(): void;
 }
@@ -25,6 +27,7 @@ class WGTextureData implements WGTextureDataType {
 	flipY = false;
 	format = "rgba8unorm";
 	dimension = "2d";
+	viewDimension = "2d";
 	constructor() {}
 
 	setDescripter(descriptor: TextureDataDescriptor): WGTextureData {
@@ -32,6 +35,7 @@ class WGTextureData implements WGTextureDataType {
 		if (descriptor.flipY) this.flipY = descriptor.flipY;
 		if (descriptor.format) this.format = descriptor.format;
 		if (descriptor.dimension) this.dimension = descriptor.dimension;
+		if (descriptor.viewDimension) this.viewDimension = descriptor.viewDimension;
 		this.mDesc = descriptor;
 		return this;
 	}
@@ -50,8 +54,8 @@ class WGImageTextureData extends WGTextureData {
 
 	build(ctx: WebGPUContext): GPUTexture {
 		if (this.mImgs && !this.mTex) {
-			// console.log("this.mImgs: ", this.mImgs, this.dimension);
-			switch (this.dimension) {
+			console.log("WGImageTextureData::build(), this.mImgs: ", this.mImgs, this.viewDimension);
+			switch (this.viewDimension) {
 				case "cube":
 					this.mTex = ctx.texture.createTexCubeByImages(this.mImgs, this.generateMipmaps, this.flipY, this.format, this.mUrl);
 					break;
@@ -104,11 +108,18 @@ class WGDataTextureData extends WGTextureData {
 		if (td && desc) {
 			if (!this.mTex) {
 				if (td.texture) {
-					console.log("apply a texture in the WGDataTextureData instance.");
+					console.log("apply a texture in the WGDataTextureData instance: ", this);
 					this.mTex = td.texture;
 				} else if (td.data) {
-					console.log("create a texture in the WGDataTextureData instance.");
-					this.mTex = ctx.texture.createDataTexture(td.data, td.width, td.height, {format: desc.format}, desc.generateMipmaps);
+					console.log("create a texture in the WGDataTextureData instance: ", this);
+					this.mTex = ctx.texture.createDataTexture([td.data], td.width, td.height, {format: desc.format}, desc.generateMipmaps);
+				} else if (td.datas && td.datas.length > 0) {
+					// let texDesc = {format: desc.format, size: { width: td.width, height: td.height} as GPUExtent3DDict};
+					console.log("create a custom mipmap texture in the WGDataTextureData instance: ", this);
+					// if(this.viewDimension === 'cube') {
+					// 	texDesc.size.depthOrArrayLayers = 6;
+					// }
+					this.mTex = ctx.texture.createDataTexture(td.datas, td.width, td.height, {format: desc.format, viewDimension: this.viewDimension}, desc.generateMipmaps);
 				}
 			}
 		}
@@ -175,7 +186,7 @@ class WGImageCubeTextureData extends WGImageTextureData {
 
 	setDescripter(descriptor: TextureDataDescriptor): WGImageCubeTextureData {
 		super.setDescripter(descriptor);
-		if (this.dimension !== "cube") {
+		if (this.viewDimension !== "cube") {
 			throw Error("Illegal Operation !!!");
 		}
 		if (descriptor.urls) {
@@ -195,7 +206,7 @@ class WGImageCubeTextureData extends WGImageTextureData {
 		return images;
 	}
 	private initCubeMapURLs(urls: string[]): WGImageTextureData {
-		this.dimension = "cube";
+		this.viewDimension = "cube";
 		this.mUrl = urls[0];
 		this.createCubeMapImgsByUrls(urls).then((imgs: ImageBitmap[]): void => {
 			this.mImgs = imgs;
@@ -209,6 +220,7 @@ interface WGTextureType {
 	flipY?: boolean;
 	name?: string;
 	dimension?: string;
+	viewDimension?: string;
 	format?: string;
 	generateMipmaps?: boolean;
 	data?: WGTextureDataType;
@@ -227,6 +239,7 @@ class WGTexture implements WGTextureType {
 	generateMipmaps = true;
 	flipY = true;
 	dimension = "2d";
+	viewDimension = '2d';
 
 	texture: GPUTexture;
 
@@ -261,6 +274,7 @@ class WGTextureWrapper {
 			if (td.generateMipmaps) tex.generateMipmaps = td.generateMipmaps;
 			if (td.flipY) tex.flipY = td.flipY;
 			if (td.dimension) tex.dimension = td.dimension;
+			if (td.viewDimension) tex.viewDimension = td.viewDimension;
 			if (td.format) tex.format = td.format;
 		}
 
@@ -278,10 +292,11 @@ class WGTextureWrapper {
 
 const __$texDataMap: Map<string, WGTextureData> = new Map();
 function createDataWithDescriptor(descriptor: WGTextureDataDescriptor): WGTextureData {
-	let dimension = descriptor.dimension ? descriptor.dimension : "2d";
+	// let dimension = descriptor.dimension ? descriptor.dimension : "2d";
 
 	let td: WGTextureData;
 	const dpt = texDescriptorFilter(descriptor);
+	let viewDimension = dpt.viewDimension ? dpt.viewDimension : "2d";
 	const map = __$texDataMap;
 	let key = "";
 	if (dpt.url !== undefined) {
@@ -300,19 +315,24 @@ function createDataWithDescriptor(descriptor: WGTextureDataDescriptor): WGTextur
 		}
 	}
 
-	switch (dimension) {
+	switch (viewDimension) {
 		case "2d":
+			console.log("create a 2d texture instance ...");
 			if (dpt.rttTexture) {
 				td = new WGRTTTextureData().setDescripter(dpt);
 			} else if (dpt.dataTexture) {
-				console.log("apply a data texture instance ...");
 				td = new WGDataTextureData().setDescripter(dpt);
 			} else {
 				td = new WGImage2DTextureData().setDescripter(dpt);
 			}
 			break;
 		case "cube":
-			td = new WGImageCubeTextureData().setDescripter(dpt);
+			console.log("create a cube texture instance ...");
+			if (dpt.dataTexture) {
+				td = new WGDataTextureData().setDescripter(dpt);
+			} else {
+				td = new WGImageCubeTextureData().setDescripter(dpt);
+			}
 			break;
 		default:
 			throw Error("Illegal Operation !!!");

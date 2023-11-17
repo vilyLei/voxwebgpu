@@ -22,7 +22,12 @@ interface GPUTextureDescriptor {
 	 *		"1d","2d","3d",
 	 */
 	dimension?: string;
-
+	/**
+	 * The dimension to view the texture as.
+	 * Possible values are(in GPUTextureViewDimension: https://gpuweb.github.io/gpuweb/#enumdef-gputextureviewdimension):
+	 *		"1d","2d","2d-array","cube","cube-array","3d",
+	 */
+	viewDimension?: string;
 	/**
 	 * The format of the texture view. Must be either the format of the texture or one of the viewFormats specified during its creation.
 	 * see: https://gpuweb.github.io/gpuweb/#enumdef-gputextureformat

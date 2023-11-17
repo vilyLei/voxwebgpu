@@ -1,7 +1,7 @@
 import { GPUTexture } from "./GPUTexture";
 import { WebGPUContextImpl } from "./WebGPUContextImpl";
 import { calculateMipLevels, GPUMipmapGenerator } from "../texture/GPUMipmapGenerator";
-import { GPUTextureDescriptor } from "./GPUTextureDescriptor";
+import { GPUExtent3DDict, GPUTextureDescriptor } from "./GPUTextureDescriptor";
 import { toFloat16 } from "../utils/CommonUtils";
 import { packRGB9E5UFloat } from "../utils/Conversion";
 
@@ -80,21 +80,32 @@ class WebGPUTextureContext {
 		tex.uid = WebGPUTextureContext.sUid++;
 		return tex;
 	}
+	private checkTexDesc(descriptor: GPUTextureDescriptor, generateMipmaps: boolean): boolean {
+		if (descriptor.usage === undefined) descriptor.usage = GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST;
+		if (descriptor.mipLevelCount < 1) descriptor.mipLevelCount = 1;
+		generateMipmaps = generateMipmaps && descriptor.mipLevelCount > 1;
+		if (generateMipmaps) {
+			descriptor.usage = descriptor.usage | GPUTextureUsage.RENDER_ATTACHMENT;
+		}
+		return generateMipmaps;
+	}
 	createTex2DByImage(image: WebImageType, generateMipmaps = true, flipY = false, format = "rgba8unorm", label?: string): GPUTexture {
 		const device = this.mWGCtx.device;
 		const mipmapG = this.mipmapGenerator;
-		const mipLevelCount = generateMipmaps ? calculateMipLevels(image.width, image.height) : 1;
-		const textureDescriptor = {
+		let mipLevelCount = generateMipmaps ? calculateMipLevels(image.width, image.height) : 1;
+		const descriptor = {
 			dimension: "2d",
 			size: { width: image.width, height: image.height, depthOrArrayLayers: 1 },
 			format,
-			mipLevelCount,
-			usage: GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST | GPUTextureUsage.RENDER_ATTACHMENT
+			mipLevelCount
 		};
-		let tex = this.createTexture(textureDescriptor);
+
+		generateMipmaps = this.checkTexDesc(descriptor, generateMipmaps);
+
+		let tex = this.createTexture(descriptor);
 		device.queue.copyExternalImageToTexture({ source: image, flipY }, { texture: tex }, [image.width, image.height]);
 		if (generateMipmaps) {
-			mipmapG.generateMipmap(tex, textureDescriptor);
+			tex = mipmapG.generateMipmap(tex, descriptor);
 		}
 		return tex;
 	}
@@ -114,26 +125,28 @@ class WebGPUTextureContext {
 		let image = images[0];
 
 		const queue = this.mWGCtx.queue;
-		const mipLevelCount = generateMipmaps ? calculateMipLevels(image.width, image.height) : 1;
-		const textureDescriptor = {
+		let mipLevelCount = generateMipmaps ? calculateMipLevels(image.width, image.height) : 1;
+		const descriptor = {
 			dimension: "2d",
 			size: { width: image.width, height: image.height, depthOrArrayLayers: 6 },
 			format,
-			mipLevelCount,
-			usage: GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST
+			mipLevelCount
 		};
-		const tex = this.createTexture(textureDescriptor);
+
+		generateMipmaps = this.checkTexDesc(descriptor, generateMipmaps);
+		console.log("createTexCubeByImages(), descriptor: ", descriptor);
+		let tex = this.createTexture(descriptor);
 		for (let i = 0; i < images.length; ++i) {
 			image = images[i];
 			queue.copyExternalImageToTexture({ source: image, flipY }, { texture: tex, origin: [0, 0, i] }, [image.width, image.height]);
 		}
 		if (generateMipmaps) {
-			this.mipmapGenerator.generateMipmap(tex, textureDescriptor);
+			tex = this.mipmapGenerator.generateMipmap(tex, descriptor);
 		}
 		return tex;
 	}
 	createDataTexture(
-		srcData: NumberArrayType,
+		srcDatas: NumberArrayType[],
 		width: number,
 		height: number,
 		descriptor?: GPUTextureDescriptor,
@@ -146,20 +159,20 @@ class WebGPUTextureContext {
 		console.log("descriptor.format: ", descriptor.format);
 		switch (descriptor.format) {
 			case "rgba16float":
-				return this.create64BitsTexture(srcData, width, height, descriptor, generateMipmaps);
+				return this.create64BitsTexture(srcDatas, width, height, descriptor, generateMipmaps);
 				break;
 			case "bgra8unorm":
 			case "rgba8unorm":
 			case "rgb9e5ufloat":
-				return this.create32BitsTexture(srcData, width, height, descriptor, generateMipmaps);
+				return this.create32BitsTexture(srcDatas, width, height, descriptor, generateMipmaps);
 			default:
 				break;
 		}
-		throw Error('Illegal operation !!!');
+		throw Error("Illegal operation !!!");
 	}
 
 	create32BitsTexture(
-		srcData: NumberArrayType,
+		srcDatas: NumberArrayType[],
 		width: number,
 		height: number,
 		descriptor?: GPUTextureDescriptor,
@@ -172,7 +185,7 @@ class WebGPUTextureContext {
 		}
 		let wgctx = this.mWGCtx;
 
-		let data: Uint16Array | Float32Array | Uint8Array | Int32Array;
+		let datas: (Uint16Array | Float32Array | Uint8Array | Int32Array)[] = new Array(srcDatas.length);
 
 		if (!descriptor) descriptor = {};
 		if (!descriptor.usage) {
@@ -181,43 +194,80 @@ class WebGPUTextureContext {
 		if (!descriptor.size) {
 			descriptor.size = [width, height];
 		}
-		console.log('this.create32BitsTexture(), descriptor.format: ', descriptor.format);
-		let bytesPerRow = width * 4;
-		let rowsPerImage = height;
+		console.log("this.create32BitsTexture(), descriptor.format: ", descriptor.format);
+
 		switch (descriptor.format) {
-			case 'rgb9e5ufloat':
+			case "rgb9e5ufloat":
 				generateMipmaps = false;
-				let tot = srcData.length / 3;
-				let k = 0;
-				data = new Int32Array(tot);
-				for (let i = 0; i < tot; ++i) {
-					data[i] = packRGB9E5UFloat(srcData[k], srcData[k + 1], srcData[k + 2]);
-					k += 3;
+				for (let i = 0; i < srcDatas.length; ++i) {
+					let rd = srcDatas[i];
+					let tot = rd.length / 3;
+					let k = 0;
+					let data = new Int32Array(tot);
+					for (let j = 0; j < tot; ++j) {
+						data[j] = packRGB9E5UFloat(rd[k], rd[k + 1], rd[k + 2]);
+						k += 3;
+					}
+					datas[i] = data;
 				}
 				break;
 			default:
-				data = srcData as Uint8Array;
-				if (data.byteLength === undefined) {
-					data = new Uint8Array(srcData);
+				for (let i = 0; i < srcDatas.length; ++i) {
+					let data = srcDatas[i] as Uint8Array;
+					// console.log('data instanceof Uint8Array: ', data instanceof Uint8Array, ', data.BYTES_PER_ELEMENT: ', data.BYTES_PER_ELEMENT);
+					if (data.byteLength === undefined || data.BYTES_PER_ELEMENT != 1) {
+						data = new Uint8Array(srcDatas[i]);
+					}
+					datas[i] = data;
 				}
 				break;
 		}
 
-		let mipLevelCount = generateMipmaps ? calculateMipLevels(width, height) : 1;
-		if(mipLevelCount < 1) mipLevelCount = 1;
-		descriptor.mipLevelCount = mipLevelCount;
-		const texture = wgctx.device.createTexture(descriptor);
+		descriptor.mipLevelCount = generateMipmaps || datas.length > 1 ? calculateMipLevels(width, height) : 1;
 
-		wgctx.device.queue.writeTexture({ texture }, data, { bytesPerRow, rowsPerImage }, { width, height });
+		generateMipmaps = this.checkTexDesc(descriptor, generateMipmaps);
 
-		console.log('this.create32BitsTexture(), mipmapGenerator: ', (generateMipmaps && mipLevelCount > 1));
-		if (generateMipmaps && mipLevelCount > 1) {
-			this.mipmapGenerator.generateMipmap(texture, descriptor);
+		// console.log("this.create32BitsTexture(), descriptor.mipLevelCount: ", descriptor.mipLevelCount, ', descriptor.dimension: ', descriptor.dimension);
+		// console.log("this.create32BitsTexture(), descriptor: ", descriptor);
+		let texture: GPUTexture; // = wgctx.device.createTexture(descriptor);
+		if (descriptor.viewDimension === "cube") {
+			// console.log("MMM MMM MMM >>> >>> >>> >>> >>>>>>>>>>>>> mipLevelCount: ", descriptor.mipLevelCount);
+			descriptor.size = { width, height, depthOrArrayLayers: 6 };
+			texture = wgctx.device.createTexture(descriptor);
+			let k = 0;
+			for (let i = 0; i < descriptor.mipLevelCount; i++) {
+				let bytesPerRow = width * 4;
+				let rowsPerImage = height;
+				for (let j = 0; j < 6; j++) {
+					wgctx.device.queue.writeTexture(
+						{ texture, mipLevel: i, origin: [0, 0, j] },
+						datas[k++],
+						{ bytesPerRow, rowsPerImage },
+						{ width, height }
+					);
+				}
+				width >>= 1;
+				height >>= 1;
+			}
+		} else {
+			let rowsPerImage = height;
+			texture = wgctx.device.createTexture(descriptor);
+			for (let i = 0; i < datas.length; ++i) {
+				let bytesPerRow = width * 4;
+				wgctx.device.queue.writeTexture({ texture, mipLevel: i, origin: [0, 0] }, datas[i], { bytesPerRow, rowsPerImage }, { width, height });
+				width >>= 1;
+				height >>= 1;
+			}
+		}
+
+		// console.log("this.create32BitsTexture(), mipmapGenerator: ", generateMipmaps);
+		if (generateMipmaps) {
+			texture = this.mipmapGenerator.generateMipmap(texture, descriptor);
 		}
 		return texture;
 	}
 	create64BitsTexture(
-		srcData: NumberArrayType,
+		srcDatas: NumberArrayType[],
 		width: number,
 		height: number,
 		descriptor?: GPUTextureDescriptor,
@@ -229,33 +279,62 @@ class WebGPUTextureContext {
 		}
 
 		let wgctx = this.mWGCtx;
-		let data: Uint16Array | Float32Array | Int32Array;
+		let datas: (Uint16Array | Float32Array | Int32Array)[] = new Array(srcDatas.length);
 		switch (descriptor.format) {
 			case "rgba16float":
-				data = new Uint16Array(srcData.length);
-				for (let i = 0; i < srcData.length; ++i) {
-					data[i] = toFloat16(srcData[i]);
+				for (let i = 0; i < srcDatas.length; i++) {
+					let sd = srcDatas[i];
+					let data = new Uint16Array(sd.length);
+					for (let j = 0; j < sd.length; ++j) {
+						data[j] = toFloat16(sd[j]);
+					}
+					datas[i] = data;
 				}
+
 				break;
 			default:
 				break;
 		}
 		if (!descriptor) descriptor = {};
-		if (!descriptor.usage) {
-			descriptor.usage = GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST;
-		}
 		if (!descriptor.size) {
 			descriptor.size = [width, height];
 		}
-		let bytesPerRow = width * 8;
 
-		let mipLevelCount = generateMipmaps ? calculateMipLevels(width, height) : 1;
-		if(mipLevelCount < 1) mipLevelCount = 1;
-		descriptor.mipLevelCount = mipLevelCount;
-		const texture = wgctx.device.createTexture(descriptor);
-		wgctx.device.queue.writeTexture({ texture }, data, { bytesPerRow, rowsPerImage: height }, { width, height });
-		if (generateMipmaps && mipLevelCount > 1) {
-			this.mipmapGenerator.generateMipmap(texture, descriptor);
+		descriptor.mipLevelCount = generateMipmaps ? calculateMipLevels(width, height) : 1;
+
+		generateMipmaps = this.checkTexDesc(descriptor, generateMipmaps);
+
+		let texture: GPUTexture;
+		if (descriptor.viewDimension === "cube") {
+			// console.log("MMM MMM MMM >>> >>> >>> >>> >>>>>>>>>>>>> mipLevelCount: ", descriptor.mipLevelCount);
+			descriptor.size = { width, height, depthOrArrayLayers: 6 };
+			texture = wgctx.device.createTexture(descriptor);
+			let k = 0;
+			for (let i = 0; i < descriptor.mipLevelCount; i++) {
+				let bytesPerRow = width * 8;
+				let rowsPerImage = height;
+				for (let j = 0; j < 6; j++) {
+					wgctx.device.queue.writeTexture(
+						{ texture, mipLevel: i, origin: [0, 0, j] },
+						datas[k++],
+						{ bytesPerRow, rowsPerImage },
+						{ width, height }
+					);
+				}
+				width >>= 1;
+				height >>= 1;
+			}
+		} else {
+			texture = wgctx.device.createTexture(descriptor);
+			for (let i = 0; i < datas.length; i++) {
+				let bytesPerRow = width * 8;
+				wgctx.device.queue.writeTexture({ texture, mipLevel: i }, datas[i], { bytesPerRow, rowsPerImage: height }, { width, height });
+				width >>= 1;
+				height >>= 1;
+			}
+		}
+		if (generateMipmaps) {
+			texture = this.mipmapGenerator.generateMipmap(texture, descriptor);
 		}
 		return texture;
 	}
