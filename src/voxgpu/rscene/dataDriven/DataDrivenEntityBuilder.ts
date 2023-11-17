@@ -1,26 +1,23 @@
+import { AxisEntity } from "../../entity/AxisEntity";
+import { BoundsFrameEntity } from "../../entity/BoundsFrameEntity";
+import { BoxEntity } from "../../entity/BoxEntity";
+import { ConeEntity } from "../../entity/ConeEntity";
+import { CubeEntity } from "../../entity/CubeEntity";
+import { CylinderEntity } from "../../entity/CylinderEntity";
 import { Entity3D } from "../../entity/Entity3D";
-import { PrimitiveDDEParam, DataDrivenEntityParam } from "./DataDrivenEntityParam";
+import { Line3DEntity } from "../../entity/Line3DEntity";
+import { ModelEntity } from "../../entity/ModelEntity";
+import { PlaneEntity } from "../../entity/PlaneEntity";
+import { RectLineGridEntity } from "../../entity/RectLineGridEntity";
+import { SphereEntity } from "../../entity/SphereEntity";
+import { TorusEntity } from "../../entity/TorusEntity";
+import { DataDrivenEntityParamType, PrimitiveDDEParam, DataDrivenEntityParam } from "./DataDrivenEntityParam";
 
-/*
-
-axis?: DataDrivenEntityParam;
-    line?: DataDrivenEntityParam;
-    rectLineGrid?: DataDrivenEntityParam;
-    boundsFrame?: DataDrivenEntityParam;
-
-    plane?: DataDrivenEntityParam;
-    box?: DataDrivenEntityParam;
-    cube?: DataDrivenEntityParam;
-
-    sphere?: DataDrivenEntityParam;
-    cylinder?: DataDrivenEntityParam;
-    cone?: DataDrivenEntityParam;
-    torus?: DataDrivenEntityParam;
-*/
 const ettyes = [
     'axis', 'line', 'rectLineGrid', 'boundsFrame',
     'plane', 'box', 'cube',
-    'sphere', 'cylinder', 'cone', 'torus'
+    'sphere', 'cylinder', 'cone', 'torus',
+	'model', 'container'
 ];
 function ddeParamFilter(d: PrimitiveDDEParam): DataDrivenEntityParam {
 	if(!d) {
@@ -29,7 +26,7 @@ function ddeParamFilter(d: PrimitiveDDEParam): DataDrivenEntityParam {
 	let rd = d;
     for(let i = 0; i < ettyes.length; ++i) {
         rd = (d as any)[ettyes[i]];
-        console.log('rd: ', rd, ', key: ', ettyes[i]);
+        // console.log('rd: ', rd, ', key: ', ettyes[i]);
         if(rd) {
             rd.entityType = ettyes[i];
             console.log("rd.entityType: ", rd.entityType);
@@ -37,55 +34,92 @@ function ddeParamFilter(d: PrimitiveDDEParam): DataDrivenEntityParam {
         }
     }
     if(!rd) rd = d;
-	// if (d.axis) {
-    //     rd.entityType = 'axis'
-	// 	rd = d.axis;
-	// }
-    /*
-	if (d.line) {
-		rd = d.line;
-	}
-	if (d.rectLineGrid) {
-		rd = d.rectLineGrid;
-	}
-	if (d.boundsFrame) {
-		rd = d.boundsFrame;
-	}
-	if (d.plane) {
-		rd = d.plane;
-	}    
-	if (d.box) {
-		rd = d.box;
-	}
-	if (d.cube) {
-		rd = d.cube;
-	}
-
-	if (d.sphere) {
-		rd = d.sphere;
-	}
-	if (d.cylinder) {
-		rd = d.cylinder;
-	}
-	if (d.cone) {
-		rd = d.cone;
-	}
-	if (d.torus) {
-		rd = d.torus;
-	}
-    //*/
     return rd;
+}
+function createEntity(param: DataDrivenEntityParam): Entity3D {
+	let entity: Entity3D;
+	if(param) {
+		let et = param.entity as DataDrivenEntityParamType;
+		switch(param.entityType) {
+			case 'axis':
+
+				if(et.size !== undefined) {
+					et.axisLength = et.size;
+				}
+				et.size = undefined;
+				entity = new AxisEntity(param.entity);
+				break;
+			case 'line':
+				entity = new Line3DEntity(param.entity);
+				break;
+			case 'rectLineGrid':
+				entity = new RectLineGridEntity(param.entity);
+				break;
+			case 'boundsFrame':
+				entity = new BoundsFrameEntity(param.entity);
+				break;
+
+			case 'plane':
+				entity = new PlaneEntity(param.entity);
+				break;
+			case 'box':
+				et = param.entity as DataDrivenEntityParamType;
+				if(et.size !== undefined) {
+					et.cubeSize = et.size;
+				}
+				et.size = undefined;
+				entity = new BoxEntity(param.entity);
+				break;
+			case 'cube':
+				entity = new CubeEntity(param.entity);
+				break;
+
+			case 'sphere':
+				entity = new SphereEntity(param.entity);
+				break;
+			case 'cylinder':
+				entity = new CylinderEntity(param.entity);
+				break;
+			case 'cone':
+				entity = new ConeEntity(param.entity);
+				break;
+			case 'torus':
+				entity = new TorusEntity(param.entity);
+				break;
+
+			case 'model':
+				et = param.entity as DataDrivenEntityParamType;
+				if(et.url !== undefined) {
+					et.modelUrl = et.url;
+				}
+				et.url = undefined;
+				entity = new ModelEntity(param.entity);
+				break;
+			case 'container':
+				// entity = new AxisEntity(param.entity);
+				break;
+			default:
+				break;
+
+		}
+		if(entity) {
+			param.uid = entity.uid;
+		}
+	}
+	return entity;
 }
 class DataDrivenEntityBuilder {
     constructor() { }
     createEntity(param: PrimitiveDDEParam): Entity3D {
+		let et: Entity3D;
         if(param) {
             let p = param as PrimitiveDDEParam;
-            ddeParamFilter(p);
+            let ep = ddeParamFilter(p);
+			et = createEntity(ep);
         }else {
             throw Error('Illegal Operation !!!');
         }
-        return null;
+        return et;
     }
 }
 export { DataDrivenEntityBuilder };

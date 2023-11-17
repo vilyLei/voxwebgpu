@@ -1,8 +1,8 @@
-import { Entity3DParam, PrimitiveEntity } from "./PrimitiveEntity";
+import { PrimitiveEntityParam, PrimitiveEntity } from "./PrimitiveEntity";
 import GeometryBase from "../geometry/primitive/GeometryBase";
 import TorusGeometry from "../geometry/primitive/TorusGeometry";
 
-interface TorusEntityParam extends Entity3DParam {
+interface TorusEntityParam extends PrimitiveEntityParam {
 	radius?: number;
 	axisRadius?: number;
 	longitudeNumSegments?: number;

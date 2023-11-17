@@ -1,9 +1,9 @@
-import { Entity3DParam, PrimitiveEntity } from "./PrimitiveEntity";
+import { PrimitiveEntityParam, PrimitiveEntity } from "./PrimitiveEntity";
 import GeometryBase from "../geometry/primitive/GeometryBase";
 import BoxGeometry from "../geometry/primitive/BoxGeometry";
 import Vector3 from "../math/Vector3";
 
-interface CubeEntityParam extends Entity3DParam {
+interface CubeEntityParam extends PrimitiveEntityParam {
 	cubeSize?: number;
 }
 class CubeEntity extends PrimitiveEntity {

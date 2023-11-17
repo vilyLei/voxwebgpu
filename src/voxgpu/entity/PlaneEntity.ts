@@ -1,9 +1,9 @@
-import { Entity3DParam, PrimitiveEntity } from "./PrimitiveEntity";
+import { PrimitiveEntityParam, PrimitiveEntity } from "./PrimitiveEntity";
 import GeometryBase from "../geometry/primitive/GeometryBase";
 import RectPlaneGeometry from "../geometry/primitive/RectPlaneGeometry";
 import Extent2 from "../cgeom/Extent2";
 
-interface PlaneEntityParam extends Entity3DParam {
+interface PlaneEntityParam extends PrimitiveEntityParam {
 	x?: number;
 	y?: number;
 	width?: number;

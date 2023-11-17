@@ -2,12 +2,11 @@ import { WebGPUContext } from "../gpu/WebGPUContext";
 import { WGRPipelineContextDefParam, WGRPassParam, WGRenderPassBlock } from "../render/WGRenderPassBlock";
 import { GPUCanvasConfiguration } from "../gpu/GPUCanvasConfiguration";
 import { WGRPassWrapperImpl } from "../render/pipeline/WGRPassWrapperImpl";
-import Vector3 from "../math/Vector3";
 
 interface WGCameraParam {
-	eye?: Vector3;
-	origin?: Vector3;
-	up?: Vector3;
+	eye?: Vector3DataType;
+	origin?: Vector3DataType;
+	up?: Vector3DataType;
 	near?: number;
 	far?: number;
 	perspective?: boolean;

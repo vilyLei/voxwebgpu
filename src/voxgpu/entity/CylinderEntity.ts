@@ -1,8 +1,8 @@
-import { Entity3DParam, PrimitiveEntity } from "./PrimitiveEntity";
+import { PrimitiveEntityParam, PrimitiveEntity } from "./PrimitiveEntity";
 import GeometryBase from "../geometry/primitive/GeometryBase";
 import CylinderGeometry from "../geometry/primitive/CylinderGeometry";
 
-interface CylinderEntityParam extends Entity3DParam {
+interface CylinderEntityParam extends PrimitiveEntityParam {
 	radius?: number;
 	height?: number;
 	longitudeNumSegments?: number;

@@ -20,10 +20,11 @@ class WGEntityNodeMana {
 		wnode.block = null;
 	}
 	addEntity(node: WGWaitEntityNode): void {
-		// console.log("WGEntityNodeMana::addEntity(), this.mNodes.length: ", this.mNodes.length);
 		this.mNodes.push(node);
+		// console.log("WGEntityNodeMana::addEntity(), this.mNodes.length: ", this.mNodes.length);
 	}
 	update(): void {
+		// console.log("WGEntityNodeMana::update(), this.mNodes.length: ", this.mNodes.length, this.mEnabled);
 		if (this.mEnabled) {
 			const ls = this.mNodes;
 
@@ -31,6 +32,7 @@ class WGEntityNodeMana {
 				const node = ls[i];
 				const entity = node.entity;
 				if (node.rever == node.node.rstate.__$rever) {
+					// console.log('A entity.isREnabled(): ', entity.isREnabled());
 					if (!entity.isREnabled()) {
 						const ms = entity.materials;
 						if (ms) {
@@ -44,8 +46,9 @@ class WGEntityNodeMana {
 							break;
 						}
 					}
+					// console.log('B entity.isREnabled(): ', entity.isREnabled());
 					if (entity.isREnabled()) {
-						// console.log("WGEntityNodeMana::update(), ppp a 01");
+						console.log("WGEntityNodeMana::update(), a entity is rendering enabled.");
 						ls.splice(i, 1);
 						--i;
 						this.receiveNode( node );

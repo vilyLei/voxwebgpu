@@ -168,15 +168,15 @@ fn dithering( color: vec3<f32>, fragCoord: vec2<f32> ) -> vec3<f32> {
     return color + dither_shift_RGB;
 }
 
-const dis = 600.0;
-const disY = 400.0;
+const dis = 1500.0;
+const disY = 600.0;
 const lightPositions = array<vec3<f32>, 4>(
 	vec3<f32>(-dis, disY, dis),
 	vec3<f32>(dis, disY, dis),
 	vec3<f32>(-dis, disY, -dis),
 	vec3<f32>(dis, disY, -dis)
 );
-const colorValue = 300.0;
+const colorValue = 700.0;
 const lightColors = array<vec3<f32>, 4>(
 	vec3<f32>(colorValue, colorValue, colorValue),
 	vec3<f32>(colorValue, colorValue, colorValue),

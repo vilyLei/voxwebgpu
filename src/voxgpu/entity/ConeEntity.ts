@@ -1,8 +1,8 @@
-import { Entity3DParam, PrimitiveEntity } from "./PrimitiveEntity";
+import { PrimitiveEntityParam, PrimitiveEntity } from "./PrimitiveEntity";
 import GeometryBase from "../geometry/primitive/GeometryBase";
 import ConeGeometry from "../geometry/primitive/ConeGeometry";
 
-interface ConeEntityParam extends Entity3DParam {
+interface ConeEntityParam extends PrimitiveEntityParam {
 	radius?: number;
 	height?: number;
 	longitudeNumSegments?: number;

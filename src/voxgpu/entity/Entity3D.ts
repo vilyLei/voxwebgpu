@@ -105,8 +105,9 @@ class Entity3D implements IRenderableEntity {
 			if (param.transufvShared === true) {
 				this.transform.uniformv.shared = true;
 			}
-			this.materials = param.materials;
-			this.geometry = param.geometry;
+			// this.materials = param.materials;
+			if(param.materials !== undefined) this.materials = param.materials;
+			if(param.geometry !== undefined) this.geometry = param.geometry;
 			this.update();
 		}
 	}
@@ -148,12 +149,9 @@ class Entity3D implements IRenderableEntity {
 		} else {
 			return false;
 		}
-		const g = this.geometry;
-		if (g) {
-			if (!g.isREnabled()) {
-				return false;
-			}
-		} else {
+		let g = this.geometry;
+		if (!g || !g.isREnabled()) {
+			console.log("aaa g.isREnabled(), !g: ", !g,', ', this.geometry);
 			return false;
 		}
 		return true;
@@ -280,7 +278,9 @@ class Entity3D implements IRenderableEntity {
 			}
 			this.updateGlobalBounds();
 		}
-		this.transform.update();
+		if(this.transform) {
+			this.transform.update();
+		}
 		return this;
 	}
 	destroy(): void {

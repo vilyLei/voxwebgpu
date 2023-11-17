@@ -14,6 +14,7 @@ interface BoundsFrameEntityParam extends Line3DEntityParam {
 	bounds?: IAABB;
 
 	frameColors?: ColorDataType[];
+	frameColor?: ColorDataType;
 	vertices8?: Vector3DataType[];
 }
 const __v8List = [
@@ -165,6 +166,9 @@ class BoundsFrameEntity extends Line3DEntity {
 			buildColorData( param );
 		}
 		super(param);
+		if(param.frameColor) {
+			this.color = param.frameColor;
+		}
 	}
 }
 export { BoundsFrameEntityParam, BoundsFrameEntity };

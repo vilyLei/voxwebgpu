@@ -22,7 +22,12 @@ export default class Vector3 implements IVector3 {
     clone(): Vector3 {
         return new Vector3(this.x, this.y, this.z, this.w);
     }
-
+	toZero(): Vector3 {
+		return this.setXYZW(0,0,0,0);
+	}
+	toOne(): Vector3 {
+		return this.setXYZW(1,1,1,1);
+	}
 	setVector3(vector3: Vector3DataType): Vector3 {
 		let v = vector3;
 		if (v) {

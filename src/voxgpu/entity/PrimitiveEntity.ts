@@ -11,13 +11,17 @@ import texFragWGSL from "../material/shader/wgsl/primitiveTex.frag.wgsl";
 import GeometryBase from "../geometry/primitive/GeometryBase";
 import { WGGeometry } from "../geometry/WGGeometry";
 import Arms from "../material/Arms";
-
+interface PrimitiveEntityParam extends Entity3DParam {
+	albedo?: ColorDataType;
+	arm?: ArmsDataType;
+	arms?: ArmsDataType;
+}
 class PrimitiveEntity extends Entity3D {
 	private mColor = new Color4();
 	private mArms = new Arms();
 	protected albedoV: WGRBufferData;
 	protected armV: WGRBufferData;
-	constructor(param?: Entity3DParam) {
+	constructor(param?: PrimitiveEntityParam) {
 		super(param);
 		if (!param) param = {};
 		if (!(param.building === false)) {
@@ -26,7 +30,7 @@ class PrimitiveEntity extends Entity3D {
 		}
 		this.mDescParam = param;
 	}
-	clone(param?: Entity3DParam): PrimitiveEntity {
+	clone(param?: PrimitiveEntityParam): PrimitiveEntity {
 		if(param) {
 			if(!param.geometry) param.geometry = this.geometry;
 		}else {
@@ -49,16 +53,20 @@ class PrimitiveEntity extends Entity3D {
 		return this.mColor;
 	}
 	setAlbedo(c: ColorDataType): PrimitiveEntity {
+		// console.log("c: ", c);
+		// console.log("this.albedoV: ", this.albedoV);
 		if (this.albedoV) {
 			if (c) {
 				this.mColor.setColor(c).toArray4(this.albedoV.data as Float32Array);
+				// console.log("this.mColor: ", this.mColor);
 				this.albedoV.version++;
+				// console.log("this.albedoV.data: ", this.albedoV.data);
 			}
 		}
 		return this;
 	}
 	set albedo(c: ColorDataType) {
-		this.setColor(c);
+		this.setAlbedo( c );
 	}
 	get albedo(): ColorDataType {
 		return this.mColor;
@@ -78,10 +86,10 @@ class PrimitiveEntity extends Entity3D {
 	get arm(): ArmsDataType {
 		return this.mArms;
 	}
-	protected getGeometryData(param: Entity3DParam): GeometryBase {
+	protected getGeometryData(param: PrimitiveEntityParam): GeometryBase {
 		return null;
 	}
-	private createGeometry(param: Entity3DParam): void {
+	protected createGeometry(param: PrimitiveEntityParam): void {
 		if (param && param.geometry) {
 			this.geometry = param.geometry;
 		} else {
@@ -99,7 +107,7 @@ class PrimitiveEntity extends Entity3D {
 			}
 		}
 	}
-	protected createMaterial(param: Entity3DParam): void {
+	protected createMaterial(param: PrimitiveEntityParam): void {
 		if (!param) param = {};
 		if (param.materials) {
 			this.materials = param.materials;
@@ -176,6 +184,14 @@ class PrimitiveEntity extends Entity3D {
 				}
 			}
 		}
+		// console.log("param: ", param);
+		// console.log("param.albedo: ", param.albedo);
+		if(param.albedo) {
+			this.albedo = param.albedo;
+		}
+		if(param.arm) {
+			this.arm = param.arm;
+		}
 		checkMaterialRPasses(this.materials, param.rpasses);
 	}
 	destroy(): void {
@@ -184,4 +200,4 @@ class PrimitiveEntity extends Entity3D {
 		super.destroy();
 	}
 }
-export { Entity3DParam, PrimitiveEntity };
+export { PrimitiveEntityParam, PrimitiveEntity };

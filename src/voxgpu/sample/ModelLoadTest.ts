@@ -6,10 +6,11 @@ import { CoGeomDataType, CoModelTeamLoader } from "../../voxlib/cospace/app/comm
 import { WGGeometry } from "../geometry/WGGeometry";
 import { PrimitiveEntity } from "../entity/PrimitiveEntity";
 import Color4 from "../material/Color4";
+import { modelLoader } from "../asset/loader/utils";
 
 export class ModelLoadTest {
 	private mRscene = new RendererScene();
-	private mTeamLoader = new CoModelTeamLoader();
+	private mTeamLoader = modelLoader;
 	initialize(): void {
 		console.log("ModelLoadTest::initialize() ...");
 		this.initEvent();

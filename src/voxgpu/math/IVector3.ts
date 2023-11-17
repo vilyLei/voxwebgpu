@@ -23,6 +23,8 @@ interface IVector3 {
      */
     w: number;
     clone(): IVector3;
+	toZero(): IVector3;
+	toOne(): IVector3;
 	setVector3(vector3: Vector3DataType): IVector3;
 	abs(): IVector3;
     setXYZW(px: number, py: number, pz: number, pw?: number): IVector3;

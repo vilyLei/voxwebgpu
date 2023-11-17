@@ -58,6 +58,7 @@
 // import { LineObjectTest as Demo } from "./voxgpu/sample/LineObjectTest";
 // import { WireframeEntityTest as Demo } from "./voxgpu/sample/WireframeEntityTest";
 // import { EntityCloneTest as Demo } from "./voxgpu/sample/EntityCloneTest";
+// import { ModelEntityTest as Demo } from "./voxgpu/sample/ModelEntityTest";
 import { DataDrivenTest as Demo } from "./voxgpu/sample/DataDrivenTest";
 
 // import { DataTextureTest as Demo } from "./voxgpu/sample/DataTextureTest";
