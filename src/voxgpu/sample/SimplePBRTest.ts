@@ -41,7 +41,7 @@ export class SimplePBRTest {
 
 		const material = new WGMaterial({
 			shadinguuid: "simple-pbr-materialx",
-			shaderCodeSrc: shdSrc,
+			shaderSrc: shdSrc,
 			pipelineDefParam
 		});
 

@@ -15,7 +15,7 @@ interface IWGMaterial extends WGMaterialDescripter {
 	 */
 	shadinguuid: string;
 
-	shaderCodeSrc?: WGRShderSrcType;
+	shaderSrc?: WGRShderSrcType;
 	pipelineVtxParam?: VtxPipelinDescParam;
 	pipelineDefParam?: WGRPipelineContextDefParam;
 

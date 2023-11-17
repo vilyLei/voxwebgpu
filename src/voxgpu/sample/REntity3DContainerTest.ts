@@ -55,7 +55,7 @@ export class REntity3DContainerTest {
 
 		const material = new WGMaterial({
 			shadinguuid: "base-material-tex" + texTotal,
-			shaderCodeSrc: shdSrc,
+			shaderSrc: shdSrc,
 			pipelineDefParam
 		});
 

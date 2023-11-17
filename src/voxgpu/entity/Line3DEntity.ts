@@ -109,7 +109,7 @@ class Line3DEntity extends Entity3D {
 			}
 			const flag = this.mHaveCVS;
 			let ns = flag ? "color-" : "";
-			const shaderCodeSrc = param.shaderSrc
+			const shaderSrc = param.shaderSrc
 				? param.shaderSrc
 				: {
 						vertShaderSrc: { code: this.mHaveCVS ? vertColorWGSL : vertWGSL, uuid: ns + "line3DEntityVertShdCode" },
@@ -132,7 +132,7 @@ class Line3DEntity extends Entity3D {
 			let shadinguuid = param.shadinguuid !== undefined ? param.shadinguuid : ns + "line3DEntity-material";
 			const material = new WGMaterial({
 				shadinguuid,
-				shaderCodeSrc,
+				shaderSrc,
 				pipelineDefParam
 			});
 

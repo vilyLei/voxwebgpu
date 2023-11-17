@@ -149,7 +149,7 @@ class PrimitiveEntity extends Entity3D {
 			};
 			const material = new WGMaterial({
 				shadinguuid: param.shadinguuid !== undefined ? param.shadinguuid : "PrimitiveEntity-material-tex" + texTotal,
-				shaderCodeSrc: shdSrc,
+				shaderSrc: shdSrc,
 				pipelineDefParam
 			});
 			material.addTextures(texs);

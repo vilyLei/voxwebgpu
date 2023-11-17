@@ -35,10 +35,10 @@ class ComputeEntity extends Entity3D {
 		if (param.materials) {
 			this.materials = param.materials;
 		} else {
-			const shaderCodeSrc = param.shaderSrc;
+			const shaderSrc = param.shaderSrc;
 			const material = new WGCompMaterial({
 				shadinguuid: param.shadinguuid !== undefined ? param.shadinguuid : "ComputeEntity-material",
-				shaderCodeSrc
+				shaderSrc
 			});
 			if (param.instanceCount !== undefined) {
 				material.instanceCount = param.instanceCount;

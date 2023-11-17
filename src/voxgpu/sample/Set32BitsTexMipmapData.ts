@@ -179,22 +179,22 @@ export class Set32BitsTexMipmapData {
 		// // const diffuseTex = { diffuse: { url: "static/assets/default.jpg", flipY: true } };
 		const diffuseTex = { diffuse: { uuid: "imgCubeTex", urls, viewDimension: "cube" } };
 
-		const shaderCodeSrc = {
+		const shaderSrc = {
 			vert: { code: vertCubeWGSL, uuid: "vertCubeShdCode" },
 			frag: { code: fragCubeWGSL, uuid: "fragCubeShdCode" }
 		};
 
-		// const material = this.createMaterial(shaderCodeSrc, diffuseTex );
+		// const material = this.createMaterial(shaderSrc, diffuseTex );
 		// this.createCubeMapEntity([material]);
 	}
 
-	private createMaterial(shaderCodeSrc: WGRShderSrcType, tex: WGTextureDataDescriptor): WGMaterial {
+	private createMaterial(shaderSrc: WGRShderSrcType, tex: WGTextureDataDescriptor): WGMaterial {
 		// // let texDataList = [new WGImageCubeTextureData(urls)];
 
 		const texTotal = 1;
 		const material = new WGMaterial({
 			shadinguuid: "cube-base-material-tex" + texTotal,
-			shaderCodeSrc
+			shaderSrc
 		}).addTextures([tex]);
 
 		return material;

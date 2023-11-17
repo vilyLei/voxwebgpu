@@ -27,7 +27,7 @@ class WGMaterial implements IWGMaterial {
 	 */
 	shadinguuid = "default-material";
 
-	shaderCodeSrc?: WGRShderSrcType;
+	shaderSrc?: WGRShderSrcType;
 	pipelineVtxParam?: VtxPipelinDescParam;
 	pipelineDefParam?: WGRPipelineContextDefParam;
 	rpass: WGRMaterialPassViewImpl = {rpass: { index: 0 } };
@@ -124,7 +124,7 @@ class WGMaterial implements IWGMaterial {
 		const d = descriptor;
 		if (d) {
 			if (d.shadinguuid) this.shadinguuid = d.shadinguuid;
-			if (d.shaderCodeSrc) this.shaderCodeSrc = d.shaderCodeSrc;
+			if (d.shaderSrc) this.shaderSrc = d.shaderSrc;
 			if (d.pipelineVtxParam) this.pipelineVtxParam = d.pipelineVtxParam;
 			if (d.pipelineDefParam) this.pipelineDefParam = d.pipelineDefParam;
 			if (d.rpass) this.rpass = d.rpass;

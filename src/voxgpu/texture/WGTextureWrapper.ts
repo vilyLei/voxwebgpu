@@ -12,6 +12,7 @@ import {
 import { GPUExtent3DDict, GPUTextureDescriptor } from "../gpu/GPUTextureDescriptor";
 
 interface WGTextureDataType {
+	uid?: number;
 	generateMipmaps?: boolean;
 	flipY?: boolean;
 	format?: string;
@@ -23,6 +24,7 @@ interface WGTextureDataType {
 class WGTextureData implements WGTextureDataType {
 	protected mTex: GPUTexture;
 	protected mDesc: TextureDataDescriptor;
+	uid?: number;
 	generateMipmaps = true;
 	flipY = false;
 	format = "rgba8unorm";
@@ -58,11 +60,13 @@ class WGImageTextureData extends WGTextureData {
 			switch (this.viewDimension) {
 				case "cube":
 					this.mTex = ctx.texture.createTexCubeByImages(this.mImgs, this.generateMipmaps, this.flipY, this.format, this.mUrl);
-					this.mDesc.uid = this.mTex.uid;
+					this.uid = this.mTex.uid;
+					if(this.mDesc)this.mDesc.uid = this.mTex.uid;
 					break;
 				case "2d":
 					this.mTex = ctx.texture.createTex2DByImage(this.mImgs[0], this.generateMipmaps, this.flipY, this.format, this.mUrl);
-					this.mDesc.uid = this.mTex.uid;
+					this.uid = this.mTex.uid;
+					if(this.mDesc)this.mDesc.uid = this.mTex.uid;
 					break;
 				default:
 					console.error("Illegal operation !!!");
@@ -89,7 +93,8 @@ class WGRTTTextureData extends WGTextureData {
 			if (td.texture) {
 				console.log("apply a rtt texture into a WGRTTTextureData instance.");
 				this.mTex = td.texture;
-				this.mDesc.uid = this.mTex.uid;
+				this.uid = this.mTex.uid;
+				if(this.mDesc)this.mDesc.uid = this.mTex.uid;
 			}
 		}
 		return this.mTex;
@@ -113,15 +118,18 @@ class WGDataTextureData extends WGTextureData {
 				if (td.texture) {
 					console.log("apply a texture in the WGDataTextureData instance: ", this);
 					this.mTex = td.texture;
-					this.mDesc.uid = this.mTex.uid;
+					this.uid = this.mTex.uid;
+					if(this.mDesc)this.mDesc.uid = this.mTex.uid;
 				} else if (td.data) {
 					console.log("create a texture in the WGDataTextureData instance: ", this);
 					this.mTex = ctx.texture.createDataTexture([td.data], td.width, td.height, {format: desc.format}, desc.generateMipmaps);
-					this.mDesc.uid = this.mTex.uid;
+					this.uid = this.mTex.uid;
+					if(this.mDesc)this.mDesc.uid = this.mTex.uid;
 				} else if (td.datas && td.datas.length > 0) {
 					console.log("create a custom mipmap texture in the WGDataTextureData instance: ", this);
 					this.mTex = ctx.texture.createDataTexture(td.datas, td.width, td.height, {format: desc.format, viewDimension: this.viewDimension}, desc.generateMipmaps);
-					this.mDesc.uid = this.mTex.uid;
+					this.uid = this.mTex.uid;
+					if(this.mDesc)this.mDesc.uid = this.mTex.uid;
 				}
 			}
 		}

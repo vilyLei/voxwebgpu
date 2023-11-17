@@ -35,7 +35,7 @@ export class ImgCubeMap {
 
 		let texDataList = [new WGImageCubeTextureData(urls)];
 
-		const shaderCodeSrc = {
+		const shaderSrc = {
 			vert: { code: vertWGSL, uuid: "vertShdCode" },
 			frag: { code: fragWGSL, uuid: "fragShdCode" }
 		};
@@ -44,7 +44,7 @@ export class ImgCubeMap {
 
 		const material = new WGMaterial({
 			shadinguuid: "base-material-tex" + texTotal,
-			shaderCodeSrc
+			shaderSrc
 		}).addTextureWithDatas(texDataList);
 
 		return material;

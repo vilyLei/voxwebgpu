@@ -153,19 +153,19 @@ export class GameOfLifeSpherePBR {
 	private mEntity: Entity3D;
 	private mStep = 0;
 
-	private createMaterial(shaderCodeSrc: WGRShderSrcType, uniformValues: WGRUniformValue[], instanceCount: number): WGMaterial {
+	private createMaterial(shaderSrc: WGRShderSrcType, uniformValues: WGRUniformValue[], instanceCount: number): WGMaterial {
 		return new WGMaterial({
 			shadinguuid: 'rendering',
-			shaderCodeSrc,
+			shaderSrc,
 			instanceCount,
 			uniformValues,
 			uniformAppend: false
 		});
 	}
-	private createCompMaterial(shaderCodeSrc: WGRShderSrcType, uniformValues: WGRUniformValue[], workgroupCount = 2): WGCompMaterial {
+	private createCompMaterial(shaderSrc: WGRShderSrcType, uniformValues: WGRUniformValue[], workgroupCount = 2): WGCompMaterial {
 		return new WGCompMaterial({
 			shadinguuid: 'computing',
-			shaderCodeSrc,
+			shaderSrc,
 			uniformValues,
 			uniformAppend: false
 		}).setWorkcounts(workgroupCount, workgroupCount);

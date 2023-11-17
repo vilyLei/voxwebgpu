@@ -44,7 +44,7 @@ export class VertColorTriangle {
 		};
 		const materials = [new WGMaterial({
 			shadinguuid: "shapeMaterial",
-			shaderCodeSrc: shdSrc
+			shaderSrc: shdSrc
 		})];
 		const geometry = new WGGeometry().addAttributes([
 			{ position},

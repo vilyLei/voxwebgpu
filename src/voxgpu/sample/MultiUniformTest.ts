@@ -71,7 +71,7 @@ export class MultiUniformTest {
 
 		const material = new WGMaterial({
 			shadinguuid: "base-material-tex" + texTotal,
-			shaderCodeSrc: shdSrc,
+			shaderSrc: shdSrc,
 			pipelineDefParam
 		});
 		material.uniformValues = [this.mMixValue];

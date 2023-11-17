@@ -38,7 +38,7 @@ export class ImgTexturedCube {
 
 		const material = new WGMaterial({
 			shadinguuid: "base-material-tex" + texTotal,
-			shaderCodeSrc: shdSrc,
+			shaderSrc: shdSrc,
 			pipelineDefParam
 		});		
 		material.addTextureWithDatas( texDatas );

@@ -184,7 +184,7 @@ class WGRenderPassBlock implements IWGRPassNodeBuilder {
 	}
 	getPassNodeWithMaterial(material: WGMaterialDescripter): WGRenderPassNode {
 		let node = this.getPassNode(material.rpass ? material.rpass.rpass : null);
-		if (material.shaderCodeSrc.compShaderSrc) {
+		if (material.shaderSrc.compShaderSrc) {
 			if (this.mCompPassNodes.length < 1) {
 				this.appendRendererPass({ computeEnabled: true });
 			}

@@ -28,7 +28,7 @@ export class MultiTexturedCube {
 	}
 
 	private createMaterial(
-		shaderCodeSrc: WGRShderSrcType,
+		shaderSrc: WGRShderSrcType,
 		texDatas?: WGImage2DTextureData[]
 	): WGMaterial {
 
@@ -36,7 +36,7 @@ export class MultiTexturedCube {
 
 		const material = new WGMaterial({
 			shadinguuid: "base-material-tex" + texTotal,
-			shaderCodeSrc
+			shaderSrc
 		});
 		material.addTextureWithDatas(texDatas);
 		return material;

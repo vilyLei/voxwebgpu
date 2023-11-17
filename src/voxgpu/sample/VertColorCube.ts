@@ -19,14 +19,14 @@ export class VertColorCube {
 		const renderer = this.renderer;
 		const rgd = this.geomData.createCube(200);
 
-		const shaderCodeSrc = {
+		const shaderSrc = {
 			vert: { code: vertWGSL },
 			frag: { code: fragWGSL }
 		};
 
 		const materials = [new WGMaterial({
 			shadinguuid: "shapeMaterial",
-			shaderCodeSrc
+			shaderSrc
 		})];
 
 		const geometry = new WGGeometry()

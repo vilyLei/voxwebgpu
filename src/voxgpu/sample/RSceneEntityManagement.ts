@@ -88,7 +88,7 @@ export class RSceneEntityManagement {
 		const texTotal = texs ? texs.length : 0;
 		const material = new WGMaterial({
 			shadinguuid: "base-material-tex" + texTotal,
-			shaderCodeSrc: shdSrc,
+			shaderSrc: shdSrc,
 			pipelineDefParam
 		});
 

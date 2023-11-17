@@ -84,7 +84,7 @@ export class DepthBlur {
 	private mouseDown = (evt: MouseEvent): void => {}
 
 	private createMaterial(shadinguuid: string, textures: WGTextureDataDescriptor[], type: number): WGMaterial {
-		let shaderCodeSrc = {
+		let shaderSrc = {
 			vert: { code: vertWGSL, uuid: "vert" },
 			frag: { code: type > 0 ? blurVWGSL : blurHWGSL, uuid: "frag" }
 		};
@@ -94,7 +94,7 @@ export class DepthBlur {
 		};
 		const material = new WGMaterial({
 			shadinguuid,
-			shaderCodeSrc,
+			shaderSrc,
 			pipelineDefParam
 		});
 		material.uniformValues = this.uniformValues;

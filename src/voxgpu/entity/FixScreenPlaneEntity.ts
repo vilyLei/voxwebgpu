@@ -86,7 +86,7 @@ class FixScreenPlaneEntity extends FixScreenEntity {
 			const texs = param.textures;
 			const texTotal = texs ? texs.length : 0;
 			let fragUuid = texTotal > 0 ? "fragTex" : "frag";
-			const shaderCodeSrc = param.shaderSrc
+			const shaderSrc = param.shaderSrc
 				? param.shaderSrc
 				: {
 						vertShaderSrc: { code: vertWGSL, uuid: "fixScreenPlaneVertShdCode" },
@@ -109,7 +109,7 @@ class FixScreenPlaneEntity extends FixScreenEntity {
 			let shadinguuid = param.shadinguuid !== undefined ? param.shadinguuid : "FixScreenPlaneEntity-material-tex" + texTotal;
 			const material = new WGMaterial({
 				shadinguuid,
-				shaderCodeSrc,
+				shaderSrc,
 				pipelineDefParam
 			});
 			material.addTextures(texs);

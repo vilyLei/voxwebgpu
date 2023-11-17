@@ -133,7 +133,7 @@ class WGRenderPassNode implements IWGRenderPassNode {
 				return map.get(material.shadinguuid);
 			}
 		}
-		const ctx = this.createRenderPipelineCtx(material.shaderCodeSrc, material.pipelineVtxParam, material.pipelineDefParam);
+		const ctx = this.createRenderPipelineCtx(material.shaderSrc, material.pipelineVtxParam, material.pipelineDefParam);
 		if (flag) {
 			ctx.shadinguuid = material.shadinguuid;
 			map.set(material.shadinguuid, ctx);

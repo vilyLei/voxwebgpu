@@ -64,7 +64,7 @@ class WGRObjBuilder {
 		}
 	}
 	private checkMaterial(material: IWGMaterial, primitive: WGRPrimitive): void {
-		if(!material.shaderCodeSrc.compShaderSrc) {
+		if(!material.shaderSrc.compShaderSrc) {
 			const vtxParam = material.pipelineVtxParam;
 			if (primitive && vtxParam) {
 				const vert = vtxParam.vertex;
@@ -116,7 +116,7 @@ class WGRObjBuilder {
 		}
 		if (!builder.hasMaterial(material)) {
 			if (!pctx) {
-				this.testShaderSrc(material.shaderCodeSrc);
+				this.testShaderSrc(material.shaderSrc);
 				if (!material.pipelineVtxParam) {
 					if (primitive) {
 						material.pipelineVtxParam = { vertex: { attributeIndicesArray: [] } };
@@ -136,7 +136,7 @@ class WGRObjBuilder {
 		}
 
 		// console.log("createRUnit(), utexes: ", utexes);
-		const isComputing = material.shaderCodeSrc.compShaderSrc;
+		const isComputing = material.shaderSrc.compShaderSrc;
 
 		let ru: IWGRUnit;
 

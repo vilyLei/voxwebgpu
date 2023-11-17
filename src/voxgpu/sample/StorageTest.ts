@@ -40,7 +40,7 @@ export class StorageTest {
 		this.mEntity = this.createEntity([material]);
 	}
 
-	private createMaterial(shaderCodeSrc: WGRShderSrcType, texDatas?: WGImage2DTextureData[], blendModes: string[] = [], faceCullMode = "back"): WGMaterial {
+	private createMaterial(shaderSrc: WGRShderSrcType, texDatas?: WGImage2DTextureData[], blendModes: string[] = [], faceCullMode = "back"): WGMaterial {
 
 		let pipelineDefParam = {
 			depthWriteEnabled: true,
@@ -54,7 +54,7 @@ export class StorageTest {
 
 		const material = new WGMaterial({
 			shadinguuid: "base-material-tex" + texTotal,
-			shaderCodeSrc,
+			shaderSrc,
 			pipelineDefParam
 		});
 

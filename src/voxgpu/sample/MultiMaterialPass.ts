@@ -30,7 +30,7 @@ export class MultiMaterialPass {
 		this.mEntity = this.createEntity([material0, material1]);
 	}
 
-	private createMaterial(shaderCodeSrc: WGRShderSrcType, texDatas?: WGImage2DTextureData[], blendModes: string[] = [], faceCullMode = "back"): WGMaterial {
+	private createMaterial(shaderSrc: WGRShderSrcType, texDatas?: WGImage2DTextureData[], blendModes: string[] = [], faceCullMode = "back"): WGMaterial {
 		let pipelineDefParam = {
 			depthWriteEnabled: true,
 			faceCullMode: faceCullMode,
@@ -43,7 +43,7 @@ export class MultiMaterialPass {
 
 		const material = new WGMaterial({
 			shadinguuid: "base-material-tex" + texTotal + faceCullMode,
-			shaderCodeSrc,
+			shaderSrc,
 			pipelineDefParam
 		});
 		material.addTextureWithDatas(texDatas);

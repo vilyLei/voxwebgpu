@@ -92,10 +92,10 @@ export class ComputeMaterialTest {
 		const v2 = { storage: { data: cellStateArray1, stride: 1, layout: { visibility: 'comp', access: 'read_write' } } };
 		return [v0, v1, v2];
 	}
-	private createMaterial(shaderCodeSrc: WGRShderSrcType, shadinguuid: string, uniformValues: WGRBufferData[]): WGCompMaterial {
+	private createMaterial(shaderSrc: WGRShderSrcType, shadinguuid: string, uniformValues: WGRBufferData[]): WGCompMaterial {
 
 		const workcounts = [4, 4];
-		return new WGCompMaterial({ shadinguuid, shaderCodeSrc, uniformValues, workcounts });
+		return new WGCompMaterial({ shadinguuid, shaderSrc, uniformValues, workcounts });
 	}
 	private initScene(): void {
 		const rc = this.mRscene;
