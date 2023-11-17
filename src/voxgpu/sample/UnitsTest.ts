@@ -127,11 +127,105 @@ function mainFunc(demoIns: any): void {
 	window.requestAnimationFrame(mainLoop);
 }
 
+function getCookieByName(cname: string) {
+	let ckInfo = document.cookie + ""
+	let index0 = ckInfo.indexOf(cname + "=");
+	if (index0 >= 0) {
+		let index1 = ckInfo.indexOf(";", index0 + 1)
+		if (index1 < 0) {
+			index1 = ckInfo.length
+		}
+		let kvalue = ckInfo.slice(index0, index1);
+		kvalue = kvalue.split("=")[1]
+		return kvalue;
+	}
+	return "";
+}
+function setCookieByName(cname: string, value: string) {
+	let pvalue = cname + "=" + value + ";";
+	console.log('setCookieByName(), pvalue: ', pvalue);
+	document.cookie = pvalue;
+}
+class UnitsTestMana {
+	private mKeyName = 'unit_test-index';
+	private mUnitIndex = -1;
+	constructor(){}
+	downIndex(): void {
+		this.mUnitIndex--;
+		if(this.mUnitIndex < 0) {
+			this.mUnitIndex += demoNames.length;
+		}
+		this.setIndex();
+	}
+	upIndex(): void {
+		this.mUnitIndex++;
+		if(this.mUnitIndex >= demoNames.length) {
+			this.mUnitIndex -= demoNames.length;
+		}
+		this.setIndex();
+	}
+	getIndex(): number {
+		if(this.mUnitIndex >= 0) {
+			return this.mUnitIndex;
+		}
+		let sv = getCookieByName(this.mKeyName);
+		let index = 0;
+		if(sv.length > 0) {
+			index = parseInt(sv);
+		}
+		this.mUnitIndex = index;
+		return this.mUnitIndex;
+	}
+	setIndex(): void {
+		setCookieByName(this.mKeyName, this.mUnitIndex + '');
+	}
+}
+function createDiv(px: number, py: number, pw: number, ph: number): HTMLDivElement {
+	let div: HTMLDivElement = document.createElement("div");
+	let style = div.style;
+	style.width = pw + "px";
+	style.height = ph + "px";
+	document.body.appendChild(div);
+	style.display = "bolck";
+	style.left = px + "px";
+	style.top = py + "px";
+	style.position = "absolute";
+	style.display = "bolck";
+	style.position = "absolute";
+	style.textAlign = 'center';
+	return div;
+}
 export class UnitsTest {
+	private mMana = new UnitsTestMana();
+	private mDiv: HTMLDivElement;
+	private initEvent(): void {
+		console.log('initEvent() ....');
+		window.onkeydown = (evt: any): void => {
+			console.log('evt: ', evt);
+			switch(evt.key) {
+				case 'ArrowUp':
+					this.mMana.upIndex();
+					window.location.reload();
+					break;
+				case 'ArrowDown':
+					this.mMana.downIndex();
+					window.location.reload();
+					break;
+				default:
+					break;
 
+			}
+		}
+	}
 	initialize(): void {
-
+		this.initEvent();
+		let index = this.mMana.getIndex();
+		console.log("######## index: ", index);
 		let ns = 'SimpleLightTest';
+		ns = demoNames[ index ];
+
+		this.mDiv = createDiv(20, 530, 512 - 20, 50);
+		this.mDiv.innerHTML = ns + "("+ index + "/" + demoNames.length + ")";
 		switch (ns) {
 			case 'VertColorTriangle':
 				mainFunc(new VertColorTriangle());
