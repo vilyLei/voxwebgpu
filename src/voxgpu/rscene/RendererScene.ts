@@ -104,11 +104,13 @@ class RendererScene implements IRendererScene {
 		}
 	}
 	addEntity(entity: IRenderableObject, processIndex = 0): RendererScene {
-		this.initialize();
-		if (entity.isContainer()) {
-			this.addContainer(entity as IRenderableEntityContainer, processIndex);
-		} else {
-			this.mRenderer.addEntity(entity as Entity3D, processIndex);
+		if(entity) {
+			this.initialize();
+			if (entity.isContainer()) {
+				this.addContainer(entity as IRenderableEntityContainer, processIndex);
+			} else {
+				this.mRenderer.addEntity(entity as Entity3D, processIndex);
+			}
 		}
 		return this;
 	}
