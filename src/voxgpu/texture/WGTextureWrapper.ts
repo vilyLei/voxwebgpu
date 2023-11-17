@@ -58,9 +58,11 @@ class WGImageTextureData extends WGTextureData {
 			switch (this.viewDimension) {
 				case "cube":
 					this.mTex = ctx.texture.createTexCubeByImages(this.mImgs, this.generateMipmaps, this.flipY, this.format, this.mUrl);
+					this.mDesc.uid = this.mTex.uid;
 					break;
 				case "2d":
 					this.mTex = ctx.texture.createTex2DByImage(this.mImgs[0], this.generateMipmaps, this.flipY, this.format, this.mUrl);
+					this.mDesc.uid = this.mTex.uid;
 					break;
 				default:
 					console.error("Illegal operation !!!");
@@ -87,6 +89,7 @@ class WGRTTTextureData extends WGTextureData {
 			if (td.texture) {
 				console.log("apply a rtt texture into a WGRTTTextureData instance.");
 				this.mTex = td.texture;
+				this.mDesc.uid = this.mTex.uid;
 			}
 		}
 		return this.mTex;
@@ -110,16 +113,15 @@ class WGDataTextureData extends WGTextureData {
 				if (td.texture) {
 					console.log("apply a texture in the WGDataTextureData instance: ", this);
 					this.mTex = td.texture;
+					this.mDesc.uid = this.mTex.uid;
 				} else if (td.data) {
 					console.log("create a texture in the WGDataTextureData instance: ", this);
 					this.mTex = ctx.texture.createDataTexture([td.data], td.width, td.height, {format: desc.format}, desc.generateMipmaps);
+					this.mDesc.uid = this.mTex.uid;
 				} else if (td.datas && td.datas.length > 0) {
-					// let texDesc = {format: desc.format, size: { width: td.width, height: td.height} as GPUExtent3DDict};
 					console.log("create a custom mipmap texture in the WGDataTextureData instance: ", this);
-					// if(this.viewDimension === 'cube') {
-					// 	texDesc.size.depthOrArrayLayers = 6;
-					// }
 					this.mTex = ctx.texture.createDataTexture(td.datas, td.width, td.height, {format: desc.format, viewDimension: this.viewDimension}, desc.generateMipmaps);
+					this.mDesc.uid = this.mTex.uid;
 				}
 			}
 		}

@@ -20,6 +20,7 @@ interface DataTextureDataDescriptor {
 	type?: string;
 }
 interface TextureDataDescriptor {
+	uid?: number;
 	uuid?: string;
 	generateMipmaps?: boolean;
 	flipY?: boolean;

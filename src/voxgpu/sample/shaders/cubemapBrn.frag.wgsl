@@ -4,8 +4,7 @@ const hdrBrnDecodeVec4 = vec4f(255.0, 2.55, 0.0255, 0.000255);
 fn rgbaToHdrBrn(color: vec4f) -> f32 {
     return dot(hdrBrnDecodeVec4, color);
 }
-@#ifdef VOX_USE_2D_MAP
-@#endif
+
 @fragment
 fn main(
   @location(0) fragPosition: vec4<f32>

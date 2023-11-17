@@ -3,7 +3,6 @@ import { RendererScene } from "../rscene/RendererScene";
 import { MouseInteraction } from "../ui/MouseInteraction";
 import { FixScreenPlaneEntity } from "../entity/FixScreenPlaneEntity";
 import { HttpFileLoader } from "../asset/loader/HttpFileLoader";
-import { calculateMipLevels } from "../utils/CommonUtils";
 
 import vertWGSL from "../material/shader/wgsl/fixScreenPlane.vert.wgsl";
 import brn4BytesTexWGSL from "./shaders/fixScreenPlaneBrn4BytesTex.frag.wgsl";

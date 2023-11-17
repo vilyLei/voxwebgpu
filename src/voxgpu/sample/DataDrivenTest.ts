@@ -10,15 +10,12 @@ export class DataDrivenTest {
 
 		let url = "static/assets/scene/sceneData01.json";
 
-		new HttpFileLoader().load(
+		new HttpFileLoader().loadJson(
 			url,
 			(json: object, url: string): void => {
 				console.log("json: ", json);
 				this.initScene(json);
-			},
-			null,
-			null,
-			"json"
+			}
 		);
 	}
 	private initScene(json: object): void {

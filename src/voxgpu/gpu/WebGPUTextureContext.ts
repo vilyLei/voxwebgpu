@@ -24,21 +24,21 @@ class WebGPUTextureContext {
 
 	createFloatRTTTexture(descriptor?: GPUTextureDescriptor): GPUTexture {
 		if (!descriptor) descriptor = {};
-		if (descriptor.format === undefined) {
+		if (!descriptor.format) {
 			descriptor.format = "rgba16float";
 		}
 		return this.createRTTTexture(descriptor);
 	}
 	createColorRTTTexture(descriptor?: GPUTextureDescriptor): GPUTexture {
 		if (!descriptor) descriptor = {};
-		if (descriptor.format === undefined) {
+		if (!descriptor.format) {
 			descriptor.format = "bgra8unorm";
 		}
 		return this.createRTTTexture(descriptor);
 	}
 	createDepthRTTTexture(descriptor?: GPUTextureDescriptor): GPUTexture {
 		if (!descriptor) descriptor = {};
-		if (descriptor.format === undefined) {
+		if (!descriptor.format) {
 			descriptor.format = "depth24plus";
 		}
 		return this.createRTTTexture(descriptor);
@@ -50,7 +50,7 @@ class WebGPUTextureContext {
 		if (descriptor.size === undefined) {
 			descriptor.size = [ctx.canvasWidth, ctx.canvasHeight];
 		}
-		if (descriptor.format === undefined) {
+		if (!descriptor.format) {
 			descriptor.format = ctx.presentationFormat;
 		}
 		if (descriptor.usage === undefined) {
@@ -153,7 +153,7 @@ class WebGPUTextureContext {
 		generateMipmaps = false
 	): GPUTexture {
 		if (!descriptor) descriptor = {};
-		if (descriptor.format === undefined) {
+		if (!descriptor.format) {
 			descriptor.format = "rgba8unorm";
 		}
 		console.log("descriptor.format: ", descriptor.format);
@@ -180,7 +180,7 @@ class WebGPUTextureContext {
 	): GPUTexture {
 		generateMipmaps = generateMipmaps === true ? true : false;
 		if (!descriptor) descriptor = {};
-		if (descriptor.format === undefined) {
+		if (!descriptor.format) {
 			descriptor.format = "rgba8unorm";
 		}
 		let wgctx = this.mWGCtx;
@@ -227,11 +227,8 @@ class WebGPUTextureContext {
 
 		generateMipmaps = this.checkTexDesc(descriptor, generateMipmaps);
 
-		// console.log("this.create32BitsTexture(), descriptor.mipLevelCount: ", descriptor.mipLevelCount, ', descriptor.dimension: ', descriptor.dimension);
-		// console.log("this.create32BitsTexture(), descriptor: ", descriptor);
-		let texture: GPUTexture; // = wgctx.device.createTexture(descriptor);
+		let texture: GPUTexture;
 		if (descriptor.viewDimension === "cube") {
-			// console.log("MMM MMM MMM >>> >>> >>> >>> >>>>>>>>>>>>> mipLevelCount: ", descriptor.mipLevelCount);
 			descriptor.size = { width, height, depthOrArrayLayers: 6 };
 			texture = wgctx.device.createTexture(descriptor);
 			let k = 0;
@@ -306,7 +303,6 @@ class WebGPUTextureContext {
 
 		let texture: GPUTexture;
 		if (descriptor.viewDimension === "cube") {
-			// console.log("MMM MMM MMM >>> >>> >>> >>> >>>>>>>>>>>>> mipLevelCount: ", descriptor.mipLevelCount);
 			descriptor.size = { width, height, depthOrArrayLayers: 6 };
 			texture = wgctx.device.createTexture(descriptor);
 			let k = 0;

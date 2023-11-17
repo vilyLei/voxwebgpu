@@ -13,6 +13,30 @@ class HttpFileLoader {
 	setCrossOrigin( crossOrigin: string ): void  {
 		this.crossOrigin = crossOrigin;
 	}
+	loadText(url: string,
+		onLoad: (buf: ArrayBuffer | string | object, url: string) => void,
+		/**
+		 * @param progress its value is 0.0 -> 1.0
+		 */
+		onProgress: (progress: number, url: string) => void = null,
+		onError: (status: number, url: string) => void = null,
+		responseType: XMLHttpRequestResponseType = "text",
+		headRange: string = ""
+	): HttpFileLoader {
+		return  this.load(url, onLoad, onProgress, onError, responseType, headRange);
+	}
+	loadJson(url: string,
+		onLoad: (buf: ArrayBuffer | string | object, url: string) => void,
+		/**
+		 * @param progress its value is 0.0 -> 1.0
+		 */
+		onProgress: (progress: number, url: string) => void = null,
+		onError: (status: number, url: string) => void = null,
+		responseType: XMLHttpRequestResponseType = "json",
+		headRange: string = ""
+	): HttpFileLoader {
+		return  this.load(url, onLoad, onProgress, onError, responseType, headRange);
+	}
 	load(url: string,
 		onLoad: (buf: ArrayBuffer | string | object, url: string) => void,
 		/**
