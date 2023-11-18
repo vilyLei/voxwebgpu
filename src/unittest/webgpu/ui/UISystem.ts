@@ -23,14 +23,21 @@ export class UISystem {
 		style.fontSize = "25px";
     }
     private initRightInfoNameBar(param: DemoParam): void {
-        let div = createDiv(513, 513, 512, 37);
+        let div = createDiv(513, 513, 255, 37);
         document.body.appendChild(div);
-		div.innerHTML = "( items )";
+		div.innerHTML = "Prev";
 		let style = div.style;
 		style.textAlign = 'center';
-		// style.backgroundColor = '#ffbe22';
-		// style.backgroundColor = '#543094';
-		style.backgroundColor = '#403b54';
+		style.backgroundColor = '#0b4741';
+		style.color = '#eeeeee';
+		style.fontSize = "25px";
+
+        div = createDiv(513 + 257, 513, 255, 37);
+        document.body.appendChild(div);
+		div.innerHTML = "Next";
+		 style = div.style;
+		style.textAlign = 'center';
+		style.backgroundColor = '#0b4741';
 		style.color = '#eeeeee';
 		style.fontSize = "25px";
     }
@@ -42,6 +49,7 @@ export class UISystem {
 		// style.textAlign = 'center';
 		// style.backgroundColor = '#ffbe22';
 		// style.backgroundColor = '#543094';
+		// style.backgroundColor = '#272637';
 		style.backgroundColor = '#272637';
 		// style.color = '#eeeeee';
 		// style.fontSize = "25px";
