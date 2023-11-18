@@ -1,61 +1,65 @@
-import { VertColorTriangle } from "./VertColorTriangle";
-import { VertColorCube } from "./VertColorCube";
-import { VertEntityTest } from "./VertEntityTest";
-import { DefaultEntityTest } from "./DefaultEntityTest";
-import { ImgTexturedCube } from "./ImgTexturedCube";
-import { ImgCubeMap } from "./ImgCubeMap";
-import { MultiTexturedCube } from "./MultiTexturedCube";
-import { BlendTest } from "./BlendTest";
-import { MultiMaterialPass } from "./MultiMaterialPass";
-import { MultiUniformTest } from "./MultiUniformTest";
-import { UniformTest } from "./UniformTest";
-import { StorageTest } from "./StorageTest";
+import { VertColorTriangle } from "../../voxgpu/sample/VertColorTriangle";
+import { VertColorCube } from "../../voxgpu/sample/VertColorCube";
+import { VertEntityTest } from "../../voxgpu/sample/VertEntityTest";
+import { DefaultEntityTest } from "../../voxgpu/sample/DefaultEntityTest";
+import { ImgTexturedCube } from "../../voxgpu/sample/ImgTexturedCube";
+import { ImgCubeMap } from "../../voxgpu/sample/ImgCubeMap";
+import { MultiTexturedCube } from "../../voxgpu/sample/MultiTexturedCube";
+import { BlendTest } from "../../voxgpu/sample/BlendTest";
+import { MultiMaterialPass } from "../../voxgpu/sample/MultiMaterialPass";
+import { MultiUniformTest } from "../../voxgpu/sample/MultiUniformTest";
+import { UniformTest } from "../../voxgpu/sample/UniformTest";
+import { StorageTest } from "../../voxgpu/sample/StorageTest";
 
-import { RSceneTest } from "./RSceneTest";
-import { SimpleLightTest } from "./SimpleLightTest";
-import { REntity3DContainerTest } from "./REntity3DContainerTest";
+import { RSceneTest } from "../../voxgpu/sample/RSceneTest";
+import { SimpleLightTest } from "../../voxgpu/sample/SimpleLightTest";
+import { REntity3DContainerTest } from "../../voxgpu/sample/REntity3DContainerTest";
 
-import { Entity3DVisibilityTest } from "./Entity3DVisibilityTest";
-import { RSceneEntityManagement } from "./RSceneEntityManagement";
-import { SimplePBRTest } from "./SimplePBRTest";
-import { FixScreenPlaneTest } from "./FixScreenPlaneTest";
-import { PrimitiveEntityTest } from "./PrimitiveEntityTest";
-import { ScreenPostEffect } from "./ScreenPostEffect";
+import { Entity3DVisibilityTest } from "../../voxgpu/sample/Entity3DVisibilityTest";
+import { RSceneEntityManagement } from "../../voxgpu/sample/RSceneEntityManagement";
+import { SimplePBRTest } from "../../voxgpu/sample/SimplePBRTest";
+import { FixScreenPlaneTest } from "../../voxgpu/sample/FixScreenPlaneTest";
+import { PrimitiveEntityTest } from "../../voxgpu/sample/PrimitiveEntityTest";
+import { ScreenPostEffect } from "../../voxgpu/sample/ScreenPostEffect";
 
-import { ModelLoadTest } from "./ModelLoadTest";
-import { DrawInstanceTest } from "./DrawInstanceTest";
-import { ComputeEntityTest } from "./ComputeEntityTest";
-import { GameOfLifeTest } from "./GameOfLifeTest";
-import { ComputeMaterialTest } from "./ComputeMaterialTest";
-import { GameOfLifeMultiMaterialPass } from "./GameOfLifeMultiMaterialPass";
+import { ModelLoadTest } from "../../voxgpu/sample/ModelLoadTest";
+import { DrawInstanceTest } from "../../voxgpu/sample/DrawInstanceTest";
+import { ComputeEntityTest } from "../../voxgpu/sample/ComputeEntityTest";
+import { GameOfLifeTest } from "../../voxgpu/sample/GameOfLifeTest";
+import { ComputeMaterialTest } from "../../voxgpu/sample/ComputeMaterialTest";
+import { GameOfLifeMultiMaterialPass } from "../../voxgpu/sample/GameOfLifeMultiMaterialPass";
 
-import { GameOfLifePretty } from "./GameOfLifePretty";
-import { GameOfLifeSphere } from "./GameOfLifeSphere";
-import { GameOfLifeSpherePBR } from "./GameOfLifeSpherePBR";
-import { GameOfLife3DPBR } from "./GameOfLife3DPBR";
-import { MultiGPUPassTest } from "./MultiGPUPassTest";
-import { RTTFixScreenTest } from "./RTTFixScreenTest";
-import { RTTTest } from "./RTTTest";
+import { GameOfLifePretty } from "../../voxgpu/sample/GameOfLifePretty";
+import { GameOfLifeSphere } from "../../voxgpu/sample/GameOfLifeSphere";
+import { GameOfLifeSpherePBR } from "../../voxgpu/sample/GameOfLifeSpherePBR";
+import { GameOfLife3DPBR } from "../../voxgpu/sample/GameOfLife3DPBR";
+import { MultiGPUPassTest } from "../../voxgpu/sample/MultiGPUPassTest";
+import { RTTFixScreenTest } from "../../voxgpu/sample/RTTFixScreenTest";
+import { RTTTest } from "../../voxgpu/sample/RTTTest";
 
-import { AddEntityIntoMultiRPasses } from "./AddEntityIntoMultiRPasses";
-import { PassNodeGraphTest } from "./PassNodeGraphTest";
-import { ColorAttachmentReplace } from "./ColorAttachmentReplace";
-import { PingpongBlur } from "./PingpongBlur";
-import { FloatRTT } from "./FloatRTT";
-import { MRT } from "./MRT";
-import { DepthBlur } from "./DepthBlur";
+import { AddEntityIntoMultiRPasses } from "../../voxgpu/sample/AddEntityIntoMultiRPasses";
+import { PassNodeGraphTest } from "../../voxgpu/sample/PassNodeGraphTest";
+import { ColorAttachmentReplace } from "../../voxgpu/sample/ColorAttachmentReplace";
+import { PingpongBlur } from "../../voxgpu/sample/PingpongBlur";
+import { FloatRTT } from "../../voxgpu/sample/FloatRTT";
+import { MRT } from "../../voxgpu/sample/MRT";
+import { DepthBlur } from "../../voxgpu/sample/DepthBlur";
 
-import { LineEntityTest } from "./LineEntityTest";
-import { LineObjectTest } from "./LineObjectTest";
-import { WireframeEntityTest } from "./WireframeEntityTest";
-import { EntityCloneTest } from "./EntityCloneTest";
-import { ModelEntityTest } from "./ModelEntityTest";
+import { LineEntityTest } from "../../voxgpu/sample/LineEntityTest";
+import { LineObjectTest } from "../../voxgpu/sample/LineObjectTest";
+import { WireframeEntityTest } from "../../voxgpu/sample/WireframeEntityTest";
+import { EntityCloneTest } from "../../voxgpu/sample/EntityCloneTest";
+import { ModelEntityTest } from "../../voxgpu/sample/ModelEntityTest";
 
-import { DataDrivenTest } from "./DataDrivenTest";
-import { DataTextureTest } from "./DataTextureTest";
-import { FloatTextureTest } from "./FloatTextureTest";
-import { Set32BitsTexMipmapData } from "./Set32BitsTexMipmapData";
+import { DataDrivenTest } from "../../voxgpu/sample/DataDrivenTest";
+import { DataTextureTest } from "../../voxgpu/sample/DataTextureTest";
+import { FloatTextureTest } from "../../voxgpu/sample/FloatTextureTest";
+import { Set32BitsTexMipmapData } from "../../voxgpu/sample/Set32BitsTexMipmapData";
 
+
+import {createDiv} from './utils/util';
+import {UnitsTestMana} from './manage/manager';
+import { UISystem } from "./ui/UISystem";
 
 
 const demoNames = [
@@ -127,77 +131,9 @@ function mainFunc(demoIns: any): void {
 	window.requestAnimationFrame(mainLoop);
 }
 
-function getCookieByName(cname: string) {
-	let ckInfo = document.cookie + ""
-	let index0 = ckInfo.indexOf(cname + "=");
-	if (index0 >= 0) {
-		let index1 = ckInfo.indexOf(";", index0 + 1)
-		if (index1 < 0) {
-			index1 = ckInfo.length
-		}
-		let kvalue = ckInfo.slice(index0, index1);
-		kvalue = kvalue.split("=")[1]
-		return kvalue;
-	}
-	return "";
-}
-function setCookieByName(cname: string, value: string) {
-	let pvalue = cname + "=" + value + ";";
-	console.log('setCookieByName(), pvalue: ', pvalue);
-	document.cookie = pvalue;
-}
-class UnitsTestMana {
-	private mKeyName = 'unit_test-index';
-	private mUnitIndex = -1;
-	constructor(){}
-	downIndex(): void {
-		this.mUnitIndex--;
-		if(this.mUnitIndex < 0) {
-			this.mUnitIndex += demoNames.length;
-		}
-		this.setIndex();
-	}
-	upIndex(): void {
-		this.mUnitIndex++;
-		if(this.mUnitIndex >= demoNames.length) {
-			this.mUnitIndex -= demoNames.length;
-		}
-		this.setIndex();
-	}
-	getIndex(): number {
-		if(this.mUnitIndex >= 0) {
-			return this.mUnitIndex;
-		}
-		let sv = getCookieByName(this.mKeyName);
-		let index = 0;
-		if(sv.length > 0) {
-			index = parseInt(sv);
-		}
-		this.mUnitIndex = index;
-		return this.mUnitIndex;
-	}
-	setIndex(): void {
-		setCookieByName(this.mKeyName, this.mUnitIndex + '');
-	}
-}
-function createDiv(px: number, py: number, pw: number, ph: number): HTMLDivElement {
-	let div: HTMLDivElement = document.createElement("div");
-	let style = div.style;
-	style.width = pw + "px";
-	style.height = ph + "px";
-	document.body.appendChild(div);
-	style.display = "bolck";
-	style.left = px + "px";
-	style.top = py + "px";
-	style.position = "absolute";
-	style.display = "bolck";
-	style.position = "absolute";
-	style.textAlign = 'center';
-	return div;
-}
 export class UnitsTest {
-	private mMana = new UnitsTestMana();
-	private mDiv: HTMLDivElement;
+	private mMana = new UnitsTestMana(demoNames);
+	private mUISys = new UISystem();
 	private initEvent(): void {
 		console.log('initEvent() ....');
 		window.onkeydown = (evt: any): void => {
@@ -224,8 +160,9 @@ export class UnitsTest {
 		let ns = 'SimpleLightTest';
 		ns = demoNames[ index ];
 
-		this.mDiv = createDiv(20, 530, 512 - 20, 50);
-		this.mDiv.innerHTML = ns + "("+ index + "/" + demoNames.length + ")";
+		let param = {name: ns, index, demoNames };
+		this.mUISys.initialize( param );
+
 		switch (ns) {
 			case 'VertColorTriangle':
 				mainFunc(new VertColorTriangle());
