@@ -1,5 +1,5 @@
 export function createDiv(px: number, py: number, pw: number, ph: number): HTMLDivElement {
-	let div: HTMLDivElement = document.createElement("div");
+	let div = document.createElement("div");
 	let style = div.style;
 	style.width = pw + "px";
 	style.height = ph + "px";

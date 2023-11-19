@@ -57,7 +57,7 @@ import { FloatTextureTest } from "../../voxgpu/sample/FloatTextureTest";
 import { Set32BitsTexMipmapData } from "../../voxgpu/sample/Set32BitsTexMipmapData";
 
 
-import {UnitsTestMana} from './manage/manager';
+import { UnitsTestMana } from './manage/manager';
 import { UISystem } from "./ui/UISystem";
 
 
@@ -133,17 +133,50 @@ function mainFunc(demoIns: any): void {
 export class UnitsTest {
 	private mMana = new UnitsTestMana(demoNames);
 	private mUISys = new UISystem();
-	
-	initialize(): void {
-		// this.initEvent();
-		let index = this.mMana.getIndex();
-		console.log("######## index: ", index);
-		let ns = 'SimpleLightTest';
-		ns = demoNames[ index ];
 
-		let param = {name: ns, index, demoNames };
+	initialize(): void {
+		//
+		let href = window.location.href;
+		let k = href.indexOf('?');
+		let demoName = '';
+		if (k > 0) {
+			href = href.slice(k + 1);
+			let hrefs = href.split('&');
+			console.log('hrefs: ', hrefs);
+			if (hrefs && hrefs.length > 0) {
+				for (let i = 0; i < hrefs.length; ++i) {
+					const str = hrefs[i];
+					if(str) {
+						const items = str.split('=');
+						if(items.length == 2) {
+							if(items[0] == 'webgpudemounit') {
+								demoName = items[1].toLocaleLowerCase();
+							}
+						}
+					}
+				}
+			}
+		}
+		console.log('href: ', href);
+		//
+		let index = this.mMana.getIndex();
+		let ns = 'MRT';
+		if(demoName.length > 0) {
+			let ls = new Array(demoNames.length);
+			for(let i = 0; i < ls.length; ++i) {
+				ls[i] = demoNames[i].toLocaleLowerCase();
+			}
+			let i = ls.indexOf(demoName);
+			if(i >= 0) {
+				index = i;
+			}
+		}
+		console.log("######## index: ", index, ", demoName: ", demoName);
+		ns = demoNames[index];
+
+		let param = { name: ns, index, demoNames };
 		this.mUISys.mana = this.mMana;
-		this.mUISys.initialize( param );
+		this.mUISys.initialize(param);
 
 		switch (ns) {
 			case 'VertColorTriangle':
@@ -213,7 +246,7 @@ export class UnitsTest {
 			case 'ScreenPostEffect':
 				mainFunc(new ScreenPostEffect());
 				break;
-			
+
 			case 'ModelLoadTest':
 				mainFunc(new ModelLoadTest());
 				break;
@@ -232,7 +265,7 @@ export class UnitsTest {
 			case 'GameOfLifeMultiMaterialPass':
 				mainFunc(new GameOfLifeMultiMaterialPass());
 				break;
-			
+
 			case 'GameOfLifePretty':
 				mainFunc(new GameOfLifePretty());
 				break;
@@ -275,10 +308,10 @@ export class UnitsTest {
 			case 'DepthBlur':
 				mainFunc(new DepthBlur());
 				break;
-				
+
 			case 'LineEntityTest':
 				mainFunc(new LineEntityTest());
-				break;			
+				break;
 			case 'LineObjectTest':
 				mainFunc(new LineObjectTest());
 				break;
@@ -291,7 +324,7 @@ export class UnitsTest {
 			case 'ModelEntityTest':
 				mainFunc(new ModelEntityTest());
 				break;
-			
+
 			case 'DataDrivenTest':
 				mainFunc(new DataDrivenTest());
 				break;

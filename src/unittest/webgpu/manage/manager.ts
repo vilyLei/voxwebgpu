@@ -38,6 +38,10 @@ export class UnitsTestMana {
 		}
 		this.setIndex();
 	}
+	gotoIndex(i: number): void {
+		this.mUnitIndex = i;
+		this.setIndex();
+	}
 	getIndex(): number {
 		if(this.mUnitIndex >= 0) {
 			return this.mUnitIndex;

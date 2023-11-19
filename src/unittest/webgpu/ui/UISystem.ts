@@ -1,12 +1,16 @@
 import { createDiv } from "../utils/util";
-type DemoParam = { name: string, index: number, demoNames: string[] };
+
 import { UnitsTestMana } from '../manage/manager';
 import { ButtonDivItem } from "./ButtonDivItem";
+import { DemoTagGroup } from "./DemoTagGroup";
+import { DemoParam } from "./define";
+
 export class UISystem {
 
 	mana: UnitsTestMana;
 	private mPrevBtn = new ButtonDivItem();
 	private mNextBtn = new ButtonDivItem();
+	private mTagGroup = new DemoTagGroup();
 	constructor() {
 
 	}
@@ -17,10 +21,12 @@ export class UISystem {
 			switch(evt.key) {
 				case 'ArrowLeft':
 				case 'ArrowUp':
+				case 'PageUp':
 					this.toPrevDemo();
 					break;
 				case 'ArrowDown':
 				case 'ArrowRight':
+				case 'PageDown':
 					this.toNextDemo();
 					break;
 				default:
@@ -39,7 +45,10 @@ export class UISystem {
 	}
 	initialize(param: DemoParam): void {
 		this.initDemoNameBar(param);
-		this.initRightLabeArea(param);
+		let div = this.initTagGroupDiv(param);
+		this.initEvent();
+		this.mTagGroup.mana = this.mana;
+		this.mTagGroup.initialize(div, param );
 	}
 	private initDemoNameBar(param: DemoParam): void {
 		let div = createDiv(0, 513, 512, 37);
@@ -47,9 +56,6 @@ export class UISystem {
 		div.innerHTML = param.name + "(" + (param.index + 1) + "/" + param.demoNames.length + ")";
 		let style = div.style;
 		style.textAlign = 'center';
-		// style.backgroundColor = '#ffbe22';
-		// style.backgroundColor = '#543094';
-		// style.backgroundColor = '#706dce';
 		style.backgroundColor = '#403b54';
 		style.color = '#eeeeee';
 		style.fontSize = "25px";
@@ -82,11 +88,13 @@ export class UISystem {
 			this.toNextDemo();
 		}
 	}
-	private initRightLabeArea(param: DemoParam): void {
+	private initTagGroupDiv(param: DemoParam): HTMLDivElement {
 		let div = createDiv(513, 0, 512, 512);
 		document.body.appendChild(div);
 		let style = div.style;
 		style.backgroundColor = '#272637';
 		this.initRightInfoNameBar(param);
+		return div;
 	}
 }
+export { DemoParam }

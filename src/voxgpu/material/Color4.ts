@@ -37,10 +37,14 @@ function linearToSRGB(c: number): number {
 }
 function getHexStr(v: number): string {
 	let t = Math.floor(v * 255.0);
-	if (t < 0xf) {
-		return "0" + t.toString(16);
+	if (t > 0) {
+		if (t < 0xf) {
+			return "0" + t.toString(16);
+		} else {
+			return "" + t.toString(16);
+		}
 	} else {
-		return "" + t.toString(16);
+		return '00';
 	}
 }
 
@@ -178,7 +182,26 @@ export default class Color4 implements IColor4 {
 	getRGBUint24(): number {
 		return (Math.round(this.r * 255) << 16) + (Math.round(this.g * 255) << 8) + Math.round(this.b * 255);
 	}
-
+	clamp(): IColor4 {
+		if (this.r > 1.0) this.r = 1.0;
+		else if (this.r < 0.0) this.r = 0.0;
+		if (this.g > 1.0) this.g = 1.0;
+		else if (this.g < 0.0) this.g = 0.0;
+		if (this.b > 1.0) this.b = 1.0;
+		else if (this.b < 0.0) this.b = 0.0;
+		return this;
+	}
+	ceil(): IColor4 {
+		let s = Math.max( Math.max(this.r, this.g), this.b);
+		// console.log("a0 s: ", s);
+		s = 1.0 / (s + 0.000001);
+		// console.log("a1 s: ", s);
+		if(s < 1.0) {
+			s = 1.0;
+		}
+		// console.log("b0 s: ", s);
+		return this.scaleBy(s);
+	}
 	/**
 	 * @param argbUint32 example: 0xFFFF88cc
 	 */
@@ -373,6 +396,10 @@ export default class Color4 implements IColor4 {
 		this.g = Math.random() * density + bias;
 		this.b = Math.random() * density + bias;
 		return this;
+	}
+	rotate(): Color4 {
+		// let arr = [this.g, this.b, this.r];
+		return this.setColor([this.g, this.b, this.r]);
 	}
 	normalizeRandom(density: number = 1.0, bias: number = 0.0): Color4 {
 		this.r = Math.random();

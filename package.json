@@ -8,8 +8,10 @@
   "scripts": {
 
     "build:vox": "vue-cli-service build --target lib --name VoxWebGPU --dest dist ./src/main.ts",
+    "build:unitTest": "vue-cli-service build --target lib --name VoxWebGPU --dest dist ./src/main_units.ts",
+
     "dev:vox": "vue-cli-service serve --type=dev[./src/main.ts]",
-    "dev:unit": "vue-cli-service serve --type=dev[./src/main_units.ts]"
+    "dev:unitTest": "vue-cli-service serve --type=dev[./src/main_units.ts]"
   },
   "dependencies": {
     "@tweenjs/tween.js": "^18.4.2",

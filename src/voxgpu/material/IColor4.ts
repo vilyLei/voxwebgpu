@@ -38,6 +38,8 @@ interface IColor4 {
 	toBlack(brn?: number): IColor4;
 	toWhite(brn?: number): IColor4;
 	gammaCorrect(): IColor4;
+    clamp(): IColor4;
+	ceil(): IColor4;
     /**
      * example: [0],[1],[2],[3] => r,g,b,a
      */
