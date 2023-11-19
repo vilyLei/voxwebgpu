@@ -15,6 +15,7 @@ interface WGCameraParam {
 	viewY?: number;
 	viewWidth?: number;
 	viewHeight?: number;
+	enabled?: boolean;
 }
 interface WGRendererConfig {
 	gpuCanvasCfg?: GPUCanvasConfiguration;

@@ -36,8 +36,10 @@ export class VertColorTriangle {
 	renderer = new WGRenderer();
 	initialize(): void {
 
-		const renderer = this.renderer;
+		console.log('VertColorTriangle::initialize() ...');
 
+		const renderer = this.renderer;
+		renderer.initialize({camera:{enabled: false}});
 		const shdSrc = {
 			vert: { code: vertWGSL },
 			frag: { code: fragWGSL }

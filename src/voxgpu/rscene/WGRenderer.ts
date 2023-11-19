@@ -25,7 +25,7 @@ class WGRenderer implements IRenderer {
 	private mEntityMana = new WGEntityNodeMana();
 	private mConfig: WGRendererConfig;
 
-	readonly camera = new Camera();
+	readonly camera: Camera;// = new Camera();
 	enabled = true;
 	stage: IRenderStage3D;
 
@@ -35,12 +35,16 @@ class WGRenderer implements IRenderer {
 		}
 	}
 	private initCamera(width: number, height: number): void {
-
 		let p = this.mConfig.camera;
 		if (!p) p = {};
-		p.viewWidth = width;
-		p.viewHeight = height;
-		this.camera.initialize(p);
+		if(!(p.enabled === false)) {
+			let selfT: any = this;
+			selfT.camera = new Camera();
+			
+			p.viewWidth = width;
+			p.viewHeight = height;
+			this.camera.initialize(p);
+		}
 
 	}
 	get uid(): number {

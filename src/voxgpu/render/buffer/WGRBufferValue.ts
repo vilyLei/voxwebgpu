@@ -7,6 +7,7 @@ class WGRBufferValue extends WGRBufferView {
 
 	name?: string;
 	constructor(param: WGRBufferValueParam) {
+		console.log("WGRBufferValue::constructor() ...");
 		super();
 		applyParamToBufferData(this, param);
 		this.upate();
@@ -77,7 +78,7 @@ class WGRBufferValue extends WGRBufferView {
 		}
 	}
 }
-const __$ubv = new WGRBufferValue({data: new Float32Array(4)});
+let __$ubv:WGRBufferValue;// = new WGRBufferValue({data: new Float32Array(4)});
 function getVisibility(str: string, value: number): number {
 	switch(str) {
 		case 'vert':
@@ -104,6 +105,9 @@ function applyLayout(layout: WGRBufferLayout, vi: WGRBufferVisibility, type: str
 	let visi = layout.visibility !== undefined ? layout.visibility : 'vert_frag';
 	let vs = visi.split('_');
 	let v = 0;
+	if(!__$ubv) {
+		__$ubv = new WGRBufferValue({data: new Float32Array(4)});
+	}
 	let bv = __$ubv.visibility;
 	for(let i = 0; i < vs.length; ++i) {
 		if(vs[i] === 'all') {			
@@ -141,6 +145,9 @@ function bufferDataFilter(d: WGRBufferData): WGRBufferData {
 
 	if(!d) {
 		return d;
+	}
+	if(!__$ubv) {
+		__$ubv = new WGRBufferValue({data: new Float32Array(4)});
 	}
 	const v = __$ubv;
 	let rd = d;
