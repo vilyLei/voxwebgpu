@@ -39,7 +39,9 @@ class WGRenderer implements IRenderer {
 		if (!p) p = {};
 		if(!(p.enabled === false)) {
 			let selfT: any = this;
-			selfT.camera = new Camera();
+			if(!this.camera) {
+				selfT.camera = new Camera();
+			}
 			
 			p.viewWidth = width;
 			p.viewHeight = height;

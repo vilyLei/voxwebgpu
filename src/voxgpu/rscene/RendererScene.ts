@@ -40,9 +40,14 @@ class RendererScene implements IRendererScene {
 	initialize(config?: WGRendererConfig): void {
 		if (this.mInit) {
 			this.mInit = false;
-
 			const renderer = new WGRenderer();
 			config = checkConfig(config);
+			
+			if(!config || !config.camera || !(config.camera.enabled === false)) {
+				if(!renderer.camera) {
+					(renderer as any).camera = new Camera();
+				}
+			}
 
 			this.mStage = new Stage3D(this.uid, document);
 			this.racontext = new RAdapterContext();
