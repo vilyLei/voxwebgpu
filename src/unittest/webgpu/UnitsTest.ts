@@ -57,7 +57,6 @@ import { FloatTextureTest } from "../../voxgpu/sample/FloatTextureTest";
 import { Set32BitsTexMipmapData } from "../../voxgpu/sample/Set32BitsTexMipmapData";
 
 
-import {createDiv} from './utils/util';
 import {UnitsTestMana} from './manage/manager';
 import { UISystem } from "./ui/UISystem";
 
@@ -134,33 +133,16 @@ function mainFunc(demoIns: any): void {
 export class UnitsTest {
 	private mMana = new UnitsTestMana(demoNames);
 	private mUISys = new UISystem();
-	private initEvent(): void {
-		console.log('initEvent() ....');
-		window.onkeydown = (evt: any): void => {
-			console.log('evt: ', evt);
-			switch(evt.key) {
-				case 'ArrowUp':
-					this.mMana.upIndex();
-					window.location.reload();
-					break;
-				case 'ArrowDown':
-					this.mMana.downIndex();
-					window.location.reload();
-					break;
-				default:
-					break;
-
-			}
-		}
-	}
+	
 	initialize(): void {
-		this.initEvent();
+		// this.initEvent();
 		let index = this.mMana.getIndex();
 		console.log("######## index: ", index);
 		let ns = 'SimpleLightTest';
 		ns = demoNames[ index ];
 
 		let param = {name: ns, index, demoNames };
+		this.mUISys.mana = this.mMana;
 		this.mUISys.initialize( param );
 
 		switch (ns) {

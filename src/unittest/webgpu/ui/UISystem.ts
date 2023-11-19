@@ -1,18 +1,50 @@
 import { createDiv } from "../utils/util";
-type DemoParam = {name: string, index: number, demoNames: string[]};
+type DemoParam = { name: string, index: number, demoNames: string[] };
+import { UnitsTestMana } from '../manage/manager';
+import { ButtonDivItem } from "./ButtonDivItem";
 export class UISystem {
 
-    constructor(){
+	mana: UnitsTestMana;
+	private mPrevBtn = new ButtonDivItem();
+	private mNextBtn = new ButtonDivItem();
+	constructor() {
 
-    }
-    initialize(param: DemoParam): void {
-        this.initDemoNameBar(param);
-        this.initRightLabeArea(param);
-    }
-    private initDemoNameBar(param: DemoParam): void {
-        let div = createDiv(0, 513, 512, 37);
-        document.body.appendChild(div);
-		div.innerHTML = param.name + "("+ param.index + "/" + param.demoNames.length + ")";
+	}
+	private initEvent(): void {
+		console.log('initEvent() ....');
+		window.onkeydown = (evt: any): void => {
+			console.log('evt: ', evt);
+			switch(evt.key) {
+				case 'ArrowLeft':
+				case 'ArrowUp':
+					this.toPrevDemo();
+					break;
+				case 'ArrowDown':
+				case 'ArrowRight':
+					this.toNextDemo();
+					break;
+				default:
+					break;
+
+			}
+		}
+	}
+	private toPrevDemo(): void {
+		this.mana.downIndex();
+		window.location.reload();
+	}
+	private toNextDemo(): void {
+		this.mana.upIndex();
+		window.location.reload();
+	}
+	initialize(param: DemoParam): void {
+		this.initDemoNameBar(param);
+		this.initRightLabeArea(param);
+	}
+	private initDemoNameBar(param: DemoParam): void {
+		let div = createDiv(0, 513, 512, 37);
+		document.body.appendChild(div);
+		div.innerHTML = param.name + "(" + (param.index + 1) + "/" + param.demoNames.length + ")";
 		let style = div.style;
 		style.textAlign = 'center';
 		// style.backgroundColor = '#ffbe22';
@@ -21,38 +53,40 @@ export class UISystem {
 		style.backgroundColor = '#403b54';
 		style.color = '#eeeeee';
 		style.fontSize = "25px";
-    }
-    private initRightInfoNameBar(param: DemoParam): void {
-        let div = createDiv(513, 513, 255, 37);
-        document.body.appendChild(div);
-		div.innerHTML = "Prev";
-		let style = div.style;
-		style.textAlign = 'center';
-		style.backgroundColor = '#0b4741';
-		style.color = '#eeeeee';
-		style.fontSize = "25px";
+	}
+	private initRightInfoNameBar(param: DemoParam): void {
 
-        div = createDiv(513 + 257, 513, 255, 37);
-        document.body.appendChild(div);
-		div.innerHTML = "Next";
-		 style = div.style;
-		style.textAlign = 'center';
-		style.backgroundColor = '#0b4741';
-		style.color = '#eeeeee';
-		style.fontSize = "25px";
-    }
-    private initRightLabeArea(param: DemoParam): void {
-        let div = createDiv(513, 0, 512, 512);
-        document.body.appendChild(div);
-		// div.innerHTML = param.name + "("+ param.index + "/" + param.demoNames.length + ")";
+		let btn = this.mPrevBtn;
+		let div = createDiv(513, 513, 255, 37);
+		document.body.appendChild(div);
+		btn.setDeselectColors([0x008CBA, 0x0094D9, 0x00B4F4]);
+		btn.initialize(div, 'Prev Demo', 'prevDemo');
+		
+		btn.setTextSize("25px");
+		btn.setTextColor(0xffffff);
+		btn.setTextAlign('center');
+		btn.onmouseup = (): void => {
+			this.toPrevDemo();
+		}
+
+		btn = this.mNextBtn;
+		div = createDiv(513 + 257, 513, 255, 37);
+		document.body.appendChild(div);
+		btn.setDeselectColors([0x008CBA, 0x0094D9, 0x00B4F4]);
+		btn.initialize(div, 'Next Demo', 'nextDemo');
+
+		btn.setTextSize("25px");
+		btn.setTextColor(0xffffff);
+		btn.setTextAlign('center');
+		btn.onmouseup = (): void => {
+			this.toNextDemo();
+		}
+	}
+	private initRightLabeArea(param: DemoParam): void {
+		let div = createDiv(513, 0, 512, 512);
+		document.body.appendChild(div);
 		let style = div.style;
-		// style.textAlign = 'center';
-		// style.backgroundColor = '#ffbe22';
-		// style.backgroundColor = '#543094';
-		// style.backgroundColor = '#272637';
 		style.backgroundColor = '#272637';
-		// style.color = '#eeeeee';
-		// style.fontSize = "25px";
-        this.initRightInfoNameBar(param);
-    }
+		this.initRightInfoNameBar(param);
+	}
 }
