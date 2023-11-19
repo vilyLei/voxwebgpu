@@ -49,6 +49,9 @@ export class UISystem {
 		this.initEvent();
 		this.mTagGroup.mana = this.mana;
 		this.mTagGroup.initialize(div, param );
+
+		// document.body.style.backgroundImage = `linear-gradient(to right bottom, #159957, #155799)`;
+		document.body.style.background = `#333333`;
 	}
 	private initDemoNameBar(param: DemoParam): void {
 		let div = createDiv(0, 513, 512, 37);

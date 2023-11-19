@@ -70,7 +70,7 @@ export class DepthBlur {
 		let multisampleEnabled = true;
 		let depthTestEnabled = false;
 		let rpassparam = { multisampleEnabled, depthTestEnabled };
-		this.mRscene.initialize({ rpassparam });
+		this.mRscene.initialize({ rpassparam, camera: { eye: [260, 260, 260] } });
 
 		this.initEvent();
 		this.initScene();
@@ -81,7 +81,7 @@ export class DepthBlur {
 		rc.addEventListener(MouseEvent.MOUSE_DOWN, this.mouseDown);
 		new MouseInteraction().initialize(rc, 0, false).setAutoRunning(true);
 	}
-	private mouseDown = (evt: MouseEvent): void => {}
+	private mouseDown = (evt: MouseEvent): void => { }
 
 	private createMaterial(shadinguuid: string, textures: WGTextureDataDescriptor[], type: number): WGMaterial {
 		let shaderSrc = {
@@ -148,7 +148,8 @@ export class DepthBlur {
 		};
 		const attachment1 = {
 			texture: vposRTTTex,
-			clearValue: [800, 800, 800, 1]
+			clearValue: [0.2, 0.25, 0.2, 1.0]
+			// clearValue: [800, 800, 800, 1]
 		};
 
 		const colorAttachments = [attachment0, attachment1];
@@ -160,8 +161,8 @@ export class DepthBlur {
 			frag: { code: entityFragWGSL, uuid: "fragMRT" }
 		};
 
-		let torus = new TorusEntity({shaderSrc, radius: 150});
-		torus.setAlbedo([0.7,0.02,0.1]);
+		let torus = new TorusEntity({ shaderSrc, radius: 150 });
+		torus.setAlbedo([0.7, 0.02, 0.1]);
 		rPass.addEntity(torus);
 
 		shaderSrc = {
@@ -187,7 +188,7 @@ export class DepthBlur {
 	}
 	private initScene(): void {
 		this.applyBlurPass([0.0, 0.0, 0.03, 1.0], [-1, -1, 2, 2]);
-		this.applyMRTPass( [-1, -1, 2, 2] );
+		this.applyMRTPass([-1, -1, 2, 2]);
 	}
 
 	run(): void {

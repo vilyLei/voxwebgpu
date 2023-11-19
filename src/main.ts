@@ -52,7 +52,7 @@
 
 // import { FloatRTT as Demo } from "./voxgpu/sample/FloatRTT";
 // import { MRT as Demo } from "./voxgpu/sample/MRT";
-// import { DepthBlur as Demo } from "./voxgpu/sample/DepthBlur";
+import { DepthBlur as Demo } from "./voxgpu/sample/DepthBlur";
 
 // import { LineEntityTest as Demo } from "./voxgpu/sample/LineEntityTest";
 // import { LineObjectTest as Demo } from "./voxgpu/sample/LineObjectTest";
@@ -64,7 +64,7 @@
 
 // import { DataTextureTest as Demo } from "./voxgpu/sample/DataTextureTest";
 // import { FloatTextureTest as Demo } from "./voxgpu/sample/FloatTextureTest";
-import { Set32BitsTexMipmapData as Demo } from "./voxgpu/sample/Set32BitsTexMipmapData";
+// import { Set32BitsTexMipmapData as Demo } from "./voxgpu/sample/Set32BitsTexMipmapData";
 
 //////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////           unit test               ////////////////////////////
