@@ -25,7 +25,7 @@ class RendererScene implements IRendererScene {
 	enabled = true;
 	private mRenderer: WGRenderer;
 	racontext: RAdapterContext;
-	camera: Camera;
+	camera:Camera;// = new Camera;
 
 	constructor(uidBase = 0) {
 		this.mUid = uidBase + RendererScene.sUid++;
@@ -42,12 +42,6 @@ class RendererScene implements IRendererScene {
 			this.mInit = false;
 			const renderer = new WGRenderer();
 			config = checkConfig(config);
-			
-			if(!config || !config.camera || !(config.camera.enabled === false)) {
-				if(!renderer.camera) {
-					(renderer as any).camera = new Camera();
-				}
-			}
 
 			this.mStage = new Stage3D(this.uid, document);
 			this.racontext = new RAdapterContext();

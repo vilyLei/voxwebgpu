@@ -1,6 +1,6 @@
 
-let win = window as any;
 /*
+let win = window as any;
 win['GPUBufferUsage'] = {
     MAP_READ: 0x0001,
     MAP_WRITE: 0x0002,

@@ -3,9 +3,6 @@ import { WGGeometry } from "../geometry/WGGeometry";
 import { FixScreenEntity } from "../entity/FixScreenEntity";
 import { WGRenderer } from "../rscene/WGRenderer";
 
-// import vertWGSL from "./shaders/colorTriangle.vert.wgsl";
-// import fragWGSL from "./shaders/colorTriangle.frag.wgsl";
-
 const vertWGSL =`
 struct VSOut {
     @builtin(position) Position: vec4f,

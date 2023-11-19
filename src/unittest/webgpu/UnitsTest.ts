@@ -135,7 +135,7 @@ export class UnitsTest {
 	private mUISys = new UISystem();
 
 	initialize(): void {
-		//
+		
 		let href = window.location.href;
 		let k = href.indexOf('?');
 		let demoName = '';
@@ -158,7 +158,7 @@ export class UnitsTest {
 			}
 		}
 		console.log('href: ', href);
-		//
+		
 		let index = this.mMana.getIndex();
 		let ns = 'MRT';
 		if(demoName.length > 0) {
