@@ -2,7 +2,7 @@
 ////////////////////////////           WebGPU               /////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////
 
-import { VertColorTriangle as Demo } from "./voxgpu/sample/VertColorTriangle";
+// import { VertColorTriangle as Demo } from "./voxgpu/sample/VertColorTriangle";
 // import { VertColorCube as Demo } from "./voxgpu/sample/VertColorCube";
 // import { VertEntityTest as Demo } from "./voxgpu/sample/VertEntityTest";
 
@@ -65,6 +65,8 @@ import { VertColorTriangle as Demo } from "./voxgpu/sample/VertColorTriangle";
 // import { DataTextureTest as Demo } from "./voxgpu/sample/DataTextureTest";
 // import { FloatTextureTest as Demo } from "./voxgpu/sample/FloatTextureTest";
 // import { Set32BitsTexMipmapData as Demo } from "./voxgpu/sample/Set32BitsTexMipmapData";
+
+import { BaseMaterialTest as Demo } from "./voxgpu/sample/BaseMaterialTest";
 
 //////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////           unit test               ////////////////////////////
