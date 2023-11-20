@@ -151,6 +151,11 @@ class WGGeometry {
 					break;
 				}
 			}
+		}else {
+			flag = false;
+		}
+		if(this.indexBuffer && !this.indexBuffer.data) {
+			return false;
 		}
 		return flag;
 	}

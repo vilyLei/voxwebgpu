@@ -66,7 +66,8 @@
 // import { FloatTextureTest as Demo } from "./voxgpu/sample/FloatTextureTest";
 // import { Set32BitsTexMipmapData as Demo } from "./voxgpu/sample/Set32BitsTexMipmapData";
 
-import { BaseMaterialTest as Demo } from "./voxgpu/sample/BaseMaterialTest";
+// import { BaseMaterialTest as Demo } from "./voxgpu/sample/BaseMaterialTest";
+import { BasePbrMaterialTest as Demo } from "./voxgpu/sample/BasePbrMaterialTest";
 
 //////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////           unit test               ////////////////////////////

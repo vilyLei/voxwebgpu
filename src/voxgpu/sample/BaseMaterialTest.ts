@@ -110,9 +110,7 @@ export class BaseMaterialTest {
 		return { lights, lightColors };
 	}
 	private initScene(): void {
-		// this.applyRGBA8Tex();
 		this.initEntities();
-		// this.initBrnTexEnvMap();
 	}
 
 	private initEvent(): void {

@@ -36,7 +36,14 @@ class WGMaterial implements IWGMaterial {
 	 * material uniforms append to pipeline, or not
 	 */
 	uniformAppend?: boolean;
-	uniformValues: WGRBufferData[];
+
+	protected mUniformValues: WGRBufferData[];
+	set uniformValues(values: WGRBufferData[]) {
+		this.mUniformValues = values;
+	}
+	get uniformValues(): WGRBufferData[] {
+		return this.mUniformValues;
+	}
 
 	instanceCount = 1;
 
@@ -151,4 +158,4 @@ class WGMaterial implements IWGMaterial {
 		}
 	}
 }
-export { WGRShderSrcType, checkMaterialRPasses, WGTextureDataDescriptor, WGMaterial };
+export { WGMaterialDescripter, WGRShderSrcType, checkMaterialRPasses, WGTextureDataDescriptor, WGMaterial };

@@ -158,16 +158,11 @@ class Entity3D implements IRenderableEntity {
 		}
 		let g = this.geometry;
 		if (!g || !g.isREnabled()) {
-			console.log("aaa g.isREnabled(), !g: ", !g,', ', this.geometry);
+			// console.log("aaa g.isREnabled(), !g: ", !g,', ', this.geometry);
 			return false;
 		}
 		return true;
 	}
-	// updateBounds(): void {
-	// 	if (this.mGBs) {
-	// 	}
-	// }
-
 	updateBounds(): void {
 		const trans = this.transform;
 		const lb = this.mLBs;

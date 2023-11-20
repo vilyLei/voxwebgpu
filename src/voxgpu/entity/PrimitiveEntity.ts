@@ -31,20 +31,20 @@ class PrimitiveEntity extends Entity3D {
 		this.mDescParam = param;
 	}
 	clone(param?: PrimitiveEntityParam): PrimitiveEntity {
-		if(param) {
-			if(!param.geometry) param.geometry = this.geometry;
-		}else {
+		if (param) {
+			if (!param.geometry) param.geometry = this.geometry;
+		} else {
 			param = this.mDescParam;
 			param.materials = this.materials;
 			param.geometry = this.geometry;
 		}
-		let p = new PrimitiveEntity( param  );
+		let p = new PrimitiveEntity(param);
 		p.arm = this.arm;
 		p.color = this.color;
 		return p;
 	}
 	setColor(c: ColorDataType): PrimitiveEntity {
-		return this.setAlbedo( c );
+		return this.setAlbedo(c);
 	}
 	set color(c: ColorDataType) {
 		this.setColor(c);
@@ -66,7 +66,7 @@ class PrimitiveEntity extends Entity3D {
 		return this;
 	}
 	set albedo(c: ColorDataType) {
-		this.setAlbedo( c );
+		this.setAlbedo(c);
 	}
 	get albedo(): ColorDataType {
 		return this.mColor;
@@ -108,6 +108,19 @@ class PrimitiveEntity extends Entity3D {
 		}
 	}
 	protected createMaterial(param: PrimitiveEntityParam): void {
+
+		let b = param.depthWriteEnabled;
+		b = b === false ? false : true;
+		let f = param.faceCullMode;
+		f = f ? f : "back";
+		let bl = param.blendModes;
+		bl = bl ? bl : ["solid"];
+
+		let pipelineDefParam = {
+			depthWriteEnabled: b,
+			faceCullMode: f,
+			blendModes: bl
+		};
 		if (!param) param = {};
 		if (param.materials) {
 			this.materials = param.materials;
@@ -118,7 +131,7 @@ class PrimitiveEntity extends Entity3D {
 				this.albedoV = getUniformValueFromParam(
 					"albedo",
 					param,
-					new WGRUniformValue({ data: new Float32Array([1.0,1.0,1.0, 1]), shdVarName: "albedo" })
+					new WGRUniformValue({ data: new Float32Array([1.0, 1.0, 1.0, 1]), shdVarName: "albedo" })
 				);
 				this.armV = getUniformValueFromParam(
 					"arm",
@@ -135,18 +148,7 @@ class PrimitiveEntity extends Entity3D {
 							uuid: texTotal > 0 ? "primitiveTexFragShdCode" : "primitiveFragShdCode"
 						}
 				  };
-			let b = param.depthWriteEnabled;
-			b = b === false ? false : true;
-			let f = param.faceCullMode;
-			f = f ? f : "back";
-			let bl = param.blendModes;
-			bl = bl ? bl : ["solid"];
 
-			let pipelineDefParam = {
-				depthWriteEnabled: b,
-				faceCullMode: f,
-				blendModes: bl
-			};
 			const material = new WGMaterial({
 				shadinguuid: param.shadinguuid !== undefined ? param.shadinguuid : "PrimitiveEntity-material-tex" + texTotal,
 				shaderSrc: shdSrc,
@@ -186,14 +188,14 @@ class PrimitiveEntity extends Entity3D {
 		// }
 		// console.log("param: ", param);
 		// console.log("param.albedo: ", param.albedo);
-		if(param.albedo) {
+		if (param.albedo) {
 			this.albedo = param.albedo;
 		}
-		if(param.arm) {
+		if (param.arm) {
 			this.arm = param.arm;
 		}
 		// checkMaterialRPasses(this.materials, param.rpasses);
-		checkEntityMaterialsInfo( this.materials, param );
+		checkEntityMaterialsInfo(this.materials, param);
 	}
 	destroy(): void {
 		this.albedoV = null;
