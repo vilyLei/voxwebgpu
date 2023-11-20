@@ -324,7 +324,8 @@ fn calcColor4(worldPos: vec4<f32>, uv: vec2<f32>, worldNormal: vec3<f32>, worldC
 	let specularFactor = vec3<f32>(1.0);
     specularColor *= specularFactor;
 
-	let mipLvFactor = 0.07;
+	// let mipLvFactor = 0.07;
+	let mipLvFactor = param.z;
 	var mipLv = floor(100.0 * fract(mipLvFactor));
 	mipLv -= glossinessSquare * mipLv;
 	mipLv = max(mipLv + floor(mipLvFactor), 0.0);
@@ -354,8 +355,6 @@ fn calcColor4(worldPos: vec4<f32>, uv: vec2<f32>, worldNormal: vec3<f32>, worldC
     rL.specularPower = specularPower;
     rL.frontIntensity = frontIntensity;
     rL.sideIntensity = sideIntensity;
-
-	// rL.specularPower = 10.0;
 
 	let ptr_rL = &rL;
 
@@ -398,7 +397,6 @@ fn calcColor4(worldPos: vec4<f32>, uv: vec2<f32>, worldNormal: vec3<f32>, worldC
 
     // gamma correct
     color = linearToGammaVec3(color);
-
 
 	color4 = vec4<f32>(V.xyz * 0.1 + albedo3.xyz * N * 0.8 + 0.2 * specularColor, 1.0);
 	color4 = vec4<f32>(lightColors[0].xyz * factor, 1.0);

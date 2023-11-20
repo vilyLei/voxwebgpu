@@ -6,6 +6,7 @@ import { WGMaterialDescripter, WGMaterial } from "./WGMaterial";
 
 import basePBRVertWGSL from "./shader/wgsl/pbr.vert.wgsl";
 import basePBRFragWGSL from "./shader/wgsl/pbr.frag.wgsl";
+import MathConst from "../math/MathConst";
 
 const basePBRShaderSrc = {
 	vert: { code: basePBRVertWGSL, uuid: "vertBasePBRShdCode" },
@@ -111,6 +112,22 @@ class PBRParamVec4Data extends BasePBRVec4Data {
 	get scatterIntensity(): number {
 		return this.property.w;
 	}
+	/**
+     * (lod mipmap level) = base + (maxMipLevel - k * maxMipLevel)
+     * @param maxMipLevel envmap texture lod max mipmap level, the vaue is a int number
+     * @param base envmap texture lod max mipmap level base, value range: -7.0 -> 12.0
+     */
+    setEnvMapLodMipMapLevel(maxMipLevel: number, base: number = 0.0): void {
+        maxMipLevel = Math.min(Math.max(maxMipLevel, 0.0), 14.0);
+        base = Math.min(Math.max(base, -7.0), 12.0);
+        this.property.z = Math.round(maxMipLevel) * 0.01 + base;
+    }
+    setEnvMapLodMipMapLevelWithSize(envMapWidth: number, envMapHeight: number, base: number = 0.0): void {
+        // this.mEnvMapWidth = envMapWidth;
+        // this.mEnvMapHeight = envMapHeight;
+        base = Math.min(Math.max(base, -7.0), 12.0);
+        this.property.z = MathConst.GetMaxMipMapLevel(envMapWidth, envMapHeight) * 0.01 + base;
+    }
 }
 //scatterIntensity
 /*
@@ -158,7 +175,7 @@ class BasePBRProperty {
 	fresnel = new BasePBRVec4Data(new Float32Array([0, 0, 0, 0]), "fresnel");
 	toneParam = new ToneVec4Data(new Float32Array([1.0, 0.1, 1, 1]), "toneParam");
 	uvParam = new BasePBRVec4Data(new Float32Array([1, 1, 0, 0]), "uvParam");
-	param = new PBRParamVec4Data(new Float32Array([0.0, 0.0, 0, 1]), "param");
+	param = new PBRParamVec4Data(new Float32Array([0, 0, 0.07, 1]), "param");
 	lights = new BaseLightData(null, "lights");
 	lightColors = new BaseLightData(null, "lightColors");
 
