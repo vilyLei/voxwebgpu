@@ -1,41 +1,17 @@
 import MouseEvent from "../event/MouseEvent";
 import { RendererScene } from "../rscene/RendererScene";
 import { MouseInteraction } from "../ui/MouseInteraction";
-import { FixScreenPlaneEntity } from "../entity/FixScreenPlaneEntity";
-import { HttpFileLoader } from "../asset/loader/HttpFileLoader";
-
-import vertWGSL from "../material/shader/wgsl/fixScreenPlane.vert.wgsl";
-import brn4BytesTexWGSL from "./shaders/fixScreenPlaneBrn4BytesTex.frag.wgsl";
-
-import vertCubeWGSL from "./shaders/vertEntityOnlyVtx.vert.wgsl";
-import fragCubeWGSL from "./shaders/cubemap.frag.wgsl";
-import fragCubeBrnWGSL from "./shaders/cubemapBrn.frag.wgsl";
-
-import { WGRShderSrcType, WGMaterial } from "../material/WGMaterial";
-import { GeomDataBuilder } from "../geometry/GeomDataBuilder";
-import { Entity3D } from "../entity/Entity3D";
-import { WGGeometry } from "../geometry/WGGeometry";
 import { WGTextureDataDescriptor } from "../texture/WGTextureWrapper";
-import { SpecularBrnTexture } from "../texture/SpecularBrnTexture";
 import { SpecularEnvBrnTexture } from "../texture/SpecularEnvBrnTexture";
-import { BoxEntity } from "../entity/BoxEntity";
-
-import baseVertWGSL from "../material/shader/wgsl/pbr.vert.wgsl";
-import baseFragWGSL from "../material/shader/wgsl/pbr.frag.wgsl";
 
 import { SphereEntity } from "../entity/SphereEntity";
-import { AxisEntity } from "../entity/AxisEntity";
-import { WGRBufferData } from "../render/buffer/WGRBufferData";
 import { ModelEntity } from "../entity/ModelEntity";
-import { ConeEntity } from "../entity/ConeEntity";
 import { BasePBRMaterial } from "../material/BasePBRMaterial";
-import { CubeEntity } from "../entity/CubeEntity";
 import Vector3 from "../math/Vector3";
 import Color4 from "../material/Color4";
 
 export class BasePbrMaterialTest {
 	private mRscene = new RendererScene();
-	geomData = new GeomDataBuilder();
 
 	initialize(): void {
 		console.log("BasePbrMaterialTest::initialize() ...");
