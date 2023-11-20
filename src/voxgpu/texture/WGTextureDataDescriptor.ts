@@ -1,3 +1,4 @@
+import { GPUSamplerDescriptor } from "../gpu/GPUSamplerDescriptor";
 import { GPUTexture } from "../gpu/GPUTexture";
 import { GPUTextureView } from "../gpu/GPUTextureView";
 
@@ -34,14 +35,15 @@ interface TextureDataDescriptor {
 	rttTexture?: RTTTextureDataDescriptor;
 	dataTexture?: DataTextureDataDescriptor;
 	shdVarName?: string;
-	/**
-	 * Possible values are: "clamp-to-edge", "repeat", "mirror-repeat"
-	 */
-	addressModeU?: string;
-	/**
-	 * Possible values are: "clamp-to-edge", "repeat", "mirror-repeat"
-	 */
-	addressModeV?: string;
+	// /**
+	//  * Possible values are: "clamp-to-edge", "repeat", "mirror-repeat"
+	//  */
+	// addressModeU?: string;
+	// /**
+	//  * Possible values are: "clamp-to-edge", "repeat", "mirror-repeat"
+	//  */
+	// addressModeV?: string;
+	sampler?: GPUSamplerDescriptor;
 	update?(): void;
 }
 interface WGTextureDataDescriptor extends TextureDataDescriptor {
