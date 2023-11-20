@@ -88,6 +88,20 @@ class ToneVec4Data extends BasePBRVec4Data {
 	get tone(): number {
 		return this.property.x;
 	}
+	set frontIntensity(v: number) {
+		this.property.z = v;
+		this.update();
+	}
+	get frontIntensity(): number {
+		return this.property.z;
+	}
+	set sideIntensity(v: number) {
+		this.property.w = v;
+		this.update();
+	}
+	get sideIntensity(): number {
+		return this.property.w;
+	}
 }
 
 /*

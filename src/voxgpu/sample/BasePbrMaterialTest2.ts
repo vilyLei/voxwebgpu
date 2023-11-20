@@ -54,7 +54,9 @@ export class BasePbrMaterialTest2 {
 		property.arms.value = [1, 0.5, 0];
 		property.armsBase.value = [0, 1, 1];
 		property.uvParam.value = [2, 2];
-		property.toneParam.tone = 2.0;
+		let toneParam = property.toneParam
+		toneParam.tone = 1.0;
+		toneParam.sideIntensity = 30;
 
 		
 		material = this.createModelEntity(monkeySrc, "rusted_iron", pos.clone().addBy(new Vector3(-200, 0, 150)));
