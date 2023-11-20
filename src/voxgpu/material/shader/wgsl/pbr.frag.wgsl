@@ -312,9 +312,6 @@ fn calcColor4(worldPos: vec4<f32>, uv: vec2<f32>, worldNormal: vec3<f32>, worldC
 	ao = mix(0.0, max(textureSample(aoTexture, aoSampler, texUV).x, armsBase.x), ao);
 	roughness = mix(0.0, max(textureSample(roughnessTexture, roughnessSampler, texUV).y, armsBase.y), roughness);
 	metallic = mix(0.0, max(textureSample(metallicTexture, metallicSampler, texUV).z, armsBase.z), metallic);
-	// return vec4<f32>(vec3<f32>(metallic), 1.0);
-	// return vec4<f32>(vec3<f32>(roughness), 1.0);
-	// return vec4<f32>(albedo3, 1.0);
 
 
 	let colorGlossiness = clamp(1.0 - roughness, 0.0, 1.0);

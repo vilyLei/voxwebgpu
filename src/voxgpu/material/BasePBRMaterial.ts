@@ -103,7 +103,16 @@ class ToneVec4Data extends BasePBRVec4Data {
 		return this.property.w;
 	}
 }
-
+class PBRParamVec4Data extends BasePBRVec4Data {
+	set scatterIntensity(v: number) {
+		this.property.w = v;
+		this.update();
+	}
+	get scatterIntensity(): number {
+		return this.property.w;
+	}
+}
+//scatterIntensity
 /*
 let uniformValues = [
 	{ data: new Float32Array([0.9, 1.0, 0.1, 1]), shdVarName: "ambient" },
@@ -149,7 +158,7 @@ class BasePBRProperty {
 	fresnel = new BasePBRVec4Data(new Float32Array([0, 0, 0, 0]), "fresnel");
 	toneParam = new ToneVec4Data(new Float32Array([1.0, 0.1, 1, 1]), "toneParam");
 	uvParam = new BasePBRVec4Data(new Float32Array([1, 1, 0, 0]), "uvParam");
-	param = new BasePBRVec4Data(new Float32Array([1, 1, 0, 0]), "param");
+	param = new PBRParamVec4Data(new Float32Array([0.0, 0.0, 0, 1]), "param");
 	lights = new BaseLightData(null, "lights");
 	lightColors = new BaseLightData(null, "lightColors");
 
