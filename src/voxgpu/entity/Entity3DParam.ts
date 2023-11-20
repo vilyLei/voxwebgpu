@@ -1,7 +1,7 @@
 import ROTransform from "./ROTransform";
 import IMatrix4 from "../math/IMatrix4";
 import { WGGeometry } from "../geometry/WGGeometry";
-import { WGTextureDataDescriptor, WGMaterial } from "../material/WGMaterial";
+import { checkMaterialRPasses, WGTextureDataDescriptor, WGMaterial } from "../material/WGMaterial";
 import { WGRShderSrcType } from "../material/WGMaterialDescripter";
 import { WGRBufferData } from "../render/buffer/WGRBufferData";
 import { WGRMaterialPassViewImpl } from "../render/pipeline/WGRMaterialPassViewImpl";
@@ -30,6 +30,7 @@ interface Entity3DParam {
 	 */
 	building?: boolean;
 }
+
 function getUniformValueFromParam(key: string, param: Entity3DParam, defaultV?: WGRBufferData): WGRBufferData {
 	const ufvs = param.uniformValues;
 	if (param.uniformValues) {
@@ -41,4 +42,26 @@ function getUniformValueFromParam(key: string, param: Entity3DParam, defaultV?: 
 	}
 	return defaultV;
 }
-export { TransformParam, Entity3DParam, getUniformValueFromParam };
+function checkEntityMaterialsInfo(ms: WGMaterial[], param: Entity3DParam): void {
+
+	if(param.doubleFace !== undefined) {
+		let flag = param.doubleFace === true;
+		for(let i = 0; i < ms.length; ++i) {
+			if(ms[i].doubleFace === undefined && flag) {
+				ms[i].doubleFace = flag;
+				ms[i].shadinguuid += '-dface';
+			}
+		}
+	}
+	if(param.wireframe !== undefined) {
+		let flag = param.wireframe === true;
+		for(let i = 0; i < ms.length; ++i) {
+			if(ms[i].wireframe === undefined && flag) {
+				ms[i].wireframe = flag;
+				ms[i].shadinguuid += '-wframe';
+			}
+		}
+	}
+	checkMaterialRPasses(ms, param.rpasses);
+}
+export { checkEntityMaterialsInfo, TransformParam, Entity3DParam, getUniformValueFromParam };

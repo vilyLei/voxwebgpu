@@ -30,12 +30,6 @@ class WGRenderer implements IRenderer {
 	stage: IRenderStage3D;
 
 	constructor(config?: WGRendererConfig) {
-		// if(!config || !config.camera || !(config.camera.enabled === false)) {
-		// 	console.log("VVVVVVVVVVVVV 03");
-		// 	if(!this.camera) {
-		// 		(this as any).camera = new Camera();
-		// 	}
-		// }
 		if (config) {
 			this.initialize(config);
 		}
@@ -48,7 +42,7 @@ class WGRenderer implements IRenderer {
 			if(!this.camera) {
 				selfT.camera = new Camera();
 			}
-			
+
 			p.viewWidth = width;
 			p.viewHeight = height;
 			this.camera.initialize(p);
@@ -77,7 +71,7 @@ class WGRenderer implements IRenderer {
 		if (this.mInit && !this.mWGCtx) {
 
 			if(!config) config = {};
-			
+
 			if(!config || !config.camera || !(config.camera.enabled === false)) {
 				if(!this.camera) {
 					(this as any).camera = new Camera();

@@ -18,20 +18,19 @@ class ModelEntity extends PrimitiveEntity {
 	}
 
 	private createModelGeometry(gd: CoGeomDataType): WGGeometry {
-		const g = new WGGeometry()
+		const g = this.geometry
 			.addAttribute({ position: gd.vertices })
 			.addAttribute({ uv: gd.uvsList[0] })
 			.addAttribute({ normal: gd.normals })
 			.setIndices(gd.indices);
 		return g;
-		// console.log("ModelEntity::createModelGeometry(), this.geometry: ", this.geometry);
 	}
 	private initModel(): void {
+		if (!this.geometry) this.geometry = new WGGeometry();
 
 		let url = (this.mDescParam as ModelEntityParam).modelUrl;
-
 		modelLoader.load([url], (models: CoGeomDataType[], transforms: Float32Array[]): void => {
-			console.log("ModelEntity::initModel(), loaded models: ", models);
+			// console.log("ModelEntity::initModel(), loaded models: ", models);
 			let len = models.length;
 			for (let i = 0; i < len; ++i) {
 				this.geometry = this.createModelGeometry(models[i]);

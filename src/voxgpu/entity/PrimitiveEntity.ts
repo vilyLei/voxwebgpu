@@ -1,4 +1,4 @@
-import { Entity3DParam, getUniformValueFromParam, Entity3D } from "./Entity3D";
+import { checkEntityMaterialsInfo, Entity3DParam, getUniformValueFromParam, Entity3D } from "./Entity3D";
 import { checkMaterialRPasses, WGMaterial } from "../material/WGMaterial";
 import { WGRUniformValue } from "../render/uniform/WGRUniformValue";
 import { WGRBufferData } from "../render/buffer/WGRBufferData";
@@ -6,7 +6,7 @@ import Color4 from "../material/Color4";
 
 import vertWGSL from "../material/shader/wgsl/primitive.vert.wgsl";
 import fragWGSL from "../material/shader/wgsl/primitive.frag.wgsl";
-import texFragWGSL from "../material/shader/wgsl/primitiveTex.frag.wgsl";
+import texFragWGSL from "../material/shader/wgsl/primitive.frag.wgsl";
 
 import GeometryBase from "../geometry/primitive/GeometryBase";
 import { WGGeometry } from "../geometry/WGGeometry";
@@ -118,7 +118,7 @@ class PrimitiveEntity extends Entity3D {
 				this.albedoV = getUniformValueFromParam(
 					"albedo",
 					param,
-					new WGRUniformValue({ data: new Float32Array([0.5, 0.5, 0.5, 1]), shdVarName: "albedo" })
+					new WGRUniformValue({ data: new Float32Array([1.0,1.0,1.0, 1]), shdVarName: "albedo" })
 				);
 				this.armV = getUniformValueFromParam(
 					"arm",
@@ -166,24 +166,24 @@ class PrimitiveEntity extends Entity3D {
 		}
 		const ms = this.materials;
 
-		if(param.doubleFace !== undefined) {
-			let flag = param.doubleFace === true;
-			for(let i = 0; i < ms.length; ++i) {
-				if(ms[i].doubleFace === undefined && flag) {
-					ms[i].doubleFace = flag;
-					ms[i].shadinguuid += '-dface';
-				}
-			}
-		}
-		if(param.wireframe !== undefined) {
-			let flag = param.wireframe === true;
-			for(let i = 0; i < ms.length; ++i) {
-				if(ms[i].wireframe === undefined && flag) {
-					ms[i].wireframe = flag;
-					ms[i].shadinguuid += '-wframe';
-				}
-			}
-		}
+		// if(param.doubleFace !== undefined) {
+		// 	let flag = param.doubleFace === true;
+		// 	for(let i = 0; i < ms.length; ++i) {
+		// 		if(ms[i].doubleFace === undefined && flag) {
+		// 			ms[i].doubleFace = flag;
+		// 			ms[i].shadinguuid += '-dface';
+		// 		}
+		// 	}
+		// }
+		// if(param.wireframe !== undefined) {
+		// 	let flag = param.wireframe === true;
+		// 	for(let i = 0; i < ms.length; ++i) {
+		// 		if(ms[i].wireframe === undefined && flag) {
+		// 			ms[i].wireframe = flag;
+		// 			ms[i].shadinguuid += '-wframe';
+		// 		}
+		// 	}
+		// }
 		// console.log("param: ", param);
 		// console.log("param.albedo: ", param.albedo);
 		if(param.albedo) {
@@ -192,7 +192,8 @@ class PrimitiveEntity extends Entity3D {
 		if(param.arm) {
 			this.arm = param.arm;
 		}
-		checkMaterialRPasses(this.materials, param.rpasses);
+		// checkMaterialRPasses(this.materials, param.rpasses);
+		checkEntityMaterialsInfo( this.materials, param );
 	}
 	destroy(): void {
 		this.albedoV = null;

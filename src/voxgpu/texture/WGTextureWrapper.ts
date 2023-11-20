@@ -115,6 +115,7 @@ class WGDataTextureData extends WGTextureData {
 		const td = this.mTexData;
 		if (td && desc) {
 			if (!this.mTex) {
+
 				if (td.texture) {
 					console.log("apply a texture in the WGDataTextureData instance: ", this);
 					this.mTex = td.texture;
@@ -304,6 +305,9 @@ const __$texDataMap: Map<string, WGTextureData> = new Map();
 function createDataWithDescriptor(descriptor: WGTextureDataDescriptor): WGTextureData {
 	// let dimension = descriptor.dimension ? descriptor.dimension : "2d";
 
+	if(descriptor && descriptor.update !== undefined) {
+		descriptor.update();
+	}
 	let td: WGTextureData;
 	const dpt = texDescriptorFilter(descriptor);
 	let viewDimension = dpt.viewDimension ? dpt.viewDimension : "2d";

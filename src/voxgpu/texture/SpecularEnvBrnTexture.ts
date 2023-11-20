@@ -1,5 +1,4 @@
-
-import { TextureDataDescriptor,WGTextureDataDescriptor } from "../texture/WGTextureDataDescriptor";
+import { TextureDataDescriptor, WGTextureDataDescriptor } from "../texture/WGTextureDataDescriptor";
 import { HttpFileLoader } from "../asset/loader/HttpFileLoader";
 /**
 let tex = {
@@ -8,7 +7,20 @@ let tex = {
 		};
  */
 class SpecularEnvBrnTexture implements WGTextureDataDescriptor {
-	specularEnv: TextureDataDescriptor = { uuid: "SpecularEnvBrnTexture", dataTexture: { datas: [] as Uint8Array[], width: 128, height: 128 }, viewDimension: 'cube', format: "rgba8unorm", generateMipmaps: false };
+	private mUrl = "static/bytes/spb.bin";
+	private mLoadInit = true;
+	constructor(url?: string) {
+		if (url !== undefined && url !== "") {
+			this.mUrl = url;
+		}
+	}
+	specularEnv: TextureDataDescriptor = {
+		uuid: "SpecularEnvBrnTexture",
+		dataTexture: { datas: [] as Uint8Array[], width: 128, height: 128 },
+		viewDimension: "cube",
+		format: "rgba8unorm",
+		generateMipmaps: false
+	};
 	set datas(datas: Uint8Array[]) {
 		this.specularEnv.dataTexture.datas = datas;
 	}
@@ -18,11 +30,21 @@ class SpecularEnvBrnTexture implements WGTextureDataDescriptor {
 	set height(h: number) {
 		this.specularEnv.dataTexture.width = h;
 	}
-	load(url: string): SpecularEnvBrnTexture {
-		new HttpFileLoader().load(url, (buf: ArrayBuffer, url: string): void => {
-			this.parse( buf );
-		});
+	load(url?: string): SpecularEnvBrnTexture {
+		if (this.mLoadInit) {
+			this.mLoadInit = false;
+			if (!url) {
+				url = this.mUrl;
+			}
+			this.specularEnv.uuid = "SpecularEnvBrnTexture-" + url;
+			new HttpFileLoader().load(url, (buf: ArrayBuffer, url: string): void => {
+				this.parse(buf);
+			});
+		}
 		return this;
+	}
+	update(): void {
+		this.load();
 	}
 	private parse(buffer: ArrayBuffer): void {
 		let data16 = new Uint16Array(buffer);
@@ -57,4 +79,4 @@ class SpecularEnvBrnTexture implements WGTextureDataDescriptor {
 		tex.datas = datas;
 	}
 }
-export { SpecularEnvBrnTexture }
+export { SpecularEnvBrnTexture };

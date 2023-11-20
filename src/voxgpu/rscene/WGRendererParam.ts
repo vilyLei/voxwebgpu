@@ -21,6 +21,8 @@ interface WGRendererConfig {
 	gpuCanvasCfg?: GPUCanvasConfiguration;
 	ctx?: WebGPUContext;
 	canvas?: HTMLCanvasElement;
+	canvasWith?: number;
+	canvasHeight?: number;
 	div?: HTMLDivElement;
 	rpassparam?: WGRPassParam;
 	camera?: WGCameraParam;
@@ -46,8 +48,8 @@ function checkConfig(config?: WGRendererConfig): WGRendererConfig {
 	} else {
 		config = { canvas: null };
 	}
-	let width = 512;
-	let height = 512;
+	let width = config.canvasWith !== undefined ? config.canvasWith : 512;
+	let height = config.canvasHeight !== undefined ? config.canvasHeight : 512;
 	if (!div) {
 		div = document.createElement("div");
 		document.body.appendChild(div);

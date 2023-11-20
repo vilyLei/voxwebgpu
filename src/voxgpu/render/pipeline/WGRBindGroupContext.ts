@@ -220,9 +220,11 @@ class WGRBindGroupContext {
 		// console.log("createUniformBindGroup(), texParams: ", texParams);
 		if (texParams && texParams.length > 0) {
 			const sampler = device.createSampler({
-				magFilter: "linear",
-				minFilter: "linear",
-				mipmapFilter: "linear"
+				magFilter: 'linear',
+				minFilter: 'linear',
+				mipmapFilter: 'linear',
+				addressModeU: 'repeat',
+				addressModeV: 'repeat'
 			});
 			// const sampler = device.createSampler({
 			// 	magFilter: 'nearest',

@@ -18,6 +18,16 @@ import { WGGeometry } from "../geometry/WGGeometry";
 import { WGTextureDataDescriptor } from "../texture/WGTextureWrapper";
 import { SpecularBrnTexture } from "../texture/SpecularBrnTexture";
 import { SpecularEnvBrnTexture } from "../texture/SpecularEnvBrnTexture";
+import { BoxEntity } from "../entity/BoxEntity";
+
+import baseVertWGSL from "../material/shader/wgsl/pbr.vert.wgsl";
+import baseFragWGSL from "../material/shader/wgsl/pbr.frag.wgsl";
+
+import { SphereEntity } from "../entity/SphereEntity";
+import { AxisEntity } from "../entity/AxisEntity";
+import { WGRBufferData } from "../render/buffer/WGRBufferData";
+import { ModelEntity } from "../entity/ModelEntity";
+import { ConeEntity } from "../entity/ConeEntity";
 
 export class BaseMaterialTest {
 	private mRscene = new RendererScene();
@@ -25,94 +35,92 @@ export class BaseMaterialTest {
 
 	initialize(): void {
 		console.log("BaseMaterialTest::initialize() ...");
-		let callback = (): void => {
-			// this.initScene();
-			// this.initAssets();
-
-			this.initBrnTexEnvMap();
-
-			this.initEvent();
-		};
-		this.mRscene.initialize({ callback });
+		// let callback = (): void => {
+		// 	this.initScene();
+		// 	this.initEvent();
+		// };
+		// this.mRscene.initialize({ callback });
+		this.mRscene.initialize({ canvasWith: 1024, canvasHeight: 1024, rpassparam: { multisampleEnabled: true } });
+		this.initScene();
+		this.initEvent();
 	}
-	private initBrnTexEnvMap(): void {
+	private hdrEnvtex = new SpecularEnvBrnTexture();
+	private createTextures(ns: string): WGTextureDataDescriptor[] {
+		const albedoTex = { albedo: { url: `static/assets/pbr/${ns}/albedo.jpg` } };
+		const normalTex = { normal: { url: `static/assets/pbr/${ns}/normal.jpg` } };
+		const aoTex = { ao: { url: `static/assets/pbr/${ns}/ao.jpg` } };
+		const roughnessTex = { roughness: { url: `static/assets/pbr/${ns}/roughness.jpg` } };
+		const metallicTex = { metallic: { url: `static/assets/pbr/${ns}/metallic.jpg` } };
+		let textures = [this.hdrEnvtex, albedoTex, normalTex, aoTex, roughnessTex, metallicTex];
+		return textures;
+	}
+	private initEntities(): void {
+		let rc = this.mRscene;
+
+		// let axis = new AxisEntity();
+		// axis.transform.setPosition([0,200,0]);
+		// rc.addEntity(axis);
+
 		let shaderSrc = {
-			vert: { code: vertCubeWGSL, uuid: "vert" },
-			frag: { code: fragCubeBrnWGSL, uuid: "brnCubeFrag" }
+			vert: { code: baseVertWGSL, uuid: "baseVert" },
+			frag: { code: baseFragWGSL, uuid: "baseFrag" }
 		};
-		let envMapUrl = "static/bytes/spb.bin";
-		let tex = new SpecularEnvBrnTexture().load(envMapUrl);
-		const material = this.createMaterial(shaderSrc, tex);
-		this.createCubeMapEntity([material]);
+
+		let lightData = this.createLightData();
+
+		// let textures = this.createTextures("wall");
+		let textures = this.createTextures("gold");
+		// let textures = this.createTextures('plastic');
+		// let textures = this.createTextures("rusted_iron");
+		let uniformValues = [
+			{ data: new Float32Array([0.9, 1.0, 0.1, 1]), shdVarName: "ambient" },
+			{ data: new Float32Array([1, 1.0, 1, 1]), shdVarName: "albedo" },
+			{ data: new Float32Array([1, 0.7, 1, 0]), shdVarName: "arms" },
+			{ data: new Float32Array([0, 0.0, 0, 0]), shdVarName: "armsBase" },
+			{ data: new Float32Array([0.0, 0.0, 0.0, 1]), shdVarName: "fresnel" },
+			{ data: new Float32Array([1.0, 0.1, 1, 1]), shdVarName: "toneParam" },
+			{ data: new Float32Array([2.0, 2.0, 0, 0]), shdVarName: "uvParam" },
+			{ data: new Float32Array([0.0, 0.0, 0, 1.0]), shdVarName: "param" }, // w(scatterIntensity)
+			lightData.lights,
+			lightData.lightColors
+		];
+		// let box = new BoxEntity({shaderSrc, minPos: [-100, -100, -100], maxPos: [100, 100, 100]});
+		// rc.addEntity(box);
+
+		let sph = new SphereEntity({ shaderSrc, radius: 100, latitudeNumSegments: 30, longitudeNumSegments: 30, textures, uniformValues });
+		sph.transform.setPosition([0, 0, 300]);
+		rc.addEntity(sph);
+
+		// let cone = new ConeEntity({shaderSrc, radius: 100, height: 260, longitudeNumSegments: 30, textures, uniformValues});
+		// rc.addEntity(cone);
+		textures = this.createTextures("rusted_iron");
+		let monkey = new ModelEntity({
+			shaderSrc,
+			textures,
+			uniformValues,
+			modelUrl: "static/assets/draco/monkey.drc",
+			transform: { position: [0, 0, 0], scale: [100, 100, 100], rotation: [0, 90, 0] }
+		});
+		rc.addEntity(monkey);
 	}
+	private createLightData(): { lights: WGRBufferData; lightColors: WGRBufferData } {
+		let lights = { storage: { data: new Float32Array([0.0, 200.0, 0, 0.0001]), shdVarName: "lights" } };
+		let lightColors = { storage: { data: new Float32Array([5.0, 5.0, 5.0, 0.0001]), shdVarName: "lightColors" } };
+
+		return { lights, lightColors };
+	}
+	private initScene(): void {
+		// this.applyRGBA8Tex();
+		this.initEntities();
+		// this.initBrnTexEnvMap();
+	}
+
 	private initEvent(): void {
 		const rc = this.mRscene;
 		rc.addEventListener(MouseEvent.MOUSE_DOWN, this.mouseDown);
 		new MouseInteraction().initialize(rc, 0, false).setAutoRunning(true);
 	}
 	private mouseDown = (evt: MouseEvent): void => {};
-	private initAssets(): void {
-		let hdrBrnEnabled = true;
-		let envMapUrl = "static/bytes/spb.bin";
-
-		new HttpFileLoader().load(envMapUrl, (buf: ArrayBuffer, url: string): void => {
-			console.log("buf: ", buf);
-			this.buildFloatTex(hdrBrnEnabled, buf);
-
-			this.initializeImgCubeMap();
-		});
-	}
-	private buildFloatTex(hdrBrnEnabled: boolean, buf: ArrayBuffer): void {
-		this.parseMultiHdrBrn(buf);
-		// this.parseCubeHdrBrn(buf);
-	}
-	private parseMultiHdrBrn(buffer: ArrayBuffer): void {
-		let data16 = new Uint16Array(buffer);
-		let currBytes = new Uint8Array(buffer);
-		let begin = 0;
-		let width = data16[4];
-		let height = data16[5];
-		let mipMapMaxLv = data16[6];
-		console.log("parseMultiHdrBrn, width: ", width, "height: ", height, "mipMapMaxLv: ", mipMapMaxLv);
-		let size = 0;
-		let bytes = currBytes.subarray(32);
-		let dataU8: Uint8Array;
-		let datas: Uint8Array[] = [];
-		let dstI = 0;
-
-		let currW = width;
-		let currH = height;
-		for (let j = 0; j < mipMapMaxLv; j++) {
-			for (let i = 0; i < 6; i++) {
-				size = currW * currW * 4;
-				if (i == dstI) {
-					// console.log("parseMultiHdrBrn, j: ", j, ", currW: ", currW, ", currH: ", currH);
-					dataU8 = bytes.subarray(begin, begin + size);
-					datas.push(dataU8);
-				}
-				begin += size;
-			}
-			currW >>= 1;
-			currH >>= 1;
-		}
-
-		let rc = this.mRscene;
-		let tb = rc.getWGCtx().texture;
-
-		// let texture = tb.create32BitsTexture(datas, width, height, { format: "rgba8unorm" }, false);
-		// let tex = {
-		// 	// diffuse: { uuid: "texBrn", dataTexture: { data: dataU8, width, height }, format: "rgba8unorm", generateMipmaps: false }
-		// 	diffuse: { uuid: "texMultiBrn", dataTexture: { texture }, format: "rgba8unorm", generateMipmaps: false }
-		// };
-		let tex = new SpecularBrnTexture(datas, width, height);
-		let shaderSrc = {
-			vert: { code: vertWGSL, uuid: "vert" },
-			frag: { code: brn4BytesTexWGSL, uuid: "br4BytesFrag" }
-		};
-		let entity = new FixScreenPlaneEntity({ shadinguuid: "texMultiBrnM", shaderSrc, extent: [0.0, 0.0, 0.8, 0.8], textures: [tex] });
-		entity.color = [1.0, 1.0, 1.0, 4.0];
-		rc.addEntity(entity);
-	}
 
 	private initializeImgCubeMap(): void {
 		console.log("ImgCubeMap::initialize() ...");
@@ -132,13 +140,11 @@ export class BaseMaterialTest {
 			frag: { code: fragCubeWGSL, uuid: "fragCubeShdCode" }
 		};
 
-		// const material = this.createMaterial(shaderSrc, diffuseTex );
-		// this.createCubeMapEntity([material]);
+		const material = this.createMaterial(shaderSrc, diffuseTex);
+		this.createCubeMapEntity([material]);
 	}
 
 	private createMaterial(shaderSrc: WGRShderSrcType, tex: WGTextureDataDescriptor): WGMaterial {
-		// // let texDataList = [new WGImageCubeTextureData(urls)];
-
 		const texTotal = 1;
 		const material = new WGMaterial({
 			shadinguuid: "cube-base-material-tex" + texTotal,
@@ -146,7 +152,6 @@ export class BaseMaterialTest {
 		}).addTextures([tex]);
 
 		return material;
-		// return new WGMaterial();
 	}
 	private createCubeMapEntity(materials: WGMaterial[]): Entity3D {
 		let rc = this.mRscene;
@@ -183,9 +188,6 @@ export class BaseMaterialTest {
 
 		let entity = new FixScreenPlaneEntity({ shadinguuid: "texRGBA8", extent: [-0.3, -0.3, 0.8, 0.8], textures: [tex] });
 		rc.addEntity(entity);
-	}
-	private initScene(): void {
-		// this.applyRGBA8Tex();
 	}
 
 	run(): void {

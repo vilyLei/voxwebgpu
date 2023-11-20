@@ -34,6 +34,7 @@ interface TextureDataDescriptor {
 	rttTexture?: RTTTextureDataDescriptor;
 	dataTexture?: DataTextureDataDescriptor;
 	shdVarName?: string;
+	update?(): void;
 }
 interface WGTextureDataDescriptor extends TextureDataDescriptor {
 	diffuse?: TextureDataDescriptor;

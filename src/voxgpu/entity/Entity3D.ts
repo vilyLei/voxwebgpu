@@ -12,7 +12,7 @@ import AABB from "../cgeom/AABB";
 import { WGRUnitState } from "../render/WGRUnitState";
 import Vector3 from "../math/Vector3";
 import { EntityVolume } from "../space/EntityVolume";
-import { TransformParam, getUniformValueFromParam, Entity3DParam } from "./Entity3DParam";
+import { checkEntityMaterialsInfo, TransformParam, getUniformValueFromParam, Entity3DParam } from "./Entity3DParam";
 
 class Entity3D implements IRenderableEntity {
 	private static sUid = 0;
@@ -36,7 +36,14 @@ class Entity3D implements IRenderableEntity {
 
 	uuid?: string;
 
-	materials: WGMaterial[];
+	private mMaterials: WGMaterial[];
+	set materials( ms: WGMaterial[] ) {
+		this.mMaterials = ms;
+	}
+	get materials():  WGMaterial[] {
+		return this.mMaterials;
+	}
+	// materials: WGMaterial[];
 	geometry?: WGGeometry;
 
 	transform?: ROTransform;
@@ -400,4 +407,4 @@ class Entity3D implements IRenderableEntity {
 		return true;
 	}
 }
-export { TransformParam, Entity3DParam, getUniformValueFromParam, Entity3D };
+export { checkEntityMaterialsInfo, TransformParam, Entity3DParam, getUniformValueFromParam, Entity3D };

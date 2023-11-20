@@ -37,6 +37,18 @@ class HttpFileLoader {
 	): HttpFileLoader {
 		return  this.load(url, onLoad, onProgress, onError, responseType, headRange);
 	}
+	loadBinary(url: string,
+		onLoad: (buf: ArrayBuffer | string | object, url: string) => void,
+		/**
+		 * @param progress its value is 0.0 -> 1.0
+		 */
+		onProgress: (progress: number, url: string) => void = null,
+		onError: (status: number, url: string) => void = null,
+		responseType: XMLHttpRequestResponseType = "blob",
+		headRange: string = ""
+	): HttpFileLoader {
+		return  this.load(url, onLoad, onProgress, onError, responseType, headRange);
+	}
 	load(url: string,
 		onLoad: (buf: ArrayBuffer | string | object, url: string) => void,
 		/**
