@@ -34,6 +34,14 @@ interface TextureDataDescriptor {
 	rttTexture?: RTTTextureDataDescriptor;
 	dataTexture?: DataTextureDataDescriptor;
 	shdVarName?: string;
+	/**
+	 * Possible values are: "clamp-to-edge", "repeat", "mirror-repeat"
+	 */
+	addressModeU?: string;
+	/**
+	 * Possible values are: "clamp-to-edge", "repeat", "mirror-repeat"
+	 */
+	addressModeV?: string;
 	update?(): void;
 }
 interface WGTextureDataDescriptor extends TextureDataDescriptor {

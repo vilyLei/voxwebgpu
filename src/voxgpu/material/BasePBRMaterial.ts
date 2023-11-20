@@ -161,10 +161,6 @@ class BasePBRProperty {
 class BasePBRMaterial extends WGMaterial {
 	property = new BasePBRProperty();
 	constructor(descriptor?: WGMaterialDescripter) {
-		// if(!descriptor || descriptor.shaderSrc === undefined) {
-		// 	if(!descriptor) descriptor = {shadinguuid:'BasePBRMaterial'};
-		// 	descriptor.shaderSrc = basePBRShaderSrc;
-		// }
 		super(descriptor);
 	}
 	setDescriptor(descriptor: WGMaterialDescripter): void {
