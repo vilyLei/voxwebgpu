@@ -233,8 +233,6 @@ fn calcPBRLight(roughness: f32, rm: vec3<f32>, inColor: vec3<f32>, ptr_rL: ptr<f
     // Cook-Torrance BRDF
     let NDF = distributionGGX(rL.N, H, roughness);
     let G   = geometrySmith(rL.N, rL.V, rL.L, roughness);
-    //vec3 F    = fresnelSchlick(clamp(dot(H, rL.V), 0.0, 1.0), rL.F0);
-    //vec3 F    = fresnelSchlick3(rL.F0,clamp(dot(H, V), 0.0, 1.0), roughness);
     let F    = fresnelSchlick3(rL.F0, rL.dotNV, roughness);
 
     let nominator    = NDF * G * F;
@@ -262,9 +260,6 @@ fn calcPBRLight(roughness: f32, rm: vec3<f32>, inColor: vec3<f32>, ptr_rL: ptr<f
     // #endif
     (*ptr_rL).diffuse += fdBurley * lightColor * kD;
     (*ptr_rL).specular += specular * lightColor * specularScatter;
-
-	// (*ptr_rL).diffuse = lightColor;
-	// (*ptr_rL).diffuse = vec3<f32>(1.0,0.0,0.0);
 }
 
 fn chaneColorTest(color: ptr<function, vec4<f32>>) {
@@ -283,27 +278,21 @@ fn calcColor4(worldPos: vec4<f32>, uv: vec2<f32>, worldNormal: vec3<f32>, worldC
     var roughness = arms.y;
     var ao = arms.x;
 
-
 	var texUV = uv.xy * uvParam.xy;
 	let worldPosition = worldPos.xyz;
 
 	let V = normalize(worldCamPos.xyz - worldPosition);
 	var N = worldNormal;
 
-
 	N = getNormalFromMap( texUV, worldPosition.xyz, worldNormal);
 	let normalFactor = 1.0;
     N = normalize(mix(worldNormal, N, normalFactor));
-
 
  	//	#ifdef VOX_USE_GLOSSINESS
     //	    colorGlossiness = 1.0 - roughness;
     //	#else
     //	    colorGlossiness = roughness;
     //	#endif
-
-	// roughness = 0.1;
-
 
     let dotNV = clamp(dot(N, V), 0.0, 1.0);
 	var albedo3 = albedo.xyz;
@@ -312,7 +301,6 @@ fn calcColor4(worldPos: vec4<f32>, uv: vec2<f32>, worldNormal: vec3<f32>, worldC
 	ao = mix(0.0, max(textureSample(aoTexture, aoSampler, texUV).x, armsBase.x), ao);
 	roughness = mix(0.0, max(textureSample(roughnessTexture, roughnessSampler, texUV).y, armsBase.y), roughness);
 	metallic = mix(0.0, max(textureSample(metallicTexture, metallicSampler, texUV).z, armsBase.z), metallic);
-
 
 	let colorGlossiness = clamp(1.0 - roughness, 0.0, 1.0);
     let reflectionIntensity = 1.0;
@@ -332,9 +320,6 @@ fn calcColor4(worldPos: vec4<f32>, uv: vec2<f32>, worldNormal: vec3<f32>, worldC
     // #endif
 	// return vec4<f32>(albedo3, 1.0);
     albedo3 = mix(albedo3, F0, metallic);
-
-
-	// return vec4<f32>(albedo3, 1.0);
 
 	let specularFactor = vec3<f32>(1.0);
     specularColor *= specularFactor;
@@ -378,8 +363,7 @@ fn calcColor4(worldPos: vec4<f32>, uv: vec2<f32>, worldNormal: vec3<f32>, worldC
 	var light: vec4<f32>;
 	var lightColor: vec4<f32>;
 	var factor: f32 = 1.0;
-	for(var i: u32  = u32(0); i < pointsTotal; i++)
-	{
+	for(var i: u32  = u32(0); i < pointsTotal; i++) {
 		// calculate per-light radiance
 		light = lights[i];
 		lightColor = lightColors[i];
@@ -422,15 +406,6 @@ fn calcColor4(worldPos: vec4<f32>, uv: vec2<f32>, worldNormal: vec3<f32>, worldC
 	color4 = vec4<f32>(vec3<f32>(factor), 1.0);
 	color4 = vec4<f32>(color, 1.0);
 	// color4 = vec4<f32>(rL.diffuse, 1.0);
-	// color4 = vec4<f32>(rL.specular, 1.0);
-	// color4 = vec4<f32>(sColor0, 1.0);
-	// color4 = vec4<f32>(diffuse, 1.0);
-	// color4 = vec4<f32>(vec3(brnEnvValue), 1.0);
-	// let c4_ptr = &color4;
-	// chaneColorTest(&color4);
-	// var tv3 = color4.xyz;
-	// chaneColorTestV3(&tv3);
-	// chaneColorTest(c4_ptr);
 
 	return color4;
 }
@@ -441,8 +416,6 @@ fn main(
   @location(2) worldNormal: vec3<f32>,
   @location(3) worldCamPos: vec3<f32>
 ) -> @location(0) vec4<f32> {
-//   var color4 = albedo + arms * 0.01;
-//   color4 = vec4f(color4.xyz * worldNormal.xyz, 1.0);
   var color4 = calcColor4(worldPos, uv, worldNormal, worldCamPos);
   return color4;
 }
