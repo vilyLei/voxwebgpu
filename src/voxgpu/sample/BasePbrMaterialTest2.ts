@@ -4,17 +4,15 @@ import { MouseInteraction } from "../ui/MouseInteraction";
 import { WGTextureDataDescriptor } from "../texture/WGTextureWrapper";
 import { SpecularEnvBrnTexture } from "../texture/SpecularEnvBrnTexture";
 
-import { SphereEntity } from "../entity/SphereEntity";
 import { ModelEntity } from "../entity/ModelEntity";
 import { BasePBRMaterial } from "../material/BasePBRMaterial";
 import Vector3 from "../math/Vector3";
-import Color4 from "../material/Color4";
 
-export class BasePbrMaterialTest {
+export class BasePbrMaterialTest2 {
 	private mRscene = new RendererScene();
 
 	initialize(): void {
-		console.log("BasePbrMaterialTest::initialize() ...");
+		console.log("BasePbrMaterialTest2::initialize() ...");
 
 		this.mRscene.initialize({ canvasWith: 512, canvasHeight: 512, rpassparam: { multisampleEnabled: true } });
 		this.initScene();
@@ -39,60 +37,51 @@ export class BasePbrMaterialTest {
 		let monkeySrc = new ModelEntity({
 			modelUrl: "static/assets/draco/monkey.drc"
 		});
-		let sphSrc = new SphereEntity({
-			radius: 100,
-			latitudeNumSegments: 30,
-			longitudeNumSegments: 30
-		});
+		
+		let pos = new Vector3(0, 0, -150);
 
+		let material = this.createModelEntity(monkeySrc, "gold", pos);
+		let property = material.property;
+		property.ambient.value = [0.0, 0.2, 0.2];
+		property.albedo.value = [0.1, 0.7, 0.5];
+		property.arms.value = [1, 0.1, 1];
+		property.armsBase.value = [0, 0, 0];
+
+		material = this.createModelEntity(monkeySrc, "rusted_iron", pos.clone().addBy(new Vector3(0, 0, 300)));
+		property = material.property;
+		property.ambient.value = [0.0, 0.2, 0.2];
+		property.albedo.value = [0.1, 0.7, 0.5];
+		property.arms.value = [1, 0.5, 0];
+		property.armsBase.value = [0, 1, 1];
+		property.uvParam.value = [2, 2];
+		property.toneParam.tone = 2.0;
+
+		
+		material = this.createModelEntity(monkeySrc, "rusted_iron", pos.clone().addBy(new Vector3(-200, 0, 150)));
+		property = material.property;
+		property.arms.value = [1, 0.3, 1];
+		property.armsBase.value = [0, 0, 0];
+		property.uvParam.value = [2, 2];
+
+	}
+	private createModelEntity(srcEntity: ModelEntity, texName: string, position: Vector3DataType): BasePBRMaterial {
+
+		let rc = this.mRscene;
+		
 		let lightData = this.createLightData();
 
-		let startV = new Vector3(-500, 0, -500);
-		for (let i = 0; i < 3; ++i) {
-			for (let j = 0; j < 5; ++j) {
-
-				let pos = new Vector3(j * 300 + startV.x, 0, i * 600 + startV.z);
-
-				let roughness = 1.0 - (0.05 + 0.95 * j/(5-1));
-				let roughnessBase = i/(3-1);
-				let material = new BasePBRMaterial();
-				let property = material.property;
-				property.setLightData(lightData.lightsData, lightData.lightColorsData);
-				property.ambient.value = new Color4().randomRGB(0.3, 0.1);
-				property.albedo.value = new Color4().randomRGB(1.0, 0.2);
-				property.arms.value = [1, roughness, 1];
-				property.armsBase.value = [0, roughnessBase ,0];
-
-				material.addTextures(this.createTextures("gold"));
-
-				let sph = new SphereEntity({
-					materials: [material],
-					geometry: sphSrc.geometry
-				});
-				sph.transform.setPosition(pos);
-				rc.addEntity(sph);
-
-				material = new BasePBRMaterial();
-				property = material.property;
-				property.setLightData(lightData.lightsData, lightData.lightColorsData);
-
-				property.ambient.value = new Color4().randomRGB(0.3, 0.1).ceil();
-				property.albedo.value = new Color4().randomRGB(1.0, 0.2);
-				property.arms.value = [1, roughness, 1];
-				property.armsBase.value = [0, roughnessBase ,0];
-				property.uvParam.value = [2,2];
-				material.addTextures(this.createTextures("rusted_iron"));
-
-				let monkey = new ModelEntity({
-					materials: [material],
-					geometry: monkeySrc.geometry,
-					transform: { position: pos.clone().subtractBy(new Vector3(0, 0, 270)), scale: [100, 100, 100], rotation: [0, 90, 0] }
-				});
-				rc.addEntity(monkey);
-			}
-		}
+		let material = new BasePBRMaterial();
+		let property = material.property;
+		property.setLightData(lightData.lightsData, lightData.lightColorsData);
+		material.addTextures(this.createTextures( texName ));
+		let monkey = new ModelEntity({
+			materials: [material],
+			geometry: srcEntity.geometry,
+			transform: { position, scale: [100, 100, 100], rotation: [0, 90, 0] }
+		});
+		rc.addEntity(monkey);
+		return material;
 	}
-
 	private createLightData(): { lightsData: Float32Array; lightColorsData: Float32Array } {
 		let lightsData = new Float32Array([0.0, 300.0, 0, 0.000001]);
 		let lightColorsData = new Float32Array([5.0, 5.0, 5.0, 0.000005]);
@@ -103,7 +92,7 @@ export class BasePbrMaterialTest {
 		rc.addEventListener(MouseEvent.MOUSE_DOWN, this.mouseDown);
 		new MouseInteraction().initialize(rc, 0, false).setAutoRunning(true);
 	}
-	private mouseDown = (evt: MouseEvent): void => {};
+	private mouseDown = (evt: MouseEvent): void => { };
 	run(): void {
 		this.mRscene.run();
 	}

@@ -67,7 +67,8 @@
 // import { Set32BitsTexMipmapData as Demo } from "./voxgpu/sample/Set32BitsTexMipmapData";
 
 // import { BaseMaterialTest as Demo } from "./voxgpu/sample/BaseMaterialTest";
-import { BasePbrMaterialTest as Demo } from "./voxgpu/sample/BasePbrMaterialTest";
+// import { BasePbrMaterialTest as Demo } from "./voxgpu/sample/BasePbrMaterialTest";
+import { BasePbrMaterialTest2 as Demo } from "./voxgpu/sample/BasePbrMaterialTest2";
 
 //////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////           unit test               ////////////////////////////

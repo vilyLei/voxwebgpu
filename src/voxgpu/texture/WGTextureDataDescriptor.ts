@@ -35,14 +35,7 @@ interface TextureDataDescriptor {
 	rttTexture?: RTTTextureDataDescriptor;
 	dataTexture?: DataTextureDataDescriptor;
 	shdVarName?: string;
-	// /**
-	//  * Possible values are: "clamp-to-edge", "repeat", "mirror-repeat"
-	//  */
-	// addressModeU?: string;
-	// /**
-	//  * Possible values are: "clamp-to-edge", "repeat", "mirror-repeat"
-	//  */
-	// addressModeV?: string;
+
 	sampler?: GPUSamplerDescriptor;
 	update?(): void;
 }
@@ -62,30 +55,35 @@ interface WGTextureDataDescriptor extends TextureDataDescriptor {
 }
 
 function texDescriptorFilter(d: WGTextureDataDescriptor): TextureDataDescriptor {
-	if(!d) {
+	if (!d) {
 		return d;
 	}
 	let rd = d;
 	if (d.diffuse) {
 		rd = d.diffuse;
 		rd.shdVarName = "diffuse";
+		return rd;
 	}
 	if (d.color) {
 		rd = d.color;
 		rd.shdVarName = "color";
+		return rd;
 	}
 	if (d.albedo) {
 		rd = d.albedo;
 		rd.shdVarName = "albedo";
+		return rd;
 	}
 
 	if (d.normal) {
 		rd = d.normal;
 		rd.shdVarName = "normal";
+		return rd;
 	}
 	if (d.ao) {
 		rd = d.ao;
 		rd.shdVarName = "ao";
+		return rd;
 	}
 	if (d.metallic) {
 		rd = d.metallic;
@@ -95,10 +93,12 @@ function texDescriptorFilter(d: WGTextureDataDescriptor): TextureDataDescriptor 
 	if (d.roughness) {
 		rd = d.roughness;
 		rd.shdVarName = "roughness";
+		return rd;
 	}
 	if (d.specularEnv) {
 		rd = d.specularEnv;
 		rd.shdVarName = "specularEnv";
+		return rd;
 	}
 	if (d.arm) {
 		rd = d.arm;
@@ -108,6 +108,7 @@ function texDescriptorFilter(d: WGTextureDataDescriptor): TextureDataDescriptor 
 	if (d.parallax) {
 		rd = d.parallax;
 		rd.shdVarName = "parallax";
+		return rd;
 	}
 	// if (d.height) {
 	// 	rd = d.height;
@@ -116,13 +117,14 @@ function texDescriptorFilter(d: WGTextureDataDescriptor): TextureDataDescriptor 
 	if (d.displacement) {
 		rd = d.displacement;
 		rd.shdVarName = "displacement";
+		return rd;
 	}
 
 	if (d.specular) {
 		rd = d.specular;
 		rd.shdVarName = "specular";
+		return rd;
 	}
-
 	return rd;
 }
 export {
