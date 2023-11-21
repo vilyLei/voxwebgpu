@@ -68,7 +68,8 @@
 
 // import { BaseMaterialTest as Demo } from "./voxgpu/sample/BaseMaterialTest";
 // import { BasePbrMaterialTest as Demo } from "./voxgpu/sample/BasePbrMaterialTest";
-import { BasePbrMaterialTest2 as Demo } from "./voxgpu/sample/BasePbrMaterialTest2";
+// import { BasePbrMaterialTest2 as Demo } from "./voxgpu/sample/BasePbrMaterialTest2";
+import { BasePbrMaterialMultiLights as Demo } from "./voxgpu/sample/BasePbrMaterialMultiLights";
 
 //////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////           unit test               ////////////////////////////

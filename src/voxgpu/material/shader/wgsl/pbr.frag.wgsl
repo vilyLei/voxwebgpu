@@ -213,11 +213,6 @@ struct RadianceLight {
     specularPower: f32
 }
 
-
-fn calcPBRLight1(roughness: f32, rm: vec3<f32>) {
-}
-fn calcPBRLight2(ptr_rL: ptr<function, RadianceLight>) {
-}
 fn calcPBRLight(roughness: f32, rm: vec3<f32>, inColor: vec3<f32>, ptr_rL: ptr<function, RadianceLight>) {
     // rm is remainder metallic: vec3(1.0 - metallic)
 	let rL = *ptr_rL;
@@ -258,7 +253,7 @@ fn calcPBRLight(roughness: f32, rm: vec3<f32>, inColor: vec3<f32>, ptr_rL: ptr<f
     // #ifdef VOX_SPECULAR_BLEED
     // kD *= specularScatter;
     // #endif
-    (*ptr_rL).diffuse += fdBurley * lightColor * kD;
+    (*ptr_rL).diffuse += fdBurley * lightColor * (kD + kD * specularScatter);
     (*ptr_rL).specular += specular * lightColor * specularScatter;
 }
 
@@ -300,7 +295,11 @@ fn calcColor4(worldPos: vec4<f32>, uv: vec2<f32>, worldNormal: vec3<f32>, worldC
 	albedo3 = albedo.xyz * textureSample(albedoTexture, albedoSampler, texUV).xyz;
 	ao = mix(0.0, max(textureSample(aoTexture, aoSampler, texUV).x, armsBase.x), ao);
 	roughness = mix(0.0, max(textureSample(roughnessTexture, roughnessSampler, texUV).y, armsBase.y), roughness);
-	metallic = mix(0.0, max(textureSample(metallicTexture, metallicSampler, texUV).z, armsBase.z), metallic);
+	let texMetallic = textureSample(metallicTexture, metallicSampler, texUV).z;
+	metallic = mix(0.0, max(texMetallic, armsBase.z), metallic);
+	// return vec4<f32>(vec3( (max(texMetallic, armsBase.z)) ), 1.0);
+	// return vec4<f32>(vec3(armsBase.z), 1.0);
+	// return vec4<f32>(vec3(metallic), 1.0);
 
 	let colorGlossiness = clamp(1.0 - roughness, 0.0, 1.0);
     let reflectionIntensity = 1.0;
@@ -398,12 +397,9 @@ fn calcColor4(worldPos: vec4<f32>, uv: vec2<f32>, worldNormal: vec3<f32>, worldC
     // gamma correct
     color = linearToGammaVec3(color);
 
-	color4 = vec4<f32>(V.xyz * 0.1 + albedo3.xyz * N * 0.8 + 0.2 * specularColor, 1.0);
-	color4 = vec4<f32>(lightColors[0].xyz * factor, 1.0);
-	var tf0 = 1.0 / (1.0 + light.w * factor + lightColor.w * factor * factor);
-	color4 = vec4<f32>(vec3<f32>(factor), 1.0);
 	color4 = vec4<f32>(color, 1.0);
 	// color4 = vec4<f32>(rL.diffuse, 1.0);
+	// color4 = vec4<f32>(rL.specular, 1.0);
 
 	return color4;
 }
