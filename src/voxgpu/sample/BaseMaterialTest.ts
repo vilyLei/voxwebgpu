@@ -35,7 +35,7 @@ export class BaseMaterialTest {
 	initialize(): void {
 		console.log("BaseMaterialTest::initialize() ...");
 
-		this.mRscene.initialize({ canvasWith: 1024, canvasHeight: 1024, rpassparam: { multisampleEnabled: true } });
+		this.mRscene.initialize({ canvasWith: 512, canvasHeight: 512, rpassparam: { multisampleEnabled: true } });
 		this.initScene();
 		this.initEvent();
 	}

@@ -206,11 +206,11 @@ class Vec4ShdDataWrapper {
 	}
 }
 class ToneParamDataWrapper extends Vec4ShdDataWrapper {
-	set tone(v: number) {
+	set toneExposure(v: number) {
 		this.property.x = v;
 		this.update();
 	}
-	get tone(): number {
+	get toneExposure(): number {
 		return this.property.x;
 	}
 	set frontIntensity(v: number) {
@@ -326,8 +326,8 @@ class BasePBRProperty {
 	]), "params", "frag");
 
 	lightParam = new LightParamData(new Uint32Array([1, 0, 0, 0]), "lightParam", "frag");
-	lights = new BaseLightData(null, "lights", "frag");
-	lightColors = new BaseLightData(null, "lightColors", "frag");
+	lights = new BaseLightData(new Float32Array([0.0, 200.0, 0, 0.0001]), "lights", "frag");
+	lightColors = new BaseLightData(new Float32Array([5.0, 5.0, 5.0, 0.0001]), "lightColors", "frag");
 
 	albedo: Color4ShdDataWrapper;
 	fresnel: Color4ShdDataWrapper;

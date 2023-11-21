@@ -55,7 +55,7 @@ export class BasePbrMaterialTest2 {
 		property.armsBase.value = [0, 1, 1];
 		property.uvParam.value = [2, 2];
 		let toneParam = property.toneParam
-		toneParam.tone = 1.0;
+		toneParam.toneExposure = 1.0;
 		toneParam.sideIntensity = 30;
 
 
