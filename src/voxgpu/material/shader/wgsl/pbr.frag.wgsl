@@ -1,10 +1,6 @@
 @group(0) @binding(3) var<uniform> ambient: vec4<f32>;
-// @group(0) @binding(4) var<uniform> albedo: vec4<f32>;
 @group(0) @binding(4) var<storage> armsParams: array<vec4<f32>>;
-// @group(0) @binding(6) var<uniform> fresnel: vec4<f32>;
-// @group(0) @binding(7) var<uniform> toneParam: vec4<f32>;
 @group(0) @binding(5) var<uniform> uvParam: vec4<f32>;
-// @group(0) @binding(10) var<uniform> specularFactor: vec4<f32>;
 @group(0) @binding(6) var<storage> params: array<vec4<f32>>;
 @group(0) @binding(7) var<uniform> lightParam: vec4<u32>;
 @group(0) @binding(8) var<storage> lights: array<vec4<f32>>;
@@ -304,8 +300,6 @@ fn calcColor4(worldPos: vec4<f32>, uv: vec2<f32>, worldNormal: vec3<f32>, worldC
 	roughness = mix(0.0, max(textureSample(roughnessTexture, roughnessSampler, texUV).y, armsBase.y), roughness);
 	let texMetallic = textureSample(metallicTexture, metallicSampler, texUV).z;
 	metallic = mix(0.0, max(texMetallic, armsBase.z), metallic);
-	// return vec4<f32>(vec3( (max(texMetallic, armsBase.z)) ), 1.0);
-	// return vec4<f32>(vec3(armsBase.z), 1.0);
 	// return vec4<f32>(vec3(metallic), 1.0);
 
 	let colorGlossiness = clamp(1.0 - roughness, 0.0, 1.0);
@@ -408,8 +402,6 @@ fn calcColor4(worldPos: vec4<f32>, uv: vec2<f32>, worldNormal: vec3<f32>, worldC
     color = linearToGammaVec3(color);
 
 	color4 = vec4<f32>(color, 1.0);
-	// color4 = vec4<f32>(rL.diffuse, 1.0);
-	// color4 = vec4<f32>(rL.specular, 1.0);
 
 	return color4;
 }
