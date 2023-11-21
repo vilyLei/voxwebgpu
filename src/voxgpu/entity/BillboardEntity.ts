@@ -66,6 +66,7 @@ class BillboardEntity extends Entity3D {
 		return [this.mUVScale.z, this.mUVScale.w];
 	}
 	setColor(c: ColorDataType): BillboardEntity {
+		// console.log(">>>> c: ",c);
 		if (c && this.mColorV) {
 			this.mColor.setColor(c).toArray4(this.mColorV.data as Float32Array);
 			this.mColorV.version++;

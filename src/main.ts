@@ -59,7 +59,7 @@
 // import { WireframeEntityTest as Demo } from "./voxgpu/sample/WireframeEntityTest";
 // import { EntityCloneTest as Demo } from "./voxgpu/sample/EntityCloneTest";
 // import { ModelEntityTest as Demo } from "./voxgpu/sample/ModelEntityTest";
-import { BillboardEntityTest as Demo } from "./voxgpu/sample/BillboardEntityTest";
+// import { BillboardEntityTest as Demo } from "./voxgpu/sample/BillboardEntityTest";
 
 // import { DataDrivenTest as Demo } from "./voxgpu/sample/DataDrivenTest";
 
@@ -70,7 +70,7 @@ import { BillboardEntityTest as Demo } from "./voxgpu/sample/BillboardEntityTest
 // import { BaseMaterialTest as Demo } from "./voxgpu/sample/BaseMaterialTest";
 // import { BasePbrMaterialTest as Demo } from "./voxgpu/sample/BasePbrMaterialTest";
 // import { BasePbrMaterialTest2 as Demo } from "./voxgpu/sample/BasePbrMaterialTest2";
-// import { BasePbrMaterialMultiLights as Demo } from "./voxgpu/sample/BasePbrMaterialMultiLights";
+import { BasePbrMaterialMultiLights as Demo } from "./voxgpu/sample/BasePbrMaterialMultiLights";
 
 //////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////           unit test               ////////////////////////////
