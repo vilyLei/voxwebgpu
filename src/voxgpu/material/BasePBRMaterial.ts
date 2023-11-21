@@ -18,6 +18,7 @@ interface BasePBRUniformDataImpl extends WGRBufferData {
 }
 class BasePBRUniformData implements BasePBRUniformDataImpl {
 	data: NumberArrayDataType;
+	shared = false;
 	shdVarName: string;
 	version = -1;
 	layout = { visibility: "all" };
@@ -260,6 +261,12 @@ class BaseLightData implements WGRBufferData {
 	constructor(data: Float32Array, shdVarName: string, visibility?: string) {
 		this.storage = new BasePBRUniformData(data, shdVarName, visibility);
 	}
+	set shared(b: boolean) {
+		this.storage.shared = b;
+	}
+	get shared(): boolean {
+		return this.storage.shared === true;
+	}
 	set data(d: Float32Array) {
 		this.storage.data = d;
 		this.update();
@@ -274,17 +281,23 @@ class BaseLightData implements WGRBufferData {
 		}
 	}
 }
-type LightShaderDataParam = { lights?: Float32Array, colors?: Float32Array, pointLightsTotal?: number, directLightsTotal?: number, spotLightsTotal?: number };
+type LightShaderDataParam = {
+	lights?: Float32Array;
+	colors?: Float32Array;
+	pointLightsTotal?: number;
+	directLightsTotal?: number;
+	spotLightsTotal?: number;
+};
 class LightParamData extends BasePBRVec4Data {
 	set param(param: LightShaderDataParam) {
-		if( param ) {
-			if(param.pointLightsTotal !== undefined) {
+		if (param) {
+			if (param.pointLightsTotal !== undefined) {
 				this.property.x = param.pointLightsTotal;
 			}
-			if(param.directLightsTotal !== undefined) {
+			if (param.directLightsTotal !== undefined) {
 				this.property.y = param.directLightsTotal;
 			}
-			if(param.spotLightsTotal !== undefined) {
+			if (param.spotLightsTotal !== undefined) {
 				this.property.z = param.spotLightsTotal;
 			}
 			this.update();
@@ -317,13 +330,7 @@ class BasePBRProperty {
 	 * param: [0, 0, 0.07, 1],
 	 * specularFactor: [1,1,1, 1],
 	 */
-	private params = new PBRParamsVec4Data(new Float32Array([
-		1, 1, 1, 1,
-		0, 0, 0, 0,
-		1, 0.1, 1, 1,
-		0, 0, 0.07, 1,
-		1, 1, 1, 1
-	]), "params", "frag");
+	private params = new PBRParamsVec4Data(new Float32Array([1, 1, 1, 1, 0, 0, 0, 0, 1, 0.1, 1, 1, 0, 0, 0.07, 1, 1, 1, 1, 1]), "params", "frag");
 
 	lightParam = new LightParamData(new Uint32Array([1, 0, 0, 0]), "lightParam", "frag");
 	lights = new BaseLightData(new Float32Array([0.0, 200.0, 0, 0.0001]), "lights", "frag");
@@ -349,22 +356,14 @@ class BasePBRProperty {
 		this.specularFactor = new Color4ShdDataWrapper(params.specularFactor, params);
 	}
 	get uniformValues(): WGRBufferData[] {
-		return [
-			this.ambient,
-			this.armsParams,
-			this.uvParam,
-			this.params,
-			this.lightParam,
-			this.lights,
-			this.lightColors
-		];
+		return [this.ambient, this.armsParams, this.uvParam, this.params, this.lightParam, this.lights, this.lightColors];
 	}
 	setLightParam(param: LightShaderDataParam): void {
-		if(param) {
-			if(param.lights) {
+		if (param) {
+			if (param.lights) {
 				this.lights.data = param.lights;
 			}
-			if(param.colors) {
+			if (param.colors) {
 				this.lightColors.data = param.colors;
 			}
 			this.lightParam.param = param;
@@ -379,6 +378,9 @@ class BasePBRMaterial extends WGMaterial {
 	property = new BasePBRProperty();
 	constructor(descriptor?: WGMaterialDescripter) {
 		super(descriptor);
+	}
+	setLightParam(param: LightShaderDataParam): void {
+		this.property.setLightParam( param );
 	}
 	setDescriptor(descriptor: WGMaterialDescripter): void {
 		if (!descriptor || descriptor.shaderSrc === undefined) {

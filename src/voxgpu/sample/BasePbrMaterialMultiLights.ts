@@ -17,7 +17,7 @@ export class BasePbrMaterialMultiLights {
 	initialize(): void {
 		console.log("BasePbrMaterialMultiLights::initialize() ...");
 
-		this.mRscene.initialize({ canvasWith: 512, canvasHeight: 512, rpassparam: { multisampleEnabled: true } });
+		this.mRscene.initialize({ rpassparam: { multisampleEnabled: true } });
 		this.initScene();
 		this.initEvent();
 	}
@@ -71,9 +71,8 @@ export class BasePbrMaterialMultiLights {
 		let lightData = this.createLightData(position);
 
 		let material = new BasePBRMaterial();
-		let property = material.property;
 
-		property.setLightParam(lightData);
+		material.setLightParam(lightData);
 		material.addTextures(this.createTextures(texName));
 		let monkey = new ModelEntity({
 			materials: [material],
@@ -89,9 +88,8 @@ export class BasePbrMaterialMultiLights {
 		let rc = this.mRscene;
 
 		let material = new BasePBRMaterial();
-		let property = material.property;
 
-		property.setLightParam(lightData);
+		material.setLightParam(lightData);
 		material.addTextures(this.createTextures(texName));
 		let box = new BoxEntity({
 			materials: [material],
