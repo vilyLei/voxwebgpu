@@ -19,7 +19,6 @@ fn main(
     let vtx = position.xy * billParam.xy;
     let vtx_pos = vec2<f32>(vtx.x * cosv - vtx.y * sinv, vtx.x * sinv + vtx.y * cosv);
     var viewV = viewMat * objMat * vec4f(0.0,0.0,0.0,1.0);
-    // viewPosition.xy += vtx_pos.xy;
     viewV = vec4<f32>(viewV.xy + vtx_pos.xy, viewV.zw);
     var projV =  projMat * viewV;
     projV.z = ((projV.z / projV.w) + billParam.w) * projV.w;

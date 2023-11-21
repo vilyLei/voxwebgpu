@@ -1,16 +1,10 @@
 import MouseEvent from "../event/MouseEvent";
 import { RendererScene } from "../rscene/RendererScene";
 import { MouseInteraction } from "../ui/MouseInteraction";
-import { WGTextureDataDescriptor } from "../texture/WGTextureWrapper";
-import { SpecularEnvBrnTexture } from "../texture/SpecularEnvBrnTexture";
 
-import { ModelEntity } from "../entity/ModelEntity";
-import { BasePBRMaterial } from "../material/BasePBRMaterial";
-import Vector3 from "../math/Vector3";
 import { AxisEntity } from "../entity/AxisEntity";
 import { BillboardEntity } from "../entity/BillboardEntity";
 import { FixScreenPlaneEntity } from "../entity/FixScreenPlaneEntity";
-
 export class BillboardEntityTest {
 	private mRscene = new RendererScene();
 
@@ -20,16 +14,6 @@ export class BillboardEntityTest {
 		this.mRscene.initialize({ canvasWith: 512, canvasHeight: 512, rpassparam: { multisampleEnabled: true } });
 		this.initScene();
 		this.initEvent();
-	}
-	private hdrEnvtex = new SpecularEnvBrnTexture();
-	private createTextures(ns: string): WGTextureDataDescriptor[] {
-		const albedoTex = { albedo: { url: `static/assets/pbr/${ns}/albedo.jpg` } };
-		const normalTex = { normal: { url: `static/assets/pbr/${ns}/normal.jpg` } };
-		const aoTex = { ao: { url: `static/assets/pbr/${ns}/ao.jpg` } };
-		const roughnessTex = { roughness: { url: `static/assets/pbr/${ns}/roughness.jpg` } };
-		const metallicTex = { metallic: { url: `static/assets/pbr/${ns}/metallic.jpg` } };
-		let textures = [this.hdrEnvtex, albedoTex, normalTex, aoTex, roughnessTex, metallicTex];
-		return textures;
 	}
 	private initScene(): void {
 		this.initEntities();
