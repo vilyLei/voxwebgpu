@@ -7,9 +7,9 @@ function initializeCamera(param: WGCameraParam, cam: IRenderCamera): IRenderCame
 	let p = param;
 	if (!p) p = {};
 
-	let eye = p.eye ? new Vector3().toZero().setVector3(p.eye) : new Vector3(1100.0, 1100.0, 1100.0);
-	let up = p.up ? new Vector3().toZero().setVector3(p.up) : new Vector3(0, 1, 0);
-	let origin = p.origin ? new Vector3().toZero().setVector3(p.origin) : new Vector3();
+	let eye = p.eye ? new Vector3().toZero().setVector4(p.eye) : new Vector3(1100.0, 1100.0, 1100.0);
+	let up = p.up ? new Vector3().toZero().setVector4(p.up) : new Vector3(0, 1, 0);
+	let origin = p.origin ? new Vector3().toZero().setVector4(p.origin) : new Vector3();
 
 	if (p.fovDegree === undefined) p.fovDegree = 45;
 	if (p.near === undefined) p.near = 0.1;

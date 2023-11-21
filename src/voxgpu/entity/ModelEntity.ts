@@ -4,6 +4,7 @@ import { PrimitiveEntityParam, PrimitiveEntity } from "./PrimitiveEntity";
 
 interface ModelEntityParam extends PrimitiveEntityParam {
 	modelUrl?: string;
+	callback?: () => void;
 }
 class ModelEntity extends PrimitiveEntity {
 	constructor(param?: ModelEntityParam) {
@@ -13,7 +14,7 @@ class ModelEntity extends PrimitiveEntity {
 		}
 		super(param);
 		if (flag) {
-			this.initModel();
+			this.initModel(param);
 		}
 	}
 
@@ -25,7 +26,7 @@ class ModelEntity extends PrimitiveEntity {
 			.setIndices(gd.indices);
 		return g;
 	}
-	private initModel(): void {
+	private initModel(param?: ModelEntityParam): void {
 		if (!this.geometry) this.geometry = new WGGeometry();
 
 		let url = (this.mDescParam as ModelEntityParam).modelUrl;
@@ -38,6 +39,10 @@ class ModelEntity extends PrimitiveEntity {
 				this.init(this.mDescParam);
 				this.createMaterial(this.mDescParam);
 				break;
+			}
+			if(param.callback !== undefined) {
+				param.callback();
+				param.callback = undefined;
 			}
 		});
 	}

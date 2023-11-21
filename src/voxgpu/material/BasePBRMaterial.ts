@@ -7,19 +7,26 @@ import { WGMaterialDescripter, WGMaterial } from "./WGMaterial";
 import basePBRVertWGSL from "./shader/wgsl/pbr.vert.wgsl";
 import basePBRFragWGSL from "./shader/wgsl/pbr.frag.wgsl";
 import MathConst from "../math/MathConst";
+import Vector3 from "../math/Vector3";
 
 const basePBRShaderSrc = {
 	vert: { code: basePBRVertWGSL, uuid: "vertBasePBRShdCode" },
 	frag: { code: basePBRFragWGSL, uuid: "fragBasePBRShdCode" }
 };
-
-class BasePBRUniformData implements WGRBufferData {
-	data: Float32Array;
+interface BasePBRUniformDataImpl extends WGRBufferData {
+	update(): void;
+}
+class BasePBRUniformData implements BasePBRUniformDataImpl {
+	data: NumberArrayDataType;
 	shdVarName: string;
 	version = -1;
-	constructor(data: Float32Array, shdVarName: string) {
-		this.data = data;
+	layout = { visibility: "all" };
+	constructor(data: NumberArrayType, shdVarName: string, visibility?: string) {
+		this.data = data as NumberArrayDataType;
 		this.shdVarName = shdVarName;
+		if (visibility) {
+			this.layout.visibility = visibility;
+		}
 	}
 	update(): void {
 		this.version++;
@@ -27,47 +34,67 @@ class BasePBRUniformData implements WGRBufferData {
 }
 class BasePBRColor4Data extends BasePBRUniformData {
 	property = new Color4();
-	constructor(data: Float32Array, shdVarName: string) {
-		super(data, shdVarName);
-		this.property.fromArray4(this.data);
+	constructor(data: NumberArrayType, shdVarName: string, visibility?: string) {
+		super(data, shdVarName, visibility);
+		this.property.fromArray4(this.data as NumberArrayType);
 	}
 	set value(v: ColorDataType) {
-		this.property.setColor(v).toArray4(this.data);
+		this.property.setColor(v).toArray4(this.data as NumberArrayType);
 		this.version++;
 	}
 	get value(): ColorDataType {
 		return this.property;
 	}
 	update(): void {
-		this.property.toArray4(this.data);
+		this.property.toArray4(this.data as NumberArrayType);
 		this.version++;
 	}
 }
 class BasePBRVec4Data extends BasePBRUniformData {
 	property = new Vector4();
-	constructor(data: Float32Array, shdVarName: string) {
-		super(data, shdVarName);
-		this.property.fromArray4(this.data);
+	constructor(data: NumberArrayType, shdVarName: string, visibility?: string) {
+		super(data, shdVarName, visibility);
+		this.property.fromArray4(this.data as NumberArrayType);
 	}
 	set value(v: Vector3DataType) {
-		this.property.setVector3(v).toArray4(this.data);
+		this.property.setVector4(v).toArray4(this.data as NumberArrayType);
 		this.version++;
 	}
 	get value(): Vector3DataType {
 		return this.property;
 	}
 	update(): void {
-		this.property.toArray4(this.data);
+		this.property.toArray4(this.data as NumberArrayType);
 		this.version++;
 	}
 }
 
-class BasePBRArmsData extends BasePBRUniformData {
-	property = new Arms();
-	constructor(data: Float32Array, shdVarName: string) {
-		super(data, shdVarName);
-		this.property.fromArray4(this.data);
+class BasePBRArmsData implements BasePBRUniformDataImpl {
+	version = -1;
+	storage: BasePBRUniformData;
+	arms = new Arms();
+	base = new Arms();
+	constructor(data: Float32Array, shdVarName: string, visibility?: string) {
+		this.storage = new BasePBRUniformData(data, shdVarName, visibility);
+		this.arms.fromArray4(data);
+		this.base.fromArray4(data, 4);
 	}
+	update(): void {
+		const data = this.storage.data;
+		this.arms.toArray4(data as NumberArrayType);
+		this.base.toArray4(data as NumberArrayType, 4);
+		this.version++;
+	}
+}
+
+class ArmsDataWrapper {
+	property: Arms;
+	private target: BasePBRUniformDataImpl;
+	constructor(property: Arms, target: BasePBRUniformDataImpl) {
+		this.property = property;
+		this.target = target;
+	}
+	///*
 	set ao(v: number) {
 		this.property.a = v;
 		this.update();
@@ -98,19 +125,135 @@ class BasePBRArmsData extends BasePBRUniformData {
 		return this.property.s;
 	}
 	set value(v: ArmsDataType) {
-		this.property.setArms( v );
+		this.property.setArms(v);
 		this.update();
 	}
 	get value(): ArmsDataType {
 		return this.property;
 	}
 	update(): void {
-		this.property.toArray4(this.data);
-		this.version++;
+		this.target.update();
 	}
 }
 
-class ToneVec4Data extends BasePBRVec4Data {
+// class ToneVec4Data extends BasePBRVec4Data {
+// 	set tone(v: number) {
+// 		this.property.x = v;
+// 		this.update();
+// 	}
+// 	get tone(): number {
+// 		return this.property.x;
+// 	}
+// 	set frontIntensity(v: number) {
+// 		this.property.z = v;
+// 		this.update();
+// 	}
+// 	get frontIntensity(): number {
+// 		return this.property.z;
+// 	}
+// 	set sideIntensity(v: number) {
+// 		this.property.w = v;
+// 		this.update();
+// 	}
+// 	get sideIntensity(): number {
+// 		return this.property.w;
+// 	}
+// }
+/**
+ * albedo: [1, 1, 1, 1],
+ * fresnel: [0, 0, 0, 0],
+ * toneParam: [1, 0.1, 1, 1],
+ * param: [0, 0, 0.07, 1],
+ * specularFactor: [1,1,1, 1],
+ */
+class PBRParamsVec4Data implements BasePBRUniformDataImpl {
+	version = -1;
+	storage: BasePBRUniformData;
+	albedo = new Color4();
+	fresnel = new Color4();
+	toneParam = new Vector3();
+	param = new Vector3();
+	specularFactor = new Color4();
+	constructor(data: Float32Array, shdVarName: string, visibility?: string) {
+		this.storage = new BasePBRUniformData(data, shdVarName, visibility);
+		this.albedo.fromArray4(data);
+		this.fresnel.fromArray4(data, 4);
+		this.toneParam.fromArray4(data, 8);
+		this.param.fromArray4(data, 12);
+		this.specularFactor.fromArray4(data, 16);
+	}
+	update(): void {
+		const data = this.storage.data;
+		this.albedo.toArray4(data as NumberArrayType);
+		this.fresnel.toArray4(data as NumberArrayType, 4);
+		this.toneParam.toArray4(data as NumberArrayType, 8);
+		this.param.toArray4(data as NumberArrayType, 12);
+		this.specularFactor.toArray4(data as NumberArrayType, 16);
+		this.version++;
+	}
+
+	// set scatterIntensity(v: number) {
+	// 	this.property.w = v;
+	// 	this.update();
+	// }
+	// get scatterIntensity(): number {
+	// 	return this.property.w;
+	// }
+	// /**
+	//  * (lod mipmap level) = base + (maxMipLevel - k * maxMipLevel)
+	//  * @param maxMipLevel envmap texture lod max mipmap level, the vaue is a int number
+	//  * @param base envmap texture lod max mipmap level base, value range: -7.0 -> 12.0
+	//  */
+	// setEnvMapLodMipMapLevel(maxMipLevel: number, base: number = 0.0): void {
+	//     maxMipLevel = Math.min(Math.max(maxMipLevel, 0.0), 14.0);
+	//     base = Math.min(Math.max(base, -7.0), 12.0);
+	//     this.property.z = Math.round(maxMipLevel) * 0.01 + base;
+	// }
+	// setEnvMapLodMipMapLevelWithSize(envMapWidth: number, envMapHeight: number, base: number = 0.0): void {
+	//     // this.mEnvMapWidth = envMapWidth;
+	//     // this.mEnvMapHeight = envMapHeight;
+	//     base = Math.min(Math.max(base, -7.0), 12.0);
+	//     this.property.z = MathConst.GetMaxMipMapLevel(envMapWidth, envMapHeight) * 0.01 + base;
+	// }
+}
+
+class Color4ShdDataWrapper {
+	property: Color4;
+	private target: BasePBRUniformDataImpl;
+	constructor(property: Color4, target: BasePBRUniformDataImpl) {
+		this.property = property;
+		this.target = target;
+	}
+	set value(v: ColorDataType) {
+		this.property.setColor(v);
+		this.update();
+	}
+	get value(): ColorDataType {
+		return this.property;
+	}
+	update(): void {
+		this.target.update();
+	}
+}
+class Vec4ShdDataWrapper {
+	property: Vector3;
+	private target: BasePBRUniformDataImpl;
+	constructor(property: Vector3, target: BasePBRUniformDataImpl) {
+		this.property = property;
+		this.target = target;
+	}
+	set value(v: Vector3DataType) {
+		this.property.setVector4(v);
+		this.update();
+	}
+	get value(): Vector3DataType {
+		return this.property;
+	}
+	update(): void {
+		this.target.update();
+	}
+}
+class ToneParamDataWrapper extends Vec4ShdDataWrapper {
 	set tone(v: number) {
 		this.property.x = v;
 		this.update();
@@ -133,7 +276,16 @@ class ToneVec4Data extends BasePBRVec4Data {
 		return this.property.w;
 	}
 }
-class PBRParamVec4Data extends BasePBRVec4Data {
+// class PBRColor4DataWrapper extends Color4ShdDataWrapper {
+// 	set value(v: ColorDataType) {
+// 		this.property.setColor(v);
+// 		this.update();
+// 	}
+// 	get value(): ColorDataType {
+// 		return this.property;
+// 	}
+// }
+class PBRParamDataWrapper extends Vec4ShdDataWrapper {
 	set scatterIntensity(v: number) {
 		this.property.w = v;
 		this.update();
@@ -142,52 +294,37 @@ class PBRParamVec4Data extends BasePBRVec4Data {
 		return this.property.w;
 	}
 	/**
-     * (lod mipmap level) = base + (maxMipLevel - k * maxMipLevel)
-     * @param maxMipLevel envmap texture lod max mipmap level, the vaue is a int number
-     * @param base envmap texture lod max mipmap level base, value range: -7.0 -> 12.0
-     */
-    setEnvMapLodMipMapLevel(maxMipLevel: number, base: number = 0.0): void {
-        maxMipLevel = Math.min(Math.max(maxMipLevel, 0.0), 14.0);
-        base = Math.min(Math.max(base, -7.0), 12.0);
-        this.property.z = Math.round(maxMipLevel) * 0.01 + base;
-    }
-    setEnvMapLodMipMapLevelWithSize(envMapWidth: number, envMapHeight: number, base: number = 0.0): void {
-        // this.mEnvMapWidth = envMapWidth;
-        // this.mEnvMapHeight = envMapHeight;
-        base = Math.min(Math.max(base, -7.0), 12.0);
-        this.property.z = MathConst.GetMaxMipMapLevel(envMapWidth, envMapHeight) * 0.01 + base;
-    }
+	 * (lod mipmap level) = base + (maxMipLevel - k * maxMipLevel)
+	 * @param maxMipLevel envmap texture lod max mipmap level, the vaue is a int number
+	 * @param base envmap texture lod max mipmap level base, value range: -7.0 -> 12.0
+	 */
+	setEnvMapLodMipMapLevel(maxMipLevel: number, base: number = 0.0): void {
+		maxMipLevel = Math.min(Math.max(maxMipLevel, 0.0), 14.0);
+		base = Math.min(Math.max(base, -7.0), 12.0);
+		this.property.z = Math.round(maxMipLevel) * 0.01 + base;
+		this.update();
+	}
+	setEnvMapLodMipMapLevelWithSize(envMapWidth: number, envMapHeight: number, base: number = 0.0): void {
+		// this.mEnvMapWidth = envMapWidth;
+		// this.mEnvMapHeight = envMapHeight;
+		base = Math.min(Math.max(base, -7.0), 12.0);
+		this.property.z = MathConst.GetMaxMipMapLevel(envMapWidth, envMapHeight) * 0.01 + base;
+		this.update();
+	}
 }
-//scatterIntensity
-/*
-let uniformValues = [
-	{ data: new Float32Array([0.9, 1.0, 0.1, 1]), shdVarName: "ambient" },
-	{ data: new Float32Array([1, 1.0, 1, 1]), shdVarName: "albedo" },
-	{ data: new Float32Array([1, 0.7, 1, 0]), shdVarName: "arms" },
-	{ data: new Float32Array([0, 0.0, 0, 0]), shdVarName: "armsBase" },
-	{ data: new Float32Array([0.0, 0.0, 0.0, 1]), shdVarName: "fresnel" },
-	{ data: new Float32Array([1.0, 0.1, 1, 1]), shdVarName: "toneParam" },
-	{ data: new Float32Array([2.0, 2.0, 0, 0]), shdVarName: "uvParam" },
-	{ data: new Float32Array([0.0, 0.0, 0, 1.0]), shdVarName: "param" }, // w(scatterIntensity)
-	lightData.lights,
-	lightData.lightColors
-];
-let lights = { storage: { data: new Float32Array([0.0, 200.0, 0, 0.0001]), shdVarName: "lights" } };
-		let lightColors = { storage: { data: new Float32Array([5.0, 5.0, 5.0, 0.0001]), shdVarName: "lightColors" } };
-*/
 
 class BaseLightData implements WGRBufferData {
 	version = -1;
 	storage: BasePBRUniformData;
-	constructor(data: Float32Array, shdVarName: string) {
-		this.storage = new BasePBRUniformData(data, shdVarName);
+	constructor(data: Float32Array, shdVarName: string, visibility?: string) {
+		this.storage = new BasePBRUniformData(data, shdVarName, visibility);
 	}
 	set data(d: Float32Array) {
 		this.storage.data = d;
 		this.update();
 	}
 	get data(): Float32Array {
-		return this.storage.data;
+		return this.storage.data as Float32Array;
 	}
 	update(): void {
 		this.version++;
@@ -196,31 +333,114 @@ class BaseLightData implements WGRBufferData {
 		}
 	}
 }
+type LightShaderDataParam = { lights?: Float32Array, colors?: Float32Array, pointLightsTotal?: number, directLightsTotal?: number, spotLightsTotal?: number };
+class LightParamData extends BasePBRVec4Data {
+	set param(param: LightShaderDataParam) {
+		if( param ) {
+			if(param.pointLightsTotal !== undefined) {
+				this.property.x = param.pointLightsTotal;
+			}
+			if(param.directLightsTotal !== undefined) {
+				this.property.y = param.directLightsTotal;
+			}
+			if(param.spotLightsTotal !== undefined) {
+				this.property.z = param.spotLightsTotal;
+			}
+			this.update();
+		}
+	}
+	set pointLightsTotal(n: number) {
+		this.property.x = n;
+		this.update();
+	}
+	set directLightsTotal(n: number) {
+		this.property.y = n;
+		this.update();
+	}
+	set spotLightsTotal(n: number) {
+		this.property.z = n;
+		this.update();
+	}
+}
 class BasePBRProperty {
-	ambient = new BasePBRColor4Data(new Float32Array([0.1, 0.1, 0.1, 1]), "ambient");
-	albedo = new BasePBRColor4Data(new Float32Array([1, 1, 1, 1]), "albedo");
-	arms = new BasePBRArmsData(new Float32Array([1, 1, 1, 0]), "arms");
-	armsBase = new BasePBRArmsData(new Float32Array([0, 0, 0, 0]), "armsBase");
-	fresnel = new BasePBRVec4Data(new Float32Array([0, 0, 0, 0]), "fresnel");
-	toneParam = new ToneVec4Data(new Float32Array([1.0, 0.1, 1, 1]), "toneParam");
-	uvParam = new BasePBRVec4Data(new Float32Array([1, 1, 0, 0]), "uvParam");
-	param = new PBRParamVec4Data(new Float32Array([0, 0, 0.07, 1]), "param");
-	lights = new BaseLightData(null, "lights");
-	lightColors = new BaseLightData(null, "lightColors");
+	ambient = new BasePBRColor4Data(new Float32Array([0.1, 0.1, 0.1, 1]), "ambient", "frag");
+	// albedo = new BasePBRColor4Data(new Float32Array([1, 1, 1, 1]), "albedo",'frag');
+	/**
+	 * default values, arms: [1, 1, 1, 0], armsBase: [0, 0, 0, 0]
+	 */
+	private armsParams = new BasePBRArmsData(new Float32Array([1, 1, 1, 0, 0, 0, 0, 0]), "armsParams", "frag");
+	// armsBase = new BasePBRArmsData(new Float32Array([0, 0, 0, 0]), "armsBase",'frag');
+	// fresnel = new BasePBRVec4Data(new Float32Array([0, 0, 0, 0]), "fresnel",'frag');
+	// toneParam = new ToneVec4Data(new Float32Array([1, 0.1, 1, 1]), "toneParam",'frag');
+	uvParam = new BasePBRVec4Data(new Float32Array([1, 1, 0, 0]), "uvParam", "frag");
+	// specularFactor = new BasePBRVec4Data(new Float32Array([1, 1, 1, 1]), "specularFactor", "frag");
+	/**
+	 * albedo: [1, 1, 1, 1],
+	 * fresnel: [0, 0, 0, 0],
+	 * toneParam: [1, 0.1, 1, 1],
+	 * param: [0, 0, 0.07, 1],
+	 * specularFactor: [1,1,1, 1],
+	 */
+	private params = new PBRParamsVec4Data(new Float32Array([
+		1, 1, 1, 1,
+		0, 0, 0, 0,
+		1, 0.1, 1, 1,
+		0, 0, 0.07, 1,
+		1, 1, 1, 1
+	]), "params", "frag");
+	// private param = new PBRParamVec4Data(new Float32Array([0, 0, 0.07, 1]), "param",'frag');
 
+	lightParam = new LightParamData(new Uint32Array([1, 0, 0, 0]), "lightParam", "frag");
+	lights = new BaseLightData(null, "lights", "frag");
+	lightColors = new BaseLightData(null, "lightColors", "frag");
+
+	albedo: Color4ShdDataWrapper;
+	fresnel: Color4ShdDataWrapper;
+	toneParam: ToneParamDataWrapper;
+	param: PBRParamDataWrapper;
+	specularFactor: Color4ShdDataWrapper;
+
+	arms: ArmsDataWrapper;
+	armsBase: ArmsDataWrapper;
+	constructor() {
+		let armsSrc = this.armsParams;
+		this.arms = new ArmsDataWrapper(armsSrc.arms, armsSrc);
+		this.armsBase = new ArmsDataWrapper(armsSrc.base, armsSrc);
+		let params = this.params;
+		this.albedo = new Color4ShdDataWrapper(params.albedo, params);
+		this.fresnel = new Color4ShdDataWrapper(params.fresnel, params);
+		this.toneParam = new ToneParamDataWrapper(params.toneParam, params);
+		this.param = new PBRParamDataWrapper(params.toneParam, params);
+		this.specularFactor = new Color4ShdDataWrapper(params.specularFactor, params);
+	}
 	get uniformValues(): WGRBufferData[] {
 		return [
 			this.ambient,
-			this.albedo,
-			this.arms,
-			this.armsBase,
-			this.fresnel,
-			this.toneParam,
+			// this.albedo,
+			this.armsParams,
+			// this.armsBase,
+			// this.fresnel,
+			// this.toneParam,
 			this.uvParam,
-			this.param,
+			// this.specularFactor,
+			this.params,
+			this.lightParam,
 			this.lights,
 			this.lightColors
 		];
+	}
+	setLightParam(param: LightShaderDataParam): void {
+		if(param) {
+			if(param.lights) {
+				this.lights.data = param.lights;
+			}
+			if(param.colors) {
+				this.lightColors.data = param.colors;
+			}
+			this.lightParam.param = param;
+		}
+		// this.lights.data = lightsData;
+		// this.lightColors.data = lightColorsData;
 	}
 	setLightData(lightsData: Float32Array, lightColorsData: Float32Array): void {
 		this.lights.data = lightsData;
@@ -246,4 +466,4 @@ class BasePBRMaterial extends WGMaterial {
 		return this.mUniformValues;
 	}
 }
-export { BasePBRMaterial };
+export { LightShaderDataParam, BasePBRMaterial };

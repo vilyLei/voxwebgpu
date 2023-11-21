@@ -54,16 +54,16 @@ export default class DashedLineGeometry extends GeometryBase {
 			this.mvs = new Float32Array(positions.length * 3);
 			for (let i = 0; i < positions.length; ++i) {
 				if (positions[i]) {
-					v3.setVector3(positions[i]).toArray3(this.mvs, j++ * 3);
+					v3.setVector4(positions[i]).toArray3(this.mvs, j++ * 3);
 				}
 			}
 		} else {
 			this.mvs = new Float32Array(positions.length > 2 ? ((positions.length - 2) * 2 + 2) * 3 : positions.length * 3);
 			for (let i = 0; i < positions.length; ++i) {
 				if (positions[i]) {
-					v3.setVector3(positions[i]).toArray3(this.mvs, j++ * 3);
+					v3.setVector4(positions[i]).toArray3(this.mvs, j++ * 3);
 					if (i > 0 && i < positions.length - 1) {
-						v3.setVector3(positions[i]).toArray3(this.mvs, j++ * 3);
+						v3.setVector4(positions[i]).toArray3(this.mvs, j++ * 3);
 					}
 				}
 			}

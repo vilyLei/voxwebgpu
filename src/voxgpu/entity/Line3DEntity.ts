@@ -27,7 +27,7 @@ class Line3DEntity extends Entity3D {
 	private mHaveCVS = false;
 	private mColor = new Color4();
 	protected mColorV: WGRBufferData;
-	
+
 	constructor(param?: Line3DEntityParam) {
 		super(param);
 
@@ -40,7 +40,7 @@ class Line3DEntity extends Entity3D {
 		if(param.lineColor) {
 			this.color = param.lineColor;
 		}
-	}	
+	}
 	clone(param?: Entity3DParam): Line3DEntity {
 		if(param) {
 			if(!param.geometry) param.geometry = this.geometry;
@@ -169,7 +169,7 @@ function createCircleData(ix: number, iy: number, iz: number, radius: number, se
 		vs[ix] = cvs[ix] + radius * Math.cos(rad);
 		vs[iy] = cvs[iy] + radius * Math.sin(rad);
 		vs[iz] = cvs[iz];
-		posList[i] = new Vector3().setVector3(vs);
+		posList[i] = new Vector3().setVector4(vs);
 		j += 3;
 	}
 	posList[i] = posList[0];

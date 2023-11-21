@@ -28,8 +28,8 @@ export default class Vector3 implements IVector3 {
 	toOne(): Vector3 {
 		return this.setXYZW(1,1,1,1);
 	}
-	setVector3(vector3: Vector3DataType): Vector3 {
-		let v = vector3;
+	setVector4(vector4: Vector3DataType): Vector3 {
+		let v = vector4;
 		if (v) {
 			const t = this;
 			const vs = v as number[];
@@ -45,6 +45,25 @@ export default class Vector3 implements IVector3 {
 				if (tv.y !== undefined) t.y = tv.y;
 				if (tv.z !== undefined) t.z = tv.z;
 				if (tv.w !== undefined) t.w = tv.w;
+			}
+		}
+		return this;
+	}
+	setVector3(vector3: Vector3DataType): Vector3 {
+		let v = vector3;
+		if (v) {
+			const t = this;
+			const vs = v as number[];
+			if (vs.length !== undefined) {
+				const len = vs.length;
+				if (len > 0) t.x = vs[0];
+				if (len > 1) t.y = vs[1];
+				if (len > 2) t.z = vs[2];
+			} else {
+				const tv = v as Vector3Type;
+				if (tv.x !== undefined) t.x = tv.x;
+				if (tv.y !== undefined) t.y = tv.y;
+				if (tv.z !== undefined) t.z = tv.z;
 			}
 		}
 		return this;
@@ -88,7 +107,7 @@ export default class Vector3 implements IVector3 {
 	/**
      * example: [0],[1],[2],[3] => x,y,z,w
      */
-    fromArray3(arr: number[] | Float32Array, offset: number = 0): Vector3 {
+    fromArray3(arr: NumberArrayType, offset: number = 0): Vector3 {
         this.x = arr[offset];
         this.y = arr[offset + 1];
         this.z = arr[offset + 2];
@@ -97,20 +116,20 @@ export default class Vector3 implements IVector3 {
 	/**
      * example: x,y,z => [0],[1],[2]
      */
-    toArray3(arr: number[] | Float32Array, offset: number = 0): Vector3 {
+    toArray3(arr: NumberArrayType, offset: number = 0): Vector3 {
         arr[offset] = this.x;
         arr[offset + 1] = this.y;
         arr[offset + 2] = this.z;
         return this;
     }
-    fromArray4(arr: number[] | Float32Array, offset: number = 0): Vector3 {
+    fromArray4(arr: NumberArrayType, offset: number = 0): Vector3 {
         this.x = arr[offset];
         this.y = arr[offset + 1];
         this.z = arr[offset + 2];
         this.w = arr[offset + 3];
         return this;
     }
-    toArray4(arr: number[] | Float32Array, offset: number = 0): Vector3 {
+    toArray4(arr: NumberArrayType, offset: number = 0): Vector3 {
         arr[offset] = this.x;
         arr[offset + 1] = this.y;
         arr[offset + 2] = this.z;

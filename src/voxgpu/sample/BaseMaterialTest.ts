@@ -16,7 +16,6 @@ import { GeomDataBuilder } from "../geometry/GeomDataBuilder";
 import { Entity3D } from "../entity/Entity3D";
 import { WGGeometry } from "../geometry/WGGeometry";
 import { WGTextureDataDescriptor } from "../texture/WGTextureWrapper";
-import { SpecularBrnTexture } from "../texture/SpecularBrnTexture";
 import { SpecularEnvBrnTexture } from "../texture/SpecularEnvBrnTexture";
 import { BoxEntity } from "../entity/BoxEntity";
 
@@ -35,11 +34,7 @@ export class BaseMaterialTest {
 
 	initialize(): void {
 		console.log("BaseMaterialTest::initialize() ...");
-		// let callback = (): void => {
-		// 	this.initScene();
-		// 	this.initEvent();
-		// };
-		// this.mRscene.initialize({ callback });
+
 		this.mRscene.initialize({ canvasWith: 1024, canvasHeight: 1024, rpassparam: { multisampleEnabled: true } });
 		this.initScene();
 		this.initEvent();
@@ -74,13 +69,16 @@ export class BaseMaterialTest {
 		// let textures = this.createTextures("rusted_iron");
 		let uniformValues = [
 			{ data: new Float32Array([0.9, 1.0, 0.1, 1]), shdVarName: "ambient" },
-			{ data: new Float32Array([1, 1.0, 1, 1]), shdVarName: "albedo" },
-			{ data: new Float32Array([1, 0.7, 1, 0]), shdVarName: "arms" },
-			{ data: new Float32Array([0, 0.0, 0, 0]), shdVarName: "armsBase" },
-			{ data: new Float32Array([0.0, 0.0, 0.0, 1]), shdVarName: "fresnel" },
-			{ data: new Float32Array([1.0, 0.1, 1, 1]), shdVarName: "toneParam" },
+			{storage: { data: new Float32Array([1, 0.7, 1, 0,  0, 0.0, 0, 0]), shdVarName: "armsParams" }},
 			{ data: new Float32Array([2.0, 2.0, 0, 0]), shdVarName: "uvParam" },
-			{ data: new Float32Array([0.0, 0.0, 0, 1.0]), shdVarName: "param" }, // w(scatterIntensity)
+			{storage: { data: new Float32Array([
+				1, 1, 1, 1,
+				0, 0, 0, 0,
+				1, 0.1, 1, 1,
+				0, 0, 0.07, 1,
+				1, 1, 1, 1
+			]), shdVarName: "params" }},
+			{ data: new Uint32Array([1, 0,0,0]), shdVarName: "lightParam" },
 			lightData.lights,
 			lightData.lightColors
 		];

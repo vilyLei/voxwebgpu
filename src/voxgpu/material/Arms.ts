@@ -36,6 +36,37 @@ export default class Arms {
 		this.m = m;
 		this.s = s;
 	}
+	set ao(v: number) {
+		this.a = v;
+	}
+	get ao(): number {
+		return this.a;
+	}
+	set roughness(v: number) {
+		this.r = v;
+	}
+	get roughness(): number {
+		return this.r;
+	}
+	set metallic(v: number) {
+		this.m = v;
+	}
+	get metallic(): number {
+		return this.m;
+	}
+
+	set specular(v: number) {
+		this.s = v;
+	}
+	get specular(): number {
+		return this.s;
+	}
+	set value(v: ArmsDataType) {
+		this.setArms( v );
+	}
+	get value(): ArmsDataType {
+		return this;
+	}
 	clone(): Arms {
 		return new Arms(this.a, this.r, this.m, this.s);
 	}
@@ -60,14 +91,14 @@ export default class Arms {
 		}
 		return this;
 	}
-	fromArray4(arr: number[] | Float32Array, offset: number = 0): Arms {
+	fromArray4(arr: NumberArrayType, offset: number = 0): Arms {
 		this.a = arr[offset];
 		this.r = arr[offset + 1];
 		this.m = arr[offset + 2];
 		this.s = arr[offset + 3];
 		return this;
 	}
-	toArray4(arr: number[] | Float32Array, offset: number = 0): Arms {
+	toArray4(arr: NumberArrayType, offset: number = 0): Arms {
 		arr[offset] = this.a;
 		arr[offset + 1] = this.r;
 		arr[offset + 2] = this.m;
@@ -84,13 +115,13 @@ export default class Arms {
 		this.toArray3(arr);
 		return arr;
 	}
-	fromArray3(arr: number[] | Float32Array, offset = 0): Arms {
+	fromArray3(arr: NumberArrayType, offset = 0): Arms {
 		this.a = arr[offset];
 		this.r = arr[offset + 1];
 		this.m = arr[offset + 2];
 		return this;
 	}
-	toArray3(arr: number[] | Float32Array, offset = 0): Arms {
+	toArray3(arr: NumberArrayType, offset = 0): Arms {
 		arr[offset] = this.a;
 		arr[offset + 1] = this.r;
 		arr[offset + 2] = this.m;

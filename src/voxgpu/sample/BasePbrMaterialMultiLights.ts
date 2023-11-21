@@ -5,12 +5,12 @@ import { WGTextureDataDescriptor } from "../texture/WGTextureWrapper";
 import { SpecularEnvBrnTexture } from "../texture/SpecularEnvBrnTexture";
 
 import { ModelEntity } from "../entity/ModelEntity";
-import { BasePBRMaterial } from "../material/BasePBRMaterial";
+import { LightShaderDataParam, BasePBRMaterial } from "../material/BasePBRMaterial";
 import Vector3 from "../math/Vector3";
 import { AxisEntity } from "../entity/AxisEntity";
 import Color4 from "../material/Color4";
 import { BillboardEntity } from "../entity/BillboardEntity";
-
+import { BoxEntity } from "../entity/BoxEntity";
 export class BasePbrMaterialMultiLights {
 	private mRscene = new RendererScene();
 
@@ -38,23 +38,33 @@ export class BasePbrMaterialMultiLights {
 		let rc = this.mRscene;
 
 		rc.addEntity(new AxisEntity());
+		let callback = (): void => {
+			// let pos = new Vector3(0, 0, -150);
+			let pos = new Vector3(0, 0, 0);
 
+			// let material = this.createModelEntity(monkeySrc, "grass", pos);
+			// let material = this.createModelEntity(monkeySrc, "rusted_iron", pos);
+			// let material = this.createModelEntity(monkeySrc, "gold", pos);
+			let material = this.createModelEntity(monkeySrc, "plastic", pos);
+			let property = material.property;
+			property.ambient.value = [0.0, 0.2, 0.2];
+			property.albedo.value = [0.7, 0.7, 0.3];
+			property.arms.roughness = 0.8;
+			property.armsBase.value = [0, 0, 0];
+			property.uvParam.value = [2, 2];
+			// property.specularFactor.value = [0.0,0.0,1.1];
+			property.param.scatterIntensity = 32;
+
+			this.createBoxEntity("plastic", new Vector3(0, -110.0, 0), this.mLightParams[0]);
+
+			this.createBillboards(this.mLightParams[0]);
+		};
 		let monkeySrc = new ModelEntity({
+			callback,
 			modelUrl: "static/assets/draco/monkey.drc"
 		});
-
-		// let pos = new Vector3(0, 0, -150);
-		let pos = new Vector3(0, 0, 0);
-
-		// let material = this.createModelEntity(monkeySrc, "gold", pos);
-		let material = this.createModelEntity(monkeySrc, "plastic", pos);
-		let property = material.property;
-		property.ambient.value = [0.0, 0.2, 0.2];
-		property.albedo.value = [0.7, 0.7, 0.3];
-		property.arms.roughness = 0.8;
-		property.armsBase.value = [0, 0, 0];
-		property.param.scatterIntensity = 32;
 	}
+	private mLightParams: LightShaderDataParam[] = [];
 	private createModelEntity(srcEntity: ModelEntity, texName: string, position: Vector3DataType): BasePBRMaterial {
 		let rc = this.mRscene;
 
@@ -62,7 +72,8 @@ export class BasePbrMaterialMultiLights {
 
 		let material = new BasePBRMaterial();
 		let property = material.property;
-		property.setLightData(lightData.lightsData, lightData.lightColorsData);
+
+		property.setLightParam(lightData);
 		material.addTextures(this.createTextures(texName));
 		let monkey = new ModelEntity({
 			materials: [material],
@@ -70,12 +81,28 @@ export class BasePbrMaterialMultiLights {
 			transform: { position, scale: [100, 100, 100], rotation: [0, 90, 0] }
 		});
 		rc.addEntity(monkey);
+
 		return material;
 	}
-	private createLightData(position: Vector3DataType): { lightsData: Float32Array; lightColorsData: Float32Array } {
+
+	private createBoxEntity(texName: string, position: Vector3DataType, lightData: LightShaderDataParam): BasePBRMaterial {
 		let rc = this.mRscene;
 
-		let pos = new Vector3().setVector3(position);
+		let material = new BasePBRMaterial();
+		let property = material.property;
+
+		property.setLightParam(lightData);
+		material.addTextures(this.createTextures(texName));
+		let box = new BoxEntity({
+			materials: [material],
+			transform: { position, scale: [7, 0.1, 7] }
+		});
+		rc.addEntity(box);
+		return material;
+	}
+	private createLightData(position: Vector3DataType): LightShaderDataParam {
+
+		let pos = new Vector3().setVector4(position);
 		let pv0 = pos.clone().addBy(new Vector3(0, 200, 0));
 		let pv1 = pos.clone().addBy(new Vector3(200, 0, 0));
 		let pv2 = pos.clone().addBy(new Vector3(0, 0, 200));
@@ -83,21 +110,19 @@ export class BasePbrMaterialMultiLights {
 		let pv4 = pos.clone().addBy(new Vector3(0, 0, -200));
 		let posList = [pv0, pv1, pv2, pv3, pv4];
 
-		let c0 = new Color4(0.1 + Math.random() * 13, 0.1 + Math.random() * 13, 0.0, 	0.00002);
-		let c1 = new Color4(0.0, 0.1 + Math.random() * 13, 1.0, 						0.00002);
-		let c2 = new Color4(0.0, 0.1 + Math.random() * 13, 0.1 + Math.random() * 13, 	0.00002);
-		let c3 = new Color4(0.1 + Math.random() * 13, 1.0, 0.1 + Math.random() * 13, 	0.00002);
-		let c4 = new Color4(0.5, 1.0, 0.1 + Math.random() * 13, 						0.00002);
+		let c0 = new Color4(0.1 + Math.random() * 13, 0.1 + Math.random() * 13, 0.0, 0.00002);
+		let c1 = new Color4(0.0, 0.1 + Math.random() * 13, 1.0, 0.00002);
+		let c2 = new Color4(0.0, 0.1 + Math.random() * 13, 0.1 + Math.random() * 13, 0.00002);
+		let c3 = new Color4(0.1 + Math.random() * 13, 1.0, 0.1 + Math.random() * 13, 0.00002);
+		let c4 = new Color4(0.5, 1.0, 0.1 + Math.random() * 13, 0.00002);
 
 		let colorList = [c0, c1, c2, c3, c4];
 
-		let lightsTotal = posList.length;
+		let pointLightsTotal = posList.length;
 
 		let j = 0;
-		let lightsData = new Float32Array(4 * lightsTotal);
-		let lightColorsData = new Float32Array(4 * lightsTotal);
-
-		let diffuseTex0 = { diffuse: { url: "static/assets/flare_core_03.jpg" } };
+		let lightsData = new Float32Array(4 * pointLightsTotal);
+		let lightColorsData = new Float32Array(4 * pointLightsTotal);
 
 		for (let i = 0; i < lightsData.length; ) {
 			const pv = posList[j];
@@ -109,16 +134,28 @@ export class BasePbrMaterialMultiLights {
 
 			j++;
 			i += 4;
+		}
+		let param = { lights: lightsData, colors: lightColorsData, pointLightsTotal };
+		this.mLightParams.push(param);
+		return param;
+	}
+	private createBillboards(param: LightShaderDataParam): void {
+		let rc = this.mRscene;
 
+		let pointLightsTotal = param.pointLightsTotal;
+		let lights = param.lights;
+		let colors = param.colors;
+		let diffuseTex0 = { diffuse: { url: "static/assets/flare_core_03.jpg" } };
+		for (let i = 0; i < pointLightsTotal; ++i) {
 			let billboard = new BillboardEntity({ size: 50, textures: [diffuseTex0] });
+			let pv = new Vector3().fromArray3(lights, i * 4);
+			let c = new Color4().fromArray3(colors, i * 4);
 			c.a = 1.0;
 			billboard.color = c.scaleBy(0.1);
 			billboard.scale = 1.0;
 			billboard.transform.setPosition(pv);
 			rc.addEntity(billboard);
 		}
-
-		return { lightsData, lightColorsData };
 	}
 	private initEvent(): void {
 		const rc = this.mRscene;

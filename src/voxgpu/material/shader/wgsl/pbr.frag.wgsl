@@ -1,25 +1,26 @@
 @group(0) @binding(3) var<uniform> ambient: vec4<f32>;
-@group(0) @binding(4) var<uniform> albedo: vec4<f32>;
-@group(0) @binding(5) var<uniform> arms: vec4<f32>;
-@group(0) @binding(6) var<uniform> armsBase: vec4<f32>;
-@group(0) @binding(7) var<uniform> fresnel: vec4<f32>;
-@group(0) @binding(8) var<uniform> toneParam: vec4<f32>;
-@group(0) @binding(9) var<uniform> uvParam: vec4<f32>;
-@group(0) @binding(10) var<uniform> param: vec4<f32>;
-@group(0) @binding(11) var<storage> lights: array<vec4<f32>>;
-@group(0) @binding(12) var<storage> lightColors: array<vec4<f32>>;
-@group(0) @binding(13) var specularEnvSampler: sampler;
-@group(0) @binding(14) var specularEnvTexture: texture_cube<f32>;
-@group(0) @binding(15) var albedoSampler: sampler;
-@group(0) @binding(16) var albedoTexture: texture_2d<f32>;
-@group(0) @binding(17) var normalSampler: sampler;
-@group(0) @binding(18) var normalTexture: texture_2d<f32>;
-@group(0) @binding(19) var aoSampler: sampler;
-@group(0) @binding(20) var aoTexture: texture_2d<f32>;
-@group(0) @binding(21) var roughnessSampler: sampler;
-@group(0) @binding(22) var roughnessTexture: texture_2d<f32>;
-@group(0) @binding(23) var metallicSampler: sampler;
-@group(0) @binding(24) var metallicTexture: texture_2d<f32>;
+// @group(0) @binding(4) var<uniform> albedo: vec4<f32>;
+@group(0) @binding(4) var<storage> armsParams: array<vec4<f32>>;
+// @group(0) @binding(6) var<uniform> fresnel: vec4<f32>;
+// @group(0) @binding(7) var<uniform> toneParam: vec4<f32>;
+@group(0) @binding(5) var<uniform> uvParam: vec4<f32>;
+// @group(0) @binding(10) var<uniform> specularFactor: vec4<f32>;
+@group(0) @binding(6) var<storage> params: array<vec4<f32>>;
+@group(0) @binding(7) var<uniform> lightParam: vec4<u32>;
+@group(0) @binding(8) var<storage> lights: array<vec4<f32>>;
+@group(0) @binding(9) var<storage> lightColors: array<vec4<f32>>;
+@group(0) @binding(10) var specularEnvSampler: sampler;
+@group(0) @binding(11) var specularEnvTexture: texture_cube<f32>;
+@group(0) @binding(12) var albedoSampler: sampler;
+@group(0) @binding(13) var albedoTexture: texture_2d<f32>;
+@group(0) @binding(14) var normalSampler: sampler;
+@group(0) @binding(15) var normalTexture: texture_2d<f32>;
+@group(0) @binding(16) var aoSampler: sampler;
+@group(0) @binding(17) var aoTexture: texture_2d<f32>;
+@group(0) @binding(18) var roughnessSampler: sampler;
+@group(0) @binding(19) var roughnessTexture: texture_2d<f32>;
+@group(0) @binding(20) var metallicSampler: sampler;
+@group(0) @binding(21) var metallicTexture: texture_2d<f32>;
 
 const PI = 3.141592653589793;
 const PI2 = 6.283185307179586;
@@ -106,7 +107,6 @@ const hdrBrnDecodeVec4 = vec4<f32>(255.0, 2.55, 0.0255, 0.000255);
 fn rgbaToHdrBrn(color: vec4<f32>) -> f32 {
     return dot(hdrBrnDecodeVec4, color);
 }
-
 
 
 const OneOnLN2_x6 = 8.656171;// == 1/ln(2) * 6 (6 is SpecularPower of 5 + 1)
@@ -267,6 +267,14 @@ fn chaneColorTestV3(color: ptr<function, vec3<f32>>) {
 fn calcColor4(worldPos: vec4<f32>, uv: vec2<f32>, worldNormal: vec3<f32>, worldCamPos: vec3<f32>) -> vec4<f32> {
 	var color = vec3f(0.0);
 
+
+	var albedo = params[0].xyz;
+	let fresnel = params[1].xyz;
+	let toneParam = params[2];
+	let param = params[3];
+
+	let arms = armsParams[0];
+	let armsBase = armsParams[1];
     var param4 = arms;
     var color4: vec4<f32>;
     var metallic = arms.z;
@@ -290,9 +298,8 @@ fn calcColor4(worldPos: vec4<f32>, uv: vec2<f32>, worldNormal: vec3<f32>, worldC
     //	#endif
 
     let dotNV = clamp(dot(N, V), 0.0, 1.0);
-	var albedo3 = albedo.xyz;
 
-	albedo3 = albedo.xyz * textureSample(albedoTexture, albedoSampler, texUV).xyz;
+	albedo = albedo.xyz * textureSample(albedoTexture, albedoSampler, texUV).xyz;
 	ao = mix(0.0, max(textureSample(aoTexture, aoSampler, texUV).x, armsBase.x), ao);
 	roughness = mix(0.0, max(textureSample(roughnessTexture, roughnessSampler, texUV).y, armsBase.y), roughness);
 	let texMetallic = textureSample(metallicTexture, metallicSampler, texUV).z;
@@ -309,18 +316,19 @@ fn calcColor4(worldPos: vec4<f32>, uv: vec2<f32>, worldNormal: vec3<f32>, worldC
 	var F0 = fresnel.xyz + vec3(0.04);
     F0 = mix(F0, albedo.xyz, metallic);
 
-	albedo3 = gammaToLinear(albedo3);
+	albedo = gammaToLinear(albedo);
 
 	var specularColor = vec3(mix(0.025 * reflectionIntensity, 0.078 * reflectionIntensity, colorGlossiness));
     // #ifdef VOX_METALLIC_CORRECTION
-	let specularColorMetal = mix(F0, albedo3.xyz, vec3<f32>(metallic));
+	let specularColorMetal = mix(F0, albedo.xyz, vec3<f32>(metallic));
 	let ratio = clamp(metallic, 0.0, 1.0);
 	specularColor = mix(specularColor, specularColorMetal, ratio);
     // #endif
-	// return vec4<f32>(albedo3, 1.0);
-    albedo3 = mix(albedo3, F0, metallic);
+	// return vec4<f32>(albedo, 1.0);
+    albedo = mix(albedo, F0, metallic);
 
-	let specularFactor = vec3<f32>(1.0);
+	// let specularFactor = vec3<f32>(1.0);
+	let specularFactor = params[4].xyz;
     specularColor *= specularFactor;
 
 	// let mipLvFactor = 0.07;
@@ -340,7 +348,7 @@ fn calcColor4(worldPos: vec4<f32>, uv: vec2<f32>, worldNormal: vec3<f32>, worldC
 
 	let frontIntensity = toneParam.z;
     var sideIntensity = toneParam.w;
-	var diffuse = albedo3.xyz * RECIPROCAL_PI;
+	var diffuse = albedo.xyz * RECIPROCAL_PI;
     var rm = vec3(1.0 - metallic); // remainder metallic
 
 	let sColor0 = specularColor;
@@ -357,7 +365,9 @@ fn calcColor4(worldPos: vec4<f32>, uv: vec2<f32>, worldNormal: vec3<f32>, worldC
 
 	let ptr_rL = &rL;
 
-	let pointsTotal = arrayLength(&lights);
+	let pointsTotal = min(lightParam.x, u32(128));
+	//arrayLength(&lights);
+
 	var light: vec4<f32>;
 	var lightColor: vec4<f32>;
 	var factor: f32 = 1.0;
@@ -378,7 +388,7 @@ fn calcColor4(worldPos: vec4<f32>, uv: vec2<f32>, worldNormal: vec3<f32>, worldC
 
 	// ambient lighting (note that the next IBL tutorial will replace
     // this ambient lighting with environment lighting).
-    var ambient = ((color + ambient.xyz) * albedo3.xyz) * ao;
+    var ambient = ((color + ambient.xyz) * albedo.xyz) * ao;
 
 	// #ifdef VOX_WOOL
 	sideIntensity = getColorFactorIntensity(dotNV, frontIntensity, sideIntensity);

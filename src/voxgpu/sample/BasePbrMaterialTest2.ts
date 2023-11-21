@@ -37,7 +37,7 @@ export class BasePbrMaterialTest2 {
 		let monkeySrc = new ModelEntity({
 			modelUrl: "static/assets/draco/monkey.drc"
 		});
-		
+
 		let pos = new Vector3(0, 0, -150);
 
 		let material = this.createModelEntity(monkeySrc, "gold", pos);
@@ -58,7 +58,7 @@ export class BasePbrMaterialTest2 {
 		toneParam.tone = 1.0;
 		toneParam.sideIntensity = 30;
 
-		
+
 		material = this.createModelEntity(monkeySrc, "rusted_iron", pos.clone().addBy(new Vector3(-200, 0, 150)));
 		property = material.property;
 		property.arms.value = [1, 0.3, 1];
@@ -69,7 +69,7 @@ export class BasePbrMaterialTest2 {
 	private createModelEntity(srcEntity: ModelEntity, texName: string, position: Vector3DataType): BasePBRMaterial {
 
 		let rc = this.mRscene;
-		
+
 		let lightData = this.createLightData();
 
 		let material = new BasePBRMaterial();

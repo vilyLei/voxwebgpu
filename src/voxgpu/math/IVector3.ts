@@ -25,6 +25,7 @@ interface IVector3 {
     clone(): IVector3;
 	toZero(): IVector3;
 	toOne(): IVector3;
+	setVector4(vector4: Vector3DataType): IVector3;
 	setVector3(vector3: Vector3DataType): IVector3;
 	setVector2(vector3: Vector3DataType): IVector3;
 	abs(): IVector3;
@@ -34,19 +35,19 @@ interface IVector3 {
     /**
      * example: [0],[1],[2],[3] => x,y,z,w
      */
-    fromArray4(arr: number[] | Float32Array, offset?: number): IVector3;
+    fromArray4(arr: NumberArrayType, offset?: number): IVector3;
     /**
      * example: x,y,z,w => [0],[1],[2],[3]
      */
-    toArray4(arr?: number[] | Float32Array, offset?: number): IVector3;
+    toArray4(arr?: NumberArrayType, offset?: number): IVector3;
     /**
      * example: [0],[1],[2] => x,y,z
      */
-    fromArray3(arr: number[] | Float32Array, offset?: number): IVector3;
+    fromArray3(arr: NumberArrayType, offset?: number): IVector3;
     /**
      * example: x,y,z => [0],[1],[2]
      */
-    toArray3(arr?: number[] | Float32Array, offset?: number): IVector3;
+    toArray3(arr?: NumberArrayType, offset?: number): IVector3;
 
     copyFrom(v3: IVector3): IVector3;
     dot(a: IVector3): number;

@@ -43,27 +43,27 @@ interface IColor4 {
     /**
      * example: [0],[1],[2],[3] => r,g,b,a
      */
-    fromArray4(arr: number[] | Float32Array, offset?: number): IColor4;
+    fromArray4(arr: NumberArrayType, offset?: number): IColor4;
     /**
      * example: r,g,b,a => [0],[1],[2],[3]
      */
-    toArray4(arr: number[] | Float32Array, offset?: number): IColor4;
+    toArray4(arr: NumberArrayType, offset?: number): IColor4;
     /**
      * example: [0],[1],[2] => r,g,b
      */
-    fromArray3(arr: number[] | Float32Array, offset?: number): IColor4;
+    fromArray3(arr: NumberArrayType, offset?: number): IColor4;
     /**
      * example: r,g,b => [0],[1],[2]
      */
-    toArray3(arr: number[] | Float32Array, offset?: number): IColor4;
+    toArray3(arr: NumberArrayType, offset?: number): IColor4;
     /**
      * example: [0],[1],[2] => r,g,b
      */
-    fromBytesArray3(arr: number[] | Float32Array, offset?: number): IColor4;
+    fromBytesArray3(arr: NumberArrayType, offset?: number): IColor4;
     /**
      * example: r,g,b => [0],[1],[2]
      */
-    toBytesArray3(arr: number[] | Float32Array, offset?: number): IColor4;
+    toBytesArray3(arr: NumberArrayType, offset?: number): IColor4;
     /**
      * set rgb with three float values
      * @param r example: 0.5

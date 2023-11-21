@@ -190,8 +190,8 @@ export default class BoxGeometry extends MeshBase {
 
 		const min = this.minV;
 		const max = this.maxV;
-		min.setXYZ(0,0,0).setVector3(minV);
-		max.setXYZ(0,0,0).setVector3(maxV);
+		min.setXYZ(0,0,0).setVector4(minV);
+		max.setXYZ(0,0,0).setVector4(maxV);
 		// this.mList[0] = [maxV.x, minV.y, maxV.z];
 		// this.mList[1] = [maxV.x, minV.y, minV.z];
 		// this.mList[2] = [minV.x, minV.y, minV.z];

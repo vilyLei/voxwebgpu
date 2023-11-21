@@ -25,7 +25,7 @@ function createPosDataWith8Pos(vertices8: Vector3DataType[]): Vector3DataType[] 
 	const vps = __v8List;
 	let len = vertices8.length < 8 ? vertices8.length : 8;
 	for(let i = 0; i < len; ++i) {
-		vps[i].setXYZ(0,0,0).setVector3(vertices8[i]);
+		vps[i].setXYZ(0,0,0).setVector4(vertices8[i]);
 	}
 	// let posarr = [
 	// 	// bottom frame
@@ -96,16 +96,16 @@ function buildPosData(param: BoundsFrameEntityParam): void {
 	let flag = true;
 	if(param.bounds !== undefined) {
 		const b = param.bounds;
-		min.setVector3(b.min);
-		max.setVector3(b.max);
+		min.setVector4(b.min);
+		max.setVector4(b.max);
 		flag = false;
 	}
 	if(param.minPos !== undefined) {
-		min.setVector3(param.minPos);
+		min.setVector4(param.minPos);
 		flag = false;
 	}
 	if(param.maxPos !== undefined) {
-		max.setVector3(param.maxPos);
+		max.setVector4(param.maxPos);
 		flag = false;
 	}
 	if(flag) {

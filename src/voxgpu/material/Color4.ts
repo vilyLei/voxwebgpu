@@ -111,14 +111,14 @@ export default class Color4 implements IColor4 {
 		this.b = Math.pow(this.b, f);
 		return this;
 	}
-	fromArray4(arr: number[] | Float32Array, offset: number = 0): Color4 {
+	fromArray4(arr: NumberArrayType, offset = 0): Color4 {
 		this.r = arr[offset];
 		this.g = arr[offset + 1];
 		this.b = arr[offset + 2];
 		this.a = arr[offset + 3];
 		return this;
 	}
-	toArray4(arr: number[] | Float32Array, offset: number = 0): Color4 {
+	toArray4(arr: NumberArrayType, offset = 0): Color4 {
 		arr[offset] = this.r;
 		arr[offset + 1] = this.g;
 		arr[offset + 2] = this.b;
@@ -135,24 +135,24 @@ export default class Color4 implements IColor4 {
 		this.toArray3(arr);
 		return arr;
 	}
-	fromArray3(arr: number[] | Float32Array, offset: number = 0): Color4 {
+	fromArray3(arr: NumberArrayType, offset = 0): Color4 {
 		this.r = arr[offset];
 		this.g = arr[offset + 1];
 		this.b = arr[offset + 2];
 		return this;
 	}
-	toArray3(arr: number[] | Float32Array, offset: number = 0): Color4 {
+	toArray3(arr: number[] | Float32Array, offset = 0): Color4 {
 		arr[offset] = this.r;
 		arr[offset + 1] = this.g;
 		arr[offset + 2] = this.b;
 		return this;
 	}
 
-	fromBytesArray3(arr: number[] | Float32Array, offset: number = 0): Color4 {
+	fromBytesArray3(arr: NumberArrayType, offset = 0): Color4 {
 		this.setRGB3Bytes(arr[offset], arr[offset + 1], arr[offset + 2]);
 		return this;
 	}
-	toBytesArray3(arr: number[] | Float32Array, offset: number = 0): Color4 {
+	toBytesArray3(arr: NumberArrayType, offset = 0): Color4 {
 		arr[offset] = Math.round(this.r * 255);
 		arr[offset + 1] = Math.round(this.g * 255);
 		arr[offset + 2] = Math.round(this.b * 255);

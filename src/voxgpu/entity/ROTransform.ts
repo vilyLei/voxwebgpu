@@ -127,7 +127,7 @@ export default class ROTransform implements IROTransform {
 		return this;
 	}
 	offsetPosition(pv: Vector3DataType): ROTransform {
-		v3.setXYZ(0, 0, 0).setVector3(pv);
+		v3.setXYZ(0, 0, 0).setVector4(pv);
 		this.mFS32[12] += v3.x;
 		this.mFS32[13] += v3.y;
 		this.mFS32[14] += v3.z;
@@ -137,7 +137,7 @@ export default class ROTransform implements IROTransform {
 		return this;
 	}
 	setPosition(pv: Vector3DataType): ROTransform {
-		v3.setXYZ(0, 0, 0).setVector3(pv);
+		v3.setXYZ(0, 0, 0).setVector4(pv);
 		this.mFS32[12] = v3.x;
 		this.mFS32[13] = v3.y;
 		this.mFS32[14] = v3.z;
@@ -208,7 +208,7 @@ export default class ROTransform implements IROTransform {
 		return this;
 	}
 	setRotation(pv: Vector3DataType): ROTransform {
-		v3.setXYZ(0, 0, 0).setVector3(pv);
+		v3.setXYZ(0, 0, 0).setVector4(pv);
 		this.setRotationXYZ(v3.x, v3.y, v3.z);
 		return this;
 	}
@@ -258,7 +258,7 @@ export default class ROTransform implements IROTransform {
 		return this;
 	}
 	setScale(pv: Vector3DataType): ROTransform {
-		v3.setXYZ(1, 1, 1).setVector3(pv);
+		v3.setXYZ(1, 1, 1).setVector4(pv);
 		this.setScaleXYZ(v3.x, v3.y, v3.z);
 		return this;
 	}

@@ -10,8 +10,8 @@ interface RectLineGridEntityParam extends Line3DEntityParam {
 
 function buildGridMesh(minV3: Vector3DataType, maxV3: Vector3DataType, stepsTotal = 10): IVector3[] {
 	if (stepsTotal < 1) stepsTotal = 1;
-	let minV = new Vector3().setVector3(minV3);
-	let maxV = new Vector3().setVector3(maxV3);
+	let minV = new Vector3().setVector4(minV3);
+	let maxV = new Vector3().setVector4(maxV3);
 	// xoz
 	let type = 1;
 	let dv = new Vector3().subVecsTo(maxV, minV);

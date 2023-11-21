@@ -93,7 +93,6 @@ function getVisibility(str: string, value: number): number {
 			break;
 		case 'comp':
 		case 'compute':
-			console.log("getVisibility() XXXX Comp");
 			return value | GPUShaderStage.COMPUTE;
 			break;
 		default:
@@ -103,6 +102,7 @@ function getVisibility(str: string, value: number): number {
 }
 function applyLayout(layout: WGRBufferLayout, vi: WGRBufferVisibility, type: string): void {
 	let visi = layout.visibility !== undefined ? layout.visibility : 'vert_frag';
+	// console.log('applyLayout(), visi: ', visi);
 	let vs = visi.split('_');
 	let v = 0;
 	if(!__$ubv) {
@@ -110,7 +110,7 @@ function applyLayout(layout: WGRBufferLayout, vi: WGRBufferVisibility, type: str
 	}
 	let bv = __$ubv.visibility;
 	for(let i = 0; i < vs.length; ++i) {
-		if(vs[i] === 'all') {			
+		if(vs[i] === 'all') {
 			bv.toVisibleAll();
 			v = bv.visibility;
 			break;
@@ -152,7 +152,7 @@ function bufferDataFilter(d: WGRBufferData): WGRBufferData {
 	const v = __$ubv;
 	let rd = d;
 	let vi = rd.visibility;
-	
+
 	let layout: WGRBufferLayout = rd.layout;
 	if(d.storage) {
 		rd = d.storage;
@@ -182,6 +182,7 @@ function bufferDataFilter(d: WGRBufferData): WGRBufferData {
 		v.toVertex();
 		rd.usage = v.usage;
 	}
+	// console.log(">>> rd: ", rd);
 	if(rd.usage === undefined || d.uniform) {
 		if(d.uniform) {
 			rd = d.uniform;
