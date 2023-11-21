@@ -16,22 +16,22 @@ export class FixScreenPlaneTest {
 		rc.addEventListener(MouseEvent.MOUSE_DOWN, this.mouseDown);
 		new MouseInteraction().initialize(rc, 0, false).setAutoRunning(true);
 	}
-	private mouseDown = (evt: MouseEvent): void => {
-	}
+	private mouseDown = (evt: MouseEvent): void => {};
 	private initScene(): void {
-
 		const rc = this.mRscene;
 
 		const diffuseTex = { diffuse: { url: "static/assets/default.jpg", flipY: true } };
 
-		let entity = new FixScreenPlaneEntity().setColor([0.2,0.5,0.7]);
+		let entity = new FixScreenPlaneEntity().setColor([0.2, 0.5, 0.7]);
 		rc.addEntity(entity);
 
-		entity = new FixScreenPlaneEntity({extent: [-0.8, 0.1, 0.5, 0.5]}).setColor([0.2,0.8,0.3]);
+		entity = new FixScreenPlaneEntity({ extent: [-0.8, 0.1, 0.5, 0.5] }).setColor([0.2, 0.8, 0.3]);
 		rc.addEntity(entity);
 
-		entity = new FixScreenPlaneEntity({extent: [-0.8, -0.8, 0.8, 0.8], textures: [diffuseTex]});
-		entity.setColor([0.1,0.3,0.9]);
+		entity = new FixScreenPlaneEntity({ extent: [-0.8, -0.8, 0.8, 0.8], textures: [diffuseTex] });
+		entity.uvScale = [2, 2];
+		entity.uvOffset = [0.2, 0.3];
+		entity.setColor([0.1, 0.3, 0.9]);
 		rc.addEntity(entity);
 	}
 

@@ -68,9 +68,38 @@ class BasePBRArmsData extends BasePBRUniformData {
 		super(data, shdVarName);
 		this.property.fromArray4(this.data);
 	}
+	set ao(v: number) {
+		this.property.a = v;
+		this.update();
+	}
+	get ao(): number {
+		return this.property.a;
+	}
+	set roughness(v: number) {
+		this.property.r = v;
+		this.update();
+	}
+	get roughness(): number {
+		return this.property.r;
+	}
+	set metallic(v: number) {
+		this.property.m = v;
+		this.update();
+	}
+	get metallic(): number {
+		return this.property.m;
+	}
+
+	set specular(v: number) {
+		this.property.s = v;
+		this.update();
+	}
+	get specular(): number {
+		return this.property.s;
+	}
 	set value(v: ArmsDataType) {
-		this.property.setArms(v).toArray4(this.data);
-		this.version++;
+		this.property.setArms( v );
+		this.update();
 	}
 	get value(): ArmsDataType {
 		return this.property;

@@ -253,7 +253,7 @@ fn calcPBRLight(roughness: f32, rm: vec3<f32>, inColor: vec3<f32>, ptr_rL: ptr<f
     // #ifdef VOX_SPECULAR_BLEED
     // kD *= specularScatter;
     // #endif
-    (*ptr_rL).diffuse += fdBurley * lightColor * (kD + kD * specularScatter);
+    (*ptr_rL).diffuse += fdBurley * lightColor * kD * (1.0 + specularScatter);
     (*ptr_rL).specular += specular * lightColor * specularScatter;
 }
 

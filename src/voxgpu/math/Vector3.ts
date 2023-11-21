@@ -49,6 +49,23 @@ export default class Vector3 implements IVector3 {
 		}
 		return this;
 	}
+	setVector2(vector3: Vector3DataType): Vector3 {
+		let v = vector3;
+		if (v) {
+			const t = this;
+			const vs = v as number[];
+			if (vs.length !== undefined) {
+				const len = vs.length;
+				if (len > 0) t.x = vs[0];
+				if (len > 1) t.y = vs[1];
+			} else {
+				const tv = v as Vector3Type;
+				if (tv.x !== undefined) t.x = tv.x;
+				if (tv.y !== undefined) t.y = tv.y;
+			}
+		}
+		return this;
+	}
 	abs(): Vector3 {
 		this.x = Math.abs(this.x);
 		this.y = Math.abs(this.y);

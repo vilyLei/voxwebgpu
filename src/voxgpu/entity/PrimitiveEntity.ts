@@ -166,35 +166,12 @@ class PrimitiveEntity extends Entity3D {
 			}
 			this.materials = [material];
 		}
-		const ms = this.materials;
-
-		// if(param.doubleFace !== undefined) {
-		// 	let flag = param.doubleFace === true;
-		// 	for(let i = 0; i < ms.length; ++i) {
-		// 		if(ms[i].doubleFace === undefined && flag) {
-		// 			ms[i].doubleFace = flag;
-		// 			ms[i].shadinguuid += '-dface';
-		// 		}
-		// 	}
-		// }
-		// if(param.wireframe !== undefined) {
-		// 	let flag = param.wireframe === true;
-		// 	for(let i = 0; i < ms.length; ++i) {
-		// 		if(ms[i].wireframe === undefined && flag) {
-		// 			ms[i].wireframe = flag;
-		// 			ms[i].shadinguuid += '-wframe';
-		// 		}
-		// 	}
-		// }
-		// console.log("param: ", param);
-		// console.log("param.albedo: ", param.albedo);
 		if (param.albedo) {
 			this.albedo = param.albedo;
 		}
 		if (param.arm) {
 			this.arm = param.arm;
 		}
-		// checkMaterialRPasses(this.materials, param.rpasses);
 		checkEntityMaterialsInfo(this.materials, param);
 	}
 	destroy(): void {
