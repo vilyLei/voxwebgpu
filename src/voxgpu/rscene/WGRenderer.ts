@@ -106,7 +106,6 @@ class WGRenderer implements IRenderer {
 					mana.wgctx = wgctx;
 					mana.roBuilder = this.mROBuilder;
 
-					// mana.callback = this.receiveNode;
 					this.mEntityMana.updateToTarget();
 				});
 				this.mWGCtx = wgctx;
@@ -156,10 +155,9 @@ class WGRenderer implements IRenderer {
 	removeEntity(entity: Entity3D): void {
 		if (entity) {
 			if (entity.isInRenderer()) {
-				// const et = node.entity;
+				
 				const ls = entity.__$bids;
 				if (ls) {
-					// let bs = WGRenderUnitBlock.getBlockAt();
 					let bs: WGRenderUnitBlock[] = new Array(ls.length);
 					for (let i = 0; i < ls.length; ++i) {
 						bs[i] = WGRenderUnitBlock.getBlockAt(ls[i]);

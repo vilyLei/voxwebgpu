@@ -5,8 +5,6 @@ import vertWGSL from "../material/shader/wgsl/fixScreenPlane.vert.wgsl";
 import fragCalc from "./shaders/floatRTTCalc.frag.wgsl";
 import fragRead from "./shaders/floatRTTRead.frag.wgsl";
 
-import { WGRPassColorAttachment } from "../render/pipeline/WGRPassColorAttachment";
-
 const floatRTT = { diffuse: { uuid: "rtt0", rttTexture: {}, format: 'rgba16float' } };
 
 export class FloatRTT {

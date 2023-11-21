@@ -50,8 +50,9 @@
 // import { ColorAttachmentReplace as Demo } from "./voxgpu/sample/ColorAttachmentReplace";
 // import { PingpongBlur as Demo } from "./voxgpu/sample/PingpongBlur";
 
-// import { FloatRTT as Demo } from "./voxgpu/sample/FloatRTT";
+import { FloatRTT as Demo } from "./voxgpu/sample/FloatRTT";
 // import { MRT as Demo } from "./voxgpu/sample/MRT";
+// import { CubeMapRTTTest as Demo } from "./voxgpu/sample/CubeMapRTTTest";
 // import { DepthBlur as Demo } from "./voxgpu/sample/DepthBlur";
 
 // import { LineEntityTest as Demo } from "./voxgpu/sample/LineEntityTest";
@@ -70,11 +71,8 @@
 // import { BaseMaterialTest as Demo } from "./voxgpu/sample/BaseMaterialTest";
 // import { BasePbrMaterialTest as Demo } from "./voxgpu/sample/BasePbrMaterialTest";
 // import { BasePbrMaterialTest2 as Demo } from "./voxgpu/sample/BasePbrMaterialTest2";
-import { BasePbrMaterialMultiLights as Demo } from "./voxgpu/sample/BasePbrMaterialMultiLights";
+// import { BasePbrMaterialMultiLights as Demo } from "./voxgpu/sample/BasePbrMaterialMultiLights";
 
-//////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////           unit test               ////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////
 
 
 let demoIns = new Demo();

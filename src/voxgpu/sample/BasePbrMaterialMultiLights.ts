@@ -39,7 +39,7 @@ export class BasePbrMaterialMultiLights {
 
 		rc.addEntity(new AxisEntity());
 		let callback = (): void => {
-			// let pos = new Vector3(0, 0, -150);
+			
 			let pos = new Vector3(0, 0, 0);
 
 			// let material = this.createModelEntity(monkeySrc, "grass", pos);
