@@ -47,7 +47,7 @@ class WGShaderPredefine {
 				end1 = src.length;
 			}
 			let end = Math.min(end0, end1);
-			console.log("WGShaderPredefine::parsePredefineVar(), begin, end: ", begin, end);
+			// console.log("WGShaderPredefine::parsePredefineVar(), begin, end: ", begin, end);
 			if (end > 0 && end > begin) {
 				let defineName = src.slice(begin + 1, end).trim();
 				let codeLine = getCodeLine(src, begin + 1);
@@ -56,16 +56,26 @@ class WGShaderPredefine {
 						let defineValue = Number(src.slice(end0 + 1, end1).trim());
 						console.log("WGShaderPredefine::parsePredefineVar(), defineName: ", defineName, ", defineValue: ", defineValue);
 						this.preVarDict.set(defineName, new PreDefItem(defineName, defineValue));
+						let pstr = src.slice(index, end1);
+						// console.log("AAAAA pstr: ", pstr);
+						let regex = new RegExp(pstr, "g");
+        				src = src.replace(regex, "out ");
 					} else {
 						console.log("WGShaderPredefine::parsePredefineVar(), defineName: ", defineName);
 						this.preVarDict.set(defineName, new PreDefItem(defineName));
+						let pstr = src.slice(index, end0);
+						let regex = new RegExp(pstr, "g");
+        				src = src.replace(regex, "out ");
+						// console.log("BBBBB pstr: ", pstr);
 					}
 				}
-				index = src.indexOf(keyStr, end);
+				// index = src.indexOf(keyStr, end);
+				index = src.indexOf(keyStr);
 			} else {
 				break;
 			}
 		}
+		// console.log("TTTTTTTTTT src: ", src);
 	}
 
 	applyPredefine(src: string): string {
