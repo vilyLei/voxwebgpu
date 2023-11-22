@@ -77,6 +77,10 @@ class WGMaterial implements IWGMaterial {
 		return this;
 	}
 	addTextureWithData(data: WGTextureData, shdVarName = ""): void {
+
+		if(data.shdVarName) {
+			shdVarName = data.shdVarName;
+		}
 		if (shdVarName === "") {
 			shdVarName = "texture" + (this.textures ? this.textures.length : 0);
 		}

@@ -30,6 +30,7 @@ class WGTextureData implements WGTextureDataType {
 	format = "rgba8unorm";
 	dimension = "2d";
 	viewDimension = "2d";
+	shdVarName = "";
 	constructor() {}
 
 	setDescripter(descriptor: TextureDataDescriptor): WGTextureData {
@@ -38,6 +39,7 @@ class WGTextureData implements WGTextureDataType {
 		if (descriptor.format) this.format = descriptor.format;
 		if (descriptor.dimension) this.dimension = descriptor.dimension;
 		if (descriptor.viewDimension) this.viewDimension = descriptor.viewDimension;
+		if (descriptor.shdVarName) this.shdVarName = descriptor.shdVarName;
 		this.mDesc = descriptor;
 		return this;
 	}
@@ -287,6 +289,7 @@ class WGTextureWrapper {
 			if (td.dimension) tex.dimension = td.dimension;
 			if (td.viewDimension) tex.viewDimension = td.viewDimension;
 			if (td.format) tex.format = td.format;
+			// if (td.format) tex.format = td.;
 		}
 
 		const sp = param.sampler;

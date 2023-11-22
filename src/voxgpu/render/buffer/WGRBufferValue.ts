@@ -147,7 +147,7 @@ function bufferDataFilter(d: WGRBufferData): WGRBufferData {
 		return d;
 	}
 	if(!__$ubv) {
-		__$ubv = new WGRBufferValue({data: new Float32Array(4)});
+		__$ubv = new WGRBufferValue({data: new Float32Array(4), stride: 1, shdVarName: '__$ubv'});
 	}
 	const v = __$ubv;
 	let rd = d;
@@ -156,6 +156,7 @@ function bufferDataFilter(d: WGRBufferData): WGRBufferData {
 	let layout: WGRBufferLayout = rd.layout;
 	if(d.storage) {
 		rd = d.storage;
+		console.log("VVVVVVVVV >> rd: ", rd);
 		v.toStorage();
 		rd.usage = v.usage;
 		let flag = !rd.visibility;

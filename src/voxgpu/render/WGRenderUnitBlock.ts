@@ -40,9 +40,17 @@ class WGRenderUnitBlock {
 			if(map.has(material.uid)) {
 				return true;
 			}
-			map.set(material.uid, material);
+			// map.set(material.uid, material);
 		}
 		return false;
+	}
+	setMaterial(material: WGMaterialDescripter): void {
+		if(material.uid !== undefined) {
+			const map = this.mMaterialMap;
+			if(!map.has(material.uid)) {
+				map.set(material.uid, material);
+			}
+		}
 	}
 	addEntityToBlock(entity: Entity3D, node: WGREntityNode): void {
 		entity.update();

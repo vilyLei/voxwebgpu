@@ -20,7 +20,7 @@ class WGRenderPassNode implements IWGRenderPassNode {
 	private mPassBuilded = false;
 	readonly clearColor = new Color4(0.0, 0.0, 0.0, 1.0);
 
-	
+
 	colorAttachments: WGRPColorAttachmentImpl[];
 	camera: Camera;
 	name = "";
@@ -98,6 +98,11 @@ class WGRenderPassNode implements IWGRenderPassNode {
 			return this.unitBlock.hasMaterial(material);
 		}
 		return false;
+	}
+	setMaterial(material: WGMaterialDescripter): void {
+		if(this.unitBlock) {
+			this.unitBlock.setMaterial(material);
+		}
 	}
 	addEntity(entity: Entity3D): void {
 		if (entity) {

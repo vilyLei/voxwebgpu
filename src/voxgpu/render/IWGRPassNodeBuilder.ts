@@ -7,6 +7,7 @@ interface IWGRPassNodeBuilder {
 	readonly camera: Camera;
 	getWGCtx(): WebGPUContext;
 	hasMaterial(material: WGMaterialDescripter): boolean;
+	setMaterial(material: WGMaterialDescripter): void;
 	getPassNodeWithMaterial(material: WGMaterialDescripter): WGRenderPassNode;
 	createRenderPipelineCtxWithMaterial(material: WGMaterialDescripter): WGRPipelineContext;
 }

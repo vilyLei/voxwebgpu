@@ -501,7 +501,7 @@ export default class ROTransform implements IROTransform {
 				unit.mFS32 = ida.slice(0);
 			}
 		}
-		unit.uniformv = new WGRUniformValue({ data: unit.mOMat.getLocalFS32(), shdVarName: "objMat" });
+		unit.uniformv = new WGRUniformValue({ data: unit.mOMat.getLocalFS32(), shdVarName: "objMat", shdVarFormat: 'mat4x4<f32>' });
 		if(param.transform) {
 			unit.transform = param.transform;
 		}

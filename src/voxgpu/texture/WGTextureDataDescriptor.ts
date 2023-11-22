@@ -41,7 +41,10 @@ interface TextureDataDescriptor {
 }
 interface WGTextureDataDescriptor extends TextureDataDescriptor {
 	diffuse?: TextureDataDescriptor;
-	color?: TextureDataDescriptor;
+	/**
+	 * base color map
+	 */
+	baseColor?: TextureDataDescriptor;
 	albedo?: TextureDataDescriptor;
 	normal?: TextureDataDescriptor;
 	ao?: TextureDataDescriptor;
@@ -52,6 +55,17 @@ interface WGTextureDataDescriptor extends TextureDataDescriptor {
 	parallax?: TextureDataDescriptor;
 	displacement?: TextureDataDescriptor;
 	specular?: TextureDataDescriptor;
+	glossiness?: TextureDataDescriptor;
+	emissive?: TextureDataDescriptor;
+	anisotropic ?: TextureDataDescriptor;
+	/**
+	 * likes the mask texture
+	 */
+	opacity?: TextureDataDescriptor;
+	/**
+	 * hight map
+	 */
+	heightmap?: TextureDataDescriptor;
 }
 
 function texDescriptorFilter(d: WGTextureDataDescriptor): TextureDataDescriptor {
@@ -64,9 +78,9 @@ function texDescriptorFilter(d: WGTextureDataDescriptor): TextureDataDescriptor 
 		rd.shdVarName = "diffuse";
 		return rd;
 	}
-	if (d.color) {
-		rd = d.color;
-		rd.shdVarName = "color";
+	if (d.baseColor) {
+		rd = d.baseColor;
+		rd.shdVarName = "baseColor";
 		return rd;
 	}
 	if (d.albedo) {
@@ -110,10 +124,10 @@ function texDescriptorFilter(d: WGTextureDataDescriptor): TextureDataDescriptor 
 		rd.shdVarName = "parallax";
 		return rd;
 	}
-	// if (d.height) {
-	// 	rd = d.height;
-	// 	rd.shdVarName = "height";
-	// }
+	if (d.heightmap) {
+		rd = d.heightmap;
+		rd.shdVarName = "heightmap";
+	}
 	if (d.displacement) {
 		rd = d.displacement;
 		rd.shdVarName = "displacement";

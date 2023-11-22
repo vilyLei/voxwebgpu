@@ -6,6 +6,8 @@ import { WGMaterialDescripter, WGMaterial } from "./WGMaterial";
 
 import basePBRVertWGSL from "./shader/wgsl/pbr.vert.wgsl";
 import basePBRFragWGSL from "./shader/wgsl/pbr.frag.wgsl";
+import basePBRWholeWGSL from "./shader/wgsl/pbr.wgsl";
+import basePBRWholeInitWGSL from "./shader/wgsl/pbrInit.wgsl";
 import MathConst from "../math/MathConst";
 import Vector3 from "../math/Vector3";
 
@@ -13,15 +15,24 @@ const basePBRShaderSrc = {
 	vert: { code: basePBRVertWGSL, uuid: "vertBasePBRShdCode" },
 	frag: { code: basePBRFragWGSL, uuid: "fragBasePBRShdCode" }
 };
+
+// const basePBRShaderSrc = {
+// 	// shaderSrc: { code: basePBRVertWGSL + basePBRFragWGSL, uuid: "wholeBasePBRShdCode" },
+// 	shaderSrc: { code: basePBRWholeWGSL, uuid: "wholeBasePBRShdCode" },
+// 	// shaderSrc: { code: basePBRWholeInitWGSL, uuid: "wholeBasePBRShdCode" },
+// };
 interface BasePBRUniformDataImpl extends WGRBufferData {
 	update(): void;
 }
 class BasePBRUniformData implements BasePBRUniformDataImpl {
+	stride = 4;
 	data: NumberArrayDataType;
 	shared = false;
+	arraying = false;
 	shdVarName: string;
 	version = -1;
 	layout = { visibility: "all" };
+	shdVarFormat = 'vec4<f32>';
 	constructor(data: NumberArrayType, shdVarName: string, visibility?: string) {
 		this.data = data as NumberArrayDataType;
 		this.shdVarName = shdVarName;
@@ -77,6 +88,8 @@ class BasePBRArmsData implements BasePBRUniformDataImpl {
 	base = new Arms();
 	constructor(data: Float32Array, shdVarName: string, visibility?: string) {
 		this.storage = new BasePBRUniformData(data, shdVarName, visibility);
+		this.storage.arraying = true;
+		this.storage.shdVarFormat = 'array<vec4<f32>>';
 		this.arms.fromArray4(data);
 		this.base.fromArray4(data, 4);
 	}
@@ -153,6 +166,8 @@ class PBRParamsVec4Data implements BasePBRUniformDataImpl {
 	specularFactor = new Color4();
 	constructor(data: Float32Array, shdVarName: string, visibility?: string) {
 		this.storage = new BasePBRUniformData(data, shdVarName, visibility);
+		this.storage.arraying = true;
+		this.storage.shdVarFormat = 'array<vec4<f32>>';
 		this.albedo.fromArray4(data);
 		this.fresnel.fromArray4(data, 4);
 		this.toneParam.fromArray4(data, 8);
@@ -260,6 +275,8 @@ class BaseLightData implements WGRBufferData {
 	storage: BasePBRUniformData;
 	constructor(data: Float32Array, shdVarName: string, visibility?: string) {
 		this.storage = new BasePBRUniformData(data, shdVarName, visibility);
+		this.storage.arraying = true;
+		this.storage.shdVarFormat = 'array<vec4<f32>>';
 	}
 	set shared(b: boolean) {
 		this.storage.shared = b;
@@ -289,6 +306,10 @@ type LightShaderDataParam = {
 	spotLightsTotal?: number;
 };
 class LightParamData extends BasePBRVec4Data {
+	constructor(data: NumberArrayType, shdVarName: string, visibility?: string) {
+		super(data, shdVarName, visibility);
+		this.shdVarFormat = 'vec4<u32>';
+	}
 	set param(param: LightShaderDataParam) {
 		if (param) {
 			if (param.pointLightsTotal !== undefined) {
@@ -379,8 +400,9 @@ class BasePBRMaterial extends WGMaterial {
 	constructor(descriptor?: WGMaterialDescripter) {
 		super(descriptor);
 	}
-	setLightParam(param: LightShaderDataParam): void {
+	setLightParam(param: LightShaderDataParam): BasePBRMaterial {
 		this.property.setLightParam( param );
+		return this;
 	}
 	setDescriptor(descriptor: WGMaterialDescripter): void {
 		if (!descriptor || descriptor.shaderSrc === undefined) {

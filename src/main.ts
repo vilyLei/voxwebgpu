@@ -42,7 +42,7 @@
 // import { GameOfLife3DPBR as Demo } from "./voxgpu/sample/GameOfLife3DPBR";
 
 // import { MultiGPUPassTest as Demo } from "./voxgpu/sample/MultiGPUPassTest";
-import { RTTFixScreenTest as Demo } from "./voxgpu/sample/RTTFixScreenTest";
+// import { RTTFixScreenTest as Demo } from "./voxgpu/sample/RTTFixScreenTest";
 // import { RTTTest as Demo } from "./voxgpu/sample/RTTTest";
 // import { AddEntityIntoMultiRPasses as Demo } from "./voxgpu/sample/AddEntityIntoMultiRPasses";
 
@@ -72,6 +72,9 @@ import { RTTFixScreenTest as Demo } from "./voxgpu/sample/RTTFixScreenTest";
 // import { BasePbrMaterialTest as Demo } from "./voxgpu/sample/BasePbrMaterialTest";
 // import { BasePbrMaterialTest2 as Demo } from "./voxgpu/sample/BasePbrMaterialTest2";
 // import { BasePbrMaterialMultiLights as Demo } from "./voxgpu/sample/BasePbrMaterialMultiLights";
+// import { BasePbrMaterialMultiPasses as Demo } from "./voxgpu/sample/BasePbrMaterialMultiPasses";
+
+import { ShaderConstructing as Demo } from "./voxgpu/sample/ShaderConstructing";
 
 
 

@@ -72,8 +72,8 @@ class Camera implements IRenderCamera {
 	frustum = new Frustum();
 	inversePerspectiveZ = false;
 	constructor(param?: WGCameraParam) {
-		this.viewUniformV = new WGRUniformValue({ data: this.mViewMat.getLocalFS32(), shared: true, shdVarName: "viewMat" });
-		this.projUniformV = new WGRUniformValue({ data: this.mProjMat.getLocalFS32(), shared: true, shdVarName: "projMat" });
+		this.viewUniformV = new WGRUniformValue({ data: this.mViewMat.getLocalFS32(), shared: true, shdVarName: 'viewMat', shdVarFormat: 'mat4x4<f32>' });
+		this.projUniformV = new WGRUniformValue({ data: this.mProjMat.getLocalFS32(), shared: true, shdVarName: 'projMat', shdVarFormat: 'mat4x4<f32>' });
 		if (param) {
 			this.initialize(param);
 		}
@@ -686,7 +686,7 @@ class Camera implements IRenderCamera {
 		outV.w = outV.w - outV.y;
 	}
 	private mInvViewMat: Matrix4;
-	
+
 	getInvertViewMatrix(): Matrix4 {
 		return this.mInvViewMat;
 	}

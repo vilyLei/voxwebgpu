@@ -93,12 +93,18 @@ class WGRUniformContext implements IWGRUniformContext {
 			for (let i = 0; i < values.length; ++i) {
 
 				// console.log(values[i], ", A0-KKK v instanceof WGRBufferValue: ", values[i] instanceof WGRBufferValue);
+				/*
 				let v = values[i];
 				v = checkBufferData(v);
-
 				if(v.uid == undefined || v.uid < 0) {
 					v.uid = createNewWRGBufferViewUid();
 				}
+				*/
+				let v = values[i];
+				// v = checkBufferData(v);
+				// if(v.uid == undefined || v.uid < 0) {
+				// 	v.uid = createNewWRGBufferViewUid();
+				// }
 				const vuid = v.uid;
 				const arrayStride = v.arrayStride;
 				const visibility = v.visibility.clone();

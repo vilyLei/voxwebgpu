@@ -16,9 +16,11 @@ import { WebGPUContext } from "../gpu/WebGPUContext";
 import { IWGMaterial } from "../material/IWGMaterial";
 import { WGRPrimitiveDict, WGGeometry } from "../geometry/WGGeometry";
 import { WGRDrawMode } from "./Define";
+import { checkBufferData, WGRBufferValue } from "./buffer/WGRBufferValue";
+import { createNewWRGBufferViewUid } from "./buffer/WGRBufferView";
 
 type GeomType = { indexBuffer?: GPUBuffer, vertexBuffers: GPUBuffer[], indexCount?: number, vertexCount?: number, drawMode?: WGRDrawMode };
-
+const bufValue = new WGRBufferValue({shdVarName:'bufValue'});
 class WGRObjBuilder {
 
 	wgctx: WebGPUContext;
@@ -40,7 +42,7 @@ class WGRObjBuilder {
 		}
 		return g;
 	}
-	private testShaderSrc(shdSrc: WGRShderSrcType): void {
+	private checkShaderSrc(shdSrc: WGRShderSrcType): void {
 		if (shdSrc) {
 			if (shdSrc.code !== undefined && !shdSrc.shaderSrc) {
 				const obj = { code: shdSrc.code, uuid: shdSrc.uuid };
@@ -63,6 +65,66 @@ class WGRObjBuilder {
 			}
 		}
 	}
+	private checkUniforms(shdSrc: WGRShderSrcType, uvalues: WGRBufferData[], utexes: { texView: GPUTextureView, viewDimension: string, shdVarName: string }[]): WGRShderSrcType {
+		let shd = shdSrc.shaderSrc;
+		if(shd) {
+
+			let code = shd.code;
+			if(code.indexOf('@binding(') >= 0) {
+				let begin = code.indexOf('@group(');
+				let end = code.lastIndexOf(' @binding(');
+				end = code.indexOf(';', end + 1);
+				code = code.slice(0, begin) + code.slice(end + 1);
+				// console.log('oooooooooo begin, end: ', begin, end);
+			}
+			// console.log('oooooooooo code: ', code);
+			// console.log(`code.indexOf('@binding(') < 0: `, code.indexOf('@binding(') < 0);
+			if(code.indexOf('@binding(') < 0) {
+				let codeStr = '';
+				let index = 0;
+				if(uvalues && uvalues.length > 0) {
+					// @group(0) @binding(0) var<uniform> objMat : mat4x4<f32>;
+					for(let i = 0; i < uvalues.length; ++i) {
+						bufValue.usage = uvalues[i].usage;
+						let varType = bufValue.isStorage() ? 'storage' : 'uniform';
+						let str = `@group(0) @binding(${index++}) var<${varType}> ${uvalues[i].shdVarName} : ${uvalues[i].shdVarFormat};\n`;
+						codeStr += str;
+					}
+				}
+				if(utexes && utexes.length > 0) {
+					console.log('utexes: ', utexes);
+					for(let i = 0; i < utexes.length; ++i) {
+						let tex = utexes[i];
+						let varType = 'texture_2d';
+						switch(tex.viewDimension) {
+							case 'cube':
+								varType = 'texture_cube';
+								break;
+							default:
+								break;
+						}
+						let str = `@group(0) @binding(${index++}) var ${tex.shdVarName}Sampler: sampler;\n`;
+						str += `@group(0) @binding(${index++}) var ${tex.shdVarName}Texture: ${varType}<f32>;\n`;
+						codeStr += str;
+					}
+				}
+				console.log("checkUniforms(), codeStr:");
+				console.log( codeStr );
+				if(codeStr !== '') {
+					codeStr = codeStr + code;
+					let shaderSrc = {
+						// shaderSrc: { code: basePBRVertWGSL + basePBRFragWGSL, uuid: "wholeBasePBRShdCode" },
+						shaderSrc: { code: codeStr, uuid: shd.uuid },
+						// shaderSrc: { code: basePBRWholeInitWGSL, uuid: "wholeBasePBRShdCode" },
+					};
+					// console.log("checkUniforms() VVVVVVVVVVVVVVVVVVVVVVVV, codeStr: ");
+					// console.log( codeStr );
+					return shaderSrc;
+				}
+			}
+		}
+		return shdSrc;
+	}
 	private checkMaterial(material: IWGMaterial, primitive: WGRPrimitive): void {
 		if(!material.shaderSrc.compShaderSrc) {
 			const vtxParam = material.pipelineVtxParam;
@@ -77,6 +139,7 @@ class WGRObjBuilder {
 			}
 		}
 	}
+
 	createRPass(entity: Entity3D, builder: IWGRPassNodeBuilder, geometry: WGGeometry, materialIndex = 0, blockUid = 0): IWGRUnit {
 
 		const material = entity.materials[materialIndex];
@@ -116,7 +179,72 @@ class WGRObjBuilder {
 		}
 		if (!builder.hasMaterial(material)) {
 			if (!pctx) {
-				this.testShaderSrc(material.shaderSrc);
+				this.checkShaderSrc(material.shaderSrc);
+			}
+		}
+
+		let groupIndex = 0;
+		// console.log("createRUnit(), utexes: ", utexes);
+		const isComputing = material.shaderSrc.compShaderSrc !== undefined;
+
+		let uvalues: WGRBufferData[] = [];
+		const cam = builder.camera;
+		if (!isComputing) {
+			if (entity.transform) {
+				uvalues.push(entity.transform.uniformv);
+			}
+			if (entity.cameraViewing) {
+				uvalues.push(cam.viewUniformV);
+				uvalues.push(cam.projUniformV);
+			}
+		}
+
+		if (material.uniformValues) {
+			uvalues = uvalues.concat(material.uniformValues);
+		}
+		// transform 与 其他材质uniform数据构造和使用应该分开,
+		// 哪些uniform是依据material变化的，哪些是共享的，哪些是transform等变换的数据
+
+		let texList = material.textures;
+		let utexes: { texView: GPUTextureView, viewDimension: string, shdVarName: string }[];
+		// console.log("createRUnit(), texList: ", texList);
+		if (!isComputing) {
+			if (texList && texList.length > 0) {
+				utexes = new Array(texList.length);
+				for (let i = 0; i < texList.length; i++) {
+					const tex = texList[i].texture;
+					let dimension = tex.viewDimension;
+					if (!tex.view) {
+						tex.view = tex.texture.createView({ dimension });
+					}
+					tex.view.dimension = dimension;
+					utexes[i] = { texView: tex.view, viewDimension:  tex.viewDimension, shdVarName: tex.shdVarName};
+				}
+			}
+		}
+		let uniformFlag = (uvalues && uvalues.length > 0) || (utexes && utexes.length > 0);
+		if(uvalues && uvalues.length > 0) {
+			for(let i = 0; i < uvalues.length; ++i) {
+				uvalues[i] = checkBufferData(uvalues[i]);
+				if(uvalues[i].uid == undefined || uvalues[i].uid < 0) {
+					uvalues[i].uid = createNewWRGBufferViewUid();
+				}
+			}
+		}
+		/*
+		let v = values[i];
+				v = checkBufferData(v);
+				if(v.uid == undefined || v.uid < 0) {
+					v.uid = createNewWRGBufferViewUid();
+				}
+		*/
+
+		if (!builder.hasMaterial(material)) {
+			builder.setMaterial(material);
+			if (!pctx) {
+				// this.checkShaderSrc(material.shaderSrc);
+				material.shaderSrc = this.checkUniforms(material.shaderSrc, uvalues, utexes);
+
 				if (!material.pipelineVtxParam) {
 					if (primitive) {
 						material.pipelineVtxParam = { vertex: { attributeIndicesArray: [] } };
@@ -134,9 +262,6 @@ class WGRObjBuilder {
 			pctx = node.createRenderPipelineCtxWithMaterial(material);
 			material.initialize(pctx);
 		}
-
-		// console.log("createRUnit(), utexes: ", utexes);
-		const isComputing = material.shaderSrc.compShaderSrc;
 
 		let ru: IWGRUnit;
 
@@ -164,44 +289,8 @@ class WGRObjBuilder {
 
 		ru.pipelinectx = pctx;
 		const uniformCtx = pctx.uniformCtx;
-		let uvalues: WGRBufferData[] = [];
 
-		const cam = builder.camera;
-		if (!isComputing) {
-			if (entity.transform) {
-				uvalues.push(entity.transform.uniformv);
-			}
-			if (entity.cameraViewing) {
-				uvalues.push(cam.viewUniformV);
-				uvalues.push(cam.projUniformV);
-			}
-		}
-
-		if (material.uniformValues) {
-			uvalues = uvalues.concat(material.uniformValues);
-		}
-		// transform 与 其他材质uniform数据构造和使用应该分开,
-		// 哪些uniform是依据material变化的，哪些是共享的，哪些是transform等变换的数据
-
-		let groupIndex = 0;
-		let texList = material.textures;
-		let utexes: { texView: GPUTextureView }[];
-		// console.log("createRUnit(), texList: ", texList);
-		if (!isComputing) {
-			if (texList && texList.length > 0) {
-				utexes = new Array(texList.length);
-				for (let i = 0; i < texList.length; i++) {
-					const tex = texList[i].texture;
-					let dimension = texList[i].texture.viewDimension;
-					if (!tex.view) {
-						tex.view = tex.texture.createView({ dimension });
-					}
-					tex.view.dimension = dimension;
-					utexes[i] = { texView: tex.view };
-				}
-			}
-		}
-		if ((uvalues && uvalues.length > 0) || (utexes && utexes.length > 0)) {
+		if (uniformFlag) {
 			ru.uniforms = uniformCtx.createUniformsWithValues([
 				{
 					layoutName: material.shadinguuid,

@@ -39,7 +39,7 @@ export class BasePbrMaterialMultiLights {
 
 		rc.addEntity(new AxisEntity());
 		let callback = (): void => {
-			
+
 			let pos = new Vector3(0, 0, 0);
 
 			// let material = this.createModelEntity(monkeySrc, "grass", pos);
@@ -68,11 +68,11 @@ export class BasePbrMaterialMultiLights {
 	private createModelEntity(srcEntity: ModelEntity, texName: string, position: Vector3DataType): BasePBRMaterial {
 		let rc = this.mRscene;
 
-		let lightData = this.createLightData(position);
+		let lightParam = this.createLightData(position);
 
 		let material = new BasePBRMaterial();
 
-		material.setLightParam(lightData);
+		material.setLightParam(lightParam);
 		material.addTextures(this.createTextures(texName));
 		let monkey = new ModelEntity({
 			materials: [material],
@@ -84,12 +84,12 @@ export class BasePbrMaterialMultiLights {
 		return material;
 	}
 
-	private createBoxEntity(texName: string, position: Vector3DataType, lightData: LightShaderDataParam): BasePBRMaterial {
+	private createBoxEntity(texName: string, position: Vector3DataType, lightParam: LightShaderDataParam): BasePBRMaterial {
 		let rc = this.mRscene;
 
 		let material = new BasePBRMaterial();
 
-		material.setLightParam(lightData);
+		material.setLightParam(lightParam);
 		material.addTextures(this.createTextures(texName));
 		let box = new BoxEntity({
 			materials: [material],

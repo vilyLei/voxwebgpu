@@ -20,7 +20,12 @@ interface WGRBufferData {
 	usage?: number;
 	stride?: number;
 	shdVarName?: string;
+	/**
+	 * Pro
+	 */
+	shdVarFormat?: string;
 	layout?: WGRBufferLayout;
+	arraying?: boolean;
 	// 注意: 这种嵌套实现未必是有效的
 	bufData?: WGRBufferData;
 	uniform?: WGRBufferData;

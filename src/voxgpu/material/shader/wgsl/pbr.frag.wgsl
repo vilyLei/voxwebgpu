@@ -5,6 +5,7 @@
 @group(0) @binding(7) var<uniform> lightParam: vec4<u32>;
 @group(0) @binding(8) var<storage> lights: array<vec4<f32>>;
 @group(0) @binding(9) var<storage> lightColors: array<vec4<f32>>;
+
 @group(0) @binding(10) var specularEnvSampler: sampler;
 @group(0) @binding(11) var specularEnvTexture: texture_cube<f32>;
 @group(0) @binding(12) var albedoSampler: sampler;
@@ -406,7 +407,7 @@ fn calcColor4(worldPos: vec4<f32>, uv: vec2<f32>, worldNormal: vec3<f32>, worldC
 	return color4;
 }
 @fragment
-fn main(
+fn fragMain(
   @location(0) worldPos: vec4<f32>,
   @location(1) uv: vec2<f32>,
   @location(2) worldNormal: vec3<f32>,
