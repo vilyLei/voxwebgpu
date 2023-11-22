@@ -478,8 +478,9 @@ class BasePBRMaterial extends WGMaterial {
 		// console.log('BasePBRMaterial::__$build() ...');
 		let shaderCode = this.mShdBuilder.build(preCode);
 		let shaderSrc = {
-			shaderSrc: { code: shaderCode, uuid: "wholeBasePBRShdCode-ins01" }
+			shaderSrc: { code: shaderCode, uuid: preCode + "-ins01" }
 		}
+		this.shadinguuid = preCode + '-material';
 		this.shaderSrc = shaderSrc;
 		// this.shaderSrc = basePBRShaderSrc;
 	}

@@ -13,7 +13,7 @@ export class DynamicShaderBuilding {
 	initialize(): void {
 		console.log("DynamicShaderBuilding::initialize() ...");
 
-		this.mRscene.initialize({ rpassparam: { multisampleEnabled: true } });
+		this.mRscene.initialize({ canvasWith: 1024, canvasHeight: 1024, rpassparam: { multisampleEnabled: true } });
 		this.initScene();
 		this.initEvent();
 	}
@@ -42,24 +42,62 @@ export class DynamicShaderBuilding {
 
 		let callback = (): void => {
 			let pos = new Vector3(0, 0, 0);
+			let basePos = new Vector3(-300, 0, -400);
+			let dis = 250;
+			let textures = this.createTextures("plastic");
+			let material = this.createModelEntity(monkeySrc, pos.clone().add(new Vector3(0, 0, 0)).addBy(basePos), textures.slice(0, 0));
+			this.applyMaterialPPt(material);
+			material = this.createModelEntity(monkeySrc, pos.clone().add(new Vector3(dis, 0, 0)).addBy(basePos), textures.slice(0, 1));
+			this.applyMaterialPPt(material);
+			material = this.createModelEntity(monkeySrc, pos.clone().add(new Vector3(dis * 2, 0, 0)).addBy(basePos), textures.slice(0, 2));
+			this.applyMaterialPPt(material);
 
-			let material = this.createModelEntity(monkeySrc, "plastic", pos, [100, 100, 100]);
-			let property = material.property;
-			property.ambient.value = [0.0, 0.2, 0.2];
-			property.albedo.value = [0.7, 0.7, 0.3];
-			property.arms.roughness = 0.8;
-			property.armsBase.value = [0, 0, 0];
-			property.uvParam.value = [2, 2];
-			property.param.scatterIntensity = 32;
+			material = this.createModelEntity(monkeySrc, pos.clone().add(new Vector3(0, 0, dis)).addBy(basePos), textures.slice(0, 3));
+			this.applyMaterialPPt(material);
+			material = this.createModelEntity(monkeySrc, pos.clone().add(new Vector3(dis, 0, dis)).addBy(basePos), textures.slice(0, 4));
+			this.applyMaterialPPt(material);
+			material = this.createModelEntity(monkeySrc, pos.clone().add(new Vector3(dis * 2, 0, dis)).addBy(basePos), textures.slice(0, 5));
+			this.applyMaterialPPt(material);
 
+			material = this.createModelEntity(monkeySrc, pos.clone().add(new Vector3(0, 0, dis * 2)).addBy(basePos), textures.slice(0, 6));
+			this.applyMaterialPPt(material);
+			material = this.createModelEntity(monkeySrc, pos.clone().add(new Vector3(dis, 0, dis * 2)).addBy(basePos), textures);
+			material.property.glossiness = false;
+			this.applyMaterialPPt(material);
+			material = this.createModelEntity(monkeySrc, pos.clone().add(new Vector3(dis * 2, 0, dis * 2)).addBy(basePos), textures);
+			material.property.toneMapping = false;
+			this.applyMaterialPPt(material);
+
+			material = this.createModelEntity(monkeySrc, pos.clone().add(new Vector3(0, 0, dis * 3)).addBy(basePos), textures.slice(0, 6));
+			material.property.metallicCorrection = false;
+			material.property.glossiness = false;
+			this.applyMaterialPPt(material);
+			material = this.createModelEntity(monkeySrc, pos.clone().add(new Vector3(dis, 0, dis * 3)).addBy(basePos), textures.slice(0, 6));
+			material.property.glossiness = false;
+			material.property.toneMapping = false;
+			this.applyMaterialPPt(material);
+			material = this.createModelEntity(monkeySrc, pos.clone().add(new Vector3(dis * 2, 0, dis * 3)).addBy(basePos), textures.slice(0, 6));
+			material.property.glossiness = false;
+			material.property.toneMapping = false;
+			material.property.metallicCorrection = false;
+			this.applyMaterialPPt(material);
 		};
 		let monkeySrc = new ModelEntity({
 			callback,
 			modelUrl: "static/assets/draco/monkey.drc"
 		});
 	}
+	private applyMaterialPPt(material: BasePBRMaterial): void {
+		let property = material.property;
+		property.ambient.value = [0.0, 0.2, 0.2];
+		property.albedo.value = [0.7, 0.7, 0.3];
+		property.arms.roughness = 0.8;
+		property.armsBase.value = [0, 0, 0];
+		property.uvParam.value = [2, 2];
+		property.param.scatterIntensity = 32;
+	}
 	private mLightParams: LightShaderDataParam[] = [];
-	private createModelEntity(srcEntity: ModelEntity, texName: string, position: Vector3DataType, scale?: Vector3DataType): BasePBRMaterial {
+	private createModelEntity(srcEntity: ModelEntity, position: Vector3DataType, textures: WGTextureDataDescriptor[]): BasePBRMaterial {
 		let rc = this.mRscene;
 
 		let lightParam = this.createLightData(position);
@@ -67,11 +105,11 @@ export class DynamicShaderBuilding {
 		let material = new BasePBRMaterial();
 
 		material.setLightParam(lightParam);
-		material.addTextures(this.createTextures(texName));
+		material.addTextures(textures);
 		let monkey = new ModelEntity({
 			materials: [material],
 			geometry: srcEntity.geometry,
-			transform: { position, scale: scale, rotation: [0, 90, 0] }
+			transform: { position, scale: [100, 100, 100], rotation: [0, 90, 0] }
 		});
 		rc.addEntity(monkey);
 
