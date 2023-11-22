@@ -47,7 +47,7 @@ export class ShaderConstructing {
 		let textures = [
 			this.hdrEnvtex,
 			// albedoTex,
-			normalTex,
+			// normalTex,
 			aoTex,
 			roughnessTex,
 			metallicTex
@@ -71,7 +71,7 @@ export class ShaderConstructing {
 			let property = material.property;
 			property.ambient.value = [0.0, 0.2, 0.2];
 			// property.albedo.value = [0.7, 0.7, 0.3];
-			property.albedo.value = [0.7, 0.1, 0.1];
+			property.albedo.value = [0.0, 0.1, 0.7];
 			property.arms.roughness = 0.8;
 			property.armsBase.value = [0, 0, 0];
 			property.uvParam.value = [2, 2];

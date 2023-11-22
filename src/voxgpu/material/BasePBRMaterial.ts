@@ -432,10 +432,22 @@ class BasePBRMaterial extends WGMaterial {
 		let preCode = preDefCode;
 		let ts = this.textures;
 		for(let i = 0; i < ts.length; ++i) {
-			console.log('ts[i].texture: ', ts[i].texture);
+			console.log('ts[i].texture.shdVarName: ', ts[i].texture.shdVarName);
 			switch(ts[i].texture.shdVarName) {
+				case 'normal':
+					preCode += '#define USE_NORMAL_MAP\n';
+					break;
 				case 'albedo':
-					preCode += '#define USE_ALBEDO';
+					preCode += '#define USE_ALBEDO\n';
+					break;
+				case 'ao':
+					preCode += '#define USE_AO\n';
+					break;
+				case 'roughness':
+					preCode += '#define USE_ROUGHNESS\n';
+					break;
+				case 'metallic':
+					preCode += '#define USE_METALLIC\n';
 					break;
 				default:
 					break;
@@ -444,7 +456,7 @@ class BasePBRMaterial extends WGMaterial {
 
 		console.log('BasePBRMaterial::__$build() preCode: \n',preCode);
 		// console.log('BasePBRMaterial::__$build() ...');
-		let shaderCode = this.mShdBuilder.build(preDefCode);
+		let shaderCode = this.mShdBuilder.build(preCode);
 		let shaderSrc = {
 			shaderSrc: { code: shaderCode, uuid: "wholeBasePBRShdCode-ins01" }
 		}

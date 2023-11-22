@@ -3,6 +3,7 @@ fn gammaToLinear(color: vec3<f32>) -> vec3<f32> {
     return pow(color.rgb, vec3Gamma);
 }
 
+#ifdef USE_NORMAL_MAP
 fn getNormalFromMap(texUV: vec2<f32>, wpos: vec3<f32>, nv: vec3<f32>) -> vec3<f32> {
     let tangentNormal = textureSample(normalTexture, normalSampler, texUV).xyz * 2.0 - 1.0;
 
@@ -20,9 +21,13 @@ fn getNormalFromMap(texUV: vec2<f32>, wpos: vec3<f32>, nv: vec3<f32>) -> vec3<f3
 
     return TBN * tangentNormal;
 }
+#endif
+
+#ifdef USE_NORMAL_MAP
 fn getNormalMapvalue(texUV: vec2<f32>) -> vec3<f32> {
     return textureSample(normalTexture, normalSampler, texUV).xyz * 2.0 - 1.0;
 }
+#endif
 
 fn perturbNormal2Arb( eyePos: vec3<f32>, surfNorm: vec3<f32>, mapN: vec3<f32>, texUV: vec2<f32> ) -> vec3<f32> {
 
@@ -41,10 +46,12 @@ fn perturbNormal2Arb( eyePos: vec3<f32>, surfNorm: vec3<f32>, mapN: vec3<f32>, t
 	return normalize( T * ( mapN.x * scale ) + B * ( mapN.y * scale ) + N * mapN.z );
 }
 
+#ifdef USE_NORMAL_MAP
 fn perturbNormal2ArbFromMap(texUV: vec2<f32>, eyePos: vec3<f32>, surfNorm: vec3<f32> ) -> vec3<f32> {
 	let mapN = textureSample(normalTexture, normalSampler, texUV).xyz * 2.0 - 1.0;
 	return perturbNormal2Arb(eyePos, surfNorm, mapN, texUV);
 }
+#endif
 
 fn rotateY(dir: vec3<f32>, radian: f32) -> vec3<f32> {
 	var result: vec3<f32>;

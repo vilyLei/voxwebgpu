@@ -72,26 +72,33 @@ fn calcColor4(worldPos: vec4<f32>, uv: vec2<f32>, worldNormal: vec3<f32>, worldC
 	let V = normalize(worldCamPos.xyz - worldPosition);
 	var N = worldNormal;
 
+	#ifdef USE_NORMAL_MAP
 	N = getNormalFromMap( texUV, worldPosition.xyz, worldNormal);
-
 	let normalFactor = 1.0;
     N = normalize(mix(worldNormal, N, normalFactor));
+	#endif
 
     let dotNV = clamp(dot(N, V), 0.0, 1.0);
 
 	#ifdef USE_ALBEDO
-		albedo = albedo.xyz * textureSample(albedoTexture, albedoSampler, texUV).xyz;
+	albedo = albedo.xyz * textureSample(albedoTexture, albedoSampler, texUV).xyz;
 	#endif
+	#ifdef USE_AO
 	ao = mix(0.0, max(textureSample(aoTexture, aoSampler, texUV).x, armsBase.x), ao);
+	#endif
+	#ifdef USE_ROUGHNESS
 	roughness = mix(0.0, max(textureSample(roughnessTexture, roughnessSampler, texUV).y, armsBase.y), roughness);
+	#endif
+	#ifdef USE_METALLIC
 	let texMetallic = textureSample(metallicTexture, metallicSampler, texUV).z;
 	metallic = mix(0.0, max(texMetallic, armsBase.z), metallic);
+	#endif
 	// return vec4<f32>(vec3(metallic), 1.0);
 
 	#ifdef USE_GLOSSINESS
-		let colorGlossiness = clamp(1.0 - roughness, 0.0, 1.0);
+	let colorGlossiness = clamp(1.0 - roughness, 0.0, 1.0);
 	#else
-		let colorGlossiness = clamp(roughness, 0.0, 1.0);
+	let colorGlossiness = clamp(roughness, 0.0, 1.0);
 	#endif
 
 

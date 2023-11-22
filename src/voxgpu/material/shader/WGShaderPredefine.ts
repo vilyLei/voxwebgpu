@@ -134,9 +134,9 @@ class WGShaderPredefine {
 			} else {
 				index = elseIndex > 0 ? src.indexOf(`\n`, elseIndex + 1) : src.indexOf(`\n`, index + 1);
 			}
-			src = `\n\r${src.slice(index, end)}\n\r`;
+			src = `\n${src.slice(index, end)}\n`;
 		}else {
-			src = `\n\r`;
+			src = `\n`;
 		}
 
 		console.log('parseChunk() end, src: ', src);
