@@ -79,7 +79,9 @@ fn calcColor4(worldPos: vec4<f32>, uv: vec2<f32>, worldNormal: vec3<f32>, worldC
 
     let dotNV = clamp(dot(N, V), 0.0, 1.0);
 
-	albedo = albedo.xyz * textureSample(albedoTexture, albedoSampler, texUV).xyz;
+	#ifdef USE_ALBEDO
+		albedo = albedo.xyz * textureSample(albedoTexture, albedoSampler, texUV).xyz;
+	#endif
 	ao = mix(0.0, max(textureSample(aoTexture, aoSampler, texUV).x, armsBase.x), ao);
 	roughness = mix(0.0, max(textureSample(roughnessTexture, roughnessSampler, texUV).y, armsBase.y), roughness);
 	let texMetallic = textureSample(metallicTexture, metallicSampler, texUV).z;

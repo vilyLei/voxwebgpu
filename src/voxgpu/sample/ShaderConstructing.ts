@@ -22,7 +22,7 @@ export class ShaderConstructing {
 		console.log("ShaderConstructing::initialize() ...");
 
 		this.mRscene.initialize({ rpassparam: { multisampleEnabled: true } });
-		this.initShaderBuild();
+		// this.initShaderBuild();
 		this.initScene();
 		this.initEvent();
 	}
@@ -34,7 +34,6 @@ export class ShaderConstructing {
 #define USE_METALLIC_CORRECTION
 `;
 		let codeStr = shdCtor.build(preDefCode);
-
 		this.basePBRShaderSrc.shaderSrc.code = codeStr;
 	}
 
@@ -45,7 +44,14 @@ export class ShaderConstructing {
 		const aoTex = { ao: { url: `static/assets/pbr/${ns}/ao.jpg` } };
 		const roughnessTex = { roughness: { url: `static/assets/pbr/${ns}/roughness.jpg` } };
 		const metallicTex = { metallic: { url: `static/assets/pbr/${ns}/metallic.jpg` } };
-		let textures = [this.hdrEnvtex, albedoTex, normalTex, aoTex, roughnessTex, metallicTex];
+		let textures = [
+			this.hdrEnvtex,
+			// albedoTex,
+			normalTex,
+			aoTex,
+			roughnessTex,
+			metallicTex
+		];
 		return textures;
 	}
 	private initScene(): void {
@@ -64,7 +70,8 @@ export class ShaderConstructing {
 			let material = this.createModelEntity(monkeySrc, "plastic", pos, [100, 100, 100]);
 			let property = material.property;
 			property.ambient.value = [0.0, 0.2, 0.2];
-			property.albedo.value = [0.7, 0.7, 0.3];
+			// property.albedo.value = [0.7, 0.7, 0.3];
+			property.albedo.value = [0.7, 0.1, 0.1];
 			property.arms.roughness = 0.8;
 			property.armsBase.value = [0, 0, 0];
 			property.uvParam.value = [2, 2];
@@ -142,7 +149,7 @@ export class ShaderConstructing {
 		let lightsData = new Float32Array(4 * pointLightsTotal);
 		let lightColorsData = new Float32Array(4 * pointLightsTotal);
 
-		for (let i = 0; i < lightsData.length; ) {
+		for (let i = 0; i < lightsData.length;) {
 			const pv = posList[j];
 			pv.w = 0.00002;
 			pv.toArray4(lightsData, i);
@@ -180,7 +187,7 @@ export class ShaderConstructing {
 		rc.addEventListener(MouseEvent.MOUSE_DOWN, this.mouseDown);
 		new MouseInteraction().initialize(rc, 0, false).setAutoRunning(true);
 	}
-	private mouseDown = (evt: MouseEvent): void => {};
+	private mouseDown = (evt: MouseEvent): void => { };
 	run(): void {
 		this.mRscene.run();
 	}

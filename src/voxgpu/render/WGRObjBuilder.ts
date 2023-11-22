@@ -117,8 +117,8 @@ class WGRObjBuilder {
 						shaderSrc: { code: codeStr, uuid: shd.uuid },
 						// shaderSrc: { code: basePBRWholeInitWGSL, uuid: "wholeBasePBRShdCode" },
 					};
-					// console.log("checkUniforms() VVVVVVVVVVVVVVVVVVVVVVVV, codeStr: ");
-					// console.log( codeStr );
+					console.log("checkUniforms() VVVVVVVVVVVVVVVVVVVVVVVV, codeStr: ");
+					console.log( codeStr );
 					return shaderSrc;
 				}
 			}

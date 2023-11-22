@@ -429,6 +429,20 @@ class BasePBRMaterial extends WGMaterial {
 	}
 	
 	__$build(): void {
+		let preCode = preDefCode;
+		let ts = this.textures;
+		for(let i = 0; i < ts.length; ++i) {
+			console.log('ts[i].texture: ', ts[i].texture);
+			switch(ts[i].texture.shdVarName) {
+				case 'albedo':
+					preCode += '#define USE_ALBEDO';
+					break;
+				default:
+					break;
+			}
+		}
+
+		console.log('BasePBRMaterial::__$build() preCode: \n',preCode);
 		// console.log('BasePBRMaterial::__$build() ...');
 		let shaderCode = this.mShdBuilder.build(preDefCode);
 		let shaderSrc = {
