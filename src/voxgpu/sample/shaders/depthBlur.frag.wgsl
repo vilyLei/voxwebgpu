@@ -1,10 +1,11 @@
 @group(0) @binding(0) var<uniform> param: vec4f;
-@group(0) @binding(1) var colorSampler0: sampler;
-@group(0) @binding(2) var colorTexture0: texture_2d<f32>;
-@group(0) @binding(3) var blurSampler1: sampler;
-@group(0) @binding(4) var blurTexture1: texture_2d<f32>;
-@group(0) @binding(5) var vposSampler1: sampler;
-@group(0) @binding(6) var vposTexture1: texture_2d<f32>;
+@group(0) @binding(1) var<uniform> uvParam: vec4f;
+@group(0) @binding(2) var colorSampler0: sampler;
+@group(0) @binding(3) var colorTexture0: texture_2d<f32>;
+@group(0) @binding(4) var blurSampler1: sampler;
+@group(0) @binding(5) var blurTexture1: texture_2d<f32>;
+@group(0) @binding(6) var vposSampler1: sampler;
+@group(0) @binding(7) var vposTexture1: texture_2d<f32>;
 
 fn reinhard(v: vec3<f32>) -> vec3<f32> {
     return v / (vec3<f32>(1.0) + v);

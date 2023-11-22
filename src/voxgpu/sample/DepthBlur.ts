@@ -86,7 +86,7 @@ export class DepthBlur {
 	private createMaterial(shadinguuid: string, textures: WGTextureDataDescriptor[], type: number): WGMaterial {
 		let shaderSrc = {
 			vert: { code: vertWGSL, uuid: "vert" },
-			frag: { code: type > 0 ? blurVWGSL : blurHWGSL, uuid: "frag" }
+			frag: { code: type > 0 ? blurVWGSL : blurHWGSL, uuid: type > 0 ? 'blurVFrag' : 'blurHFrag' }
 		};
 		shadinguuid += "-" + type;
 		let pipelineDefParam = {

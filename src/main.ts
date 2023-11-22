@@ -42,7 +42,7 @@
 // import { GameOfLife3DPBR as Demo } from "./voxgpu/sample/GameOfLife3DPBR";
 
 // import { MultiGPUPassTest as Demo } from "./voxgpu/sample/MultiGPUPassTest";
-// import { RTTFixScreenTest as Demo } from "./voxgpu/sample/RTTFixScreenTest";
+import { RTTFixScreenTest as Demo } from "./voxgpu/sample/RTTFixScreenTest";
 // import { RTTTest as Demo } from "./voxgpu/sample/RTTTest";
 // import { AddEntityIntoMultiRPasses as Demo } from "./voxgpu/sample/AddEntityIntoMultiRPasses";
 
@@ -50,10 +50,10 @@
 // import { ColorAttachmentReplace as Demo } from "./voxgpu/sample/ColorAttachmentReplace";
 // import { PingpongBlur as Demo } from "./voxgpu/sample/PingpongBlur";
 
-import { FloatRTT as Demo } from "./voxgpu/sample/FloatRTT";
+// import { FloatRTT as Demo } from "./voxgpu/sample/FloatRTT";
 // import { MRT as Demo } from "./voxgpu/sample/MRT";
-// import { CubeMapRTTTest as Demo } from "./voxgpu/sample/CubeMapRTTTest";
 // import { DepthBlur as Demo } from "./voxgpu/sample/DepthBlur";
+// import { CubeMapRTTTest as Demo } from "./voxgpu/sample/CubeMapRTTTest";
 
 // import { LineEntityTest as Demo } from "./voxgpu/sample/LineEntityTest";
 // import { LineObjectTest as Demo } from "./voxgpu/sample/LineObjectTest";
