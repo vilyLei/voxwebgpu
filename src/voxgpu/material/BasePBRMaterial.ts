@@ -366,6 +366,10 @@ class BasePBRProperty {
 
 	arms: ArmsDataWrapper;
 	armsBase: ArmsDataWrapper;
+
+	glossiness = true;
+	toneMapping = true;
+	metallicCorrection = true;
 	constructor() {
 		let armsSrc = this.armsParams;
 		this.arms = new ArmsDataWrapper(armsSrc.arms, armsSrc);
@@ -430,7 +434,18 @@ class BasePBRMaterial extends WGMaterial {
 	
 	__$build(): void {
 		let preCode = preDefCode;
+		preCode = '';
 		let ts = this.textures;
+		let ppt = this.property;
+		if(ppt.glossiness) {
+			preCode += '#define USE_GLOSSINESS 1\n';
+		}
+		if(ppt.toneMapping) {
+			preCode += '#define USE_TONE_MAPPING\n';
+		}
+		if(ppt.metallicCorrection) {
+			preCode += '#define USE_METALLIC_CORRECTION\n';
+		}
 		if(ts) {
 			for(let i = 0; i < ts.length; ++i) {
 				console.log('ts[i].texture.shdVarName: ', ts[i].texture.shdVarName);
