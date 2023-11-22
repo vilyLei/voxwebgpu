@@ -58,7 +58,7 @@ class WGImageTextureData extends WGTextureData {
 
 	build(ctx: WebGPUContext): GPUTexture {
 		if (this.mImgs && !this.mTex) {
-			console.log("WGImageTextureData::build(), this.mImgs: ", this.mImgs, this.viewDimension);
+			// console.log("WGImageTextureData::build(), this.mImgs: ", this.mImgs, this.viewDimension);
 			switch (this.viewDimension) {
 				case "cube":
 					this.mTex = ctx.texture.createTexCubeByImages(this.mImgs, this.generateMipmaps, this.flipY, this.format, this.mUrl);

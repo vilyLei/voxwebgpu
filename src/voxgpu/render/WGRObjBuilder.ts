@@ -108,8 +108,8 @@ class WGRObjBuilder {
 						codeStr += str;
 					}
 				}
-				console.log("checkUniforms(), codeStr:");
-				console.log(codeStr);
+				// console.log("checkUniforms(), codeStr:");
+				// console.log(codeStr);
 				if (codeStr !== '') {
 					codeStr = codeStr + code;
 					let shaderSrc = {
@@ -117,8 +117,8 @@ class WGRObjBuilder {
 						shaderSrc: { code: codeStr, uuid: shd.uuid },
 						// shaderSrc: { code: basePBRWholeInitWGSL, uuid: "wholeBasePBRShdCode" },
 					};
-					console.log("checkUniforms() VVVVVVVVVVVVVVVVVVVVVVVV, codeStr: ");
-					console.log( codeStr );
+					// console.log("checkUniforms() VVVVVVVVVVVVVVVVVVVVVVVV, codeStr: ");
+					// console.log( codeStr );
 					return shaderSrc;
 				}
 			}

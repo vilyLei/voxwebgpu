@@ -89,7 +89,7 @@ class WGShaderConstructor {
 		// console.log("\n###### clearnSrc:");
 		// console.log(clearnSrc);
 		// let codeSrc = `${baseVertWGSL}${baseFragWGSL}`;//baseVertWGSL ;
-		console.log(">>>>> >>>>> >>>>> >>>>> >>>>> >>>>>");
+		// console.log(">>>>> >>>>> >>>>> >>>>> >>>>> >>>>>");
 		// return
 		let vertWGSL = baseVertWGSL;
 		vertWGSL = this.parseInclude(vertWGSL);
