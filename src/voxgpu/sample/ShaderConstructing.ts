@@ -46,12 +46,12 @@ export class ShaderConstructing {
 		const metallicTex = { metallic: { url: `static/assets/pbr/${ns}/metallic.jpg` } };
 		let textures = [
 			this.hdrEnvtex,
-			// albedoTex,
-			// normalTex,
+			albedoTex,
+			normalTex,
 			aoTex,
 			roughnessTex,
 			metallicTex
-		];
+		] as WGTextureDataDescriptor[];
 		return textures;
 	}
 	private initScene(): void {
@@ -70,8 +70,8 @@ export class ShaderConstructing {
 			let material = this.createModelEntity(monkeySrc, "plastic", pos, [100, 100, 100]);
 			let property = material.property;
 			property.ambient.value = [0.0, 0.2, 0.2];
-			// property.albedo.value = [0.7, 0.7, 0.3];
-			property.albedo.value = [0.0, 0.1, 0.7];
+			property.albedo.value = [0.7, 0.7, 0.3];
+			// property.albedo.value = [0.0, 0.1, 0.7];
 			property.arms.roughness = 0.8;
 			property.armsBase.value = [0, 0, 0];
 			property.uvParam.value = [2, 2];

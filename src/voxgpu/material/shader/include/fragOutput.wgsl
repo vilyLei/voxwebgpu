@@ -124,6 +124,8 @@ fn calcColor4(worldPos: vec4<f32>, uv: vec2<f32>, worldNormal: vec3<f32>, worldC
 	let specularFactor = params[4].xyz;
     specularColor *= specularFactor;
 
+	var specularEnvColor3 = vec3One;
+	#ifdef USE_SPECULAR_ENV
 	// let mipLvFactor = 0.07;
 	let mipLvFactor = param.z;
 	var mipLv = floor(100.0 * fract(mipLvFactor));
@@ -133,8 +135,9 @@ fn calcColor4(worldPos: vec4<f32>, uv: vec2<f32>, worldNormal: vec3<f32>, worldC
 
 	let specularEnvTexel = textureSampleLevel(specularEnvTexture, specularEnvSampler, envDir, mipLv);
 	let brnEnvValue = rgbaToHdrBrn(specularEnvTexel);
-	var specularEnvColor3 = vec3<f32>(brnEnvValue);
+	specularEnvColor3 = vec3<f32>(brnEnvValue);
 	specularEnvColor3 = gammaToLinear(specularEnvColor3);
+	#endif
 	specularColor = fresnelSchlick3(specularColor, dotNV, 0.25 * reflectionIntensity) * specularEnvColor3;
 
 	var rL: RadianceLight;

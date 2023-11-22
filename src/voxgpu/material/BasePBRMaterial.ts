@@ -431,26 +431,31 @@ class BasePBRMaterial extends WGMaterial {
 	__$build(): void {
 		let preCode = preDefCode;
 		let ts = this.textures;
-		for(let i = 0; i < ts.length; ++i) {
-			console.log('ts[i].texture.shdVarName: ', ts[i].texture.shdVarName);
-			switch(ts[i].texture.shdVarName) {
-				case 'normal':
-					preCode += '#define USE_NORMAL_MAP\n';
-					break;
-				case 'albedo':
-					preCode += '#define USE_ALBEDO\n';
-					break;
-				case 'ao':
-					preCode += '#define USE_AO\n';
-					break;
-				case 'roughness':
-					preCode += '#define USE_ROUGHNESS\n';
-					break;
-				case 'metallic':
-					preCode += '#define USE_METALLIC\n';
-					break;
-				default:
-					break;
+		if(ts) {
+			for(let i = 0; i < ts.length; ++i) {
+				console.log('ts[i].texture.shdVarName: ', ts[i].texture.shdVarName);
+				switch(ts[i].texture.shdVarName) {
+					case 'normal':
+						preCode += '#define USE_NORMAL_MAP\n';
+						break;
+					case 'albedo':
+						preCode += '#define USE_ALBEDO\n';
+						break;
+					case 'ao':
+						preCode += '#define USE_AO\n';
+						break;
+					case 'roughness':
+						preCode += '#define USE_ROUGHNESS\n';
+						break;
+					case 'metallic':
+						preCode += '#define USE_METALLIC\n';
+						break;
+					case 'specularEnv':
+						preCode += '#define USE_SPECULAR_ENV\n';
+						break;
+					default:
+						break;
+				}
 			}
 		}
 
