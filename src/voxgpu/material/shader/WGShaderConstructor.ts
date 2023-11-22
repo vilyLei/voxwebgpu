@@ -70,15 +70,18 @@ fn FD_Burley(linearRoughness: f32, NoV: f32, NoL: f32, LoH: f32, frontScale: f32
 // #endif
 `;
 class WGShaderConstructor {
-	predefine = new WGShaderPredefine();
+	readonly predefine = new WGShaderPredefine();
 	private moduleNames: string[] = [];
 	constructor() {}
+	reset(): void {
+		this.predefine.reset();
+	}
 	build(predefine: string): string {
 
 		// let isCommentLine = codeLineCommentTest(testStr2);
 		// console.log('isCommentLine: ', isCommentLine);
 		// return;
-		let preDef = this.predefine;
+		const preDef = this.predefine;
 		preDef.parsePredefineVar(predefine);
 		// let clearnSrc = preDef.applyPredefine(testStr3);
 		// let clearnSrc = preDef.applyPredefine(fragOutputWGSL);

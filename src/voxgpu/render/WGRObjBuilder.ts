@@ -20,7 +20,7 @@ import { checkBufferData, WGRBufferValue } from "./buffer/WGRBufferValue";
 import { createNewWRGBufferViewUid } from "./buffer/WGRBufferView";
 
 type GeomType = { indexBuffer?: GPUBuffer, vertexBuffers: GPUBuffer[], indexCount?: number, vertexCount?: number, drawMode?: WGRDrawMode };
-const bufValue = new WGRBufferValue({shdVarName:'bufValue'});
+const bufValue = new WGRBufferValue({ shdVarName: 'bufValue' });
 class WGRObjBuilder {
 
 	wgctx: WebGPUContext;
@@ -67,10 +67,10 @@ class WGRObjBuilder {
 	}
 	private checkUniforms(shdSrc: WGRShderSrcType, uvalues: WGRBufferData[], utexes: { texView: GPUTextureView, viewDimension: string, shdVarName: string }[]): WGRShderSrcType {
 		let shd = shdSrc.shaderSrc;
-		if(shd) {
+		if (shd) {
 
 			let code = shd.code;
-			if(code.indexOf('@binding(') >= 0) {
+			if (code.indexOf('@binding(') >= 0) {
 				let begin = code.indexOf('@group(');
 				let end = code.lastIndexOf(' @binding(');
 				end = code.indexOf(';', end + 1);
@@ -79,24 +79,24 @@ class WGRObjBuilder {
 			}
 			// console.log('oooooooooo code: ', code);
 			// console.log(`code.indexOf('@binding(') < 0: `, code.indexOf('@binding(') < 0);
-			if(code.indexOf('@binding(') < 0) {
+			if (code.indexOf('@binding(') < 0) {
 				let codeStr = '';
 				let index = 0;
-				if(uvalues && uvalues.length > 0) {
+				if (uvalues && uvalues.length > 0) {
 					// @group(0) @binding(0) var<uniform> objMat : mat4x4<f32>;
-					for(let i = 0; i < uvalues.length; ++i) {
+					for (let i = 0; i < uvalues.length; ++i) {
 						bufValue.usage = uvalues[i].usage;
 						let varType = bufValue.isStorage() ? 'storage' : 'uniform';
 						let str = `@group(0) @binding(${index++}) var<${varType}> ${uvalues[i].shdVarName} : ${uvalues[i].shdVarFormat};\n`;
 						codeStr += str;
 					}
 				}
-				if(utexes && utexes.length > 0) {
+				if (utexes && utexes.length > 0) {
 					console.log('utexes: ', utexes);
-					for(let i = 0; i < utexes.length; ++i) {
+					for (let i = 0; i < utexes.length; ++i) {
 						let tex = utexes[i];
 						let varType = 'texture_2d';
-						switch(tex.viewDimension) {
+						switch (tex.viewDimension) {
 							case 'cube':
 								varType = 'texture_cube';
 								break;
@@ -109,8 +109,8 @@ class WGRObjBuilder {
 					}
 				}
 				console.log("checkUniforms(), codeStr:");
-				console.log( codeStr );
-				if(codeStr !== '') {
+				console.log(codeStr);
+				if (codeStr !== '') {
 					codeStr = codeStr + code;
 					let shaderSrc = {
 						// shaderSrc: { code: basePBRVertWGSL + basePBRFragWGSL, uuid: "wholeBasePBRShdCode" },
@@ -126,7 +126,7 @@ class WGRObjBuilder {
 		return shdSrc;
 	}
 	private checkMaterial(material: IWGMaterial, primitive: WGRPrimitive): void {
-		if(!material.shaderSrc.compShaderSrc) {
+		if (!material.shaderSrc.compShaderSrc) {
 			const vtxParam = material.pipelineVtxParam;
 			if (primitive && vtxParam) {
 				const vert = vtxParam.vertex;
@@ -134,7 +134,7 @@ class WGRObjBuilder {
 				vert.drawMode = primitive.drawMode;
 			}
 			const pipeDef = material.pipelineDefParam;
-			if(material.doubleFace !== undefined) {
+			if (material.doubleFace !== undefined) {
 				pipeDef.faceCullMode = material.doubleFace === true ? 'none' : pipeDef.faceCullMode;
 			}
 		}
@@ -146,15 +146,15 @@ class WGRObjBuilder {
 		// console.log("XXXXXXX material: ", material);
 		let primitive: WGRPrimitive;
 		let pctx = material.getRCtx();
-		if(geometry) {
+		if (geometry) {
 			const wgctx = builder.getWGCtx();
 			const dict = geometry.primitive;
 			const vertexBuffers = geometry.gpuvbufs;
 			const vertexCount = vertexBuffers[0].vectorCount;
 			const gibuf = geometry.indexBuffer;
-			if(material.wireframe === true) {
+			if (material.wireframe === true) {
 				primitive = dict.wireframe;
-				if(!primitive) {
+				if (!primitive) {
 					gibuf.toWirframe();
 					const indexBuffer = gibuf ? (gibuf.gpuwibuf ? gibuf.gpuwibuf : wgctx.buffer.createIndexBuffer(gibuf.wireframeData)) : null;
 					if (indexBuffer) gibuf.gpuwibuf = indexBuffer;
@@ -164,9 +164,9 @@ class WGRObjBuilder {
 					dict.wireframe = primitive;
 					// console.log("wireframe primitive.drawMode: ", primitive.drawMode, primitive);
 				}
-			}else {
+			} else {
 				primitive = dict.default;
-				if(!primitive) {
+				if (!primitive) {
 					const indexBuffer = gibuf ? (gibuf.gpuibuf ? gibuf.gpuibuf : wgctx.buffer.createIndexBuffer(gibuf.data)) : null;
 					if (indexBuffer) gibuf.gpuibuf = indexBuffer;
 
@@ -179,6 +179,12 @@ class WGRObjBuilder {
 		}
 		if (!builder.hasMaterial(material)) {
 			if (!pctx) {
+				if (!material.shaderSrc) {
+					let pm = (material as IWGMaterial);
+					if (pm.__$build) {
+						pm.__$build();
+					}
+				}
 				this.checkShaderSrc(material.shaderSrc);
 			}
 		}
@@ -218,15 +224,15 @@ class WGRObjBuilder {
 						tex.view = tex.texture.createView({ dimension });
 					}
 					tex.view.dimension = dimension;
-					utexes[i] = { texView: tex.view, viewDimension:  tex.viewDimension, shdVarName: tex.shdVarName};
+					utexes[i] = { texView: tex.view, viewDimension: tex.viewDimension, shdVarName: tex.shdVarName };
 				}
 			}
 		}
 		let uniformFlag = (uvalues && uvalues.length > 0) || (utexes && utexes.length > 0);
-		if(uvalues && uvalues.length > 0) {
-			for(let i = 0; i < uvalues.length; ++i) {
+		if (uvalues && uvalues.length > 0) {
+			for (let i = 0; i < uvalues.length; ++i) {
 				uvalues[i] = checkBufferData(uvalues[i]);
-				if(uvalues[i].uid == undefined || uvalues[i].uid < 0) {
+				if (uvalues[i].uid == undefined || uvalues[i].uid < 0) {
 					uvalues[i].uid = createNewWRGBufferViewUid();
 				}
 			}
@@ -301,7 +307,7 @@ class WGRObjBuilder {
 			], material.uniformAppend);
 		}
 		ru.material = material;
-		ru.etuuid = entity.uuid + '-[block(' + blockUid+'), material('+material.shadinguuid+')]';
+		ru.etuuid = entity.uuid + '-[block(' + blockUid + '), material(' + material.shadinguuid + ')]';
 		return ru;
 	}
 	createRUnit(entity: Entity3D, builder: IWGRPassNodeBuilder, node: WGREntityNode, blockUid = 0): IWGRUnit {
@@ -310,7 +316,7 @@ class WGRObjBuilder {
 
 		const geometry = entity.geometry;
 		let primitiveDict: WGRPrimitiveDict;
-		if(entity.geometry) {
+		if (entity.geometry) {
 			primitiveDict = geometry.primitive;
 			// console.log('>>> primitiveDict: ', primitiveDict);
 			if (!primitiveDict) {

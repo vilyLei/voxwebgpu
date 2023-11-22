@@ -90,7 +90,8 @@ export class ShaderConstructing {
 		// let shaderSrc = {
 		// 	shaderSrc: { code: this.basePBRShaderSrc.shaderSrc.code, uuid: "wholeBasePBRShdCode" }
 		// };
-		let material = new BasePBRMaterial({ shadinguuid: "basePbrMaterial-test01", shaderSrc: this.basePBRShaderSrc });
+		// let material = new BasePBRMaterial({ shadinguuid: "basePbrMaterial-test01", shaderSrc: this.basePBRShaderSrc });
+		let material = new BasePBRMaterial();
 
 		material.setLightParam(lightParam);
 		material.addTextures(this.createTextures(texName));

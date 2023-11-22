@@ -41,6 +41,7 @@ interface IWGMaterial extends WGMaterialDescripter {
 	setDescriptor(descriptor: WGMaterialDescripter): void;
 	initialize(pipelineCtx: WGRPipelineContextImpl): void;
 	destroy(): void;
+	__$build?(): void;
 }
 function checkMaterialRPasses(ms: IWGMaterial[], rpasses: WGRMaterialPassViewImpl[]): void {
 	// const rpasses = param.rpasses;

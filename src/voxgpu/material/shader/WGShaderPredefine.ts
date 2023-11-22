@@ -14,6 +14,9 @@ class PreDefItem {
 class WGShaderPredefine {
 	private preVarDict: Map<string, PreDefItem> = new Map();
 	constructor() {}
+	reset(): void {
+		this.preVarDict.clear();
+	}
 	hasDefine(ns: string): boolean {
 		return this.preVarDict.has(ns);
 	}

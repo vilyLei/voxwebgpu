@@ -10,6 +10,7 @@ import basePBRWholeWGSL from "./shader/wgsl/pbr.wgsl";
 import basePBRWholeInitWGSL from "./shader/wgsl/pbrInit.wgsl";
 import MathConst from "../math/MathConst";
 import Vector3 from "../math/Vector3";
+import { WGShaderConstructor } from "./shader/WGShaderConstructor";
 
 const basePBRShaderSrc = {
 	vert: { code: basePBRVertWGSL, uuid: "vertBasePBRShdCode" },
@@ -395,7 +396,13 @@ class BasePBRProperty {
 		this.lightColors.data = lightColorsData;
 	}
 }
+const preDefCode = `
+#define USE_GLOSSINESS 1
+#define USE_TONE_MAPPING
+#define USE_METALLIC_CORRECTION
+`;
 class BasePBRMaterial extends WGMaterial {
+	private mShdBuilder = new WGShaderConstructor();
 	property = new BasePBRProperty();
 	constructor(descriptor?: WGMaterialDescripter) {
 		super(descriptor);
@@ -407,7 +414,10 @@ class BasePBRMaterial extends WGMaterial {
 	setDescriptor(descriptor: WGMaterialDescripter): void {
 		if (!descriptor || descriptor.shaderSrc === undefined) {
 			if (!descriptor) descriptor = { shadinguuid: "BasePBRMaterial" };
-			descriptor.shaderSrc = basePBRShaderSrc;
+			// descriptor.shaderSrc = basePBRShaderSrc;
+			// descriptor.shaderSrc = {
+			// 	shaderSrc: { code: "", uuid: "wholeBasePBRShdCode-test01" }
+			// }
 		}
 		super.setDescriptor(descriptor);
 	}
@@ -416,6 +426,16 @@ class BasePBRMaterial extends WGMaterial {
 			this.mUniformValues = this.property.uniformValues;
 		}
 		return this.mUniformValues;
+	}
+	
+	__$build(): void {
+		// console.log('BasePBRMaterial::__$build() ...');
+		let shaderCode = this.mShdBuilder.build(preDefCode);
+		let shaderSrc = {
+			shaderSrc: { code: shaderCode, uuid: "wholeBasePBRShdCode-ins01" }
+		}
+		this.shaderSrc = shaderSrc;
+		// this.shaderSrc = basePBRShaderSrc;
 	}
 }
 export { LightShaderDataParam, BasePBRMaterial };
