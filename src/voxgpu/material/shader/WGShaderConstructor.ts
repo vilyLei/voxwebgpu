@@ -43,7 +43,8 @@ initModules();
 // `;
 let testStr3 =
 `
-// #ifdef VOX_WOOL
+AAAAAAAAAA 01
+#ifdef VOX_WOOL
 fn FD_BurleyWool(linearRoughness: f32, NoV: f32, NoL: f32, LoH: f32) -> f32 {
 	let f90 = 0.5 + 2.0 * linearRoughness * LoH * LoH;
 	let lightScatter = FD_Schlick(NoL, 1.0, f90);
@@ -60,14 +61,20 @@ fn getColorFactorIntensity(NoV: f32, frontScale: f32, sideScale: f32) -> f32 {
 	// sideFactorIntensity
 	return mix(frontScale, sideScale, k);
 }
-// #else
+#else
 fn FD_Burley(linearRoughness: f32, NoV: f32, NoL: f32, LoH: f32, frontScale: f32, sideScale: f32) -> f32 {
 	let f90 = 0.5 + 2.0 * linearRoughness * LoH * LoH;
 	let lightScatter = FD_Schlick(NoL, 1.0, f90);
 	let viewScatter = FD_Schlick(NoV, frontScale, sideScale * f90);
 	return lightScatter * viewScatter;
 }
-// #endif
+AAAAAAAAAA 02
+#endif
+AAAAAAAAAA 03
+#ifdef VOX_DOLL
+$$$$$$$$$ DOLL 01
+#endif
+AAAAAAAAAA 04
 `;
 class WGShaderConstructor {
 	readonly predefine = new WGShaderPredefine();
@@ -78,14 +85,22 @@ class WGShaderConstructor {
 	}
 	build(predefine: string): string {
 
+// 		predefine =
+// `
+// #define VOX_WOOL
+// #define VOX_DOLL
+// `;
 		// let isCommentLine = codeLineCommentTest(testStr2);
 		// console.log('isCommentLine: ', isCommentLine);
 		// return;
 		const preDef = this.predefine;
 		preDef.parsePredefineVar(predefine);
+		
 		// let clearnSrc = preDef.applyPredefine(testStr3);
 		// let clearnSrc = preDef.applyPredefine(fragOutputWGSL);
 		// let clearnSrc = preDef.applyPredefine( testStr );
+		// console.log("\n###### testStr3:");
+		// console.log(testStr3);
 		// console.log("\n###### clearnSrc:");
 		// console.log(clearnSrc);
 		// let codeSrc = `${baseVertWGSL}${baseFragWGSL}`;//baseVertWGSL ;

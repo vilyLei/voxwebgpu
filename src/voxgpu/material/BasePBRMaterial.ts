@@ -4,24 +4,19 @@ import Arms from "./Arms";
 import Color4 from "./Color4";
 import { WGMaterialDescripter, WGMaterial } from "./WGMaterial";
 
-import basePBRVertWGSL from "./shader/wgsl/pbr.vert.wgsl";
-import basePBRFragWGSL from "./shader/wgsl/pbr.frag.wgsl";
-import basePBRWholeWGSL from "./shader/wgsl/pbr.wgsl";
-import basePBRWholeInitWGSL from "./shader/wgsl/pbrInit.wgsl";
+// import basePBRVertWGSL from "./shader/wgsl/pbr.vert.wgsl";
+// import basePBRFragWGSL from "./shader/wgsl/pbr.frag.wgsl";
+// import basePBRWholeWGSL from "./shader/wgsl/pbr.wgsl";
+// import basePBRWholeInitWGSL from "./shader/wgsl/pbrInit.wgsl";
 import MathConst from "../math/MathConst";
 import Vector3 from "../math/Vector3";
 import { WGShaderConstructor } from "./shader/WGShaderConstructor";
 
-const basePBRShaderSrc = {
-	vert: { code: basePBRVertWGSL, uuid: "vertBasePBRShdCode" },
-	frag: { code: basePBRFragWGSL, uuid: "fragBasePBRShdCode" }
-};
-
 // const basePBRShaderSrc = {
-// 	// shaderSrc: { code: basePBRVertWGSL + basePBRFragWGSL, uuid: "wholeBasePBRShdCode" },
-// 	shaderSrc: { code: basePBRWholeWGSL, uuid: "wholeBasePBRShdCode" },
-// 	// shaderSrc: { code: basePBRWholeInitWGSL, uuid: "wholeBasePBRShdCode" },
+// 	vert: { code: basePBRVertWGSL, uuid: "vertBasePBRShdCode" },
+// 	frag: { code: basePBRFragWGSL, uuid: "fragBasePBRShdCode" }
 // };
+
 interface BasePBRUniformDataImpl extends WGRBufferData {
 	update(): void;
 }

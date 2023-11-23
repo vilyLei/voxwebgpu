@@ -69,6 +69,7 @@ export class ShaderConstructing {
 			// let material = this.createModelEntity(monkeySrc, "gold", pos);
 			let material = this.createModelEntity(monkeySrc, "plastic", pos, [100, 100, 100]);
 			let property = material.property;
+			// property.glossiness = false;
 			property.ambient.value = [0.0, 0.2, 0.2];
 			property.albedo.value = [0.7, 0.7, 0.3];
 			// property.albedo.value = [0.0, 0.1, 0.7];
@@ -80,7 +81,6 @@ export class ShaderConstructing {
 
 			// this.createBoxEntity("plastic", new Vector3(0, -110.0, 0), this.mLightParams[0]);
 
-			this.createBillboards(this.mLightParams[0]);
 		};
 		let monkeySrc = new ModelEntity({
 			callback,
@@ -112,20 +112,6 @@ export class ShaderConstructing {
 		return material;
 	}
 
-	private createBoxEntity(texName: string, position: Vector3DataType, lightParam: LightShaderDataParam): BasePBRMaterial {
-		let rc = this.mRscene;
-
-		let material = new BasePBRMaterial();
-
-		material.setLightParam(lightParam);
-		material.addTextures(this.createTextures(texName));
-		let box = new BoxEntity({
-			materials: [material],
-			transform: { position, scale: [7, 0.1, 7] }
-		});
-		rc.addEntity(box);
-		return material;
-	}
 	private createLightData(position: Vector3DataType): LightShaderDataParam {
 		let pos = new Vector3().setVector4(position);
 		let pv0 = pos.clone().addBy(new Vector3(0, 200, 0));
@@ -163,24 +149,6 @@ export class ShaderConstructing {
 		let param = { lights: lightsData, colors: lightColorsData, pointLightsTotal };
 		this.mLightParams.push(param);
 		return param;
-	}
-	private createBillboards(param: LightShaderDataParam): void {
-		let rc = this.mRscene;
-
-		let pointLightsTotal = param.pointLightsTotal;
-		let lights = param.lights;
-		let colors = param.colors;
-		let diffuseTex0 = { diffuse: { url: "static/assets/flare_core_03.jpg" } };
-		for (let i = 0; i < pointLightsTotal; ++i) {
-			// let billboard = new BillboardEntity({ size: 50, textures: [diffuseTex0] });
-			// let pv = new Vector3().fromArray3(lights, i * 4);
-			// let c = new Color4().fromArray3(colors, i * 4);
-			// c.a = 1.0;
-			// billboard.color = c.scaleBy(0.1);
-			// billboard.scale = 1.0;
-			// billboard.transform.setPosition(pv);
-			// rc.addEntity(billboard);
-		}
 	}
 	private initEvent(): void {
 		const rc = this.mRscene;

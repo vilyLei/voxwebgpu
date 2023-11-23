@@ -156,7 +156,7 @@ function bufferDataFilter(d: WGRBufferData): WGRBufferData {
 	let layout: WGRBufferLayout = rd.layout;
 	if(d.storage) {
 		rd = d.storage;
-		console.log("VVVVVVVVV >> rd: ", rd);
+		// console.log("VVVVVVVVV >> rd: ", rd);
 		v.toStorage();
 		rd.usage = v.usage;
 		let flag = !rd.visibility;

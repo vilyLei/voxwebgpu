@@ -95,9 +95,10 @@ fn calcColor4(worldPos: vec4<f32>, uv: vec2<f32>, worldNormal: vec3<f32>, worldC
 	#endif
 	// return vec4<f32>(vec3(metallic), 1.0);
 
-	var colorGlossiness = clamp(roughness, 0.0, 1.0);
 	#ifdef USE_GLOSSINESS
-	colorGlossiness = clamp(1.0 - roughness, 0.0, 1.0);
+	let colorGlossiness = clamp(1.0 - roughness, 0.0, 1.0);
+	#else
+	let colorGlossiness = clamp(roughness, 0.0, 1.0);
 	#endif
 
 

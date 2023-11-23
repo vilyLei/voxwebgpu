@@ -74,8 +74,8 @@
 // import { BasePbrMaterialMultiLights as Demo } from "./voxgpu/sample/BasePbrMaterialMultiLights";
 // import { BasePbrMaterialMultiPasses as Demo } from "./voxgpu/sample/BasePbrMaterialMultiPasses";
 
-// import { ShaderConstructing as Demo } from "./voxgpu/sample/ShaderConstructing";
-import { DynamicShaderBuilding as Demo } from "./voxgpu/sample/DynamicShaderBuilding";
+import { ShaderConstructing as Demo } from "./voxgpu/sample/ShaderConstructing";
+// import { DynamicShaderBuilding as Demo } from "./voxgpu/sample/DynamicShaderBuilding";
 
 
 
