@@ -83,6 +83,7 @@ fn calcColor4(worldPos: vec4<f32>, uv: vec2<f32>, worldNormal: vec3<f32>, worldC
 	#ifdef USE_ALBEDO
 	albedo = albedo.xyz * textureSample(albedoTexture, albedoSampler, texUV).xyz;
 	#endif
+	
 	#ifdef USE_AO
 	ao = mix(0.0, max(textureSample(aoTexture, aoSampler, texUV).x, armsBase.x), ao);
 	#endif

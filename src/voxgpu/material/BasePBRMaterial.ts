@@ -463,6 +463,9 @@ class BasePBRMaterial extends WGMaterial {
 					case 'specularEnv':
 						preCode += '#define USE_SPECULAR_ENV\n';
 						break;
+					case 'arm':
+						preCode += '#define USE_ARM_MAP\n';
+						break;
 					default:
 						break;
 				}
