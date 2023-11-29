@@ -466,6 +466,9 @@ class BasePBRMaterial extends WGMaterial {
 					case 'arm':
 						preCode += '#define USE_ARM_MAP\n';
 						break;
+					case 'emissive':
+						preCode += '#define USE_EMISSIVE_MAP\n';
+						break;
 					default:
 						break;
 				}

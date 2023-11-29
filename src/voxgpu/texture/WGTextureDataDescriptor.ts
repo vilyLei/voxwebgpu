@@ -134,11 +134,17 @@ function texDescriptorFilter(d: WGTextureDataDescriptor): TextureDataDescriptor 
 		return rd;
 	}
 
+	if (d.emissive) {
+		rd = d.emissive;
+		rd.shdVarName = "emissive";
+		return rd;
+	}
 	if (d.specular) {
 		rd = d.specular;
 		rd.shdVarName = "specular";
 		return rd;
 	}
+	
 	return rd;
 }
 export {

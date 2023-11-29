@@ -8,10 +8,10 @@ import { ModelEntity } from "../entity/ModelEntity";
 import { SpecularEnvBrnTexture } from "../texture/SpecularEnvBrnTexture";
 import { WGTextureDataDescriptor } from "../texture/WGTextureDataDescriptor";
 
-export class DynamicShaderBuilding {
+export class DynamicShaderBuilding2 {
 	private mRscene = new RendererScene();
 	initialize(): void {
-		console.log("DynamicShaderBuilding::initialize() ...");
+		console.log("DynamicShaderBuilding2::initialize() ...");
 
 		this.mRscene.initialize({ canvasWith: 512, canvasHeight: 512, rpassparam: { multisampleEnabled: true } });
 		this.initScene();
@@ -25,13 +25,15 @@ export class DynamicShaderBuilding {
 		const aoTex = { ao: { url: `static/assets/pbr/${ns}/ao.jpg` } };
 		const roughnessTex = { roughness: { url: `static/assets/pbr/${ns}/roughness.jpg` } };
 		const metallicTex = { metallic: { url: `static/assets/pbr/${ns}/metallic.jpg` } };
+		const emissiveTex = { emissive: { url: `static/assets/color_07.jpg` } };
 		let textures = [
 			this.hdrEnvtex,
 			albedoTex,
 			normalTex,
 			aoTex,
 			roughnessTex,
-			metallicTex
+			metallicTex,
+			emissiveTex
 		] as WGTextureDataDescriptor[];
 		return textures;
 	}
@@ -45,41 +47,7 @@ export class DynamicShaderBuilding {
 			let basePos = new Vector3(-300, 0, -400);
 			let dis = 250;
 			let textures = this.createTextures("plastic");
-			let material = this.createModelEntity(monkeySrc, pos.clone().add(new Vector3(0, 0, 0)).addBy(basePos), textures.slice(0, 0));
-			this.applyMaterialPPt(material);
-			material = this.createModelEntity(monkeySrc, pos.clone().add(new Vector3(dis, 0, 0)).addBy(basePos), textures.slice(0, 1));
-			this.applyMaterialPPt(material);
-			material = this.createModelEntity(monkeySrc, pos.clone().add(new Vector3(dis * 2, 0, 0)).addBy(basePos), textures.slice(0, 2));
-			this.applyMaterialPPt(material);
-
-			material = this.createModelEntity(monkeySrc, pos.clone().add(new Vector3(0, 0, dis)).addBy(basePos), textures.slice(0, 3));
-			this.applyMaterialPPt(material);
-			material = this.createModelEntity(monkeySrc, pos.clone().add(new Vector3(dis, 0, dis)).addBy(basePos), textures.slice(0, 4));
-			this.applyMaterialPPt(material);
-			material = this.createModelEntity(monkeySrc, pos.clone().add(new Vector3(dis * 2, 0, dis)).addBy(basePos), textures.slice(0, 5));
-			this.applyMaterialPPt(material);
-
-			material = this.createModelEntity(monkeySrc, pos.clone().add(new Vector3(0, 0, dis * 2)).addBy(basePos), textures.slice(0, 6));
-			this.applyMaterialPPt(material);
-			material = this.createModelEntity(monkeySrc, pos.clone().add(new Vector3(dis, 0, dis * 2)).addBy(basePos), textures);
-			material.property.glossiness = false;
-			this.applyMaterialPPt(material);
-			material = this.createModelEntity(monkeySrc, pos.clone().add(new Vector3(dis * 2, 0, dis * 2)).addBy(basePos), textures);
-			material.property.toneMapping = false;
-			this.applyMaterialPPt(material);
-
-			material = this.createModelEntity(monkeySrc, pos.clone().add(new Vector3(0, 0, dis * 3)).addBy(basePos), textures.slice(0, 6));
-			material.property.metallicCorrection = false;
-			material.property.glossiness = false;
-			this.applyMaterialPPt(material);
-			material = this.createModelEntity(monkeySrc, pos.clone().add(new Vector3(dis, 0, dis * 3)).addBy(basePos), textures.slice(0, 6));
-			material.property.glossiness = false;
-			material.property.toneMapping = false;
-			this.applyMaterialPPt(material);
-			material = this.createModelEntity(monkeySrc, pos.clone().add(new Vector3(dis * 2, 0, dis * 3)).addBy(basePos), textures.slice(0, 6));
-			material.property.glossiness = false;
-			material.property.toneMapping = false;
-			material.property.metallicCorrection = false;
+			let material = this.createModelEntity(monkeySrc,new Vector3(0, 0, 0), textures);
 			this.applyMaterialPPt(material);
 		};
 		let monkeySrc = new ModelEntity({

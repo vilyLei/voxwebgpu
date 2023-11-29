@@ -185,13 +185,18 @@ fn calcColor4(worldPos: vec4<f32>, uv: vec2<f32>, worldNormal: vec3<f32>, worldC
 
 	// ambient lighting (note that the next IBL tutorial will replace
     // this ambient lighting with environment lighting).
-    var ambient = ((color + ambient.xyz) * albedo.xyz) * ao;
+	var amb = ambient.xyz;
+	#ifdef USE_EMISSIVE_MAP
+	amb += textureSample(emissiveTexture, emissiveSampler, texUV).xyz;
+	// return vec4<f32>(amb, 1.0);
+	#endif
+    amb = ((color + amb) * albedo.xyz) * ao;
 
 	sideIntensity = getColorFactorIntensity(dotNV, frontIntensity, sideIntensity);
-	ambient *= sideIntensity;
+	amb *= sideIntensity;
 	Lo *= sideIntensity * frontIntensity;
 
-    color = ambient + Lo;
+    color = amb + Lo;
 
 	// HDR tonemapping
     #ifdef USE_TONE_MAPPING
