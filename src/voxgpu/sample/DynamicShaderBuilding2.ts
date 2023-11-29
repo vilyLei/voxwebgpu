@@ -37,23 +37,44 @@ export class DynamicShaderBuilding2 {
 		] as WGTextureDataDescriptor[];
 		return textures;
 	}
+	private createArmTextures(): WGTextureDataDescriptor[] {
+		const albedoTex = { albedo: { url: `static/assets/pbrtex/rough_plaster_broken_diff_1k.jpg` } };
+		const normalTex = { normal: { url: `static/assets/pbrtex/rough_plaster_broken_nor_1k.jpg` } };
+		const armTex = { arm: { url: `static/assets/pbrtex/rough_plaster_broken_arm_1k.jpg` } };
+		// const emissiveTex = { emissive: { url: `static/assets/color_07.jpg` } };
+		let textures = [
+			this.hdrEnvtex,
+			albedoTex,
+			normalTex,
+			armTex
+		] as WGTextureDataDescriptor[];
+		return textures;
+	}
+	//rough_plaster_broken_diff_1k
 	private initScene(): void {
 		this.initEntities();
 	}
+	private mMonkeySrc: ModelEntity;
 	private initEntities(): void {
 
 		let callback = (): void => {
-			let pos = new Vector3(0, 0, 0);
-			let basePos = new Vector3(-300, 0, -400);
-			let dis = 250;
-			let textures = this.createTextures("plastic");
-			let material = this.createModelEntity(monkeySrc,new Vector3(0, 0, 0), textures);
-			this.applyMaterialPPt(material);
+			this.initARMTexDisp();
+			this.initEmissiveTexDisp();
 		};
-		let monkeySrc = new ModelEntity({
+		this.mMonkeySrc = new ModelEntity({
 			callback,
 			modelUrl: "static/assets/draco/monkey.drc"
 		});
+	}
+	private initARMTexDisp(): void {
+		let textures = this.createArmTextures();
+		let material = this.createModelEntity(this.mMonkeySrc, new Vector3(0, 0, -150), textures);
+		this.applyMaterialPPt(material);
+	}
+	private initEmissiveTexDisp(): void {
+		let textures = this.createTextures("plastic");
+		let material = this.createModelEntity(this.mMonkeySrc, new Vector3(0, 0, 150), textures);
+		this.applyMaterialPPt(material);
 	}
 	private applyMaterialPPt(material: BasePBRMaterial): void {
 		let property = material.property;
