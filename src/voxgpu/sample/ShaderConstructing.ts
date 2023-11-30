@@ -22,9 +22,9 @@ export class ShaderConstructing {
 		console.log("ShaderConstructing::initialize() ...");
 
 		// this.mRscene.initialize({ rpassparam: { multisampleEnabled: true } });
-		this.initShaderBuild();
-		// this.initScene();
-		// this.initEvent();
+		// this.initShaderBuild();
+		this.initScene();
+		this.initEvent();
 	}
 	private initShaderBuild(): void {
 		let shdCtor = this.mShaderCtor;
