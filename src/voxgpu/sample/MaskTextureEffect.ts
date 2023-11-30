@@ -1,41 +1,21 @@
 import MouseEvent from "../event/MouseEvent";
 import { RendererScene } from "../rscene/RendererScene";
 import { MouseInteraction } from "../ui/MouseInteraction";
-import { WGShaderConstructor } from "../material/shader/WGShaderConstructor";
 import Vector3 from "../math/Vector3";
 import Color4 from "../material/Color4";
-import { BillboardEntity } from "../entity/BillboardEntity";
 import { BasePBRMaterial, LightShaderDataParam } from "../material/BasePBRMaterial";
-import { BoxEntity } from "../entity/BoxEntity";
 import { ModelEntity } from "../entity/ModelEntity";
-import { AxisEntity } from "../entity/AxisEntity";
 import { SpecularEnvBrnTexture } from "../texture/SpecularEnvBrnTexture";
 import { WGTextureDataDescriptor } from "../texture/WGTextureDataDescriptor";
 
-export class ShaderConstructing {
+export class MaskTextureEffect {
 	private mRscene = new RendererScene();
-	private mShaderCtor = new WGShaderConstructor();
-	private basePBRShaderSrc = {
-		shaderSrc: { code: "", uuid: "wholeBasePBRShdCode-test01" }
-	};
 	initialize(): void {
-		console.log("ShaderConstructing::initialize() ...");
+		console.log("MaskTextureEffect::initialize() ...");
 
-		// this.mRscene.initialize({ rpassparam: { multisampleEnabled: true } });
-		this.initShaderBuild();
-		// this.initScene();
-		// this.initEvent();
-	}
-	private initShaderBuild(): void {
-		let shdCtor = this.mShaderCtor;
-		let preDefCode = `
-#define USE_GLOSSINESS 1
-#define USE_TONE_MAPPING
-#define USE_METALLIC_CORRECTION
-`;
-		// let codeStr = shdCtor.build(preDefCode);
-		let codeStr = shdCtor.testBuild(preDefCode);
-		this.basePBRShaderSrc.shaderSrc.code = codeStr;
+		this.mRscene.initialize({ canvasWith: 512, canvasHeight: 512, rpassparam: { multisampleEnabled: true } });
+		this.initScene();
+		this.initEvent();
 	}
 
 	private hdrEnvtex = new SpecularEnvBrnTexture();
@@ -45,68 +25,80 @@ export class ShaderConstructing {
 		const aoTex = { ao: { url: `static/assets/pbr/${ns}/ao.jpg` } };
 		const roughnessTex = { roughness: { url: `static/assets/pbr/${ns}/roughness.jpg` } };
 		const metallicTex = { metallic: { url: `static/assets/pbr/${ns}/metallic.jpg` } };
+		const emissiveTex = { emissive: { url: `static/assets/color_07.jpg` } };
 		let textures = [
 			this.hdrEnvtex,
 			albedoTex,
 			normalTex,
 			aoTex,
 			roughnessTex,
-			metallicTex
+			metallicTex,
+			emissiveTex
 		] as WGTextureDataDescriptor[];
 		return textures;
 	}
+	private createArmTextures(): WGTextureDataDescriptor[] {
+		const albedoTex = { albedo: { url: `static/assets/pbrtex/rough_plaster_broken_diff_1k.jpg` } };
+		const normalTex = { normal: { url: `static/assets/pbrtex/rough_plaster_broken_nor_1k.jpg` } };
+		const armTex = { arm: { url: `static/assets/pbrtex/rough_plaster_broken_arm_1k.jpg` } };
+		// const emissiveTex = { emissive: { url: `static/assets/color_07.jpg` } };
+		let textures = [
+			this.hdrEnvtex,
+			albedoTex,
+			normalTex,
+			armTex
+		] as WGTextureDataDescriptor[];
+		return textures;
+	}
+	//rough_plaster_broken_diff_1k
 	private initScene(): void {
 		this.initEntities();
 	}
+	private mMonkeySrc: ModelEntity;
 	private initEntities(): void {
-		let rc = this.mRscene;
 
-		// rc.addEntity(new AxisEntity());
 		let callback = (): void => {
-			let pos = new Vector3(0, 0, 0);
-
-			// let material = this.createModelEntity(monkeySrc, "grass", pos);
-			// let material = this.createModelEntity(monkeySrc, "rusted_iron", pos);
-			// let material = this.createModelEntity(monkeySrc, "gold", pos);
-			let material = this.createModelEntity(monkeySrc, "plastic", pos, [100, 100, 100]);
-			let property = material.property;
-			// property.glossiness = false;
-			property.ambient.value = [0.0, 0.2, 0.2];
-			property.albedo.value = [0.7, 0.7, 0.3];
-			// property.albedo.value = [0.0, 0.1, 0.7];
-			property.arms.roughness = 0.8;
-			property.armsBase.value = [0, 0, 0];
-			property.uvParam.value = [2, 2];
-			// property.specularFactor.value = [0.0,0.0,1.1];
-			property.param.scatterIntensity = 32;
-
-			// this.createBoxEntity("plastic", new Vector3(0, -110.0, 0), this.mLightParams[0]);
-
+			this.initARMTexDisp();
+			this.initEmissiveTexDisp();
 		};
-		let monkeySrc = new ModelEntity({
+		this.mMonkeySrc = new ModelEntity({
 			callback,
-			// modelUrl: "static/assets/draco/portal.drc"
 			modelUrl: "static/assets/draco/monkey.drc"
 		});
 	}
+	private initARMTexDisp(): void {
+		let textures = this.createArmTextures();
+		let material = this.createModelEntity(this.mMonkeySrc, new Vector3(0, 0, -150), textures);
+		this.applyMaterialPPt(material);
+	}
+	private initEmissiveTexDisp(): void {
+		let textures = this.createTextures("plastic");
+		let material = this.createModelEntity(this.mMonkeySrc, new Vector3(0, 0, 150), textures);
+		this.applyMaterialPPt(material);
+	}
+	private applyMaterialPPt(material: BasePBRMaterial): void {
+		let property = material.property;
+		property.ambient.value = [0.0, 0.2, 0.2];
+		property.albedo.value = [0.7, 0.7, 0.3];
+		property.arms.roughness = 0.8;
+		property.armsBase.value = [0, 0, 0];
+		property.uvParam.value = [2, 2];
+		property.param.scatterIntensity = 32;
+	}
 	private mLightParams: LightShaderDataParam[] = [];
-	private createModelEntity(srcEntity: ModelEntity, texName: string, position: Vector3DataType, scale?: Vector3DataType): BasePBRMaterial {
+	private createModelEntity(srcEntity: ModelEntity, position: Vector3DataType, textures: WGTextureDataDescriptor[]): BasePBRMaterial {
 		let rc = this.mRscene;
 
 		let lightParam = this.createLightData(position);
 
-		// let shaderSrc = {
-		// 	shaderSrc: { code: this.basePBRShaderSrc.shaderSrc.code, uuid: "wholeBasePBRShdCode" }
-		// };
-		// let material = new BasePBRMaterial({ shadinguuid: "basePbrMaterial-test01", shaderSrc: this.basePBRShaderSrc });
 		let material = new BasePBRMaterial();
 
 		material.setLightParam(lightParam);
-		material.addTextures(this.createTextures(texName));
+		material.addTextures(textures);
 		let monkey = new ModelEntity({
 			materials: [material],
 			geometry: srcEntity.geometry,
-			transform: { position, scale: scale, rotation: [0, 90, 0] }
+			transform: { position, scale: [100, 100, 100], rotation: [0, 90, 0] }
 		});
 		rc.addEntity(monkey);
 

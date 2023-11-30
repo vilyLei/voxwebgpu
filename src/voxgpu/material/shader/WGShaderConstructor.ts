@@ -76,36 +76,111 @@ $$$$$$$$$ DOLL 01
 #endif
 AAAAAAAAAA 04
 `;
+
+let testStr4 =
+`
+AAAAAAAAAA 01 begin
+#ifdef VOX_BURLEY
+#ifdef VOX_WOOL
+fn FD_BurleyWool(linearRoughness: f32, NoV: f32, NoL: f32, LoH: f32) -> f32 {
+	let f90 = 0.5 + 2.0 * linearRoughness * LoH * LoH;
+	return lightScatter * viewScatter;
+}
+fn getColorFactorIntensity(NoV: f32, frontScale: f32, sideScale: f32) -> f32 {
+	let invNoV = 1.0 - NoV;
+	return mix(frontScale, sideScale, k);
+}
+#else//#90 VOX_WOOL
+fn FD_Burley(linearRoughness: f32, NoV: f32, NoL: f32, LoH: f32, frontScale: f32, sideScale: f32) -> f32 {
+	let f90 = 0.5 + 2.0 * linearRoughness * LoH * LoH;
+	return lightScatter * viewScatter;
+}
+AAAAAAAAAA 02A
+
+#ifdef VOX_TT01
+AAAAAAAAAA 02B-VOX_TT01
+#endif//#101 VOX_TT01
+
+#endif//#201 VOX_WOOL
+
+#endif//#301 VOX_BURLEY
+
+AAAAAAAAAA 03
+#ifndef VOX_DOLL
+$$$$$$$$$ DOLL 01
+#else
+$$$$$$$$$ DOLL 02 with else
+#endif
+AAAAAAAAAA 04
+`;
+
+let testStr5 =
+`
+AAAAAAAAAA 01 begin
+AAAAAAAAAA 03
+#ifndef VOX_DOLL
+$$$$$$$$$ DOLL 01
+#else
+$$$$$$$$$ DOLL 02
+#endif
+AAAAAAAAAA 04
+`;
 class WGShaderConstructor {
 	readonly predefine = new WGShaderPredefine();
 	private moduleNames: string[] = [];
-	constructor() {}
+	constructor() { }
 	reset(): void {
 		this.predefine.reset();
 	}
-	build(predefine: string): string {
 
-// 		predefine =
-// `
-// #define VOX_WOOL
-// #define VOX_DOLL
-// `;
+	testBuild(predefine: string): string {
+
+		predefine =
+			`
+		#define VOX_BURLEY
+		#define VOX_WOOL
+		#define VOX_DOLL
+		`;
 		// let isCommentLine = codeLineCommentTest(testStr2);
 		// console.log('isCommentLine: ', isCommentLine);
 		// return;
 		const preDef = this.predefine;
 		preDef.parsePredefineVar(predefine);
-		
+
 		// let clearnSrc = preDef.applyPredefine(testStr3);
 		// let clearnSrc = preDef.applyPredefine(fragOutputWGSL);
 		// let clearnSrc = preDef.applyPredefine( testStr );
 		// console.log("\n###### testStr3:");
 		// console.log(testStr3);
+		let clearnSrc = preDef.applyPredefine(testStr4);
+		// let clearnSrc = preDef.applyPredefine(testStr5);
+		console.log("\n###### clearnSrc:");
+		console.log(clearnSrc);
 		// console.log("\n###### clearnSrc:");
 		// console.log(clearnSrc);
 		// let codeSrc = `${baseVertWGSL}${baseFragWGSL}`;//baseVertWGSL ;
 		// console.log(">>>>> >>>>> >>>>> >>>>> >>>>> >>>>>");
-		// return
+		return
+		let vertWGSL = baseVertWGSL;
+		vertWGSL = this.parseInclude(vertWGSL);
+		// console.log("\n###### vertWGSL:");
+		// console.log(vertWGSL);
+
+		let fragWGSL = baseFragWGSL;
+		fragWGSL = this.parseInclude(fragWGSL);
+		fragWGSL = preDef.applyPredefine(fragWGSL);
+		// console.log("\n###### fragWGSL:");
+		// console.log(fragWGSL);
+		let code = vertWGSL + fragWGSL;
+		// console.log("\n###### whole shader:");
+		// console.log(code);
+		return code;
+	}
+	build(predefine: string): string {
+
+		const preDef = this.predefine;
+		preDef.parsePredefineVar(predefine);
+
 		let vertWGSL = baseVertWGSL;
 		vertWGSL = this.parseInclude(vertWGSL);
 		// console.log("\n###### vertWGSL:");
@@ -129,7 +204,7 @@ class WGShaderConstructor {
 
 		const moduleNames = this.moduleNames;
 
-		for (; index >= 0; ) {
+		for (; index >= 0;) {
 			let begin = dst.indexOf("<", index + 1);
 			let end = dst.indexOf(">", begin + 1);
 			console.log("parseInclude(), begin, end: ", begin, end);
@@ -138,10 +213,10 @@ class WGShaderConstructor {
 				console.log("parseInclude(), moduleName: ", moduleName);
 				let includeCmd = dst.slice(index, end + 1);
 				// 同一个代码块不用载入两次
-				if(moduleNames.includes(moduleName)) {
+				if (moduleNames.includes(moduleName)) {
 					dst = dst.replace(includeCmd, `\n\r`);
 					end = index + 1;
-				}else{
+				} else {
 					moduleNames.push(moduleName);
 					let moduleCode = shdSrcModules.get(moduleName);
 					console.log("parseInclude(), includeCmd: ", includeCmd);

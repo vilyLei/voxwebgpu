@@ -1,3 +1,4 @@
+import { ShdPredefinTracer } from "./ShdPredefinTracer";
 import { getCodeLine, codeLineCommentTest } from "./utils";
 
 class PreDefItem {
@@ -13,6 +14,7 @@ class PreDefItem {
 }
 class WGShaderPredefine {
 	private preVarDict: Map<string, PreDefItem> = new Map();
+	private defTracer = new ShdPredefinTracer();
 	constructor() { }
 	reset(): void {
 		this.preVarDict.clear();
@@ -95,12 +97,30 @@ class WGShaderPredefine {
 			console.log(">>> $$$ AAA index: ", index, ', end: ', end);
 			if (index < end) {
 				let endI = end + keyEndDef.length;
-				let codeLine = getCodeLine(src, index);//src.slice(index, endI);
+				let codeLine = getCodeLine(src, index);
 				let flag = codeLineCommentTest(codeLine);
 				console.log("isCommentLine flag: ", flag);
 				if (!flag) {
-					let chunk = this.parseChunk(src.slice(index, endI));
-					src = src.slice(0, index) + chunk + src.slice(endI);
+					
+					// test #if string between the index and endI
+					let k = src.indexOf(keyDef, index + keyDef.length);
+					if (k > 0 && k < endI) {
+						let tracer = this.defTracer;
+						let obj = tracer.applyPredefine(src, index);
+						// let defName = this.getChunkDefName(src);
+						// let flag = this.hasDefine(defName);
+						// if(obj.elseI > 0) {
+						// }else {
+						// }
+						let chunk = this.parseChunk("", obj);
+						src = src.slice(0, index) + chunk + src.slice(obj.posEndI);
+						// index = obj.endI;
+						// for test
+						// return src;
+					}else{
+						let chunk = this.parseChunk(src.slice(index, endI));
+						src = src.slice(0, index) + chunk + src.slice(endI);
+					}
 				}
 				index = src.indexOf(keyDef, index + 1);
 				console.log(">>> $$$ BBB index: ", index);
@@ -110,30 +130,38 @@ class WGShaderPredefine {
 		}
 		return src;
 	}
-	private parseChunk(src: string): string {
+	private parseChunk(src: string, param?: { src: string, elseI: number, posEndI: number }): string {
 		let keyDef = "#if";
 		// let keyDef = "#ifdef";
 		let keyEndDef = "#endif";
 		let keyElse = "#else";
-
+		if(param) {
+			src = param.src;
+		}
 		console.log('parseChunk() ############### XXXXXXXXXXXXX');
 		console.log("parseChunk(), src: ");
 		console.log(src);
-		let defName = this.getChunkDefName(src);
-		let flag = this.hasDefine(defName);
-		console.log("parseChunk(), defName: ", defName, ', flag: ', flag);
+		let defNames = this.getChunkDefNames(src);
+		let defFlag = this.hasDefine(defNames[1]);
+		console.log("parseChunk(), defNames: ", defNames, ', defFlag: ', defFlag);
+		if(defNames[0] === '#ifndef') {
+			defFlag = !defFlag;
+		}
+		if(param) {
+			console.log("parseChunk(), param.elseI, param.endI: ", param.elseI);
+		}
 		// if (this.hasDefine(defName)) {
 
 		// const varDict = this.preVarDict;
 
-		let index = src.indexOf(keyDef);
-		let elseIndex = src.indexOf(keyElse, index + 1);
-		let endIndex = src.indexOf(keyEndDef, index + 1);
+		let index = param ? 0 : src.indexOf(keyDef);
+		let elseIndex = param ? param.elseI - keyElse.length : src.indexOf(keyElse, index + 1);
+		let endIndex = param ? src.length - keyEndDef.length : src.indexOf(keyEndDef, index + 1);
 		let end = endIndex;
-		let defFlag = this.hasDefine(defName);
+		// let defFlag = this.hasDefine(defNames[1]);
 		if (defFlag) {
 			index = src.indexOf(`\n`, index + 1);
-			end = elseIndex > 0 ? elseIndex : endIndex;
+			end = elseIndex > 0 ? elseIndex: endIndex;
 		} else {
 			index = elseIndex > 0 ? src.indexOf(`\n`, elseIndex + 1) : src.indexOf(`\n`, index + 1);
 		}
@@ -150,7 +178,7 @@ class WGShaderPredefine {
 		console.log('parseChunk() end, src: ', src);
 		return src;
 	}
-	private getChunkDefName(src: string): string {
+	private getChunkDefNames(src: string): string[] {
 		// let keyDef = "#ifdef";
 		let index = 0;
 		let begin = src.indexOf(" ", index + 1);
@@ -164,7 +192,7 @@ class WGShaderPredefine {
 		}
 		let end = Math.min(end0, end1);
 		let defineName = src.slice(begin + 1, end).trim();
-		return defineName;
+		return [src.slice(index, begin).trim(), defineName];
 	}
 }
 export { WGShaderPredefine };
