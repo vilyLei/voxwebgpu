@@ -207,10 +207,10 @@ class WGShaderConstructor {
 		for (; index >= 0;) {
 			let begin = dst.indexOf("<", index + 1);
 			let end = dst.indexOf(">", begin + 1);
-			console.log("parseInclude(), begin, end: ", begin, end);
+			// console.log("parseInclude(), begin, end: ", begin, end);
 			if (end > 0) {
 				let moduleName = dst.slice(begin + 1, end).trim();
-				console.log("parseInclude(), moduleName: ", moduleName);
+				// console.log("parseInclude(), moduleName: ", moduleName);
 				let includeCmd = dst.slice(index, end + 1);
 				// 同一个代码块不用载入两次
 				if (moduleNames.includes(moduleName)) {
@@ -219,7 +219,7 @@ class WGShaderConstructor {
 				} else {
 					moduleNames.push(moduleName);
 					let moduleCode = shdSrcModules.get(moduleName);
-					console.log("parseInclude(), includeCmd: ", includeCmd);
+					// console.log("parseInclude(), includeCmd: ", includeCmd);
 					dst = dst.replace(includeCmd, `\n\r${moduleCode}\n\r`);
 				}
 				// console.log('parseInclude(), dst:');

@@ -182,7 +182,10 @@ class WGRObjBuilder {
 				if (!material.shaderSrc) {
 					let pm = (material as IWGMaterial);
 					if (pm.__$build) {
+						let time = Date.now();
 						pm.__$build();
+						time = Date.now() - time;
+						console.log("building material shader loss time: ", time);
 					}
 				}
 				this.checkShaderSrc(material.shaderSrc);

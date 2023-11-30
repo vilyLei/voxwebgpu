@@ -59,14 +59,14 @@ class WGShaderPredefine {
 				if (!codeLineCommentTest(codeLine)) {
 					if (end0 < end1) {
 						let defineValue = Number(src.slice(end0 + 1, end1).trim());
-						console.log("WGShaderPredefine::parsePredefineVar(), defineName: ", defineName, ", defineValue: ", defineValue);
+						// console.log("WGShaderPredefine::parsePredefineVar(), defineName: ", defineName, ", defineValue: ", defineValue);
 						this.preVarDict.set(defineName, new PreDefItem(defineName, defineValue));
 						let pstr = src.slice(index, end1);
 						// console.log("AAAAA pstr: ", pstr);
 						let regex = new RegExp(pstr, "g");
 						src = src.replace(regex, "");
 					} else {
-						console.log("WGShaderPredefine::parsePredefineVar(), defineName: ", defineName);
+						// console.log("WGShaderPredefine::parsePredefineVar(), defineName: ", defineName);
 						this.preVarDict.set(defineName, new PreDefItem(defineName));
 						let pstr = src.slice(index, end);
 						let regex = new RegExp(pstr, "g");
@@ -94,12 +94,12 @@ class WGShaderPredefine {
 		let index = src.indexOf(keyDef);
 		for (; index >= 0;) {
 			let end = src.indexOf(keyEndDef, index + 1);
-			console.log(">>> $$$ AAA index: ", index, ', end: ', end);
+			// console.log(">>> $$$ AAA index: ", index, ', end: ', end);
 			if (index < end) {
 				let endI = end + keyEndDef.length;
 				let codeLine = getCodeLine(src, index);
 				let flag = codeLineCommentTest(codeLine);
-				console.log("isCommentLine flag: ", flag);
+				// console.log("isCommentLine flag: ", flag);
 				if (!flag) {
 					
 					// test #if string between the index and endI
@@ -123,7 +123,7 @@ class WGShaderPredefine {
 					}
 				}
 				index = src.indexOf(keyDef, index + 1);
-				console.log(">>> $$$ BBB index: ", index);
+				// console.log(">>> $$$ BBB index: ", index);
 			} else {
 				break;
 			}
@@ -138,18 +138,18 @@ class WGShaderPredefine {
 		if(param) {
 			src = param.src;
 		}
-		console.log('parseChunk() ############### XXXXXXXXXXXXX');
-		console.log("parseChunk(), src: ");
-		console.log(src);
+		// console.log('parseChunk() ############### XXXXXXXXXXXXX');
+		// console.log("parseChunk(), src: ");
+		// console.log(src);
 		let defNames = this.getChunkDefNames(src);
 		let defFlag = this.hasDefine(defNames[1]);
-		console.log("parseChunk(), defNames: ", defNames, ', defFlag: ', defFlag);
+		// console.log("parseChunk(), defNames: ", defNames, ', defFlag: ', defFlag);
 		if(defNames[0] === '#ifndef') {
 			defFlag = !defFlag;
 		}
-		if(param) {
-			console.log("parseChunk(), param.elseI, param.endI: ", param.elseI);
-		}
+		// if(param) {
+		// 	console.log("parseChunk(), param.elseI, param.endI: ", param.elseI);
+		// }
 		// if (this.hasDefine(defName)) {
 
 		// const varDict = this.preVarDict;
@@ -175,7 +175,7 @@ class WGShaderPredefine {
 		// 	src = `\n`;
 		// }
 
-		console.log('parseChunk() end, src: ', src);
+		// console.log('parseChunk() end, src: ', src);
 		return src;
 	}
 	private getChunkDefNames(src: string): string[] {
