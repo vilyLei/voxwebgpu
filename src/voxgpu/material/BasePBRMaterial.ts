@@ -395,11 +395,6 @@ class BasePBRProperty {
 		this.lightColors.data = lightColorsData;
 	}
 }
-const preDefCode = `
-#define USE_GLOSSINESS 1
-#define USE_TONE_MAPPING
-#define USE_METALLIC_CORRECTION
-`;
 class BasePBRMaterial extends WGMaterial {
 	private mShdBuilder = new WGShaderConstructor();
 	property = new BasePBRProperty();
@@ -428,8 +423,7 @@ class BasePBRMaterial extends WGMaterial {
 	}
 	
 	__$build(): void {
-		let preCode = preDefCode;
-		preCode = '';
+		let preCode = '';
 		let ts = this.textures;
 		let ppt = this.property;
 		if(ppt.glossiness) {
