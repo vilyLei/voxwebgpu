@@ -18,6 +18,10 @@ interface WGRPipelineContextDefParam {
 	 */
 	blendModes?: string[];
 	depthWriteEnabled?: boolean;
+	/**
+	 * Possible values are: "never","less","equal","less-equal","greater","not-equal","greater-equal","always"
+	 */
+	depthCompare?: string;
 	primitiveState?: GPUPrimitiveState;
 	depthStencil?: GPUDepthStencilState;
 	faceCullMode?: string;
@@ -106,16 +110,22 @@ class WGRPipelineCtxParams implements GPURenderPipelineDescriptor {
 			}
 		}
 	}
-	setDepthWriteEnabled(enabled: boolean): void {
+
+	setDepthWriteEnabled(enabled: boolean, depthCompare?: string): void {
 		this.depthStencilEnabled = enabled;
-		if (this.depthStencil) {
-			this.depthStencil.depthWriteEnabled = enabled;
+		if(!depthCompare) {
+			depthCompare = 'less';
+		}
+		let obj = this.depthStencil;
+		if (obj) {
+			obj.depthWriteEnabled = enabled;
+			obj.depthCompare = depthCompare;
 		}
 		if (enabled) {
-			if (!this.depthStencil) {
+			if (!obj) {
 				this.depthStencil = {
 					depthWriteEnabled: true,
-					depthCompare: "less",
+					depthCompare,
 					format: "depth24plus"
 				};
 			}

@@ -92,11 +92,11 @@ export class MaskTextureEffect {
 	}
 	private initTexDisp(): void {
 		let textures = this.createTextures("plastic");
-		let material = this.createModelEntity(this.mMonkeySrc, new Vector3(0, 0, 150), textures);
+		let material = this.createModelEntity(this.mMonkeySrc, new Vector3(0, 0, 0), textures);
 		material.property.inverseMask = false;
 		this.applyMaterialPPt(material);
 
-		material = this.createModelEntity(this.mMonkeySrc, new Vector3(0, 0, -150), textures);
+		material = this.createModelEntity(this.mMonkeySrc, new Vector3(0, 0, 0), textures, 'less-equal', false);
 		material.property.inverseMask = true;
 		this.applyMaterialPPt(material);
 	}
@@ -110,15 +110,18 @@ export class MaskTextureEffect {
 		property.param.scatterIntensity = 32;
 	}
 	private mLightParams: LightShaderDataParam[] = [];
-	private createModelEntity(srcEntity: ModelEntity, position: Vector3DataType, textures: WGTextureDataDescriptor[]): BasePBRMaterial {
+	private createModelEntity(srcEntity: ModelEntity, position: Vector3DataType, textures: WGTextureDataDescriptor[], depthCompare = 'less', lightFlag = true): BasePBRMaterial {
 		let rc = this.mRscene;
 
-		let lightParam = this.createLightData(position);
+		let lightParam = (lightFlag || this.mLightParams.length < 1) ? this.createLightData(position) : this.mLightParams[0];
 
 		let pipelineDefParam = {
 			depthWriteEnabled: true,
 			faceCullMode: 'back',
-			blendModes: ["transparent"]
+			blendModes: ["transparent"],
+			depthCompare
+			// depthCompare: 'less-equal'
+			// depthCompare: 'less'
 		};
 		let material = new BasePBRMaterial({ pipelineDefParam });
 

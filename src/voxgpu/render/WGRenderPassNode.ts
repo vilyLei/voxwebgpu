@@ -170,7 +170,7 @@ class WGRenderPassNode implements IWGRenderPassNode {
 			if (plp.depthStencil) {
 				pipeParams.setDepthStencil(plp.depthStencil);
 			} else {
-				pipeParams.setDepthWriteEnabled(plp.depthWriteEnabled === true);
+				pipeParams.setDepthWriteEnabled(plp.depthWriteEnabled === true, plp.depthCompare);
 			}
 			pipeParams.setPrimitiveState(plp.primitiveState ? plp.primitiveState : { cullMode: plp.faceCullMode });
 		}
