@@ -5,7 +5,7 @@ import { WGRMaterialPassViewImpl } from "../render/pipeline/WGRMaterialPassViewI
 import { WGRBufferData } from "../render/buffer/WGRBufferValueParam";
 
 interface WGMaterialDescripter {
-	shadinguuid: string;
+	shadinguuid?: string;
 	uid?:number;
 	shaderSrc?: WGRShderSrcType;
 	pipelineVtxParam?: VtxPipelinDescParam;

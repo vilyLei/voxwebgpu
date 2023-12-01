@@ -56,6 +56,7 @@ class WebGPUContext implements WebGPUContextImpl {
 
 		const gpu: GPU = (navigator as any).gpu;
 		if (gpu) {
+			console.log("wgConfig: ", wgConfig);
 			console.log("WebGPU is supported on this browser.");
 			selfT.gpu = gpu;
 			if(!deviceDescriptor) deviceDescriptor = {};

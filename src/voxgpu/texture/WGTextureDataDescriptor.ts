@@ -134,6 +134,11 @@ function texDescriptorFilter(d: WGTextureDataDescriptor): TextureDataDescriptor 
 		return rd;
 	}
 
+	if (d.opacity) {
+		rd = d.opacity;
+		rd.shdVarName = "opacity";
+		return rd;
+	}
 	if (d.emissive) {
 		rd = d.emissive;
 		rd.shdVarName = "emissive";

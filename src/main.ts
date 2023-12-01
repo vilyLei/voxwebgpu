@@ -75,9 +75,9 @@
 // import { BasePbrMaterialMultiPasses as Demo } from "./voxgpu/sample/BasePbrMaterialMultiPasses";
 
 // import { ShaderConstructing as Demo } from "./voxgpu/sample/ShaderConstructing";
-import { DynamicShaderBuilding as Demo } from "./voxgpu/sample/DynamicShaderBuilding";
+// import { DynamicShaderBuilding as Demo } from "./voxgpu/sample/DynamicShaderBuilding";
 // import { DynamicShaderBuilding2 as Demo } from "./voxgpu/sample/DynamicShaderBuilding2";
-// import { MaskTextureEffect as Demo } from "./voxgpu/sample/MaskTextureEffect";
+import { MaskTextureEffect as Demo } from "./voxgpu/sample/MaskTextureEffect";
 
 
 

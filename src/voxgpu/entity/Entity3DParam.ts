@@ -15,6 +15,9 @@ interface Entity3DParam {
 	materials?: WGMaterial[];
 	geometry?: WGGeometry;
 	textures?: WGTextureDataDescriptor[];
+	/**
+	 * Possible values are: "transparent", "add", "alpha_add", "solid"
+	 */
 	blendModes?: string[];
 	faceCullMode?: string;
 	depthWriteEnabled?: boolean;

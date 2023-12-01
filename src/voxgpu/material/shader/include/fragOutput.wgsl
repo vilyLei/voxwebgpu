@@ -214,8 +214,16 @@ fn calcColor4(worldPos: vec4<f32>, uv: vec2<f32>, worldNormal: vec3<f32>, worldC
 
     // gamma correct
     color = linearToGammaVec3(color);
-
+	#ifdef USE_OPACITY_MAP
+	let opacity = textureSample(opacityTexture, opacitySampler, texUV).xyz;
+	// return vec4(opacity, 1.0);
+	#ifdef USE_INVERSE_MASK
+	color4 = vec4<f32>(color, 1.0 - opacity.x);
+	#else
+	color4 = vec4<f32>(color, opacity.x);
+	#endif
+	#else
 	color4 = vec4<f32>(color, 1.0);
-
+	#endif
 	return color4;
 }

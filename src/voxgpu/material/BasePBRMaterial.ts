@@ -365,6 +365,7 @@ class BasePBRProperty {
 	glossiness = true;
 	toneMapping = true;
 	metallicCorrection = true;
+	inverseMask = false;
 	constructor() {
 		let armsSrc = this.armsParams;
 		this.arms = new ArmsDataWrapper(armsSrc.arms, armsSrc);
@@ -435,6 +436,9 @@ class BasePBRMaterial extends WGMaterial {
 		if(ppt.metallicCorrection) {
 			preCode += '#define USE_METALLIC_CORRECTION\n';
 		}
+		if(ppt.inverseMask) {
+			preCode += '#define USE_INVERSE_MASK\n';
+		}
 		if(ts) {
 			for(let i = 0; i < ts.length; ++i) {
 				console.log('ts[i].texture.shdVarName: ', ts[i].texture.shdVarName);
@@ -463,6 +467,10 @@ class BasePBRMaterial extends WGMaterial {
 					case 'emissive':
 						preCode += '#define USE_EMISSIVE_MAP\n';
 						break;
+					case 'opacity':
+						preCode += '#define USE_OPACITY_MAP\n';
+						break;
+					//opacity
 					default:
 						break;
 				}

@@ -13,6 +13,9 @@ import { createFragmentState, findShaderEntryPoint, WGRShadeSrcParam, WGRShderSr
 
 interface WGRPipelineContextDefParam {
 	blendMode?: string;
+	/**
+	 * Possible values are: "transparent", "add", "alpha_add", "solid"
+	 */
 	blendModes?: string[];
 	depthWriteEnabled?: boolean;
 	primitiveState?: GPUPrimitiveState;

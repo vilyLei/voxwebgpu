@@ -7,11 +7,16 @@ import { BasePBRMaterial, LightShaderDataParam } from "../material/BasePBRMateri
 import { ModelEntity } from "../entity/ModelEntity";
 import { SpecularEnvBrnTexture } from "../texture/SpecularEnvBrnTexture";
 import { WGTextureDataDescriptor } from "../texture/WGTextureDataDescriptor";
+import { SphereEntity } from "../entity/SphereEntity";
+import { FixScreenPlaneEntity } from "../entity/FixScreenPlaneEntity";
 
 export class MaskTextureEffect {
 	private mRscene = new RendererScene();
 	initialize(): void {
 		console.log("MaskTextureEffect::initialize() ...");
+
+		const body = document.body;
+		// body.style.background = '#000000';
 
 		this.mRscene.initialize({ canvasWith: 512, canvasHeight: 512, rpassparam: { multisampleEnabled: true } });
 		this.initScene();
@@ -25,7 +30,8 @@ export class MaskTextureEffect {
 		const aoTex = { ao: { url: `static/assets/pbr/${ns}/ao.jpg` } };
 		const roughnessTex = { roughness: { url: `static/assets/pbr/${ns}/roughness.jpg` } };
 		const metallicTex = { metallic: { url: `static/assets/pbr/${ns}/metallic.jpg` } };
-		const emissiveTex = { emissive: { url: `static/assets/color_07.jpg` } };
+		// const emissiveTex = { emissive: { url: `static/assets/color_07.jpg` } };
+		const opacityTex = { opacity: { url: `static/assets/mask01.jpg` } };
 		let textures = [
 			this.hdrEnvtex,
 			albedoTex,
@@ -33,7 +39,7 @@ export class MaskTextureEffect {
 			aoTex,
 			roughnessTex,
 			metallicTex,
-			emissiveTex
+			opacityTex
 		] as WGTextureDataDescriptor[];
 		return textures;
 	}
@@ -50,16 +56,29 @@ export class MaskTextureEffect {
 		] as WGTextureDataDescriptor[];
 		return textures;
 	}
-	//rough_plaster_broken_diff_1k
+
 	private initScene(): void {
+		const rc = this.mRscene;
+		let entity0 = new FixScreenPlaneEntity({ blendModes: ["transparent"], depthWriteEnabled: false }).setColor([0.2, 0.5, 0.4]);
+		// let entity0 = new FixScreenPlaneEntity().setColor([0.2, 0.5, 0.7]);
+		rc.addEntity(entity0);
+
+		// let diffuseTex = { diffuse: { url: "static/assets/default.jpg", flipY: true } };
+		// diffuseTex = { diffuse: { url: "static/assets/blueTransparent.png", flipY: true } };
+		// diffuseTex = { diffuse: { url: "static/assets/xulie_08_61.png", flipY: true } };
+		// let entity = new FixScreenPlaneEntity({ extent: [-0.8, -0.8, 0.8, 0.8], textures: [diffuseTex], blendModes:["transparent"] });
+		// entity.uvScale = [2, 2];
+		// entity.uvOffset = [0.2, 0.3];
+		// entity.setColor([1,1,1, 0.4]);
+		// // rc.addEntity(entity);
 		this.initEntities();
 	}
 	private mMonkeySrc: ModelEntity;
 	private initEntities(): void {
 
 		let callback = (): void => {
-			this.initARMTexDisp();
-			this.initEmissiveTexDisp();
+			// this.initARMTexDisp();
+			this.initTexDisp();
 		};
 		this.mMonkeySrc = new ModelEntity({
 			callback,
@@ -71,9 +90,14 @@ export class MaskTextureEffect {
 		let material = this.createModelEntity(this.mMonkeySrc, new Vector3(0, 0, -150), textures);
 		this.applyMaterialPPt(material);
 	}
-	private initEmissiveTexDisp(): void {
+	private initTexDisp(): void {
 		let textures = this.createTextures("plastic");
 		let material = this.createModelEntity(this.mMonkeySrc, new Vector3(0, 0, 150), textures);
+		material.property.inverseMask = false;
+		this.applyMaterialPPt(material);
+
+		material = this.createModelEntity(this.mMonkeySrc, new Vector3(0, 0, -150), textures);
+		material.property.inverseMask = true;
 		this.applyMaterialPPt(material);
 	}
 	private applyMaterialPPt(material: BasePBRMaterial): void {
@@ -82,7 +106,7 @@ export class MaskTextureEffect {
 		property.albedo.value = [0.7, 0.7, 0.3];
 		property.arms.roughness = 0.8;
 		property.armsBase.value = [0, 0, 0];
-		property.uvParam.value = [2, 2];
+		// property.uvParam.value = [2, 2];
 		property.param.scatterIntensity = 32;
 	}
 	private mLightParams: LightShaderDataParam[] = [];
@@ -91,16 +115,31 @@ export class MaskTextureEffect {
 
 		let lightParam = this.createLightData(position);
 
-		let material = new BasePBRMaterial();
+		let pipelineDefParam = {
+			depthWriteEnabled: true,
+			faceCullMode: 'back',
+			blendModes: ["transparent"]
+		};
+		let material = new BasePBRMaterial({ pipelineDefParam });
 
 		material.setLightParam(lightParam);
 		material.addTextures(textures);
-		let monkey = new ModelEntity({
-			materials: [material],
-			geometry: srcEntity.geometry,
-			transform: { position, scale: [100, 100, 100], rotation: [0, 90, 0] }
-		});
-		rc.addEntity(monkey);
+		// let monkey = new ModelEntity({
+		// 	materials: [material],
+		// 	geometry: srcEntity.geometry,
+		// 	transform: { position, scale: [100, 100, 100], rotation: [0, 90, 0] },
+		// 	blendModes: ["transparent"]
+		// });
+		// rc.addEntity(monkey);
+
+		let sphere = new SphereEntity(
+			{
+				radius: 150.0,
+				materials: [material],
+				transform: { position }
+			}
+		);
+		rc.addEntity(sphere);
 
 		return material;
 	}
