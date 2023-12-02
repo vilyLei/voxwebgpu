@@ -7,7 +7,6 @@ import { BasePBRMaterial, LightShaderDataParam } from "../material/BasePBRMateri
 import { SpecularEnvBrnTexture } from "../texture/SpecularEnvBrnTexture";
 import { WGTextureDataDescriptor } from "../texture/WGTextureDataDescriptor";
 import { SphereEntity } from "../entity/SphereEntity";
-import { FixScreenPlaneEntity } from "../entity/FixScreenPlaneEntity";
 import { TorusEntity } from "../entity/TorusEntity";
 import { CubeEntity } from "../entity/CubeEntity";
 
@@ -26,9 +25,6 @@ export class FogTest {
 
 
 	private initScene(): void {
-		const rc = this.mRscene;
-		let entity0 = new FixScreenPlaneEntity().setColor([0.2, 0.5, 0.4]);
-		rc.addEntity(entity0);
 		this.initEntities();
 	}
 	private initEntities(): void {
@@ -44,7 +40,6 @@ export class FogTest {
 
 		let position = new Vector3(0, 0, 0);
 		let materials = this.createMaterials(position, textures0, 'front');
-		// let materials = this.createMaterials(position);
 		let box = new CubeEntity(
 			{
 				cubeSize: 1550.0,
@@ -88,11 +83,11 @@ export class FogTest {
 
 	}
 	private createMaterials(position: Vector3, textures: WGTextureDataDescriptor[], faceCullMode = 'back', uvParam?: number[]): BasePBRMaterial[] {
-		
+
 		let material0 = this.createMaterial(position, textures, faceCullMode, ["solid"]);
 		let ppt = material0.property;
 		ppt.fogExp2Enabled = true;
-		ppt.fogColor.value = [0.3,0.7,0.2];
+		ppt.fogColor.value = [0.3, 0.7, 0.2];
 		this.applyMaterialPPt(material0);
 
 		let list = [material0];
@@ -129,7 +124,7 @@ export class FogTest {
 		material.addTextures(textures);
 		return material;
 	}
-	
+
 	private hdrEnvtex = new SpecularEnvBrnTexture();
 
 	private createBaseTextures(): WGTextureDataDescriptor[] {
