@@ -49,7 +49,23 @@ fn calcPBRLight(roughness: f32, rm: vec3<f32>, inColor: vec3<f32>, ptr_rL: ptr<f
     (*ptr_rL).specular += specular * lightColor * specularScatter;
 }
 
-fn calcColor4(worldPos: vec4<f32>, uv: vec2<f32>, worldNormal: vec3<f32>, worldCamPos: vec3<f32>) -> vec4<f32> {
+struct CalcColor4Param {
+	worldPos: vec4<f32>,
+	viewPos: vec4<f32>,
+	uv: vec2<f32>,
+	worldNormal: vec3<f32>,
+	worldCamPos: vec3<f32>
+}
+
+// fn calcColor4(worldPos: vec4<f32>, viewPos: vec4<f32>, uv: vec2<f32>, worldNormal: vec3<f32>, worldCamPos: vec3<f32>) -> vec4<f32> {
+fn calcColor4(calcParam: CalcColor4Param) -> vec4<f32> {
+
+	let worldPos = calcParam.worldPos;
+	let viewPos = calcParam.viewPos;
+	let uv = calcParam.uv;
+	let worldNormal = calcParam.worldNormal;
+	let worldCamPos = calcParam.worldCamPos;
+
 	var color = vec3f(0.0);
 
 
