@@ -22,12 +22,6 @@ export class OrthoCamraTest {
 			camera: {
 				perspective: false
 			},
-			// camera: {
-			// 	eye: [600.0, 800.0, -600.0],
-			// 	near: 0.1,
-			// 	far: 1900,
-			// 	perspective: false
-			// },
 			rpassparam: { multisampleEnabled: true }
 		});
 		this.initEvent();

@@ -70,7 +70,7 @@ class Camera implements IRenderCamera {
 	name = "Camera";
 
 	frustum = new Frustum();
-	inversePerspectiveZ = false;
+	
 	constructor(param?: WGCameraParam) {
 		this.viewUniformV = new WGRUniformValue({ data: this.mViewMat.getLocalFS32(), shared: true, shdVarName: 'viewMat', shdVarFormat: 'mat4x4<f32>' });
 		this.projUniformV = new WGRUniformValue({ data: this.mProjMat.getLocalFS32(), shared: true, shdVarName: 'projMat', shdVarFormat: 'mat4x4<f32>' });
@@ -198,7 +198,7 @@ class Camera implements IRenderCamera {
 			this.mT = t;
 			this.mL = l;
 			this.mR = r;
-			this.mProjMat.orthoRH(b, t, l, r, zNear, zFar, this.inversePerspectiveZ ? -1 : 1);
+			this.mProjMat.orthoRH(b, t, l, r, zNear, zFar);
 			this.mPerspective = false;
 			this.mRightHandEnabled = true;
 			this.mChanged = true;
@@ -212,7 +212,7 @@ class Camera implements IRenderCamera {
 			this.mT = t;
 			this.mL = l;
 			this.mR = r;
-			this.mProjMat.orthoLH(b, t, l, r, zNear, zFar, this.inversePerspectiveZ ? -1 : 1);
+			this.mProjMat.orthoLH(b, t, l, r, zNear, zFar);
 			this.mPerspective = false;
 			this.mRightHandEnabled = false;
 			this.mChanged = true;

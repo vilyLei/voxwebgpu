@@ -13,7 +13,6 @@ import { IRenderFrustum } from "./IRenderFrustum";
 
 interface IRenderCamera {
 
-	inversePerspectiveZ: boolean;
     version: number;
 	frustum: IRenderFrustum;
 

@@ -7,7 +7,7 @@
 
 import MathConst from "./MathConst";
 import Vector3 from "./Vector3";
-import {EulerOrder} from './EulerOrder';
+import { EulerOrder } from './EulerOrder';
 import OrientationType from "./OrientationType";
 import IMatrix4 from "./IMatrix4";
 import { Euler } from "./Euler";
@@ -39,8 +39,8 @@ class Matrix4 implements IMatrix4 {
 	}
 	fromArray(array: number[] | ArrayLike<number>, offset: number = 0): IMatrix4 {
 		const fs = this.mLocalFS32;
-		for ( let i = 0; i < 16; i ++ ) {
-			fs[ i ] = array[ i + offset ];
+		for (let i = 0; i < 16; i++) {
+			fs[i] = array[i + offset];
 		}
 		return this;
 	}
@@ -98,56 +98,56 @@ class Matrix4 implements IMatrix4 {
 			(lfs[2] * lfs[7] - lfs[6] * lfs[3]);
 	}
 
-	multiplyMatrices( a: IMatrix4, b: IMatrix4 ): IMatrix4 {
+	multiplyMatrices(a: IMatrix4, b: IMatrix4): IMatrix4 {
 
 		const ae = a.getLocalFS32();
 		const be = b.getLocalFS32();
 		const fs = this.getLocalFS32();
 
-		const a11 = ae[ 0 ], a12 = ae[ 4 ], a13 = ae[ 8 ], a14 = ae[ 12 ];
-		const a21 = ae[ 1 ], a22 = ae[ 5 ], a23 = ae[ 9 ], a24 = ae[ 13 ];
-		const a31 = ae[ 2 ], a32 = ae[ 6 ], a33 = ae[ 10 ], a34 = ae[ 14 ];
-		const a41 = ae[ 3 ], a42 = ae[ 7 ], a43 = ae[ 11 ], a44 = ae[ 15 ];
+		const a11 = ae[0], a12 = ae[4], a13 = ae[8], a14 = ae[12];
+		const a21 = ae[1], a22 = ae[5], a23 = ae[9], a24 = ae[13];
+		const a31 = ae[2], a32 = ae[6], a33 = ae[10], a34 = ae[14];
+		const a41 = ae[3], a42 = ae[7], a43 = ae[11], a44 = ae[15];
 
-		const b11 = be[ 0 ], b12 = be[ 4 ], b13 = be[ 8 ], b14 = be[ 12 ];
-		const b21 = be[ 1 ], b22 = be[ 5 ], b23 = be[ 9 ], b24 = be[ 13 ];
-		const b31 = be[ 2 ], b32 = be[ 6 ], b33 = be[ 10 ], b34 = be[ 14 ];
-		const b41 = be[ 3 ], b42 = be[ 7 ], b43 = be[ 11 ], b44 = be[ 15 ];
+		const b11 = be[0], b12 = be[4], b13 = be[8], b14 = be[12];
+		const b21 = be[1], b22 = be[5], b23 = be[9], b24 = be[13];
+		const b31 = be[2], b32 = be[6], b33 = be[10], b34 = be[14];
+		const b41 = be[3], b42 = be[7], b43 = be[11], b44 = be[15];
 
-		fs[ 0 ] = a11 * b11 + a12 * b21 + a13 * b31 + a14 * b41;
-		fs[ 4 ] = a11 * b12 + a12 * b22 + a13 * b32 + a14 * b42;
-		fs[ 8 ] = a11 * b13 + a12 * b23 + a13 * b33 + a14 * b43;
-		fs[ 12 ] = a11 * b14 + a12 * b24 + a13 * b34 + a14 * b44;
+		fs[0] = a11 * b11 + a12 * b21 + a13 * b31 + a14 * b41;
+		fs[4] = a11 * b12 + a12 * b22 + a13 * b32 + a14 * b42;
+		fs[8] = a11 * b13 + a12 * b23 + a13 * b33 + a14 * b43;
+		fs[12] = a11 * b14 + a12 * b24 + a13 * b34 + a14 * b44;
 
-		fs[ 1 ] = a21 * b11 + a22 * b21 + a23 * b31 + a24 * b41;
-		fs[ 5 ] = a21 * b12 + a22 * b22 + a23 * b32 + a24 * b42;
-		fs[ 9 ] = a21 * b13 + a22 * b23 + a23 * b33 + a24 * b43;
-		fs[ 13 ] = a21 * b14 + a22 * b24 + a23 * b34 + a24 * b44;
+		fs[1] = a21 * b11 + a22 * b21 + a23 * b31 + a24 * b41;
+		fs[5] = a21 * b12 + a22 * b22 + a23 * b32 + a24 * b42;
+		fs[9] = a21 * b13 + a22 * b23 + a23 * b33 + a24 * b43;
+		fs[13] = a21 * b14 + a22 * b24 + a23 * b34 + a24 * b44;
 
-		fs[ 2 ] = a31 * b11 + a32 * b21 + a33 * b31 + a34 * b41;
-		fs[ 6 ] = a31 * b12 + a32 * b22 + a33 * b32 + a34 * b42;
-		fs[ 10 ] = a31 * b13 + a32 * b23 + a33 * b33 + a34 * b43;
-		fs[ 14 ] = a31 * b14 + a32 * b24 + a33 * b34 + a34 * b44;
+		fs[2] = a31 * b11 + a32 * b21 + a33 * b31 + a34 * b41;
+		fs[6] = a31 * b12 + a32 * b22 + a33 * b32 + a34 * b42;
+		fs[10] = a31 * b13 + a32 * b23 + a33 * b33 + a34 * b43;
+		fs[14] = a31 * b14 + a32 * b24 + a33 * b34 + a34 * b44;
 
-		fs[ 3 ] = a41 * b11 + a42 * b21 + a43 * b31 + a44 * b41;
-		fs[ 7 ] = a41 * b12 + a42 * b22 + a43 * b32 + a44 * b42;
-		fs[ 11 ] = a41 * b13 + a42 * b23 + a43 * b33 + a44 * b43;
-		fs[ 15 ] = a41 * b14 + a42 * b24 + a43 * b34 + a44 * b44;
+		fs[3] = a41 * b11 + a42 * b21 + a43 * b31 + a44 * b41;
+		fs[7] = a41 * b12 + a42 * b22 + a43 * b32 + a44 * b42;
+		fs[11] = a41 * b13 + a42 * b23 + a43 * b33 + a44 * b43;
+		fs[15] = a41 * b14 + a42 * b24 + a43 * b34 + a44 * b44;
 
 		return this;
 
 	}
 	multiply(ma: IMatrix4, mb: IMatrix4 = null): IMatrix4 {
-		if(ma != null && mb != null) {
+		if (ma != null && mb != null) {
 			return this.multiplyMatrices(ma, mb);
-		} else if(ma != null) {
+		} else if (ma != null) {
 			return this.multiplyMatrices(this, ma);
 		}
 		return this;
 	}
 
 	premultiply(m: IMatrix4): IMatrix4 {
-		if(m != this && m != null) {
+		if (m != this && m != null) {
 			return this.multiplyMatrices(m, this);
 		}
 		return this;
@@ -352,176 +352,176 @@ class Matrix4 implements IMatrix4 {
 		fs[10] = cosY * cosXscaleZ;
 	}
 
-	compose( position: Vector3, quaternion: Quaternion, scale: Vector3 ): Matrix4 {
+	compose(position: Vector3, quaternion: Quaternion, scale: Vector3): Matrix4 {
 
 		const fs = this.mLocalFS32;
 
 		const x = quaternion.x, y = quaternion.y, z = quaternion.z, w = quaternion.w;
 
-		const x2 = x + x,	y2 = y + y, z2 = z + z;
+		const x2 = x + x, y2 = y + y, z2 = z + z;
 		const xx = x * x2, xy = x * y2, xz = x * z2;
 		const yy = y * y2, yz = y * z2, zz = z * z2;
 		const wx = w * x2, wy = w * y2, wz = w * z2;
 
 		const sx = scale.x, sy = scale.y, sz = scale.z;
 
-		fs[ 0 ] = ( 1 - ( yy + zz ) ) * sx;
-		fs[ 1 ] = ( xy + wz ) * sx;
-		fs[ 2 ] = ( xz - wy ) * sx;
-		fs[ 3 ] = 0;
+		fs[0] = (1 - (yy + zz)) * sx;
+		fs[1] = (xy + wz) * sx;
+		fs[2] = (xz - wy) * sx;
+		fs[3] = 0;
 
-		fs[ 4 ] = ( xy - wz ) * sy;
-		fs[ 5 ] = ( 1 - ( xx + zz ) ) * sy;
-		fs[ 6 ] = ( yz + wx ) * sy;
-		fs[ 7 ] = 0;
+		fs[4] = (xy - wz) * sy;
+		fs[5] = (1 - (xx + zz)) * sy;
+		fs[6] = (yz + wx) * sy;
+		fs[7] = 0;
 
-		fs[ 8 ] = ( xz + wy ) * sz;
-		fs[ 9 ] = ( yz - wx ) * sz;
-		fs[ 10 ] = ( 1 - ( xx + yy ) ) * sz;
-		fs[ 11 ] = 0;
+		fs[8] = (xz + wy) * sz;
+		fs[9] = (yz - wx) * sz;
+		fs[10] = (1 - (xx + yy)) * sz;
+		fs[11] = 0;
 
-		fs[ 12 ] = position.x;
-		fs[ 13 ] = position.y;
-		fs[ 14 ] = position.z;
-		fs[ 15 ] = 1;
+		fs[12] = position.x;
+		fs[13] = position.y;
+		fs[14] = position.z;
+		fs[15] = 1;
 
 		return this;
 
 	}
-	makeRotationFromQuaternion( q: Quaternion ): Matrix4 {
+	makeRotationFromQuaternion(q: Quaternion): Matrix4 {
 
-		return this.compose( Vector3.ZERO, q, Vector3.ONE );
+		return this.compose(Vector3.ZERO, q, Vector3.ONE);
 
 	}
-	makeRotationFromEuler( euler: Euler ): Matrix4 {
+	makeRotationFromEuler(euler: Euler): Matrix4 {
 
-		if ( euler == null ) {
+		if (euler == null) {
 
-			console.error( 'Matrix4::makeRotationFromEuler() now expects a Euler rotation rather than a Vector3 and order.' );
+			console.error('Matrix4::makeRotationFromEuler() now expects a Euler rotation rather than a Vector3 and order.');
 
 		}
 
 		const fs = this.mLocalFS32;
 
 		const x = euler.x, y = euler.y, z = euler.z;
-		const a = Math.cos( x ), b = Math.sin( x );
-		const c = Math.cos( y ), d = Math.sin( y );
-		const e = Math.cos( z ), f = Math.sin( z );
+		const a = Math.cos(x), b = Math.sin(x);
+		const c = Math.cos(y), d = Math.sin(y);
+		const e = Math.cos(z), f = Math.sin(z);
 
-		if ( euler.order === EulerOrder.XYZ ) {
-
-			const ae = a * e, af = a * f, be = b * e, bf = b * f;
-
-			fs[ 0 ] = c * e;
-			fs[ 4 ] = - c * f;
-			fs[ 8 ] = d;
-
-			fs[ 1 ] = af + be * d;
-			fs[ 5 ] = ae - bf * d;
-			fs[ 9 ] = - b * c;
-
-			fs[ 2 ] = bf - ae * d;
-			fs[ 6 ] = be + af * d;
-			fs[ 10 ] = a * c;
-
-		} else if ( euler.order === EulerOrder.YXZ ) {
-
-			const ce = c * e, cf = c * f, de = d * e, df = d * f;
-
-			fs[ 0 ] = ce + df * b;
-			fs[ 4 ] = de * b - cf;
-			fs[ 8 ] = a * d;
-
-			fs[ 1 ] = a * f;
-			fs[ 5 ] = a * e;
-			fs[ 9 ] = - b;
-
-			fs[ 2 ] = cf * b - de;
-			fs[ 6 ] = df + ce * b;
-			fs[ 10 ] = a * c;
-
-		} else if ( euler.order === EulerOrder.ZXY ) {
-
-			const ce = c * e, cf = c * f, de = d * e, df = d * f;
-
-			fs[ 0 ] = ce - df * b;
-			fs[ 4 ] = - a * f;
-			fs[ 8 ] = de + cf * b;
-
-			fs[ 1 ] = cf + de * b;
-			fs[ 5 ] = a * e;
-			fs[ 9 ] = df - ce * b;
-
-			fs[ 2 ] = - a * d;
-			fs[ 6 ] = b;
-			fs[ 10 ] = a * c;
-
-		} else if ( euler.order === EulerOrder.ZYX ) {
+		if (euler.order === EulerOrder.XYZ) {
 
 			const ae = a * e, af = a * f, be = b * e, bf = b * f;
 
-			fs[ 0 ] = c * e;
-			fs[ 4 ] = be * d - af;
-			fs[ 8 ] = ae * d + bf;
+			fs[0] = c * e;
+			fs[4] = - c * f;
+			fs[8] = d;
 
-			fs[ 1 ] = c * f;
-			fs[ 5 ] = bf * d + ae;
-			fs[ 9 ] = af * d - be;
+			fs[1] = af + be * d;
+			fs[5] = ae - bf * d;
+			fs[9] = - b * c;
 
-			fs[ 2 ] = - d;
-			fs[ 6 ] = b * c;
-			fs[ 10 ] = a * c;
+			fs[2] = bf - ae * d;
+			fs[6] = be + af * d;
+			fs[10] = a * c;
 
-		} else if ( euler.order === EulerOrder.YZX ) {
+		} else if (euler.order === EulerOrder.YXZ) {
+
+			const ce = c * e, cf = c * f, de = d * e, df = d * f;
+
+			fs[0] = ce + df * b;
+			fs[4] = de * b - cf;
+			fs[8] = a * d;
+
+			fs[1] = a * f;
+			fs[5] = a * e;
+			fs[9] = - b;
+
+			fs[2] = cf * b - de;
+			fs[6] = df + ce * b;
+			fs[10] = a * c;
+
+		} else if (euler.order === EulerOrder.ZXY) {
+
+			const ce = c * e, cf = c * f, de = d * e, df = d * f;
+
+			fs[0] = ce - df * b;
+			fs[4] = - a * f;
+			fs[8] = de + cf * b;
+
+			fs[1] = cf + de * b;
+			fs[5] = a * e;
+			fs[9] = df - ce * b;
+
+			fs[2] = - a * d;
+			fs[6] = b;
+			fs[10] = a * c;
+
+		} else if (euler.order === EulerOrder.ZYX) {
+
+			const ae = a * e, af = a * f, be = b * e, bf = b * f;
+
+			fs[0] = c * e;
+			fs[4] = be * d - af;
+			fs[8] = ae * d + bf;
+
+			fs[1] = c * f;
+			fs[5] = bf * d + ae;
+			fs[9] = af * d - be;
+
+			fs[2] = - d;
+			fs[6] = b * c;
+			fs[10] = a * c;
+
+		} else if (euler.order === EulerOrder.YZX) {
 
 			const ac = a * c, ad = a * d, bc = b * c, bd = b * d;
 
-			fs[ 0 ] = c * e;
-			fs[ 4 ] = bd - ac * f;
-			fs[ 8 ] = bc * f + ad;
+			fs[0] = c * e;
+			fs[4] = bd - ac * f;
+			fs[8] = bc * f + ad;
 
-			fs[ 1 ] = f;
-			fs[ 5 ] = a * e;
-			fs[ 9 ] = - b * e;
+			fs[1] = f;
+			fs[5] = a * e;
+			fs[9] = - b * e;
 
-			fs[ 2 ] = - d * e;
-			fs[ 6 ] = ad * f + bc;
-			fs[ 10 ] = ac - bd * f;
+			fs[2] = - d * e;
+			fs[6] = ad * f + bc;
+			fs[10] = ac - bd * f;
 
-		} else if ( euler.order === EulerOrder.XZY ) {
+		} else if (euler.order === EulerOrder.XZY) {
 
 			const ac = a * c, ad = a * d, bc = b * c, bd = b * d;
 
-			fs[ 0 ] = c * e;
-			fs[ 4 ] = - f;
-			fs[ 8 ] = d * e;
+			fs[0] = c * e;
+			fs[4] = - f;
+			fs[8] = d * e;
 
-			fs[ 1 ] = ac * f + bd;
-			fs[ 5 ] = a * e;
-			fs[ 9 ] = ad * f - bc;
+			fs[1] = ac * f + bd;
+			fs[5] = a * e;
+			fs[9] = ad * f - bc;
 
-			fs[ 2 ] = bc * f - ad;
-			fs[ 6 ] = b * e;
-			fs[ 10 ] = bd * f + ac;
+			fs[2] = bc * f - ad;
+			fs[6] = b * e;
+			fs[10] = bd * f + ac;
 
 		}
 
 		// reset bottom row
-		fs[ 3 ] = 0;
-		fs[ 7 ] = 0;
-		fs[ 11 ] = 0;
+		fs[3] = 0;
+		fs[7] = 0;
+		fs[11] = 0;
 
 		// reset last column
-		fs[ 12 ] = 0;
-		fs[ 13 ] = 0;
-		fs[ 14 ] = 0;
-		fs[ 15 ] = 1;
+		fs[12] = 0;
+		fs[13] = 0;
+		fs[14] = 0;
+		fs[15] = 1;
 
 		return this;
 
 	}
 
-	extractRotation( m: Matrix4 ): Matrix4 {
+	extractRotation(m: Matrix4): Matrix4 {
 
 		// this method does not support reflection matrices
 
@@ -535,37 +535,37 @@ class Matrix4 implements IMatrix4 {
 		m.copyColumnTo(2, v3);
 		const scaleZ = 1.0 / v3.getLength();
 
-		fs[ 0 ] = me[ 0 ] * scaleX;
-		fs[ 1 ] = me[ 1 ] * scaleX;
-		fs[ 2 ] = me[ 2 ] * scaleX;
-		fs[ 3 ] = 0;
+		fs[0] = me[0] * scaleX;
+		fs[1] = me[1] * scaleX;
+		fs[2] = me[2] * scaleX;
+		fs[3] = 0;
 
-		fs[ 4 ] = me[ 4 ] * scaleY;
-		fs[ 5 ] = me[ 5 ] * scaleY;
-		fs[ 6 ] = me[ 6 ] * scaleY;
-		fs[ 7 ] = 0;
+		fs[4] = me[4] * scaleY;
+		fs[5] = me[5] * scaleY;
+		fs[6] = me[6] * scaleY;
+		fs[7] = 0;
 
-		fs[ 8 ] = me[ 8 ] * scaleZ;
-		fs[ 9 ] = me[ 9 ] * scaleZ;
-		fs[ 10 ] = me[ 10 ] * scaleZ;
-		fs[ 11 ] = 0;
+		fs[8] = me[8] * scaleZ;
+		fs[9] = me[9] * scaleZ;
+		fs[10] = me[10] * scaleZ;
+		fs[11] = 0;
 
-		fs[ 12 ] = 0;
-		fs[ 13 ] = 0;
-		fs[ 14 ] = 0;
-		fs[ 15 ] = 1;
+		fs[12] = 0;
+		fs[13] = 0;
+		fs[14] = 0;
+		fs[15] = 1;
 
 		return this;
 
 	}
 
-	copyTranslation( m: IMatrix4 ): IMatrix4 {
+	copyTranslation(m: IMatrix4): IMatrix4 {
 
 		const fs = this.mLocalFS32, me = m.getLocalFS32();
 
-		fs[ 12 ] = me[ 12 ];
-		fs[ 13 ] = me[ 13 ];
-		fs[ 14 ] = me[ 14 ];
+		fs[12] = me[12];
+		fs[13] = me[13];
+		fs[14] = me[14];
 
 		return this;
 
@@ -1370,16 +1370,16 @@ class Matrix4 implements IMatrix4 {
 	///////
 	// view etc..
 	///////////////////////////////////////////
-	perspectiveRH(fovy: number, aspect: number, zNear: number, zFar: number, zfactor = 1.0): void {
+	perspectiveRH(fovy: number, aspect: number, zNear: number, zFar: number): void {
 		//assert(abs(aspect - std::numeric_limits<float>::epsilon()) > minFloatValue)
 		const fs = this.mLocalFS32;
 		let tanHalfFovy = Math.tan(fovy * 0.5);
 		this.identity();
 		fs[0] = 1.0 / (aspect * tanHalfFovy);
 		fs[5] = 1.0 / tanHalfFovy;
-		fs[10] = -zfactor * (zFar + zNear) / (zFar - zNear);
+		fs[10] = -(zFar + zNear) / (zFar - zNear);
 		fs[11] = -1.0;
-		fs[14] = -zfactor * (2.0 * zFar * zNear) / (zFar - zNear);
+		fs[14] = -(2.0 * zFar * zNear) / (zFar - zNear);
 	}
 	perspectiveRH2(fovy: number, pw: number, ph: number, zNear: number, zFar: number): void {
 		let focalLength: number = pw / Math.tan(fovy * 0.5);
@@ -1395,40 +1395,78 @@ class Matrix4 implements IMatrix4 {
 		fs[11] = -1.0;
 		fs[14] = m14;
 	}
-	orthoRH(b: number, t: number, l: number, r: number, zNear: number, zFar: number, zfactor = 1.0): void {
+
+	/**
+	 * Computes a 4-by-4 orthogonal transformation matrix that transforms from
+	 * the given the left, right, bottom, and top dimensions to -1 +1 in x, and y
+	 * and 0 to +1 in z.
+	 * @param left - Left side of the near clipping plane viewport.
+	 * @param right - Right side of the near clipping plane viewport.
+	 * @param bottom - Bottom of the near clipping plane viewport.
+	 * @param top - Top of the near clipping plane viewport.
+	 * @param near - The depth (negative z coordinate)
+	 *     of the near clipping plane.
+	 * @param far - The depth (negative z coordinate)
+	 *     of the far clipping plane.
+	 * @returns The orthographic projection matrix.
+	 */
+	// orthoT(left: number, right: number, bottom: number, top: number, near: number, far: number): void {
+	// 	let dst = this.mLocalFS32;
+
+	// 	dst[0] = 2 / (right - left);
+	// 	dst[1] = 0;
+	// 	dst[2] = 0;
+	// 	dst[3] = 0;
+
+	// 	dst[4] = 0;
+	// 	dst[5] = 2 / (top - bottom);
+	// 	dst[6] = 0;
+	// 	dst[7] = 0;
+
+	// 	dst[8] = 0;
+	// 	dst[9] = 0;
+	// 	dst[10] = 1 / (near - far);
+	// 	dst[11] = 0;
+
+	// 	dst[12] = (right + left) / (left - right);
+	// 	dst[13] = (top + bottom) / (bottom - top);
+	// 	dst[14] = near / (near - far);
+	// 	dst[15] = 1;
+	// }
+
+	orthoRH(b: number, t: number, l: number, r: number, zNear: number, zFar: number): void {
 
 		this.identity();
 		const fs = this.mLocalFS32;
 		fs[0] = 2.0 / (r - l);
 		fs[5] = 2.0 / (t - b);
-		fs[10] = -zfactor * 2.0 / (zFar - zNear);
-		fs[12] = -(r + l) / (r - l);
-		fs[13] = -(t + b) / (t - b);
-		fs[14] = -zfactor * (zFar + zNear) / (zFar - zNear);
-		fs[15] = 1.0;
+		fs[10] = 1.0 / (zNear - zFar);
+		fs[12] = (r + l) / (l - r);
+		fs[13] = (t + b) / (b - t);
+		fs[14] = zNear / (zNear - zFar);
+		fs[15] = 1;
 	}
-	perspectiveLH(fovy: number, aspect: number, zNear: number, zFar: number, zfactor = 1.0): void {
-		//assert(abs(aspect - std::numeric_limits<float>::epsilon()) > minFloatValue)
+	perspectiveLH(fovy: number, aspect: number, zNear: number, zFar: number): void {
 
 		let tanHalfFovy: number = Math.tan(fovy * 0.5);
 		this.identity();
 		const fs = this.mLocalFS32;
 		fs[0] = 1.0 / (aspect * tanHalfFovy);
 		fs[5] = 1.0 / tanHalfFovy;
-		fs[10] = zfactor * (zFar + zNear) / (zFar - zNear);
+		fs[10] = (zFar + zNear) / (zFar - zNear);
 		fs[11] = 1.0;
-		fs[14] = zfactor * (2.0 * zFar * zNear) / (zFar - zNear);
+		fs[14] = (2.0 * zFar * zNear) / (zFar - zNear);
 	}
-	orthoLH(b: number, t: number, l: number, r: number, zNear: number, zFar: number, zfactor = 1.0): void {
+	orthoLH(b: number, t: number, l: number, r: number, zNear: number, zFar: number): void {
 		this.identity();
 		const fs = this.mLocalFS32;
-		fs[0] = 2.0 / (r - l);// / (aspect * tanHalfFovy);
-		fs[5] = 2.0 / (t - b);// / tanHalfFovy;
-		fs[10] = zfactor * 2.0 / (zFar - zNear);
-		fs[12] = -(r + l) / (r - l);
-		fs[13] = -(t + b) / (t - b);
-		fs[14] = -zfactor * (zFar + zNear) / (zFar - zNear);
-		fs[15] = 1.0;
+		fs[0] = 2.0 / (r - l);
+		fs[5] = 2.0 / (t - b);
+		fs[10] = -1.0 / (zNear - zFar);
+		fs[12] = (r + l) / (l - r);
+		fs[13] = (t + b) / (b - t);
+		fs[14] = zNear / (zNear - zFar);
+		fs[15] = 1;
 	}
 	lookAtRH(eyePos: Vector3, atPos: Vector3, up: Vector3): void {
 		this.identity();

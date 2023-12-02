@@ -27,7 +27,6 @@ function initializeCamera(param: WGCameraParam, cam: IRenderCamera): IRenderCame
 	if (p.perspective) {
 		cam.perspectiveRH((Math.PI * p.fovDegree) / 180.0, width / height, p.near, p.far);
 	} else {
-		cam.inversePerspectiveZ = true;
 		cam.orthoRH(p.near, p.far, -0.5 * height, 0.5 * height, -0.5 * width, 0.5 * width);
 	}
 	cam.lookAtRH(eye, origin, up);
