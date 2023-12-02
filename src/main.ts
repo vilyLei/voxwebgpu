@@ -78,7 +78,8 @@
 // import { DynamicShaderBuilding as Demo } from "./voxgpu/sample/DynamicShaderBuilding";
 // import { DynamicShaderBuilding2 as Demo } from "./voxgpu/sample/DynamicShaderBuilding2";
 // import { MaskTextureEffect as Demo } from "./voxgpu/sample/MaskTextureEffect";
-import { FogTest as Demo } from "./voxgpu/sample/FogTest";
+// import { FogTest as Demo } from "./voxgpu/sample/FogTest";
+import { ShadowTest as Demo } from "./voxgpu/sample/ShadowTest";
 
 
 
