@@ -15,7 +15,7 @@ interface GPUDepthStencilState {
 	/**
 	 * An enumerated value specifying the comparison operation used to test fragment depths against depthStencilAttachment depth values.
 	 * Possible flag values are(in GPUCompareFunction: https://gpuweb.github.io/gpuweb/#enumdef-gpucomparefunction):
-	 * 		"never","less","equal","less-equal","greater","not-equal","greater-equal","always",	 *
+	 * 		"never","less","equal","less-equal","greater","not-equal","greater-equal","always"
 	 */
 	depthCompare?: string;
 	/**

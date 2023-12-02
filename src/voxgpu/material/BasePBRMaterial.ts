@@ -395,6 +395,9 @@ class BasePBRProperty {
 		this.lights.data = lightsData;
 		this.lightColors.data = lightColorsData;
 	}
+	getLightParam(): LightShaderDataParam {
+		return this.lightParam.param;
+	}
 }
 class BasePBRMaterial extends WGMaterial {
 	private mShdBuilder = new WGShaderConstructor();
@@ -405,6 +408,9 @@ class BasePBRMaterial extends WGMaterial {
 	setLightParam(param: LightShaderDataParam): BasePBRMaterial {
 		this.property.setLightParam( param );
 		return this;
+	}
+	getLightParam(): LightShaderDataParam {
+		return this.property.getLightParam();
 	}
 	setDescriptor(descriptor: WGMaterialDescripter): void {
 		if (!descriptor || descriptor.shaderSrc === undefined) {
