@@ -28,6 +28,7 @@ export default class BoxGeometry extends MeshBase {
 	normalType = WGRNormalType.FLAT;
 	flipVerticalUV = false;
 	uvPartsNumber = 0;
+	normalScale = 1.0;
 	getVS() {
 		return this.mvs;
 	}
@@ -373,9 +374,9 @@ export default class BoxGeometry extends MeshBase {
 					d = Math.sqrt(nx * nx + ny * ny + nz * nz);
 
 					if (d > MathConst.MATH_MIN_POSITIVE) {
-						this.mnvs[i] = nx / d;
-						this.mnvs[i + 1] = ny / d;
-						this.mnvs[i + 2] = nz / d;
+						this.mnvs[i] = this.normalScale * nx / d;
+						this.mnvs[i + 1] = this.normalScale * ny / d;
+						this.mnvs[i + 2] = this.normalScale * nz / d;
 					}
 					++baseI;
 				}

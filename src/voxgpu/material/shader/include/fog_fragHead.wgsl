@@ -1,13 +1,13 @@
 #ifdef VOX_USE_FOG
     #ifdef USE_FOG_COLOR_MAP
-        let fogEnvColor = vec3<f32>(1.0);
-        fn getFogColorFromTexture2D(sampler2D tex) {
+        // let fogEnvColor = vec3<f32>(1.0);
+        fn getFogColorFromTexture2D() -> vec4<f32> {
             // vec4 color = VOX_Texture2D(tex, (params[6].xy + worldPosition.xz) / params[6].zw);
-            let color = textureSample(fogColorTexture, fogColorSampler, (params[6].xy + worldPosition.xz) / params[6].zw);
-            fogEnvColor = color.xyz;
+            return textureSample(fogColorTexture, fogColorSampler, (params[6].xy + worldPosition.xz) / params[6].zw);
+            // fogEnvColor = color.xyz;
         }
     #endif
-    fn useFog(color: ptr<function, vec4<f32>>) {
+    fn useFog(color: ptr<function, vec4<f32>>, fogEnvColor: vec4<f32>) {
         var fogColor = params[5].xyz;
         let c4 = *color;
         #ifdef USE_FOG_COLOR_MAP

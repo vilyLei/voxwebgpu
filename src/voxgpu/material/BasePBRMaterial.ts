@@ -476,7 +476,6 @@ class BasePBRMaterial extends WGMaterial {
 					case 'opacity':
 						preCode += '#define USE_OPACITY_MAP\n';
 						break;
-					//opacity
 					default:
 						break;
 				}

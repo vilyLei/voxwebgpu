@@ -182,11 +182,14 @@ class WGShaderConstructor {
 		preDef.parsePredefineVar(predefine);
 
 		let vertWGSL = baseVertWGSL;
+		
+		vertWGSL = preDef.applyPredefine(vertWGSL);
 		vertWGSL = this.parseInclude(vertWGSL);
 		// console.log("\n###### vertWGSL:");
 		// console.log(vertWGSL);
 
 		let fragWGSL = baseFragWGSL;
+		fragWGSL = preDef.applyPredefine(fragWGSL);
 		fragWGSL = this.parseInclude(fragWGSL);
 		fragWGSL = preDef.applyPredefine(fragWGSL);
 		// console.log("\n###### fragWGSL:");
