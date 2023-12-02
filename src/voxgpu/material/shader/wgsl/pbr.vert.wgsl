@@ -11,8 +11,6 @@ struct VertexOutput {
 	@location(3) worldCamPos: vec3<f32>
 }
 
-// #define XXX 1
-
 @vertex
 fn vertMain(
     @location(0) position: vec3<f32>,

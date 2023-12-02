@@ -9,9 +9,17 @@ import { WGTextureDataDescriptor } from "../texture/WGTextureDataDescriptor";
 import { SphereEntity } from "../entity/SphereEntity";
 import { TorusEntity } from "../entity/TorusEntity";
 import { CubeEntity } from "../entity/CubeEntity";
+import { GeomDataBuilder } from "../geometry/GeomDataBuilder";
+import { WGMaterial, WGRShderSrcType } from "../material/WGMaterial";
+import { Entity3D } from "../entity/Entity3D";
+import { WGGeometry } from "../geometry/WGGeometry";
+
+
+import shadowDepthWGSL from "./shaders/shadow/shadowDepth.wgsl";
 
 export class ShadowTest {
 	private mRscene = new RendererScene();
+	geomData = new GeomDataBuilder();
 	initialize(): void {
 		console.log("ShadowTest::initialize() ...");
 
@@ -25,8 +33,62 @@ export class ShadowTest {
 
 
 	private initScene(): void {
-		this.initEntities();
+		// this.initEntities();
+
+		const shadowDepthShdSrc = {
+			shaderSrc: { code: shadowDepthWGSL, uuid: "shadowDepthShdSrc" }
+		};
+
+		let material = this.createDepthMaterial( shadowDepthShdSrc );
+		this.createDepthEntity([material]);
 	}
+	
+	private createDepthMaterial(shaderSrc: WGRShderSrcType, faceCullMode = "back"): WGMaterial {
+
+		let pipelineDefParam = {
+			depthWriteEnabled: true,
+			faceCullMode,
+			blendModes: [] as string[]
+		};
+
+		const material = new WGMaterial({
+			shadinguuid: "shadow-depth_material",
+			shaderSrc,
+			pipelineDefParam
+		});
+
+		// let ufv = new WGRStorageValue({data: new Float32Array([1,0,0,1])});
+		// let ufv = {storage: {data: new Float32Array([1,0,0,1]), shdVarName:'param'}};
+		// material.uniformValues = [ufv];
+
+		return material;
+	}
+	private createDepthEntity(materials: WGMaterial[]): void {
+
+		const rc = this.mRscene;
+		let gd = this.geomData;
+
+		let rgd = gd.createSphere(150, 15, 15);
+		let geometry = new WGGeometry()
+			.addAttribute({ shdVarName: "position", data: rgd.vs, strides: [3] })
+			.setIndexBuffer({ name: "geomIndex", data: rgd.ivs });
+
+		let entity = new Entity3D();
+		entity.materials = materials;
+		entity.geometry = geometry;
+		rc.addEntity(entity);
+
+		rgd = gd.createSquare(600, 1);
+		geometry = new WGGeometry()
+			.addAttribute({ shdVarName: "position", data: rgd.vs, strides: [3] })
+			.setIndexBuffer({ name: "geomIndex", data: rgd.ivs });
+		entity = new Entity3D();
+		entity.materials = materials;
+		entity.geometry = geometry;
+		entity.transform.setPosition([0,-130,0]);
+		rc.addEntity(entity);
+	}
+	
 	private initEntities(): void {
 
 		this.initTexDisp();
@@ -36,7 +98,6 @@ export class ShadowTest {
 
 		let textures0 = this.createBaseTextures();
 		let textures1 = this.createTextures("plastic");
-
 
 		let position = new Vector3(0, 0, 0);
 		let materials = this.createMaterials(position, textures0, 'front');

@@ -12,10 +12,7 @@
         #endif
         let fogDepth = -calcParam.viewPos.z;
         var fogColor = params[6].xyz;
-        // for test
-        // (*color) = params[6];
-        // return;
-
+        
         var c4 = *color;
         #ifdef USE_FOG_COLOR_MAP
             fogColor *= fogEnvColor;
