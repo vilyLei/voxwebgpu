@@ -77,7 +77,7 @@ export class ShadowTest {
 		let rc = this.mRscene;
 
 		// rtt texture proxy descriptor
-		let rttTex = { uuid: "rtt0", rttTexture: {} };
+		let rttTex = { uuid: "rtt-shadow-depth", rttTexture: {} };
 		// define a rtt pass color colorAttachment0
 		let colorAttachments = [
 			{
@@ -93,10 +93,6 @@ export class ShadowTest {
 		rPass.node.camera = this.mShadowCamera;
 
 		let extent = [-0.5, -0.5, 0.8, 0.8];
-		// const diffuseTex = { diffuse: { url: "static/assets/default.jpg", flipY: true } };
-		// let rttEntity = new FixScreenPlaneEntity({ extent, textures: [diffuseTex] }).setColor([1.0, 0.0, 0.0]);
-		// // 往pass中添加可渲染对象
-		// rPass.addEntity(rttEntity);
 
 		const shadowDepthShdSrc = {
 			shaderSrc: { code: shadowDepthWGSL, uuid: "shadowDepthShdSrc" }
@@ -108,7 +104,7 @@ export class ShadowTest {
 		}
 
 		// 使用rtt纹理
-		extent = [-0.95, -0.95, 0.3, 0.3];
+		extent = [-0.95, -0.95, 0.4, 0.4];
 		let entity = new FixScreenPlaneEntity({ extent, flipY: true, textures: [{ diffuse: rttTex }] });
 		rc.addEntity(entity);
 	}
