@@ -18,7 +18,6 @@ fn vertMain(
     return output;
 }
 
-
 const PackUpscale = 256. / 255.; // fraction -> 0..1 (including 1)
 const UnpackDownscale = 255. / 256.; // 0..1 -> fraction (excluding 1)
 
