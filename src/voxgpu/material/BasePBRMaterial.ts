@@ -1,5 +1,3 @@
-import Vector4 from "../math/Vector4";
-// import { WGRBufferData } from "../render/buffer/WGRBufferData";
 import Arms from "./Arms";
 import Color4 from "./Color4";
 import { WGMaterialDescripter, WGMaterial } from "./WGMaterial";
@@ -8,6 +6,7 @@ import { WGMaterialDescripter, WGMaterial } from "./WGMaterial";
 // import basePBRFragWGSL from "./shader/wgsl/pbr.frag.wgsl";
 // import basePBRWholeWGSL from "./shader/wgsl/pbr.wgsl";
 // import basePBRWholeInitWGSL from "./shader/wgsl/pbrInit.wgsl";
+
 import MathConst from "../math/MathConst";
 import Vector3 from "../math/Vector3";
 import { WGShaderConstructor } from "./shader/WGShaderConstructor";
@@ -20,71 +19,6 @@ import {
 	MaterialUniformColor4Wrapper,
 	WGRBufferData
 } from "./MaterialUniformData";
-
-// const basePBRShaderSrc = {
-// 	vert: { code: basePBRVertWGSL, uuid: "vertBasePBRShdCode" },
-// 	frag: { code: basePBRFragWGSL, uuid: "fragBasePBRShdCode" }
-// };
-
-// interface MaterialUniformDataImpl extends WGRBufferData {
-// 	update(): void;
-// }
-// class MaterialUniformData implements MaterialUniformDataImpl {
-// 	stride = 4;
-// 	data: NumberArrayDataType;
-// 	shared = false;
-// 	arraying = false;
-// 	shdVarName: string;
-// 	version = -1;
-// 	layout = { visibility: "all" };
-// 	shdVarFormat = 'vec4<f32>';
-// 	constructor(data: NumberArrayType, shdVarName: string, visibility?: string) {
-// 		this.data = data as NumberArrayDataType;
-// 		this.shdVarName = shdVarName;
-// 		if (visibility) {
-// 			this.layout.visibility = visibility;
-// 		}
-// 	}
-// 	update(): void {
-// 		this.version++;
-// 	}
-// }
-// class MaterialUniformColor4Data extends MaterialUniformData {
-// 	property = new Color4();
-// 	constructor(data: NumberArrayType, shdVarName: string, visibility?: string) {
-// 		super(data, shdVarName, visibility);
-// 		this.property.fromArray4(this.data as NumberArrayType);
-// 	}
-// 	set value(v: ColorDataType) {
-// 		this.property.setColor(v).toArray4(this.data as NumberArrayType);
-// 		this.version++;
-// 	}
-// 	get value(): ColorDataType {
-// 		return this.property;
-// 	}
-// 	update(): void {
-// 		this.property.toArray4(this.data as NumberArrayType);
-// 		this.version++;
-// 	}
-// }
-// class MaterialUniformVec4Data extends MaterialUniformData {
-// 	property = new Vector4();
-// 	constructor(data: NumberArrayType, shdVarName: string, visibility?: string) {
-// 		super(data, shdVarName, visibility);
-// 		this.property.fromArray4(this.data as NumberArrayType);
-// 	}
-// 	set value(v: Vector3DataType) {
-// 		this.property.setVector4(v).toArray4(this.data as NumberArrayType);
-// 		this.version++;
-// 	}
-// 	get value(): Vector3DataType {
-// 		return this.property;
-// 	}
-// 	update(): void {
-// 		this.property.toArray4(this.data as NumberArrayType);
-// 		this.version++;
-// 	}
-// }
 
 class BasePBRArmsData implements MaterialUniformDataImpl {
 	version = -1;
@@ -214,42 +148,6 @@ class PBRParamsVec4Data implements MaterialUniformDataImpl {
 	}
 }
 
-// class MaterialUniformColor4Wrapper {
-// 	property: Color4;
-// 	private target: MaterialUniformDataImpl;
-// 	constructor(property: Color4, target: MaterialUniformDataImpl) {
-// 		this.property = property;
-// 		this.target = target;
-// 	}
-// 	set value(v: ColorDataType) {
-// 		this.property.setColor(v);
-// 		this.update();
-// 	}
-// 	get value(): ColorDataType {
-// 		return this.property;
-// 	}
-// 	update(): void {
-// 		this.target.update();
-// 	}
-// }
-// class MaterialUniformVec4Wrapper {
-// 	property: Vector3;
-// 	private target: MaterialUniformDataImpl;
-// 	constructor(property: Vector3, target: MaterialUniformDataImpl) {
-// 		this.property = property;
-// 		this.target = target;
-// 	}
-// 	set value(v: Vector3DataType) {
-// 		this.property.setVector4(v);
-// 		this.update();
-// 	}
-// 	get value(): Vector3DataType {
-// 		return this.property;
-// 	}
-// 	update(): void {
-// 		this.target.update();
-// 	}
-// }
 class ToneParamDataWrapper extends MaterialUniformVec4Wrapper {
 	set toneExposure(v: number) {
 		this.property.x = v;
