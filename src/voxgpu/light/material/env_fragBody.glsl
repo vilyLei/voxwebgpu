@@ -2,6 +2,6 @@
     getFogColorFromTexture2D( VOX_FOG_COLOR_MAP );
 #endif
 
-#ifdef VOX_USE_FOG
+#ifdef USE_FOG
     useFog( FragColor0 );
 #endif 

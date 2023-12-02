@@ -1,4 +1,4 @@
-#ifdef VOX_USE_FOG
+#ifdef USE_FOG
 
 calcFogDepth(viewPosition);
 

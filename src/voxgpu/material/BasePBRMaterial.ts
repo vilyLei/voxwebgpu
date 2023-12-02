@@ -151,6 +151,8 @@ class ArmsDataWrapper {
  * toneParam: [1, 0.1, 1, 1],
  * param: [0, 0, 0.07, 1],
  * specularFactor: [1,1,1, 1],
+ * fogParam: [600, 3500, 0, 0.0005],
+ * fogColor: [1.0, 1.0, 1.0, 1.0],
  */
 class PBRParamsVec4Data implements BasePBRUniformDataImpl {
 	version = -1;
@@ -160,23 +162,45 @@ class PBRParamsVec4Data implements BasePBRUniformDataImpl {
 	toneParam = new Vector3();
 	param = new Vector3();
 	specularFactor = new Color4();
+	fogParam = new Vector3();
+	fogColor = new Color4();
 	constructor(data: Float32Array, shdVarName: string, visibility?: string) {
+
 		this.storage = new BasePBRUniformData(data, shdVarName, visibility);
 		this.storage.arraying = true;
 		this.storage.shdVarFormat = 'array<vec4<f32>>';
-		this.albedo.fromArray4(data);
-		this.fresnel.fromArray4(data, 4);
-		this.toneParam.fromArray4(data, 8);
-		this.param.fromArray4(data, 12);
-		this.specularFactor.fromArray4(data, 16);
+
+		let pos = 0;
+		this.albedo.fromArray4(data, pos);
+		pos += 4;
+		this.fresnel.fromArray4(data, pos);
+		pos += 4;
+		this.toneParam.fromArray4(data, pos);
+		pos += 4;
+		this.param.fromArray4(data, pos);
+		pos += 4;
+		this.specularFactor.fromArray4(data, pos);
+		pos += 4;
+		this.fogParam.fromArray4(data, pos);
+		pos += 4;
+		this.fogColor.fromArray4(data, pos);
 	}
 	update(): void {
 		const data = this.storage.data;
-		this.albedo.toArray4(data as NumberArrayType);
-		this.fresnel.toArray4(data as NumberArrayType, 4);
-		this.toneParam.toArray4(data as NumberArrayType, 8);
-		this.param.toArray4(data as NumberArrayType, 12);
-		this.specularFactor.toArray4(data as NumberArrayType, 16);
+		let pos = 0;
+		this.albedo.toArray4(data as NumberArrayType, pos);
+		pos += 4;
+		this.fresnel.toArray4(data as NumberArrayType, pos);
+		pos += 4;
+		this.toneParam.toArray4(data as NumberArrayType, pos);
+		pos += 4;
+		this.param.toArray4(data as NumberArrayType, pos);
+		pos += 4;
+		this.specularFactor.toArray4(data as NumberArrayType, pos);
+		pos += 4;
+		this.fogParam.toArray4(data as NumberArrayType, pos);
+		pos += 4;
+		this.fogColor.toArray4(data as NumberArrayType, pos);
 		this.version++;
 	}
 }
@@ -266,6 +290,31 @@ class PBRParamDataWrapper extends Vec4ShdDataWrapper {
 	}
 }
 
+
+class FogParamDataWrapper extends Vec4ShdDataWrapper {
+	set near(v: number) {
+		this.property.x = v;
+		this.update();
+	}
+	get near(): number {
+		return this.property.x;
+	}
+	set far(v: number) {
+		this.property.y = v;
+		this.update();
+	}
+	get far(): number {
+		return this.property.y;
+	}
+	set density(v: number) {
+		this.property.w = v;
+		this.update();
+	}
+	get density(): number {
+		return this.property.w;
+	}
+}
+
 class BaseLightData implements WGRBufferData {
 	version = -1;
 	storage: BasePBRUniformData;
@@ -346,8 +395,19 @@ class BasePBRProperty {
 	 * toneParam: [1, 0.1, 1, 1],
 	 * param: [0, 0, 0.07, 1],
 	 * specularFactor: [1,1,1, 1],
+	 * fogParam: [100, 1000, 0, 0.0005],
+	 * fogColor: [1.0, 1.0, 1.0, 1.0],
 	 */
-	private params = new PBRParamsVec4Data(new Float32Array([1, 1, 1, 1, 0, 0, 0, 0, 1, 0.1, 1, 1, 0, 0, 0.07, 1, 1, 1, 1, 1]), "params", "frag");
+	private params = new PBRParamsVec4Data(new Float32Array([
+		1, 1, 1, 1,
+		0, 0, 0, 0,
+		1, 0.1, 1, 1,
+		0, 0, 0.07, 1,
+		1, 1, 1, 1,
+
+		600, 3500, 0, 0.0005,	// fogParam
+		1.0, 1.0, 1.0, 1.0,	// fogColor
+	]), "params", "frag");
 
 	lightParam = new LightParamData(new Uint32Array([1, 0, 0, 0]), "lightParam", "frag");
 	lights = new BaseLightData(new Float32Array([0.0, 200.0, 0, 0.0001]), "lights", "frag");
@@ -358,6 +418,8 @@ class BasePBRProperty {
 	toneParam: ToneParamDataWrapper;
 	param: PBRParamDataWrapper;
 	specularFactor: Color4ShdDataWrapper;
+	fogParam: FogParamDataWrapper;
+	fogColor: Color4ShdDataWrapper;
 
 	arms: ArmsDataWrapper;
 	armsBase: ArmsDataWrapper;
@@ -366,6 +428,8 @@ class BasePBRProperty {
 	toneMapping = true;
 	metallicCorrection = true;
 	inverseMask = false;
+	fogEnabled = false;
+	fogExp2Enabled = false;
 	constructor() {
 		let armsSrc = this.armsParams;
 		this.arms = new ArmsDataWrapper(armsSrc.arms, armsSrc);
@@ -376,6 +440,8 @@ class BasePBRProperty {
 		this.toneParam = new ToneParamDataWrapper(params.toneParam, params);
 		this.param = new PBRParamDataWrapper(params.toneParam, params);
 		this.specularFactor = new Color4ShdDataWrapper(params.specularFactor, params);
+		this.fogParam = new FogParamDataWrapper(params.fogParam, params);
+		this.fogColor = new Color4ShdDataWrapper(params.fogColor, params);
 	}
 	get uniformValues(): WGRBufferData[] {
 		return [this.ambient, this.armsParams, this.uvParam, this.params, this.lightParam, this.lights, this.lightColors];
@@ -445,6 +511,13 @@ class BasePBRMaterial extends WGMaterial {
 		if(ppt.inverseMask) {
 			preCode += '#define USE_INVERSE_MASK\n';
 		}
+		if(ppt.fogExp2Enabled) {
+			ppt.fogEnabled = true;
+			preCode += '#define USE_FOG_EXP2\n';
+		}
+		if(ppt.fogEnabled) {
+			preCode += '#define USE_FOG\n';
+		}
 		if(ts) {
 			for(let i = 0; i < ts.length; ++i) {
 				console.log('ts[i].texture.shdVarName: ', ts[i].texture.shdVarName);
@@ -484,11 +557,17 @@ class BasePBRMaterial extends WGMaterial {
 
 		console.log('BasePBRMaterial::__$build() preCode: \n',preCode);
 		// console.log('BasePBRMaterial::__$build() ...');
+		let uuid = preCode + "-ins01";
+		let pdp = this.pipelineDefParam;
+		if(pdp) {
+			uuid += pdp.faceCullMode + pdp.blendModes;
+			// console.log("pdp.faceCullMode: ", pdp.faceCullMode);
+		}
 		let shaderCode = this.mShdBuilder.build(preCode);
 		let shaderSrc = {
-			shaderSrc: { code: shaderCode, uuid: preCode + "-ins01" }
+			shaderSrc: { code: shaderCode, uuid }
 		}
-		this.shadinguuid = preCode + '-material';
+		this.shadinguuid = uuid + '-material';
 		this.shaderSrc = shaderSrc;
 		// this.shaderSrc = basePBRShaderSrc;
 	}

@@ -24,20 +24,6 @@ export class FogTest {
 		this.initEvent();
 	}
 
-	private hdrEnvtex = new SpecularEnvBrnTexture();
-
-	private createBaseTextures(): WGTextureDataDescriptor[] {
-		const albedoTex = { albedo: { url: `static/assets/pbrtex/rough_plaster_broken_diff_1k.jpg` } };
-		const normalTex = { normal: { url: `static/assets/pbrtex/rough_plaster_broken_nor_1k.jpg` } };
-		const armTex = { arm: { url: `static/assets/pbrtex/rough_plaster_broken_arm_1k.jpg` } };
-		let textures = [
-			this.hdrEnvtex,
-			albedoTex,
-			normalTex,
-			armTex
-		] as WGTextureDataDescriptor[];
-		return textures;
-	}
 
 	private initScene(): void {
 		const rc = this.mRscene;
@@ -51,12 +37,17 @@ export class FogTest {
 	}
 	private initTexDisp(): void {
 		let rc = this.mRscene;
+
+		let textures0 = this.createBaseTextures();
+		let textures1 = this.createTextures("plastic");
+
+
 		let position = new Vector3(0, 0, 0);
-		let materials = this.createMaterials(position, 'front');
+		let materials = this.createMaterials(position, textures0, 'front');
 		// let materials = this.createMaterials(position);
 		let box = new CubeEntity(
 			{
-				cubeSize: 150.0,
+				cubeSize: 1550.0,
 				normalScale: -1.0,
 				materials,
 				transform: { position }
@@ -64,31 +55,44 @@ export class FogTest {
 		);
 		rc.addEntity(box);
 
-		// let position = new Vector3(0, 0, 180);
-		// let materials = this.createMaterials(position);
-		// let sphere = new SphereEntity(
-		// 	{
-		// 		radius: 150.0,
-		// 		materials,
-		// 		transform: { position }
-		// 	}
-		// );
-		// rc.addEntity(sphere);
+		position = new Vector3(-580, 280, -580);
+		materials = this.createMaterials(position, textures1);
+		let sphere = new SphereEntity(
+			{
+				radius: 150.0,
+				materials,
+				transform: { position }
+			}
+		);
+		rc.addEntity(sphere);
 
-		// position = new Vector3(0, 0, -180);
-		// materials = this.createMaterials(position, [4, 1]);
-		// let torus = new TorusEntity({
-		// 	axisType: 1,
-		// 	materials,
-		// 	transform: { position }
-		// });
-		// rc.addEntity(torus);
+		position = new Vector3(0, 0, 280);
+		materials = this.createMaterials(position, textures1);
+		sphere = new SphereEntity(
+			{
+				radius: 150.0,
+				materials,
+				transform: { position }
+			}
+		);
+		rc.addEntity(sphere);
+
+		position = new Vector3(0, 0, -380);
+		materials = this.createMaterials(position, textures1, 'back', [8, 1]);
+		let torus = new TorusEntity({
+			axisType: 2,
+			materials,
+			transform: { position }
+		});
+		rc.addEntity(torus);
 
 	}
-	private createMaterials(position: Vector3,faceCullMode = 'back', uvParam?: number[]): BasePBRMaterial[] {
-		let textures0 = this.createBaseTextures();
-
-		let material0 = this.createMaterial(position, textures0, faceCullMode, ["solid"]);
+	private createMaterials(position: Vector3, textures: WGTextureDataDescriptor[], faceCullMode = 'back', uvParam?: number[]): BasePBRMaterial[] {
+		
+		let material0 = this.createMaterial(position, textures, faceCullMode, ["solid"]);
+		let ppt = material0.property;
+		ppt.fogExp2Enabled = true;
+		ppt.fogColor.value = [0.3,0.7,0.2];
 		this.applyMaterialPPt(material0);
 
 		let list = [material0];
@@ -125,7 +129,39 @@ export class FogTest {
 		material.addTextures(textures);
 		return material;
 	}
+	
+	private hdrEnvtex = new SpecularEnvBrnTexture();
 
+	private createBaseTextures(): WGTextureDataDescriptor[] {
+		const albedoTex = { albedo: { url: `static/assets/pbrtex/rough_plaster_broken_diff_1k.jpg` } };
+		const normalTex = { normal: { url: `static/assets/pbrtex/rough_plaster_broken_nor_1k.jpg` } };
+		const armTex = { arm: { url: `static/assets/pbrtex/rough_plaster_broken_arm_1k.jpg` } };
+		let textures = [
+			this.hdrEnvtex,
+			albedoTex,
+			normalTex,
+			armTex
+		] as WGTextureDataDescriptor[];
+		return textures;
+	}
+	private createTextures(ns: string): WGTextureDataDescriptor[] {
+		const albedoTex = { albedo: { url: `static/assets/pbr/${ns}/albedo.jpg` } };
+		const normalTex = { normal: { url: `static/assets/pbr/${ns}/normal.jpg` } };
+		const aoTex = { ao: { url: `static/assets/pbr/${ns}/ao.jpg` } };
+		const roughnessTex = { roughness: { url: `static/assets/pbr/${ns}/roughness.jpg` } };
+		const metallicTex = { metallic: { url: `static/assets/pbr/${ns}/metallic.jpg` } };
+		const emissiveTex = { emissive: { url: `static/assets/color_07.jpg` } };
+		let textures = [
+			this.hdrEnvtex,
+			albedoTex,
+			normalTex,
+			aoTex,
+			roughnessTex,
+			metallicTex,
+			emissiveTex
+		] as WGTextureDataDescriptor[];
+		return textures;
+	}
 	private createLightData(position: Vector3DataType): LightShaderDataParam {
 		let pos = new Vector3().setVector4(position);
 		let pv0 = pos.clone().addBy(new Vector3(0, 200, 0));

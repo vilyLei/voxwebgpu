@@ -1,5 +1,18 @@
 #include <mathDefine>
 #include <pbrFunctions>
+
+
+struct CalcColor4Param {
+	worldPos: vec4<f32>,
+	viewPos: vec4<f32>,
+	uv: vec2<f32>,
+	worldNormal: vec3<f32>,
+	worldCamPos: vec3<f32>
+}
+
+#ifdef USE_FOG
+#include <fogFragHead>
+#endif
 #include <fragOutput>
 
 @fragment

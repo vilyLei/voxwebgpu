@@ -49,13 +49,6 @@ fn calcPBRLight(roughness: f32, rm: vec3<f32>, inColor: vec3<f32>, ptr_rL: ptr<f
     (*ptr_rL).specular += specular * lightColor * specularScatter;
 }
 
-struct CalcColor4Param {
-	worldPos: vec4<f32>,
-	viewPos: vec4<f32>,
-	uv: vec2<f32>,
-	worldNormal: vec3<f32>,
-	worldCamPos: vec3<f32>
-}
 
 // fn calcColor4(worldPos: vec4<f32>, viewPos: vec4<f32>, uv: vec2<f32>, worldNormal: vec3<f32>, worldCamPos: vec3<f32>) -> vec4<f32> {
 fn calcColor4(calcParam: CalcColor4Param) -> vec4<f32> {
@@ -241,5 +234,8 @@ fn calcColor4(calcParam: CalcColor4Param) -> vec4<f32> {
 	#else
 	color4 = vec4<f32>(color, 1.0);
 	#endif
+	#ifdef USE_FOG
+    useFog( &color4, calcParam);
+	#endif 
 	return color4;
 }

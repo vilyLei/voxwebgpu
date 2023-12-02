@@ -3,6 +3,7 @@ import baseFragWGSL from "./include/base.frag.wgsl";
 import mathDefineWGSL from "./include/mathDefine.wgsl";
 import matrixWGSL from "./include/matrix.wgsl";
 import pbrFunctionsWGSL from "./include/pbrFunctions.wgsl";
+import fogFragHeadWGSL from "./include/fogFragHead.wgsl";
 import fragOutputWGSL from "./include/fragOutput.wgsl";
 import { WGShaderPredefine } from "./WGShaderPredefine";
 import { codeLineCommentTest } from "./utils";
@@ -12,6 +13,7 @@ function initModules() {
 	shdSrcModules.set("matrix", matrixWGSL);
 	shdSrcModules.set("mathDefine", mathDefineWGSL);
 	shdSrcModules.set("pbrFunctions", pbrFunctionsWGSL);
+	shdSrcModules.set("fogFragHead", fogFragHeadWGSL);
 	shdSrcModules.set("fragOutput", fragOutputWGSL);
 }
 initModules();
@@ -190,6 +192,8 @@ class WGShaderConstructor {
 
 		let fragWGSL = baseFragWGSL;
 		fragWGSL = preDef.applyPredefine(fragWGSL);
+		console.log("\n###### fragWGSL:");
+		console.log(fragWGSL);
 		fragWGSL = this.parseInclude(fragWGSL);
 		fragWGSL = preDef.applyPredefine(fragWGSL);
 		// console.log("\n###### fragWGSL:");

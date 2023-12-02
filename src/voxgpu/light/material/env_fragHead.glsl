@@ -1,4 +1,4 @@
-#ifdef VOX_USE_FOG
+#ifdef USE_FOG
     #ifdef VOX_FOG_COLOR_MAP
         vec3 fogEnvColor = vec3(1.0);
         vec4 getFogColorFromTexture2D(sampler2D tex) {
