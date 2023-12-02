@@ -57,7 +57,7 @@ interface WGTextureDataDescriptor extends TextureDataDescriptor {
 	specular?: TextureDataDescriptor;
 	glossiness?: TextureDataDescriptor;
 	emissive?: TextureDataDescriptor;
-	anisotropic ?: TextureDataDescriptor;
+	anisotropic?: TextureDataDescriptor;
 	/**
 	 * likes the mask texture
 	 */
@@ -75,43 +75,59 @@ function texDescriptorFilter(d: WGTextureDataDescriptor): TextureDataDescriptor 
 	let rd = d;
 	if (d.diffuse) {
 		rd = d.diffuse;
-		rd.shdVarName = "diffuse";
+		if (!rd.shdVarName) {
+			rd.shdVarName = "diffuse";
+		}
 		return rd;
 	}
 	if (d.baseColor) {
 		rd = d.baseColor;
-		rd.shdVarName = "baseColor";
+		if (!rd.shdVarName) {
+			rd.shdVarName = "baseColor";
+		}
 		return rd;
 	}
 	if (d.albedo) {
 		rd = d.albedo;
-		rd.shdVarName = "albedo";
+		if (!rd.shdVarName) {
+			rd.shdVarName = "albedo";
+		}
 		return rd;
 	}
 
 	if (d.normal) {
 		rd = d.normal;
-		rd.shdVarName = "normal";
+		if (!rd.shdVarName) {
+			rd.shdVarName = "normal";
+		}
 		return rd;
 	}
 	if (d.ao) {
 		rd = d.ao;
-		rd.shdVarName = "ao";
+		if (!rd.shdVarName) {
+			rd.shdVarName = "ao";
+		}
 		return rd;
 	}
 	if (d.metallic) {
 		rd = d.metallic;
-		rd.shdVarName = "metallic";
+		if (!rd.shdVarName) {
+			rd.shdVarName = "metallic";
+		}
 	}
 
 	if (d.roughness) {
 		rd = d.roughness;
-		rd.shdVarName = "roughness";
+		if (!rd.shdVarName) {
+			rd.shdVarName = "roughness";
+		}
 		return rd;
 	}
 	if (d.specularEnv) {
 		rd = d.specularEnv;
-		rd.shdVarName = "specularEnv";
+		if (!rd.shdVarName) {
+			rd.shdVarName = "specularEnv";
+		}
 		return rd;
 	}
 	if (d.arm) {
@@ -121,22 +137,30 @@ function texDescriptorFilter(d: WGTextureDataDescriptor): TextureDataDescriptor 
 
 	if (d.parallax) {
 		rd = d.parallax;
-		rd.shdVarName = "parallax";
+		if (!rd.shdVarName) {
+			rd.shdVarName = "parallax";
+		}
 		return rd;
 	}
 	if (d.heightmap) {
 		rd = d.heightmap;
-		rd.shdVarName = "heightmap";
+		if (!rd.shdVarName) {
+			rd.shdVarName = "heightmap";
+		}
 	}
 	if (d.displacement) {
 		rd = d.displacement;
-		rd.shdVarName = "displacement";
+		if (!rd.shdVarName) {
+			rd.shdVarName = "displacement";
+		}
 		return rd;
 	}
 
 	if (d.opacity) {
 		rd = d.opacity;
-		rd.shdVarName = "opacity";
+		if (!rd.shdVarName) {
+			rd.shdVarName = "opacity";
+		}
 		return rd;
 	}
 	if (d.emissive) {
@@ -149,7 +173,7 @@ function texDescriptorFilter(d: WGTextureDataDescriptor): TextureDataDescriptor 
 		rd.shdVarName = "specular";
 		return rd;
 	}
-	
+
 	return rd;
 }
 export {

@@ -12,6 +12,7 @@ import { BoundsFrameEntity } from "../entity/BoundsFrameEntity";
 import { FixScreenPlaneEntity } from "../entity/FixScreenPlaneEntity";
 import { SphereEntity } from "../entity/SphereEntity";
 import { PlaneEntity } from "../entity/PlaneEntity";
+import { ShadowOccBlurMaterial } from "../material/ShadowOccBlurMaterial";
 
 export class ShadowTest {
 	private mRscene = new RendererScene();
@@ -50,7 +51,7 @@ export class ShadowTest {
 		// };
 		// let material = this.createDepthMaterial(shadowDepthShdSrc);
 		// this.createDepthEntities([material], true);
-
+		/*
 		let sph = new SphereEntity({
 			radius: 80,
 			transform: {
@@ -67,17 +68,20 @@ export class ShadowTest {
 			}
 		});
 		rc.addEntity(plane);
+		//*/
 
 		this.applyShadowDepthRTT();
 
 	}
-
+	private mShadowDepthRTT = { uuid: "rtt-shadow-depth", rttTexture: {}, shdVarName: 'shadowDepth' };
+	private mOccHRTT = { uuid: "rtt--occH", rttTexture: {}, shdVarName: 'shadowDepth' };
+	private mOccVRTT = { uuid: "rtt--occV", rttTexture: {}, shdVarName: 'shadowDepth' };
 	private applyShadowDepthRTT(): void {
 
 		let rc = this.mRscene;
 
 		// rtt texture proxy descriptor
-		let rttTex = { uuid: "rtt-shadow-depth", rttTexture: {} };
+		let rttTex = this.mShadowDepthRTT;
 		// define a rtt pass color colorAttachment0
 		let colorAttachments = [
 			{
@@ -105,6 +109,66 @@ export class ShadowTest {
 
 		// 使用rtt纹理
 		extent = [-0.95, -0.95, 0.4, 0.4];
+		let entity = new FixScreenPlaneEntity({ extent, flipY: true, textures: [{ diffuse: rttTex }] });
+		rc.addEntity(entity);
+	}
+	private applyBuildDepthOccVRTT(): void {
+		let rc = this.mRscene;
+
+		// rtt texture proxy descriptor
+		let rttTex = this.mOccVRTT;
+		// define a rtt pass color colorAttachment0
+		let colorAttachments = [
+			{
+				texture: rttTex,
+				// green clear background color
+				clearValue: { r: 1, g: 1, b: 1, a: 1.0 },
+				loadOp: "clear",
+				storeOp: "store"
+			}
+		];
+		// create a separate rtt rendering pass
+		let rPass = rc.createRTTPass({ colorAttachments });
+		let material = new ShadowOccBlurMaterial();
+		material.addTextures([this.mShadowDepthRTT]);
+		let extent = [-1, -1, 2, 2];
+		let rttEntity = new FixScreenPlaneEntity({ extent, materials:[material] });
+		// 往pass中添加可渲染对象
+		rPass.addEntity(rttEntity);
+
+		// 使用rtt纹理
+		extent = [-0.5, -0.95, 0.4, 0.4];
+		let entity = new FixScreenPlaneEntity({ extent, flipY: true, textures: [{ diffuse: rttTex }] });
+		rc.addEntity(entity);
+	}
+	
+	private applyBuildDepthOccHRTT(): void {
+		let rc = this.mRscene;
+
+		// rtt texture proxy descriptor
+		let rttTex = this.mOccHRTT;
+		// define a rtt pass color colorAttachment0
+		let colorAttachments = [
+			{
+				texture: rttTex,
+				// green clear background color
+				clearValue: { r: 1, g: 1, b: 1, a: 1.0 },
+				loadOp: "clear",
+				storeOp: "store"
+			}
+		];
+		// create a separate rtt rendering pass
+		let rPass = rc.createRTTPass({ colorAttachments });
+		let material = new ShadowOccBlurMaterial();
+		material.property.toHorizonalBlur();
+		material.addTextures([this.mOccVRTT]);
+		let extent = [-1, -1, 2, 2];
+		let rttEntity = new FixScreenPlaneEntity({ extent, materials:[material] });
+		// 往pass中添加可渲染对象
+		rPass.addEntity(rttEntity);
+
+		// 使用rtt纹理
+		extent = [-0.05, -0.95, 0.4, 0.4];
 		let entity = new FixScreenPlaneEntity({ extent, flipY: true, textures: [{ diffuse: rttTex }] });
 		rc.addEntity(entity);
 	}
@@ -185,7 +249,15 @@ export class ShadowTest {
 		rc.addEventListener(MouseEvent.MOUSE_DOWN, this.mouseDown);
 		new MouseInteraction().initialize(rc, 0, false).setAutoRunning(true);
 	}
-	private mouseDown = (evt: MouseEvent): void => { };
+	private mFlag = 0;
+	private mouseDown = (evt: MouseEvent): void => {
+		this.mFlag ++;
+			if(this.mFlag == 1) {
+				this.applyBuildDepthOccVRTT();
+			} else if(this.mFlag == 2) {
+				this.applyBuildDepthOccHRTT();
+			}
+	};
 	run(): void {
 		this.mRscene.run();
 	}

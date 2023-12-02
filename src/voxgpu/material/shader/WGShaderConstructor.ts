@@ -6,7 +6,6 @@ import pbrFunctionsWGSL from "./include/pbrFunctions.wgsl";
 import fogFragHeadWGSL from "./include/fogFragHead.wgsl";
 import fragOutputWGSL from "./include/fragOutput.wgsl";
 import { WGShaderPredefine } from "./WGShaderPredefine";
-import { codeLineCommentTest } from "./utils";
 
 const shdSrcModules: Map<string, string> = new Map();
 function initModules() {
