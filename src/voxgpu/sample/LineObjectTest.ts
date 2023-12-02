@@ -47,7 +47,7 @@ export class LineObjectTest {
 	}
 	private testFrustumFrame( ): void {
 
-		const cam = new Camera({eye: new Vector3(500, 500, -300), near: 50, far: 200});
+		const cam = new Camera({eye: [500, 500, -300], near: 50, far: 200});
 		const rsc = this.mRscene;
 		let frameColors = [[1.0, 0.0, 1.0], [0.0, 1.0, 1.0], [1.0, 0.0, 1.0], [0.0, 1.0, 1.0]];
 		let boxFrame = new BoundsFrameEntity({ vertices8: cam.frustum.vertices, frameColors });
