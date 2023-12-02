@@ -10,6 +10,8 @@ import shadowDepthWGSL from "./shaders/shadow/shadowDepth.wgsl";
 import Camera from "../view/Camera";
 import { BoundsFrameEntity } from "../entity/BoundsFrameEntity";
 import { FixScreenPlaneEntity } from "../entity/FixScreenPlaneEntity";
+import { SphereEntity } from "../entity/SphereEntity";
+import { PlaneEntity } from "../entity/PlaneEntity";
 
 export class ShadowTest {
 	private mRscene = new RendererScene();
@@ -24,12 +26,12 @@ export class ShadowTest {
 		this.mRscene.initialize({
 			canvasWith: 512,
 			canvasHeight: 512,
-			camera: {
-				eye: [600.0, 800.0, -600.0],
-				near: 0.1,
-				far: 1900,
-				perspective: false
-			},
+			// camera: {
+			// 	eye: [600.0, 800.0, -600.0],
+			// 	near: 0.1,
+			// 	far: 1900,
+			// 	perspective: false
+			// },
 			rpassparam: { multisampleEnabled: true }
 		});
 		this.initScene();
@@ -39,15 +41,34 @@ export class ShadowTest {
 
 	private initScene(): void {
 
+		let rc = this.mRscene;
+
 		this.buildShadowCam();
 
-		const shadowDepthShdSrc = {
-			shaderSrc: { code: shadowDepthWGSL, uuid: "shadowDepthShdSrc" }
-		};
-		let material = this.createDepthMaterial(shadowDepthShdSrc);
-		this.createDepthEntities([material], true);
+		// const shadowDepthShdSrc = {
+		// 	shaderSrc: { code: shadowDepthWGSL, uuid: "shadowDepthShdSrc" }
+		// };
+		// let material = this.createDepthMaterial(shadowDepthShdSrc);
+		// this.createDepthEntities([material], true);
 
-		// this.applyShadowDepthRTT();
+		let sph = new SphereEntity({
+			radius: 80,
+			transform: {
+				position: [-230.0, 100.0, -200.0]
+			}
+		});
+		rc.addEntity(sph);
+
+		let plane = new PlaneEntity({
+			axisType: 1,
+			extent: [-600, -600, 1200, 1200],
+			transform: {
+				position: [0, -1, 0]
+			}
+		});
+		rc.addEntity(plane);
+
+		this.applyShadowDepthRTT();
 
 	}
 
@@ -62,7 +83,7 @@ export class ShadowTest {
 			{
 				texture: rttTex,
 				// green clear background color
-				clearValue: { r: 0.1, g: 0.9, b: 0.1, a: 1.0 },
+				clearValue: { r: 1, g: 1, b: 1, a: 1.0 },
 				loadOp: "clear",
 				storeOp: "store"
 			}
@@ -87,7 +108,7 @@ export class ShadowTest {
 		}
 
 		// 使用rtt纹理
-		extent = [0.3, 0.3, 0.6, 0.6];
+		extent = [-0.95, -0.95, 0.3, 0.3];
 		let entity = new FixScreenPlaneEntity({ extent, flipY: true, textures: [{ diffuse: rttTex }] });
 		rc.addEntity(entity);
 	}
@@ -118,7 +139,7 @@ export class ShadowTest {
 		const rc = this.mRscene;
 		let gd = this.geomData;
 
-		let rgd = gd.createSphere(230, 15, 15);
+		let rgd = gd.createSphere(80, 15, 15);
 		let geometry = new WGGeometry()
 			.addAttribute({ shdVarName: "position", data: rgd.vs, strides: [3] })
 			.setIndexBuffer({ name: "geomIndex", data: rgd.ivs });
@@ -126,19 +147,20 @@ export class ShadowTest {
 		let entity = new Entity3D();
 		entity.materials = materials;
 		entity.geometry = geometry;
+		entity.transform.setPosition([-230.0, 100.0, -200.0]);
 		if (flag) {
 			rc.addEntity(entity);
 		}
 		entities.push(entity);
 
-		rgd = gd.createSquare(800, 1);
+		rgd = gd.createSquare(1200, 1);
 		geometry = new WGGeometry()
 			.addAttribute({ shdVarName: "position", data: rgd.vs, strides: [3] })
 			.setIndexBuffer({ name: "geomIndex", data: rgd.ivs });
 		entity = new Entity3D();
 		entity.materials = materials;
 		entity.geometry = geometry;
-		entity.transform.setPosition([0, -220, 0]);
+		entity.transform.setPosition([0, -1, 0]);
 		if (flag) {
 			rc.addEntity(entity);
 		}
@@ -153,8 +175,8 @@ export class ShadowTest {
 			near: 0.1,
 			far: 1900,
 			perspective: false,
-			viewWidth: 512,
-			viewHeight: 512
+			viewWidth: 1300,
+			viewHeight: 1300
 		});
 		this.mShadowCamera = cam;
 		const rsc = this.mRscene;
