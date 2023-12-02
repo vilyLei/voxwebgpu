@@ -42,7 +42,8 @@ fn fragMain(
 ) -> @location(0) vec4<f32> {
     // Higher precision equivalent of gl_FragCoord.z. This assumes depthRange has been left to its default values.
     let fragCoordZ = 0.5 * projPos[2] / projPos[3] + 0.5;
-    var color4 = packDepthToRGBA( fragCoordZ );
+    // var color4 = packDepthToRGBA( fragCoordZ );
     // var color4 = vec4<f32>(abs(normalize(projPos.xyz)) + vec3f(0.1), 1.0);
+    var color4 = vec4<f32>(abs(normalize(objPos.xyz)) + vec3f(0.1), 1.0);
     return color4;
 }

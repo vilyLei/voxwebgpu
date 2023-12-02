@@ -1,26 +1,19 @@
 import MouseEvent from "../event/MouseEvent";
 import { RendererScene } from "../rscene/RendererScene";
 import { MouseInteraction } from "../ui/MouseInteraction";
-import Vector3 from "../math/Vector3";
-import Color4 from "../material/Color4";
-import { BasePBRMaterial, LightShaderDataParam } from "../material/BasePBRMaterial";
-import { SpecularEnvBrnTexture } from "../texture/SpecularEnvBrnTexture";
-import { WGTextureDataDescriptor } from "../texture/WGTextureDataDescriptor";
-import { SphereEntity } from "../entity/SphereEntity";
-import { TorusEntity } from "../entity/TorusEntity";
-import { CubeEntity } from "../entity/CubeEntity";
 import { GeomDataBuilder } from "../geometry/GeomDataBuilder";
 import { WGMaterial, WGRShderSrcType } from "../material/WGMaterial";
 import { Entity3D } from "../entity/Entity3D";
 import { WGGeometry } from "../geometry/WGGeometry";
 
-
 import shadowDepthWGSL from "./shaders/shadow/shadowDepth.wgsl";
 import Camera from "../view/Camera";
 import { BoundsFrameEntity } from "../entity/BoundsFrameEntity";
+import { FixScreenPlaneEntity } from "../entity/FixScreenPlaneEntity";
 
 export class ShadowTest {
 	private mRscene = new RendererScene();
+	private mShadowCamera: Camera;
 	geomData = new GeomDataBuilder();
 	initialize(): void {
 		console.log("ShadowTest::initialize() ...");
@@ -28,7 +21,17 @@ export class ShadowTest {
 		const body = document.body;
 		// body.style.background = '#000000';
 
-		this.mRscene.initialize({ canvasWith: 512, canvasHeight: 512, rpassparam: { multisampleEnabled: true } });
+		this.mRscene.initialize({
+			canvasWith: 512,
+			canvasHeight: 512,
+			camera: {
+				eye: [600.0, 800.0, -600.0],
+				near: 0.1,
+				far: 1900,
+				perspective: false
+			},
+			rpassparam: { multisampleEnabled: true }
+		});
 		this.initScene();
 		this.initEvent();
 	}
@@ -36,17 +39,59 @@ export class ShadowTest {
 
 	private initScene(): void {
 
+		this.buildShadowCam();
+
 		const shadowDepthShdSrc = {
 			shaderSrc: { code: shadowDepthWGSL, uuid: "shadowDepthShdSrc" }
 		};
+		let material = this.createDepthMaterial(shadowDepthShdSrc);
+		this.createDepthEntities([material], true);
 
-		let material = this.createDepthMaterial( shadowDepthShdSrc );
-		this.createDepthEntity([material]);
+		// this.applyShadowDepthRTT();
 
-		this.showCamFrame();
 	}
-	
-	private createDepthMaterial(shaderSrc: WGRShderSrcType, faceCullMode = "back"): WGMaterial {
+
+	private applyShadowDepthRTT(): void {
+
+		let rc = this.mRscene;
+
+		// rtt texture proxy descriptor
+		let rttTex = { uuid: "rtt0", rttTexture: {} };
+		// define a rtt pass color colorAttachment0
+		let colorAttachments = [
+			{
+				texture: rttTex,
+				// green clear background color
+				clearValue: { r: 0.1, g: 0.9, b: 0.1, a: 1.0 },
+				loadOp: "clear",
+				storeOp: "store"
+			}
+		];
+		// create a separate rtt rendering pass
+		let rPass = rc.createRTTPass({ colorAttachments });
+		rPass.node.camera = this.mShadowCamera;
+
+		let extent = [-0.5, -0.5, 0.8, 0.8];
+		// const diffuseTex = { diffuse: { url: "static/assets/default.jpg", flipY: true } };
+		// let rttEntity = new FixScreenPlaneEntity({ extent, textures: [diffuseTex] }).setColor([1.0, 0.0, 0.0]);
+		// // 往pass中添加可渲染对象
+		// rPass.addEntity(rttEntity);
+
+		const shadowDepthShdSrc = {
+			shaderSrc: { code: shadowDepthWGSL, uuid: "shadowDepthShdSrc" }
+		};
+		let material = this.createDepthMaterial(shadowDepthShdSrc);
+		let es = this.createDepthEntities([material], false);
+		for (let i = 0; i < es.length; ++i) {
+			rPass.addEntity(es[i]);
+		}
+
+		// 使用rtt纹理
+		extent = [0.3, 0.3, 0.6, 0.6];
+		let entity = new FixScreenPlaneEntity({ extent, flipY: true, textures: [{ diffuse: rttTex }] });
+		rc.addEntity(entity);
+	}
+	private createDepthMaterial(shaderSrc: WGRShderSrcType, faceCullMode = "none"): WGMaterial {
 
 		let pipelineDefParam = {
 			depthWriteEnabled: true,
@@ -66,7 +111,9 @@ export class ShadowTest {
 
 		return material;
 	}
-	private createDepthEntity(materials: WGMaterial[]): void {
+	private createDepthEntities(materials: WGMaterial[], flag = false): Entity3D[] {
+
+		let entities = [];
 
 		const rc = this.mRscene;
 		let gd = this.geomData;
@@ -79,7 +126,10 @@ export class ShadowTest {
 		let entity = new Entity3D();
 		entity.materials = materials;
 		entity.geometry = geometry;
-		rc.addEntity(entity);
+		if (flag) {
+			rc.addEntity(entity);
+		}
+		entities.push(entity);
 
 		rgd = gd.createSquare(800, 1);
 		geometry = new WGGeometry()
@@ -88,24 +138,29 @@ export class ShadowTest {
 		entity = new Entity3D();
 		entity.materials = materials;
 		entity.geometry = geometry;
-		entity.transform.setPosition([0,-220,0]);
-		rc.addEntity(entity);
+		entity.transform.setPosition([0, -220, 0]);
+		if (flag) {
+			rc.addEntity(entity);
+		}
+		entities.push(entity);
+		return entities;
 	}
-	
-	private showCamFrame(): void {
+
+	private buildShadowCam(): void {
 
 		const cam = new Camera({
-			eye: [600.0,800.0,-600.0],
+			eye: [600.0, 800.0, -600.0],
 			near: 0.1,
 			far: 1900,
-			perspective:false,
-			viewWidth: 1300,
-			viewHeight: 1300
+			perspective: false,
+			viewWidth: 512,
+			viewHeight: 512
 		});
+		this.mShadowCamera = cam;
 		const rsc = this.mRscene;
 		let frameColors = [[1.0, 0.0, 1.0], [0.0, 1.0, 1.0], [1.0, 0.0, 0.0], [0.0, 1.0, 1.0]];
 		let boxFrame = new BoundsFrameEntity({ vertices8: cam.frustum.vertices, frameColors });
-		rsc.addEntity( boxFrame );
+		rsc.addEntity(boxFrame);
 	}
 	private initEvent(): void {
 		const rc = this.mRscene;

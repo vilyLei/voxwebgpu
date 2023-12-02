@@ -92,7 +92,7 @@ class WGRObjBuilder {
 					}
 				}
 				if (utexes && utexes.length > 0) {
-					console.log('utexes: ', utexes);
+					// console.log('utexes: ', utexes);
 					for (let i = 0; i < utexes.length; ++i) {
 						let tex = utexes[i];
 						let varType = 'texture_2d';
