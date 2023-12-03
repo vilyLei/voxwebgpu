@@ -114,14 +114,13 @@ fn VSMShadow (uv: vec2<f32>, compare: f32 ) -> f32 {
 }
 fn getVSMShadow( shadowMapSize: vec2<f32>, shadowBias: f32, shadowRadius: f32, shadowCoordP: vec4<f32> ) -> f32 {
 
-    var shadow = 1.0;
     var shadowCoord = vec4<f32>(shadowCoordP.xyz / vec3<f32>(shadowCoordP.w), shadowCoordP.z + shadowBias);
    
     let inFrustumVec = vec4<bool> ( shadowCoord.x >= 0.0, shadowCoord.x <= 1.0, shadowCoord.y >= 0.0, shadowCoord.y <= 1.0 );
     let inFrustum = all( inFrustumVec );
 
     let frustumTestVec = vec2<bool>( inFrustum, shadowCoord.z <= 1.0 );
-    shadow = VSMShadow( shadowCoord.xy, shadowCoord.z );
+    var shadow = VSMShadow( shadowCoord.xy, shadowCoord.z );
     if ( !all( frustumTestVec ) ) {
         shadow = 1.0;
     }

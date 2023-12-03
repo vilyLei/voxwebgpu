@@ -20,7 +20,7 @@ import { TorusEntity } from "../entity/TorusEntity";
 export class BaseVSMShadowTest {
 	private mRscene = new RendererScene();
 	private mShadowCamera: Camera;
-	private mDebug = true;
+	private mDebug = false;
 	initialize(): void {
 		console.log("BaseVSMShadowTest::initialize() ...");
 

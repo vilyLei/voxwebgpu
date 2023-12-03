@@ -1,4 +1,3 @@
-
 struct VertexOutput {
 	@builtin(position) Position: vec4<f32>,
 	@location(0) uv: vec2<f32>
@@ -25,9 +24,7 @@ const ShiftRight8 = 1. / 256.;
 
 fn packDepthToRGBA(v: f32) -> vec4<f32> {
     var r = vec4<f32>(fract(v * PackFactors), v);
-	// r.yzw -= r.xyz * ShiftRight8; // tidy overflow
     let v3 = r.yzw - (r.xyz * ShiftRight8);
-    // r = vec4<f32>(v3.x, v3);
     return vec4<f32>(v3.x, v3) * PackUpscale;
 }
 
@@ -58,7 +55,6 @@ fn fragMain(
     let fragCoord = resolution * uv;
     
     let radius = param[3];
-    // vec4 c4 = VOX_Texture2D( u_sampler0, ( gl_FragCoord.xy ) / resolution ); 
     let c4 = textureSample(shadowDepthTexture, shadowDepthSampler, uv);   
     // This seems totally useless but it's a crazy work around for a Adreno compiler bug
     var depth = unpackRGBAToDepth( c4 );
