@@ -5,6 +5,11 @@ class WGRUnitState {
 	private flag = 0;
 	private rf = 0;
 	__$rever = 0;
+	copyFrom(src: WGRUnitState): void {
+		this.flag = src.flag;
+		this.rf = src.rf;
+		this.__$rever = src.__$rever;
+	}
 	set __$rendering(v: boolean) {
 		if (v) {
 			this.rf = Bit.addBit(this.rf, Bit.ONE_0);
