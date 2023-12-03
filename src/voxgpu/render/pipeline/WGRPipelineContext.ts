@@ -49,7 +49,7 @@ class WGRPipelineContext implements WGRPipelineContextImpl {
 			const p = this.mPipelineParams;
 			if (p) {
 				this.mShader.build(p, this.rpass);
-				console.log("WGRPipelineContext::init(), p.multisampleEnabled:\n", p.multisampleEnabled);
+				// console.log("WGRPipelineContext::init(), p.multisampleEnabled:\n", p.multisampleEnabled);
 
 				let pipeGLayout: GPUPipelineLayout;
 				if (!this.uniformCtx.isLayoutAuto()) {

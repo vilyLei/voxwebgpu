@@ -156,7 +156,7 @@ class WGRendererPass implements WGRendererPassImpl {
 				this.colorView = texture.createView();
 				colorAtt.view = this.colorView;
 				colorAtt.viewTexture = texture;
-				console.log('pass colorView tex sampleCount: ', sampleCount);
+				// console.log('pass colorView tex sampleCount: ', sampleCount);
 			}
 		}
 
@@ -170,7 +170,7 @@ class WGRendererPass implements WGRendererPassImpl {
 				size = [ctx.canvasWidth, ctx.canvasHeight];
 				let format = "depth24plus";
 				if (param.depthFormat !== undefined) format = param.depthFormat;
-				console.log('pass depth tex sampleCount: ', sampleCount);
+				// console.log('pass depth tex sampleCount: ', sampleCount);
 				const depthTexDesc = {
 					size,
 					sampleCount,

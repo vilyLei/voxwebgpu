@@ -36,7 +36,7 @@ export class RTTTest {
 			}
 		];
 		// create a separate rtt rendering pass
-		let multisampleEnabled = true;
+		let multisampleEnabled = false;
 		let rPass = rc.createRTTPass({ colorAttachments, multisampleEnabled });
 
 		const diffuseTex = { diffuse: { url: "static/assets/default.jpg", flipY: true } };
@@ -53,20 +53,20 @@ export class RTTTest {
 	private initScene(): void {
 		const rc = this.mRscene;
 
-		// const diffuseTex = { diffuse: { url: "static/assets/default.jpg", flipY: true } };
-		// let extent = [-0.9, 0.0, 0.5, 0.5];
-		// let entity = new FixScreenPlaneEntity({ extent }).setColor([0.2, 0.5, 0.7]);
-		// rc.addEntity(entity);
+		const diffuseTex = { diffuse: { url: "static/assets/default.jpg", flipY: true } };
+		let extent = [-0.9, 0.0, 0.5, 0.5];
+		let entity = new FixScreenPlaneEntity({ extent }).setColor([0.2, 0.5, 0.7]);
+		rc.addEntity(entity);
 
-		// extent = [-0.8, -0.8, 0.8, 0.8];
-		// entity = new FixScreenPlaneEntity({ extent, textures: [diffuseTex] }).setColor([0.1, 0.3, 0.9]);
-		// rc.addEntity(entity);
+		extent = [-0.8, -0.8, 0.8, 0.8];
+		entity = new FixScreenPlaneEntity({ extent, textures: [diffuseTex] }).setColor([0.1, 0.3, 0.9]);
+		rc.addEntity(entity);
 	}
 
 	run(): void {
-		if(this.mFlag < 0) {
-			return;
-		}
+		// if(this.mFlag < 0) {
+		// 	return;
+		// }
 		this.mFlag --;
 
 		this.mRscene.run();

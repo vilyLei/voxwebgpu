@@ -73,7 +73,11 @@ class WGRUniformCtxInstance {
 				v = new WGRBufferVisibility().toTextureFloat(p.texView.dimension);
 				// v.texture.multisampled = multisampled === true ? true : false;
 				v.texture.multisampled = p.multisampled === true;
+				v.texture.sampleType = 'float';
 				v.texture.label = p.shdVarName;
+				// if(p.shdVarName == 'rtt') {
+				// 	v.texture.sampleType = 'unfilterable-float';
+				// }
 				v.binding = ets.length;
 				ets.push(v);
 			}
