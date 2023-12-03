@@ -280,7 +280,7 @@ export class ShadowTest {
 		let cam = this.mShadowCamera;
 		let testMatrix: Matrix4 = new Matrix4();
         testMatrix.identity();
-        testMatrix.setScaleXYZ(0.5,0.5,0.5);
+        testMatrix.setScaleXYZ(0.5,-0.5,0.5);
         testMatrix.setTranslationXYZ(0.5,0.5,0.5);
         console.log("testMatrix shadowMatrix: ");
         console.log(testMatrix.toString());
