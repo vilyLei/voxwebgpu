@@ -248,16 +248,12 @@ export class BaseVSMShadowTest {
 		let transMatrix = new Matrix4();
 		transMatrix.setScaleXYZ(0.5, -0.5, 0.5);
 		transMatrix.setTranslationXYZ(0.5, 0.5, 0.5);
-		// console.log("transMatrix shadowMatrix: ");
-		// console.log(transMatrix.toString());
 		let shadowMat = new Matrix4();
 		shadowMat.copyFrom(cam.viewProjMatrix);
 		shadowMat.append(transMatrix);
 
-		const diffuseTex = { diffuse: { url: "static/assets/default.jpg", flipY: true, shdVarName: 'shadowDepth' } };
 		let material = new ShadowReceiveMaterial();
 		let ppt = material.property;
-		// ppt.setShadowBias(this.mShadowBias);
 
 		ppt.setShadowRadius(this.mShadowRadius);
 		ppt.setShadowBias(this.mShadowBias);
