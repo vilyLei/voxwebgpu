@@ -6,13 +6,13 @@ import { WGRUniformValue } from "./WGRUniformValue";
 import { GPUBuffer } from "../../gpu/GPUBuffer";
 import { WGRBufferData } from "../../render/buffer/WGRBufferData";
 
-type WGRUniformTexParam = { texView: GPUTextureView, sampler?: GPUSampler };
-type WGRUniformParam = { layoutName: string, groupIndex: number, values: WGRBufferData[], texParams?: WGRUniformTexParam[] };
+type WGRTexLayoutParam ={ texView: GPUTextureView, viewDimension: string, shdVarName?: string, multisampled?: boolean };
+type WGRUniformParam = { layoutName: string, groupIndex: number, values: WGRBufferData[], texParams?: WGRTexLayoutParam[] };
 class WGRUniformWrapper {
 	uniform: WGRUniform;
 	bufDataParams?: BufDataParamType[];
 	bufDataDescs?: BindGroupDataParamType[];
-	texParams?: { sampler?: GPUSampler; texView: GPUTextureView }[];
+	texParams?: WGRTexLayoutParam[];
 	usage = 0;
 	groupIndex = 0;
 	enabled = true;
@@ -49,7 +49,7 @@ interface IWGRUniformContext {
 		layoutName: string,
 		groupIndex: number,
 		values: WGRUniformValue[],
-		texParams?: WGRUniformTexParam[],
+		texParams?: WGRTexLayoutParam[],
 		uniformAppend?: boolean
 	): WGRUniform | null;
 	createUniform(
@@ -63,4 +63,4 @@ interface IWGRUniformContext {
 	removeUniforms(us: WGRUniform[]): void;
 	removeUniform(u: WGRUniform): void;
 }
-export { WGRUniformBufObj, WGRUniformTexParam, WGRUniformWrapper, WGRUniformParam, BufDataParamType, IWGRUniformContext };
+export { WGRTexLayoutParam, WGRUniformBufObj, WGRUniformWrapper, WGRUniformParam, BufDataParamType, IWGRUniformContext };

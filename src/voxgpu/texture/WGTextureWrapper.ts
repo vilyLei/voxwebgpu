@@ -13,6 +13,7 @@ import { GPUExtent3DDict, GPUTextureDescriptor } from "../gpu/GPUTextureDescript
 
 interface WGTextureDataType {
 	uid?: number;
+	multisampled?: boolean;
 	generateMipmaps?: boolean;
 	flipY?: boolean;
 	format?: string;
@@ -25,6 +26,7 @@ class WGTextureData implements WGTextureDataType {
 	protected mTex: GPUTexture;
 	protected mDesc: TextureDataDescriptor;
 	uid?: number;
+	multisampled = false;
 	generateMipmaps = true;
 	flipY = false;
 	format = "rgba8unorm";
@@ -40,6 +42,7 @@ class WGTextureData implements WGTextureDataType {
 		if (descriptor.dimension) this.dimension = descriptor.dimension;
 		if (descriptor.viewDimension) this.viewDimension = descriptor.viewDimension;
 		if (descriptor.shdVarName) this.shdVarName = descriptor.shdVarName;
+		this.multisampled = descriptor.multisampled === true;
 		this.mDesc = descriptor;
 		return this;
 	}
@@ -93,10 +96,13 @@ class WGRTTTextureData extends WGTextureData {
 		const td = this.mTexData;
 		if (td && !this.mTex) {
 			if (td.texture) {
-				console.log("apply a rtt texture into a WGRTTTextureData instance.");
 				this.mTex = td.texture;
 				this.uid = this.mTex.uid;
-				if(this.mDesc)this.mDesc.uid = this.mTex.uid;
+				if(this.mDesc) {
+					this.mDesc.uid = this.mTex.uid;
+					this.multisampled = this.mDesc.multisampled;
+				}
+				console.log("apply a rtt texture into a WGRTTTextureData instance. this.multisampled: ", this.multisampled);
 			}
 		}
 		return this.mTex;
@@ -235,6 +241,7 @@ interface WGTextureType {
 	dimension?: string;
 	viewDimension?: string;
 	format?: string;
+	multisampled?: boolean;
 	generateMipmaps?: boolean;
 	data?: WGTextureDataType;
 }
@@ -249,6 +256,7 @@ class WGTexture implements WGTextureType {
 	format?: string;
 	shdVarName = "";
 
+	// multisampled = false;
 	generateMipmaps = true;
 	flipY = true;
 	dimension = "2d";

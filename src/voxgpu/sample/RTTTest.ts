@@ -1,6 +1,6 @@
 import { RendererScene } from "../rscene/RendererScene";
 import { FixScreenPlaneEntity } from "../entity/FixScreenPlaneEntity";
-
+import MouseEvent from "../event/MouseEvent";
 export class RTTTest {
 	private mRscene = new RendererScene();
 
@@ -9,13 +9,22 @@ export class RTTTest {
 
 		this.applyRTT();
 		this.initScene();
+		this.initEvent();
+	}
+	private initEvent(): void {
+		const rc = this.mRscene;
+		rc.addEventListener(MouseEvent.MOUSE_DOWN, this.mouseDown);
+	}
+	private mFlag = 0;
+	private mouseDown = (evt: MouseEvent): void => {
+		this.mFlag = 1;
 	}
 	private applyRTT(): void {
 
 		let rc = this.mRscene;
 
 		// rtt texture proxy descriptor
-		let rttTex = { uuid: "rtt0", rttTexture: {} };
+		let rttTex = { uuid: "rtt0", rttTexture: {}, shdVarName: 'rtt' };
 		// define a rtt pass color colorAttachment0
 		let colorAttachments = [
 			{
@@ -27,7 +36,8 @@ export class RTTTest {
 			}
 		];
 		// create a separate rtt rendering pass
-		let rPass = rc.createRTTPass({ colorAttachments });
+		let multisampleEnabled = true;
+		let rPass = rc.createRTTPass({ colorAttachments, multisampleEnabled });
 
 		const diffuseTex = { diffuse: { url: "static/assets/default.jpg", flipY: true } };
 		let extent = [-0.5, -0.5, 0.8, 0.8];
@@ -35,7 +45,7 @@ export class RTTTest {
 		// 往pass中添加可渲染对象
 		rPass.addEntity(rttEntity);
 
-		// 使用rtt纹理
+		// // 使用rtt纹理
 		extent = [0.3, 0.3, 0.6, 0.6];
 		let entity = new FixScreenPlaneEntity({ extent, flipY: true, textures: [{ diffuse: rttTex }] });
 		rc.addEntity(entity);
@@ -43,17 +53,22 @@ export class RTTTest {
 	private initScene(): void {
 		const rc = this.mRscene;
 
-		const diffuseTex = { diffuse: { url: "static/assets/default.jpg", flipY: true } };
-		let extent = [-0.9, 0.0, 0.5, 0.5];
-		let entity = new FixScreenPlaneEntity({ extent }).setColor([0.2, 0.5, 0.7]);
-		rc.addEntity(entity);
+		// const diffuseTex = { diffuse: { url: "static/assets/default.jpg", flipY: true } };
+		// let extent = [-0.9, 0.0, 0.5, 0.5];
+		// let entity = new FixScreenPlaneEntity({ extent }).setColor([0.2, 0.5, 0.7]);
+		// rc.addEntity(entity);
 
-		extent = [-0.8, -0.8, 0.8, 0.8];
-		entity = new FixScreenPlaneEntity({ extent, textures: [diffuseTex] }).setColor([0.1, 0.3, 0.9]);
-		rc.addEntity(entity);
+		// extent = [-0.8, -0.8, 0.8, 0.8];
+		// entity = new FixScreenPlaneEntity({ extent, textures: [diffuseTex] }).setColor([0.1, 0.3, 0.9]);
+		// rc.addEntity(entity);
 	}
 
 	run(): void {
+		if(this.mFlag < 0) {
+			return;
+		}
+		this.mFlag --;
+
 		this.mRscene.run();
 	}
 }

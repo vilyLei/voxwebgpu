@@ -85,6 +85,7 @@ class WGRenderPassNode implements IWGRenderPassNode {
 			if (this.prevNode) {
 				this.rpass.prevPass = this.prevNode.rpass;
 			}
+			console.log('WGRenderPassNode::initialize(), this.param: ', this.param);
 			this.rpass.initialize(wgCtx);
 			this.checkRPassParam(this.param);
 			this.rpass.build(this.param);
@@ -191,6 +192,7 @@ class WGRenderPassNode implements IWGRenderPassNode {
 
 			const passParam = this.rpass.getPassParams();
 			if (passParam.multisampleEnabled) {
+				pipelineParams.multisampleEnabled = true;
 				if (pipelineParams.multisample) {
 					pipelineParams.multisample.count = passParam.sampleCount;
 				} else {

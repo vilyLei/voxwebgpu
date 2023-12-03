@@ -2,21 +2,17 @@ import { GPUBindGroup } from "../../gpu/GPUBindGroup";
 import { GPUBindGroupDescriptor, GPUBindGroupDescriptorEntity, GPUBindGroupDescriptorEntityResource } from "../../gpu/GPUBindGroupDescriptor";
 import { GPUBindGroupLayout } from "../../gpu/GPUBindGroupLayout";
 import { GPUBuffer } from "../../gpu/GPUBuffer";
-import { GPUBufferDescriptor } from "../../gpu/GPUBufferDescriptor";
 import { GPURenderPipeline } from "../../gpu/GPURenderPipeline";
 import { GPURenderPipelineEmpty } from "../../gpu/GPURenderPipelineEmpty";
 import { GPUSampler } from "../../gpu/GPUSampler";
 import { GPUTextureView } from "../../gpu/GPUTextureView";
 import { WebGPUContext } from "../../gpu/WebGPUContext";
-import { BindGroupDataParamType, BufDataParamType, VtxDescParam, VtxPipelinDescParam, UniformBufferParam, WGRPipelineContextImpl } from "./WGRPipelineContextImpl";
-import { WGRPipelineCtxParams } from "./WGRPipelineCtxParams";
-import { WGRPipelineShader } from "./WGRPipelineShader";
-import { WGRUniformParam, WGRUniformContext } from "../uniform/WGRUniformContext";
+import { BindGroupDataParamType, BufDataParamType, VtxPipelinDescParam, UniformBufferParam } from "./WGRPipelineContextImpl";
+import { WGRUniformParam } from "../uniform/WGRUniformContext";
 import { GPUQueue } from "../../gpu/GPUQueue";
 import { WGRendererPassImpl } from "./WGRendererPassImpl";
 import { GPUBindGroupLayoutDescriptor } from "../../gpu/GPUBindGroupLayoutDescriptor";
 import { GPUComputePipeline } from "../../gpu/GPUComputePipeline";
-import { GPUPipelineLayout } from "../../gpu/GPUPipelineLayout";
 /**
  * one type shading shader, one WGRBindGroupContext instance
  */
@@ -248,7 +244,7 @@ class WGRBindGroupContext {
 				}
 			}
 		}
-		// console.log("createUniformBindGroup(), desc: ", desc);
+		console.log("createUniformBindGroup(), desc: ", desc);
 		if (desc.entries.length < 1) {
 			throw Error("Illegal operation !!!");
 		}

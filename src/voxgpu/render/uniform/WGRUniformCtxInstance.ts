@@ -3,7 +3,7 @@ import { GPUTextureView } from "../../gpu/GPUTextureView";
 import { UniformVerType, WGRUniform } from "./WGRUniform";
 import { BindGroupDataParamType, BufDataParamType, UniformBufferParam, WGRPipelineContextImpl } from "../pipeline/WGRPipelineContextImpl";
 import { WGRUniformValue } from "./WGRUniformValue";
-import { WGRUniformBufObj, WGRUniformParam, WGRUniformWrapper } from "./IWGRUniformContext";
+import { WGRTexLayoutParam, WGRUniformBufObj, WGRUniformParam, WGRUniformWrapper } from "./IWGRUniformContext";
 import { GPUBindGroupDescriptor } from "../../gpu/GPUBindGroupDescriptor";
 import { WGHBufferStore } from "../buffer/WGHBufferStore";
 import { WGRBufferVisibility } from "../buffer/WGRBufferVisibility";
@@ -71,7 +71,9 @@ class WGRUniformCtxInstance {
 				v.binding = ets.length;
 				ets.push(v);
 				v = new WGRBufferVisibility().toTextureFloat(p.texView.dimension);
-				v.texture.multisampled = multisampled === true ? true : false;
+				// v.texture.multisampled = multisampled === true ? true : false;
+				v.texture.multisampled = p.multisampled === true;
+				v.texture.label = p.shdVarName;
 				v.binding = ets.length;
 				ets.push(v);
 			}
@@ -79,7 +81,7 @@ class WGRUniformCtxInstance {
 		if(ets.length < 1) {
 			return undefined;
 		}
-		// console.log("WGRUniformCtxInstance:: getBindGroupLayout(), CCCCCCC ets: ", ets);
+		console.log("WGRUniformCtxInstance:: getBindGroupLayout(), CCCCCCC ets: ", ets);
 		const desc = {
 			label: "(BindGroupLayout)WGRUniformCtxInstance" + this.mUid,
 			entries: ets
@@ -310,7 +312,7 @@ class WGRUniformCtxInstance {
 		layoutName: string,
 		groupIndex: number,
 		bufDataParams?: BufDataParamType[],
-		texParams?: { texView: GPUTextureView; sampler?: GPUSampler }[],
+		texParams?: WGRTexLayoutParam[],
 		uniformAppend?: boolean
 	): WGRUniform {
 		if (!((bufDataParams && bufDataParams.length) || (texParams && texParams.length))) {

@@ -79,14 +79,19 @@ class WGRendererPass implements WGRendererPassImpl {
 					if(rttData) {
 						const ctx = this.mWGCtx;
 						if (rttData.texture === undefined) {
-							const rtt = ctx.texture.createColorRTTTexture({format: td.format});
+							let sampleCount = 1;
+							sampleCount = this.mParam.sampleCount;
+							td.multisampled = sampleCount > 1;
+							const rtt = ctx.texture.createColorRTTTexture({format: td.format, sampleCount});
+							// const rtt = ctx.texture.createColorRTTTexture({format: td.format});
 							rttData.texture = rtt;
-							rttData.textureView = rtt.createView();
+							let tview = rtt.createView();
+							rttData.textureView = tview;
 							// colorAtt.gpuTexture = rtt;
 							colorAtt.textureFormat = rtt.format;
-							colorAtt.view = rttData.textureView;
+							colorAtt.view = tview;
 							colorAtt.view.label = td.uuid;
-							console.log("动态创建一个 color rtt gpu texture instance, colorAtt.textureFormat: ", colorAtt.textureFormat);
+							console.log("动态创建一个 color rtt gpu texture instance, \ncolorAtt.textureFormat: ", colorAtt.textureFormat, ", sampleCount: ", sampleCount);
 							// console.log("动态创建一个 color rtt gpu texture instance, view: ", colorAtt.view);
 							console.log("动态创建一个 color rtt gpu texture instance, td: ", td);
 						}else {
@@ -109,6 +114,8 @@ class WGRendererPass implements WGRendererPassImpl {
 		if (multisampled) {
 			sampleCount = param.sampleCount;
 		}
+		param.sampleCount = sampleCount;
+
 		let size = [ctx.canvasWidth, ctx.canvasHeight];
 
 		let pcs = this.passColors;
@@ -122,10 +129,9 @@ class WGRendererPass implements WGRendererPassImpl {
 				for (let i = 1; i < ls.length; ++i) {
 					pcs.push(new WGRPColorAttachment());
 				}
-				for (let i = 0; i < ls.length; ++i) {
-
-					// this.updateColorAttachmentView(colorAtt, ls[i]);
-				}
+				// for (let i = 0; i < ls.length; ++i) {
+				// 	// this.updateColorAttachmentView(colorAtt, ls[i]);
+				// }
 				this.clearColor.setColor(pcs[0].clearValue);
 				// console.log("xxx xxx pcs: ", pcs);
 			} else {
@@ -150,6 +156,7 @@ class WGRendererPass implements WGRendererPassImpl {
 				this.colorView = texture.createView();
 				colorAtt.view = this.colorView;
 				colorAtt.viewTexture = texture;
+				console.log('pass colorView tex sampleCount: ', sampleCount);
 			}
 		}
 
@@ -163,6 +170,7 @@ class WGRendererPass implements WGRendererPassImpl {
 				size = [ctx.canvasWidth, ctx.canvasHeight];
 				let format = "depth24plus";
 				if (param.depthFormat !== undefined) format = param.depthFormat;
+				console.log('pass depth tex sampleCount: ', sampleCount);
 				const depthTexDesc = {
 					size,
 					sampleCount,
@@ -271,6 +279,10 @@ class WGRendererPass implements WGRendererPassImpl {
 						colorAttachments: colorAttachments
 					};
 				}
+				// console.log("### ### ### ### ###");
+				// console.log("xxx xxx this.separate: ", this.separate);
+				// console.log("xxx xxx renderPassDescriptor: ");
+				// console.log(renderPassDescriptor);
 
 				this.passEncoder = cmdEncoder.beginRenderPass(renderPassDescriptor);
 			} else {

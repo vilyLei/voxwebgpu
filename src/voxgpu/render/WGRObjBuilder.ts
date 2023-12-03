@@ -18,6 +18,7 @@ import { WGRPrimitiveDict, WGGeometry } from "../geometry/WGGeometry";
 import { WGRDrawMode } from "./Define";
 import { checkBufferData, WGRBufferValue } from "./buffer/WGRBufferValue";
 import { createNewWRGBufferViewUid } from "./buffer/WGRBufferView";
+import { WGRTexLayoutParam } from "./uniform/IWGRUniformContext";
 
 type GeomType = { indexBuffer?: GPUBuffer, vertexBuffers: GPUBuffer[], indexCount?: number, vertexCount?: number, drawMode?: WGRDrawMode };
 const bufValue = new WGRBufferValue({ shdVarName: 'bufValue' });
@@ -65,7 +66,7 @@ class WGRObjBuilder {
 			}
 		}
 	}
-	private checkUniforms(shdSrc: WGRShderSrcType, uvalues: WGRBufferData[], utexes: { texView: GPUTextureView, viewDimension: string, shdVarName: string }[]): WGRShderSrcType {
+	private checkUniforms(shdSrc: WGRShderSrcType, uvalues: WGRBufferData[], utexes: WGRTexLayoutParam[]): WGRShderSrcType {
 		let shd = shdSrc.shaderSrc;
 		if (shd) {
 
@@ -215,7 +216,7 @@ class WGRObjBuilder {
 		// 哪些uniform是依据material变化的，哪些是共享的，哪些是transform等变换的数据
 
 		let texList = material.textures;
-		let utexes: { texView: GPUTextureView, viewDimension: string, shdVarName: string }[];
+		let utexes: WGRTexLayoutParam[];
 		// console.log("createRUnit(), texList: ", texList);
 		if (!isComputing) {
 			if (texList && texList.length > 0) {
@@ -227,7 +228,12 @@ class WGRObjBuilder {
 						tex.view = tex.texture.createView({ dimension });
 					}
 					tex.view.dimension = dimension;
-					utexes[i] = { texView: tex.view, viewDimension: tex.viewDimension, shdVarName: tex.shdVarName };
+					utexes[i] = {
+						texView: tex.view,
+						viewDimension: tex.viewDimension,
+						shdVarName: tex.shdVarName,
+						multisampled: tex.data.multisampled
+					};
 				}
 			}
 		}

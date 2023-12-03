@@ -49,7 +49,7 @@ class WGRPipelineContext implements WGRPipelineContextImpl {
 			const p = this.mPipelineParams;
 			if (p) {
 				this.mShader.build(p, this.rpass);
-				// console.log("WGRPipelineContext::init(), param:\n", p);
+				console.log("WGRPipelineContext::init(), p.multisampleEnabled:\n", p.multisampleEnabled);
 
 				let pipeGLayout: GPUPipelineLayout;
 				if (!this.uniformCtx.isLayoutAuto()) {
@@ -151,18 +151,6 @@ class WGRPipelineContext implements WGRPipelineContextImpl {
 			// }
 		}
 		return this.createRenderPipeline(pipelineParams);
-		/*
-		if (pipelineParams.buildDeferred) {
-			this.mPipelineParams = pipelineParams;
-		} else {
-			this.mShader.build(pipelineParams, this.rpass);
-		}
-		// console.log("createRenderPipeline(), pipelineParams:\n", pipelineParams);
-		if (!this.mPipelineParams) {
-			this.pipeline = ctx.device.createRenderPipeline(pipelineParams);
-		}
-		return this.pipeline;
-		//*/
 	}
 	createRenderPipeline(pipelineParams: WGRPipelineCtxParams): GPURenderPipeline {
 		const ctx = this.mWGCtx;

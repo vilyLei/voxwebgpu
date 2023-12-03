@@ -32,6 +32,7 @@ interface GPUSamplerBindingLayout {
  * See: https://gpuweb.github.io/gpuweb/#dictdef-gputexturebindinglayout
  */
 interface GPUTextureBindingLayout {
+	label?: string;
 	/**
 	 * The default value is "float", Possible values are(in GPUSamplerBindingType):
 	 * 		    "float","unfilterable-float","depth","sint","uint"

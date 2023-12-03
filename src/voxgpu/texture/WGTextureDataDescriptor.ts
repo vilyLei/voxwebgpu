@@ -19,8 +19,10 @@ interface DataTextureDataDescriptor {
 	data?: NumberArrayType;
 	datas?: NumberArrayType[];
 	type?: string;
+	multisampled?: boolean;
 }
 interface TextureDataDescriptor {
+	multisampled?: boolean;
 	uid?: number;
 	uuid?: string;
 	generateMipmaps?: boolean;

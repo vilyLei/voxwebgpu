@@ -1,15 +1,11 @@
-import { GPUSampler } from "../../gpu/GPUSampler";
-import { GPUTextureView } from "../../gpu/GPUTextureView";
 import { WGRUniform } from "./WGRUniform";
 import { BufDataParamType } from "../pipeline/WGRPipelineContextImpl";
-import { WGRUniformParam, WGRUniformTexParam, IWGRUniformContext } from "./IWGRUniformContext";
+import { WGRUniformParam, IWGRUniformContext, WGRTexLayoutParam } from "./IWGRUniformContext";
 import { GPUBindGroupLayout } from "../../gpu/GPUBindGroupLayout";
 import { SharedUniformObj, WGRUniformCtxInstance } from "./WGRUniformCtxInstance";
 import { WGRBindGroupContext } from "../pipeline/WGRBindGroupContext";
 import { WebGPUContext } from "../../gpu/WebGPUContext";
 import { WGRBufferData } from "../buffer/WGRBufferData";
-import { checkBufferData } from "../buffer/WGRBufferValue";
-import { createNewWRGBufferViewUid } from "../buffer/WGRBufferView";
 
 class WGRUniformContext implements IWGRUniformContext {
 	private mMap: Map<string, WGRUniformCtxInstance> = new Map();
@@ -81,7 +77,7 @@ class WGRUniformContext implements IWGRUniformContext {
 		}
 		return uniforms;
 	}
-	createUniformWithValues(layoutName: string, groupIndex: number, values: WGRBufferData[], texParams?: WGRUniformTexParam[], uniformAppend?: boolean): WGRUniform {
+	createUniformWithValues(layoutName: string, groupIndex: number, values: WGRBufferData[], texParams?: WGRTexLayoutParam[], uniformAppend?: boolean): WGRUniform {
 		if (this.mBindGCtx) {
 			const uctx = this.getUCtx(layoutName);
 			if (!uctx.ready) {
@@ -131,7 +127,7 @@ class WGRUniformContext implements IWGRUniformContext {
 		layoutName: string,
 		groupIndex: number,
 		bufDataParams?: BufDataParamType[],
-		texParams?: { texView: GPUTextureView, sampler?: GPUSampler }[],
+		texParams?: WGRTexLayoutParam[],
 		uniformAppend?: boolean
 	): WGRUniform | null {
 		if (this.mBindGCtx) {

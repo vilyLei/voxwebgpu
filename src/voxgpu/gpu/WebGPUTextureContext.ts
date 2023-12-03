@@ -54,7 +54,7 @@ class WebGPUTextureContext {
 			descriptor.format = ctx.presentationFormat;
 		}
 		if (descriptor.usage === undefined) {
-			descriptor.usage = GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.TEXTURE_BINDING;
+			descriptor.usage = GPUTextureUsage.COPY_SRC | GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.TEXTURE_BINDING;
 		}
 		return this.createTexture(descriptor);
 	}
