@@ -1,7 +1,6 @@
 struct VertexOutput {
 	@builtin(position) Position: vec4<f32>,
-	@location(0) projPos: vec4<f32>,
-	@location(1) objPos: vec4<f32>
+	@location(0) projPos: vec4<f32>
 }
 @vertex
 fn vertMain(
@@ -13,7 +12,6 @@ fn vertMain(
     let projPos = projMat * viewMat * wpos;
     output.Position = projPos;
     output.projPos = projPos;
-    output.objPos = objPos;
     return output;
 }
 
@@ -34,8 +32,7 @@ fn packDepthToRGBA(v: f32) -> vec4<f32> {
 
 @fragment
 fn fragMain(
-    @location(0) projPos: vec4<f32>,
-    @location(1) objPos: vec4<f32>
+    @location(0) projPos: vec4<f32>
 ) -> @location(0) vec4<f32> {
     let fragCoordZ = 0.5 * projPos[2] / projPos[3] + 0.5;
     var color4 = packDepthToRGBA( fragCoordZ );

@@ -171,13 +171,12 @@ class ShadowPassGraph extends WGRPassNodeGraph {
 		this.occHEntity.visible = false;
 	}
 }
-export class ShadowTest {
+export class PassGraphShadowTest {
 	private mRscene = new RendererScene();
-
 	private mGraph = new ShadowPassGraph();
 
 	initialize(): void {
-		console.log("ShadowTest::initialize() ...");
+		console.log("PassGraphShadowTest::initialize() ...");
 
 		this.mRscene.initialize({
 			canvasWith: 512,
@@ -222,11 +221,11 @@ export class ShadowTest {
 		this.mEntities.push(torus);
 		rc.addEntity(torus);
 
-		this.applyShadow();
+		this.buildShadow();
 		this.buildShadowCamFrame();
 	}
 
-	private applyShadow(): void {
+	private buildShadow(): void {
 		this.initShadowPass();
 		this.buildShadowReceiveEntity();
 	}
@@ -263,7 +262,6 @@ export class ShadowTest {
 		rc.addEventListener(MouseEvent.MOUSE_DOWN, this.mouseDown);
 		new MouseInteraction().initialize(rc, 0, false).setAutoRunning(true);
 	}
-	private mFlag = -1;
 	private buildShadowReceiveEntity(): void {
 
 		const graph = this.mGraph;
