@@ -145,6 +145,7 @@ class PBRParamsVec4Data implements MaterialUniformDataImpl {
 		pos += 4;
 		this.fogColor.toArray4(data as NumberArrayType, pos);
 		this.version++;
+		this.storage.update();
 	}
 }
 

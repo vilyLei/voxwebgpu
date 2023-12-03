@@ -1,14 +1,15 @@
 import { WGMaterialDescripter, WGMaterial } from "../../material/WGMaterial";
 import {
-	MaterialUniformVec4Data,
+	MaterialUniformMat44Data,
+	MaterialUniformVec4ArrayData,
 	WGRBufferData
 } from "../../material/MaterialUniformData";
 import Matrix4 from "../../math/Matrix4";
 import Vector3 from "../../math/Vector3";
 import shaderSrcCode from "../shaders/shadow/shadowReceive.wgsl";
+
 class BasePBRProperty {
-	matrix = new Matrix4();
-	params = new MaterialUniformVec4Data(new Float32Array([
+	params = new MaterialUniformVec4ArrayData(new Float32Array([
         -0.0005             // shadowBias
         , 0.0               // shadowNormalBias
         , 4                 // shadowRadius
@@ -21,24 +22,29 @@ class BasePBRProperty {
         , 1.0, 1.0, 1.0      // direc light nv(x,y,z)
         , 0.0                // undefined
     ]), "params", "frag");
-	matrixParam = new MaterialUniformVec4Data(this.matrix.getLocalFS32(), "shadowMatrix", "frag");
+	matrixParam = new MaterialUniformMat44Data(null, "shadowMatrix", "vert");
 	constructor() {
-		this.matrixParam.stride = 16;
 	}
-	
+	setShadowMatrix(mat4: Matrix4): void {
+		this.matrixParam.data = mat4.getLocalFS32();
+		this.matrixParam.update();
+	}
     setShadowParam(shadowBias: number, shadowNormalBias: number, shadowRadius: number): void {
 		let vs = this.params.data as Float32Array;
         vs[0] = shadowBias;
         vs[1] = shadowNormalBias;
         vs[2] = shadowRadius;
+		this.params.update();
     }
     setShadowIntensity(intensity: number): void {
 		let vs = this.params.data as Float32Array;
         vs[3] = intensity;
+		this.params.update();
     }
     setShadowRadius(radius: number): void {
 		let vs = this.params.data as Float32Array;
         vs[2] = radius;
+		this.params.update();
     }
     setShadowBias(bias: number): void {
 		let vs = this.params.data as Float32Array;
@@ -48,13 +54,15 @@ class BasePBRProperty {
 		let vs = this.params.data as Float32Array;
         vs[4] = width;
         vs[5] = height;
+		this.params.update();
     }
-    setLightDirec(v3d: Vector3DataType): void {
+    setDirec(v3d: Vector3DataType): void {
 		let v3 = new Vector3().setVector3(v3d);
 		let vs = this.params.data as Float32Array;
         vs[8] = -v3.x;
         vs[9] = -v3.y;
         vs[10] = -v3.z;
+		this.params.update();
     }
 	get uniformValues(): WGRBufferData[] {
 		return [this.params, this.matrixParam];
@@ -80,7 +88,8 @@ class ShadowReceiveMaterial extends WGMaterial {
 
 	__$build(): void {
 		
-		// console.log('ShadowReceiveMaterial::__$build() ...');
+		console.log('ShadowReceiveMaterial::__$build() ...');
+		console.log(this.property.matrixParam);
 		let uuid = 'shadow-receive-ins01';
 		let shaderSrc = {
 			shaderSrc: { code: shaderSrcCode, uuid }

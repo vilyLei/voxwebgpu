@@ -21,6 +21,11 @@ class BasePBRProperty {
 	isHorizonalBlur(): boolean {
 		return this.mType == 0;
 	}
+	setShadowRadius(r: number): BasePBRProperty {
+		let vs = this.param.data as Float32Array;
+		vs[3] = r;
+		return this;
+	}
 	setViewSize(pw: number, ph: number): BasePBRProperty {
 		let vs = this.viewParam.data as Float32Array;
 		vs[2] = pw;

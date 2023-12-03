@@ -63,6 +63,43 @@ class MaterialUniformVec4Data extends MaterialUniformData {
 	}
 }
 
+class MaterialUniformMat44Data extends MaterialUniformData {
+	constructor(data: NumberArrayType, shdVarName: string, visibility?: string) {
+		super(data, shdVarName, visibility);
+		this.shdVarFormat = 'mat4x4<f32>';
+		this.stride = 16;
+	}
+	set value(v: Float32Array) {
+		this.data = v;
+		this.version++;
+	}
+	get value(): Float32Array {
+		return this.data as Float32Array;
+	}
+	update(): void {
+		this.version++;
+	}
+}
+
+class MaterialUniformVec4ArrayData implements MaterialUniformDataImpl {
+	version = -1;
+	storage: MaterialUniformData;
+	constructor(data: Float32Array, shdVarName: string, visibility?: string) {
+
+		this.storage = new MaterialUniformData(data, shdVarName, visibility);
+		this.storage.arraying = true;
+		this.storage.shdVarFormat = 'array<vec4<f32>>';
+	}
+	get data(): NumberArrayDataType {
+		return this.storage.data;
+	}
+	update(): void {
+		// const data = this.storage.data;
+		this.version++;
+		this.storage.update();
+	}
+}
+
 
 class MaterialUniformVec4Wrapper {
 	property: Vector3;
@@ -107,6 +144,8 @@ export {
 	MaterialUniformData,
 	MaterialUniformColor4Data,
 	MaterialUniformVec4Data,
+	MaterialUniformMat44Data,
+	MaterialUniformVec4ArrayData,
 	MaterialUniformVec4Wrapper,
 	MaterialUniformColor4Wrapper,
 	WGRBufferData

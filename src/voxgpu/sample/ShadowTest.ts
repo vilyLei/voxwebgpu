@@ -14,6 +14,7 @@ import { SphereEntity } from "../entity/SphereEntity";
 import { PlaneEntity } from "../entity/PlaneEntity";
 import { ShadowOccBlurMaterial } from "../material/ShadowOccBlurMaterial";
 import { ShadowReceiveMaterial } from "./material/ShadowReceiveMaterial";
+import Matrix4 from "../math/Matrix4";
 
 export class ShadowTest {
 	private mRscene = new RendererScene();
@@ -52,7 +53,7 @@ export class ShadowTest {
 		// };
 		// let material = this.createDepthMaterial(shadowDepthShdSrc);
 		// this.createDepthEntities([material], true);
-		/*
+		// /*
 		let sph = new SphereEntity({
 			radius: 80,
 			transform: {
@@ -61,14 +62,14 @@ export class ShadowTest {
 		});
 		rc.addEntity(sph);
 
-		let plane = new PlaneEntity({
-			axisType: 1,
-			extent: [-600, -600, 1200, 1200],
-			transform: {
-				position: [0, -1, 0]
-			}
-		});
-		rc.addEntity(plane);
+		// let plane = new PlaneEntity({
+		// 	axisType: 1,
+		// 	extent: [-600, -600, 1200, 1200],
+		// 	transform: {
+		// 		position: [0, -1, 0]
+		// 	}
+		// });
+		// rc.addEntity(plane);
 		//*/
 
 		// let plane = new PlaneEntity({
@@ -84,8 +85,8 @@ export class ShadowTest {
 
 	}
 	private mShadowDepthRTT = { uuid: "rtt-shadow-depth", rttTexture: {}, shdVarName: 'shadowDepth' };
-	private mOccHRTT = { uuid: "rtt--occH", rttTexture: {}, shdVarName: 'shadowDepth' };
 	private mOccVRTT = { uuid: "rtt--occV", rttTexture: {}, shdVarName: 'shadowDepth' };
+	private mOccHRTT = { uuid: "rtt--occH", rttTexture: {}, shdVarName: 'shadowDepth' };
 	private applyShadowDepthRTT(): void {
 
 		let rc = this.mRscene;
@@ -140,9 +141,14 @@ export class ShadowTest {
 		// create a separate rtt rendering pass
 		let rPass = rc.createRTTPass({ colorAttachments });
 		let material = new ShadowOccBlurMaterial();
+
+		let ppt = material.property;
+		ppt.setShadowRadius(this.mShadowRadius);
+		ppt.setViewSize(this.mShadowMapW, this.mShadowMapH);
+
 		material.addTextures([this.mShadowDepthRTT]);
 		let extent = [-1, -1, 2, 2];
-		let rttEntity = new FixScreenPlaneEntity({ extent, materials:[material] });
+		let rttEntity = new FixScreenPlaneEntity({ extent, materials: [material] });
 		// 往pass中添加可渲染对象
 		rPass.addEntity(rttEntity);
 
@@ -151,7 +157,7 @@ export class ShadowTest {
 		let entity = new FixScreenPlaneEntity({ extent, flipY: true, textures: [{ diffuse: rttTex }] });
 		rc.addEntity(entity);
 	}
-	
+
 	private applyBuildDepthOccHRTT(): void {
 		let rc = this.mRscene;
 
@@ -170,10 +176,13 @@ export class ShadowTest {
 		// create a separate rtt rendering pass
 		let rPass = rc.createRTTPass({ colorAttachments });
 		let material = new ShadowOccBlurMaterial();
+		let ppt = material.property;
+		ppt.setShadowRadius(this.mShadowRadius);
+		ppt.setViewSize(this.mShadowMapW, this.mShadowMapH);
 		material.property.toHorizonalBlur();
 		material.addTextures([this.mOccVRTT]);
 		let extent = [-1, -1, 2, 2];
-		let rttEntity = new FixScreenPlaneEntity({ extent, materials:[material] });
+		let rttEntity = new FixScreenPlaneEntity({ extent, materials: [material] });
 		// 往pass中添加可渲染对象
 		rPass.addEntity(rttEntity);
 
@@ -237,7 +246,12 @@ export class ShadowTest {
 		entities.push(entity);
 		return entities;
 	}
-
+	private mShadowBias = -0.0005;
+    private mShadowRadius = 2.0;
+    private mShadowMapW = 512;
+    private mShadowMapH = 512;
+    private mShadowViewW = 1300;
+    private mShadowViewH = 1300;
 	private buildShadowCam(): void {
 
 		const cam = new Camera({
@@ -245,9 +259,10 @@ export class ShadowTest {
 			near: 0.1,
 			far: 1900,
 			perspective: false,
-			viewWidth: 1300,
-			viewHeight: 1300
+			viewWidth: this.mShadowViewW,
+			viewHeight: this.mShadowViewH
 		});
+		cam.update();
 		this.mShadowCamera = cam;
 		const rsc = this.mRscene;
 		let frameColors = [[1.0, 0.0, 1.0], [0.0, 1.0, 1.0], [1.0, 0.0, 0.0], [0.0, 1.0, 1.0]];
@@ -262,9 +277,29 @@ export class ShadowTest {
 	private mFlag = 0;
 	private buildShadowReceiveEntity(): void {
 
-		const diffuseTex = { diffuse: { url: "static/assets/default.jpg", flipY: true } };
+		let cam = this.mShadowCamera;
+		let testMatrix: Matrix4 = new Matrix4();
+        testMatrix.identity();
+        testMatrix.setScaleXYZ(0.5,0.5,0.5);
+        testMatrix.setTranslationXYZ(0.5,0.5,0.5);
+        console.log("testMatrix shadowMatrix: ");
+        console.log(testMatrix.toString());
+		let shadowMat = new Matrix4();
+		shadowMat.copyFrom( cam.viewProjMatrix );
+        shadowMat.append(testMatrix);
+
+		const diffuseTex = { diffuse: { url: "static/assets/default.jpg", flipY: true, shdVarName: 'shadowDepth' } };
 		let material = new ShadowReceiveMaterial();
-		material.addTextures([diffuseTex]);
+		let ppt = material.property;
+		// ppt.setShadowBias(this.mShadowBias);
+		
+        ppt.setShadowRadius(this.mShadowRadius);
+        ppt.setShadowBias(this.mShadowBias);
+        ppt.setShadowSize(this.mShadowMapW, this.mShadowMapH);
+		ppt.setShadowMatrix(shadowMat);
+        ppt.setDirec(cam.nv);
+
+		material.addTextures([this.mOccHRTT]);
 
 		const rc = this.mRscene;
 		let plane = new PlaneEntity({
@@ -278,12 +313,15 @@ export class ShadowTest {
 		rc.addEntity(plane);
 	}
 	private mouseDown = (evt: MouseEvent): void => {
-		this.mFlag ++;
-			if(this.mFlag == 1) {
-				// this.applyBuildDepthOccVRTT();
-			} else if(this.mFlag == 2) {
-				// this.applyBuildDepthOccHRTT();
-			}
+		this.mFlag++;
+		if (this.mFlag == 1) {
+			this.applyBuildDepthOccVRTT();
+			// this.buildShadowReceiveEntity();
+		} else if (this.mFlag == 2) {
+			this.applyBuildDepthOccHRTT();
+		} else if (this.mFlag == 3) {
+			this.buildShadowReceiveEntity();
+		}
 	};
 	run(): void {
 		this.mRscene.run();
