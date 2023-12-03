@@ -13,6 +13,7 @@ import { FixScreenPlaneEntity } from "../entity/FixScreenPlaneEntity";
 import { SphereEntity } from "../entity/SphereEntity";
 import { PlaneEntity } from "../entity/PlaneEntity";
 import { ShadowOccBlurMaterial } from "../material/ShadowOccBlurMaterial";
+import { ShadowReceiveMaterial } from "./material/ShadowReceiveMaterial";
 
 export class ShadowTest {
 	private mRscene = new RendererScene();
@@ -69,6 +70,15 @@ export class ShadowTest {
 		});
 		rc.addEntity(plane);
 		//*/
+
+		// let plane = new PlaneEntity({
+		// 	axisType: 1,
+		// 	extent: [-600, -600, 1200, 1200],
+		// 	transform: {
+		// 		position: [0, -1, 0]
+		// 	}
+		// });
+		// rc.addEntity(plane);
 
 		this.applyShadowDepthRTT();
 
@@ -250,12 +260,29 @@ export class ShadowTest {
 		new MouseInteraction().initialize(rc, 0, false).setAutoRunning(true);
 	}
 	private mFlag = 0;
+	private buildShadowReceiveEntity(): void {
+
+		const diffuseTex = { diffuse: { url: "static/assets/default.jpg", flipY: true } };
+		let material = new ShadowReceiveMaterial();
+		material.addTextures([diffuseTex]);
+
+		const rc = this.mRscene;
+		let plane = new PlaneEntity({
+			axisType: 1,
+			extent: [-600, -600, 1200, 1200],
+			transform: {
+				position: [0, -1, 0]
+			},
+			materials: [material]
+		});
+		rc.addEntity(plane);
+	}
 	private mouseDown = (evt: MouseEvent): void => {
 		this.mFlag ++;
 			if(this.mFlag == 1) {
-				this.applyBuildDepthOccVRTT();
+				// this.applyBuildDepthOccVRTT();
 			} else if(this.mFlag == 2) {
-				this.applyBuildDepthOccHRTT();
+				// this.applyBuildDepthOccHRTT();
 			}
 	};
 	run(): void {
