@@ -115,28 +115,15 @@ fn VSMShadow (uv: vec2<f32>, compare: f32 ) -> f32 {
 fn getVSMShadow( shadowMapSize: vec2<f32>, shadowBias: f32, shadowRadius: f32, shadowCoordP: vec4<f32> ) -> f32 {
 
     var shadow = 1.0;
-    
-    // shadowCoord.xyz /= shadowCoord.w;
-    // shadowCoord.z += shadowBias;
-
     var shadowCoord = vec4<f32>(shadowCoordP.xyz / vec3<f32>(shadowCoordP.w), shadowCoordP.z + shadowBias);
-    // shadowCoord.xyz /= shadowCoord.w;
-    // shadowCoord.z += shadowBias;
-    
-    // if ( something && something ) breaks ATI OpenGL shader compiler
-    // if ( all( something, something ) ) using this instead
-
+   
     let inFrustumVec = vec4<bool> ( shadowCoord.x >= 0.0, shadowCoord.x <= 1.0, shadowCoord.y >= 0.0, shadowCoord.y <= 1.0 );
     let inFrustum = all( inFrustumVec );
 
     let frustumTestVec = vec2<bool>( inFrustum, shadowCoord.z <= 1.0 );
-
-    let frustumTest = all( frustumTestVec );
-
     shadow = VSMShadow( shadowCoord.xy, shadowCoord.z );
-    if ( !frustumTest ) {
+    if ( !all( frustumTestVec ) ) {
         shadow = 1.0;
-        // shadow = VSMShadow( shadowCoord.xy, shadowCoord.z );
     }
     return shadow;
 }
@@ -152,13 +139,11 @@ fn fragMain(
     let shadowIntensity = 1.0 - params[0].w;
     shadow = clamp(shadow, 0.0, 1.0) * (1.0 - shadowIntensity) + shadowIntensity;
     var f = clamp(dot(worldNormal, params[2].xyz),0.0,1.0);
-    // f = f > 0.0001 ? min(shadow,clamp(f, shadowIntensity,1.0)) : shadowIntensity;
     if(f > 0.0001) {
         f = min(shadow,clamp(f, shadowIntensity,1.0));
     }else {
         f = shadowIntensity;
     }
     var color4 = vec4<f32>(color.xyz * vec3(f * 0.9 + 0.1), 1.0);
-    // var color4 = vec4<f32>(abs(worldNormal), 1.0) * textureSample(shadowDepthTexture, shadowDepthSampler, uv );
     return color4;
 }
