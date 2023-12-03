@@ -57,7 +57,7 @@ class Entity3D implements IRenderableEntity {
 
 	cameraViewing = true;
 
-	readonly rstate = new WGRUnitState();
+	rstate = new WGRUnitState();
 
 	/**
 	 * mouse interaction enabled
@@ -72,6 +72,7 @@ class Entity3D implements IRenderableEntity {
 		this.mDescParam = param;
 	}
 	protected init(param?: Entity3DParam): void {
+		this.rstate = param.rstate? param.rstate : new WGRUnitState();
 		this.cameraViewing = param.cameraViewing === false ? false : true;
 		let transformEnabled = !param || param.transformEnabled === undefined || param.transformEnabled === true;
 		let transform: ROTransform | IMatrix4 | Float32Array;

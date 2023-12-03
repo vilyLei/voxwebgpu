@@ -86,6 +86,7 @@ class ShadowPassGraph extends WGRPassNodeGraph {
 	addEntity(entity: Entity3D): ShadowPassGraph {
 
 		let pass = this.passes[0];
+		// let et = new Entity3D({ transform: entity.transform, rstate: entity.rstate });
 		let et = new Entity3D({ transform: entity.transform });
 		et.materials = this.mDepthMaterials;
 		et.geometry = entity.geometry;

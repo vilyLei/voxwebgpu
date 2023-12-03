@@ -6,11 +6,13 @@ import { WGRShderSrcType } from "../material/WGMaterialDescripter";
 import { WGRBufferData } from "../render/buffer/WGRBufferData";
 import { WGRMaterialPassViewImpl } from "../render/pipeline/WGRMaterialPassViewImpl";
 import { TransformParam } from "./TransformParam";
+import { WGRUnitState } from "../render/WGRUnitState";
 
 interface Entity3DParam {
 	cameraViewing?: boolean;
 	transformEnabled?: boolean;
 	transform?: ROTransform | IMatrix4 | Float32Array | TransformParam;
+	rstate?: WGRUnitState;
 	transufvShared?: boolean;
 	materials?: WGMaterial[];
 	geometry?: WGGeometry;
