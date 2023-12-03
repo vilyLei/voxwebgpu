@@ -4,7 +4,6 @@ import { MouseInteraction } from "../ui/MouseInteraction";
 import { GeomDataBuilder } from "../geometry/GeomDataBuilder";
 import { WGMaterial, WGRShderSrcType } from "../material/WGMaterial";
 import { Entity3D } from "../entity/Entity3D";
-import { WGGeometry } from "../geometry/WGGeometry";
 
 import shadowDepthWGSL from "./shaders/shadow/shadowDepth.wgsl";
 import Camera from "../view/Camera";
@@ -16,16 +15,14 @@ import { ShadowOccBlurMaterial } from "../material/ShadowOccBlurMaterial";
 import { ShadowReceiveMaterial } from "./material/ShadowReceiveMaterial";
 import Matrix4 from "../math/Matrix4";
 import { BoxEntity } from "../entity/BoxEntity";
+import { TorusEntity } from "../entity/TorusEntity";
 
-export class ShadowTest {
+export class BaseVSMShadowTest {
 	private mRscene = new RendererScene();
 	private mShadowCamera: Camera;
-	geomData = new GeomDataBuilder();
+	private mDebug = true;
 	initialize(): void {
-		console.log("ShadowTest::initialize() ...");
-
-		const body = document.body;
-		// body.style.background = '#000000';
+		console.log("BaseVSMShadowTest::initialize() ...");
 
 		this.mRscene.initialize({
 			canvasWith: 512,
@@ -49,21 +46,31 @@ export class ShadowTest {
 				position: [-230.0, 100.0, -200.0]
 			}
 		});
-		this.mEntities.push( sph );
+		this.mEntities.push(sph);
 		rc.addEntity(sph);
 
 		let box = new BoxEntity({
-			minPos:[-30,-30,-30],
-			maxPos:[130,230,80],
+			minPos: [-30, -30, -30],
+			maxPos: [130, 230, 80],
 			transform: {
 				position: [160.0, 100.0, -210.0],
-				rotation: [50,130,80]
+				rotation: [50, 130, 80]
 			}
 		});
-		this.mEntities.push( box );
+		this.mEntities.push(box);
 		rc.addEntity(box);
 
-		this.applyShadowDepthRTT();
+		let torus = new TorusEntity({
+			transform: {
+				position: [160.0, 100.0, 210.0],
+				rotation: [50, 30, 80]
+			}
+		});
+		this.mEntities.push(torus);
+		rc.addEntity(torus);
+		if (!this.mDebug) {
+			this.applyShadow();
+		}
 
 	}
 	private mShadowDepthRTT = { uuid: "rtt-shadow-depth", rttTexture: {}, shdVarName: 'shadowDepth' };
@@ -100,7 +107,7 @@ export class ShadowTest {
 			rPass.addEntity(es[i]);
 		}
 
-		// 使用rtt纹理
+		// 显示渲染结果
 		extent = [-0.95, -0.95, 0.4, 0.4];
 		let entity = new FixScreenPlaneEntity({ extent, flipY: true, textures: [{ diffuse: rttTex }] });
 		rc.addEntity(entity);
@@ -131,10 +138,9 @@ export class ShadowTest {
 		material.addTextures([this.mShadowDepthRTT]);
 		let extent = [-1, -1, 2, 2];
 		let rttEntity = new FixScreenPlaneEntity({ extent, materials: [material] });
-		// 往pass中添加可渲染对象
 		rPass.addEntity(rttEntity);
 
-		// 使用rtt纹理
+		// 显示渲染结果
 		extent = [-0.5, -0.95, 0.4, 0.4];
 		let entity = new FixScreenPlaneEntity({ extent, flipY: true, textures: [{ diffuse: rttTex }] });
 		rc.addEntity(entity);
@@ -165,10 +171,9 @@ export class ShadowTest {
 		material.addTextures([this.mOccVRTT]);
 		let extent = [-1, -1, 2, 2];
 		let rttEntity = new FixScreenPlaneEntity({ extent, materials: [material] });
-		// 往pass中添加可渲染对象
 		rPass.addEntity(rttEntity);
 
-		// 使用rtt纹理
+		// 显示渲染结果
 		extent = [-0.05, -0.95, 0.4, 0.4];
 		let entity = new FixScreenPlaneEntity({ extent, flipY: true, textures: [{ diffuse: rttTex }] });
 		rc.addEntity(entity);
@@ -196,12 +201,12 @@ export class ShadowTest {
 		let entities = [];
 		let ls = this.mEntities;
 		let tot = ls.length;
-		for(let i = 0; i < tot; ++i) {
+		for (let i = 0; i < tot; ++i) {
 			let et = ls[i];
-			let entity = new Entity3D({transform: et.transform});
+			let entity = new Entity3D({ transform: et.transform });
 			entity.materials = materials;
 			entity.geometry = et.geometry;
-			entities.push( entity );
+			entities.push(entity);
 			if (flag) {
 				rc.addEntity(entity);
 			}
@@ -209,11 +214,11 @@ export class ShadowTest {
 		return entities;
 	}
 	private mShadowBias = -0.0005;
-    private mShadowRadius = 2.0;
-    private mShadowMapW = 512;
-    private mShadowMapH = 512;
-    private mShadowViewW = 1300;
-    private mShadowViewH = 1300;
+	private mShadowRadius = 2.0;
+	private mShadowMapW = 512;
+	private mShadowMapH = 512;
+	private mShadowViewW = 1300;
+	private mShadowViewH = 1300;
 	private buildShadowCam(): void {
 
 		const cam = new Camera({
@@ -236,29 +241,29 @@ export class ShadowTest {
 		rc.addEventListener(MouseEvent.MOUSE_DOWN, this.mouseDown);
 		new MouseInteraction().initialize(rc, 0, false).setAutoRunning(true);
 	}
-	private mFlag = 0;
+	private mFlag = -1;
 	private buildShadowReceiveEntity(): void {
 
 		let cam = this.mShadowCamera;
 		let transMatrix = new Matrix4();
-        transMatrix.setScaleXYZ(0.5,-0.5,0.5);
-        transMatrix.setTranslationXYZ(0.5,0.5,0.5);
-        // console.log("transMatrix shadowMatrix: ");
-        // console.log(transMatrix.toString());
+		transMatrix.setScaleXYZ(0.5, -0.5, 0.5);
+		transMatrix.setTranslationXYZ(0.5, 0.5, 0.5);
+		// console.log("transMatrix shadowMatrix: ");
+		// console.log(transMatrix.toString());
 		let shadowMat = new Matrix4();
-		shadowMat.copyFrom( cam.viewProjMatrix );
-        shadowMat.append(transMatrix);
+		shadowMat.copyFrom(cam.viewProjMatrix);
+		shadowMat.append(transMatrix);
 
 		const diffuseTex = { diffuse: { url: "static/assets/default.jpg", flipY: true, shdVarName: 'shadowDepth' } };
 		let material = new ShadowReceiveMaterial();
 		let ppt = material.property;
 		// ppt.setShadowBias(this.mShadowBias);
-		
-        ppt.setShadowRadius(this.mShadowRadius);
-        ppt.setShadowBias(this.mShadowBias);
-        ppt.setShadowSize(this.mShadowMapW, this.mShadowMapH);
+
+		ppt.setShadowRadius(this.mShadowRadius);
+		ppt.setShadowBias(this.mShadowBias);
+		ppt.setShadowSize(this.mShadowMapW, this.mShadowMapH);
 		ppt.setShadowMatrix(shadowMat);
-        ppt.setDirec(cam.nv);
+		ppt.setDirec(cam.nv);
 
 		material.addTextures([this.mOccHRTT]);
 
@@ -273,15 +278,25 @@ export class ShadowTest {
 		});
 		rc.addEntity(plane);
 	}
+	private applyShadow(): void {
+
+		this.applyShadowDepthRTT();
+		this.applyBuildDepthOccVRTT();
+		this.applyBuildDepthOccHRTT();
+		this.buildShadowReceiveEntity();
+	}
 	private mouseDown = (evt: MouseEvent): void => {
 		this.mFlag++;
-		if (this.mFlag == 1) {
-			this.applyBuildDepthOccVRTT();
-			// this.buildShadowReceiveEntity();
-		} else if (this.mFlag == 2) {
-			this.applyBuildDepthOccHRTT();
-		} else if (this.mFlag == 3) {
-			this.buildShadowReceiveEntity();
+		if (this.mDebug) {
+			if (this.mFlag == 0) {
+				this.applyShadowDepthRTT();
+			} else if (this.mFlag == 1) {
+				this.applyBuildDepthOccVRTT();
+			} else if (this.mFlag == 2) {
+				this.applyBuildDepthOccHRTT();
+			} else if (this.mFlag == 3) {
+				this.buildShadowReceiveEntity();
+			}
 		}
 	};
 	run(): void {

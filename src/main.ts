@@ -80,7 +80,8 @@
 // import { MaskTextureEffect as Demo } from "./voxgpu/sample/MaskTextureEffect";
 // import { FogTest as Demo } from "./voxgpu/sample/FogTest";
 // import { OrthoCamraTest as Demo } from "./voxgpu/sample/OrthoCamraTest";
-import { ShadowTest as Demo } from "./voxgpu/sample/ShadowTest";
+import { BaseVSMShadowTest as Demo } from "./voxgpu/sample/BaseVSMShadowTest";
+// import { ShadowTest as Demo } from "./voxgpu/sample/ShadowTest";
 
 
 
