@@ -82,7 +82,8 @@
 // import { OrthoCamraTest as Demo } from "./voxgpu/sample/OrthoCamraTest";
 // import { BaseVSMShadowTest as Demo } from "./voxgpu/sample/BaseVSMShadowTest";
 // import { PassGraphShadowTest as Demo } from "./voxgpu/sample/PassGraphShadowTest";
-import { ShadowTest as Demo } from "./voxgpu/sample/ShadowTest";
+// import { ShadowTest as Demo } from "./voxgpu/sample/ShadowTest";
+import { PBRShadowTest as Demo } from "./voxgpu/sample/PBRShadowTest";
 
 
 

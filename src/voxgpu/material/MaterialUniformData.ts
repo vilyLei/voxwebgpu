@@ -2,6 +2,7 @@ import Vector4 from "../math/Vector4";
 import { WGRBufferData } from "../render/buffer/WGRBufferData";
 import Color4 from "./Color4";
 import Vector3 from "../math/Vector3";
+import IMatrix4 from "../math/IMatrix4";
 
 interface MaterialUniformDataImpl extends WGRBufferData {
 	update(): void;
@@ -76,6 +77,11 @@ class MaterialUniformMat44Data extends MaterialUniformData {
 	get value(): Float32Array {
 		return this.data as Float32Array;
 	}
+	
+	setShadowMatrix(mat4: IMatrix4): void {
+		this.data = mat4.getLocalFS32();
+		this.update();
+	}
 	update(): void {
 		this.version++;
 	}
@@ -89,6 +95,9 @@ class MaterialUniformVec4ArrayData implements MaterialUniformDataImpl {
 		this.storage = new MaterialUniformData(data, shdVarName, visibility);
 		this.storage.arraying = true;
 		this.storage.shdVarFormat = 'array<vec4<f32>>';
+	}
+	set data(ds: NumberArrayDataType) {
+		this.storage.data = ds;
 	}
 	get data(): NumberArrayDataType {
 		return this.storage.data;

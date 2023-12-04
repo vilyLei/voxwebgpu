@@ -234,6 +234,61 @@ class FogParamDataWrapper extends MaterialUniformVec4Wrapper {
 	}
 }
 
+
+class VSMParamUniformData extends MaterialUniformVec4ArrayData {
+	constructor(data: Float32Array, shdVarName: string, visibility?: string) {
+		super(data, shdVarName, visibility);
+		this.data = new Float32Array([
+			-0.0005             // shadowBias
+			, 0.0               // shadowNormalBias
+			, 4                 // shadowRadius
+			, 0.4               // shadow intensity
+	
+			, 512, 512           // shadowMapSize(width, height)
+			, 0.0, 0.0           // undefined
+	
+			
+			, 1.0, 1.0, 1.0      // direc light nv(x,y,z)
+			, 0.0                // undefined
+		])
+	}
+    setParam(shadowBias: number, shadowNormalBias: number, shadowRadius: number): void {
+		let vs = this.data as Float32Array;
+        vs[0] = shadowBias;
+        vs[1] = shadowNormalBias;
+        vs[2] = shadowRadius;
+		this.update();
+    }
+    setIntensity(intensity: number): void {
+		let vs = this.data as Float32Array;
+        vs[3] = intensity;
+		this.update();
+    }
+    setShadowRadius(radius: number): void {
+		let vs = this.data as Float32Array;
+        vs[2] = radius;
+		this.update();
+    }
+    setShadowBias(bias: number): void {
+		let vs = this.data as Float32Array;
+        vs[0] = bias;
+    }
+    setShadowSize(width: number, height: number): void {
+		let vs = this.data as Float32Array;
+        vs[4] = width;
+        vs[5] = height;
+		this.update();
+    }
+    setDirec(v3d: Vector3DataType): void {
+		let v3 = new Vector3().setVector3(v3d);
+		let vs = this.data as Float32Array;
+        vs[8] = -v3.x;
+        vs[9] = -v3.y;
+        vs[10] = -v3.z;
+		this.update();
+    }
+}
+
 class BaseLightData implements WGRBufferData {
 	version = -1;
 	storage: MaterialUniformData;
@@ -329,20 +384,9 @@ class BasePBRProperty {
 		0.1, 0.1, 0.1, 1, // ambient
 		1, 1, 0, 0, // uvParam
 	]), "params", "frag");
-	vsmParams = new MaterialUniformVec4ArrayData(new Float32Array([
-        -0.0005             // shadowBias
-        , 0.0               // shadowNormalBias
-        , 4                 // shadowRadius
-        , 0.4               // shadow intensity
-
-        , 512, 512           // shadowMapSize(width, height)
-        , 0.0, 0.0           // undefined
-
-        
-        , 1.0, 1.0, 1.0      // direc light nv(x,y,z)
-        , 0.0                // undefined
-    ]), "vsmParams", "frag");
-	matrixParam = new MaterialUniformMat44Data(null, "shadowMatrix", "vert");
+	// vsmParams = new MaterialUniformVec4ArrayData(new Float32Array([
+	vsmParams = new VSMParamUniformData(null, "vsmParams", "frag");
+	shadowMatrix = new MaterialUniformMat44Data(null, "shadowMatrix", "vert");
 
 	lightParam = new LightParamData(new Uint32Array([1, 0, 0, 0]), "lightParam", "frag");
 	lights = new BaseLightData(new Float32Array([0.0, 200.0, 0, 0.0001]), "lights", "frag");
@@ -367,6 +411,7 @@ class BasePBRProperty {
 	inverseMask = false;
 	fogEnabled = false;
 	fogExp2Enabled = false;
+	shadowReceived = false;
 	constructor() {
 		let armsSrc = this.armsParams;
 		this.arms = new ArmsDataWrapper(armsSrc.arms, armsSrc);
@@ -385,6 +430,9 @@ class BasePBRProperty {
 	get uniformValues(): WGRBufferData[] {
 		// return [this.ambient, this.armsParams, this.uvParam, this.params, this.lightParam, this.lights, this.lightColors];
 		// return [this.armsParams, this.uvParam, this.params, this.lightParam, this.lights, this.lightColors];
+		if(this.shadowReceived) {
+			return [this.vsmParams, this.shadowMatrix,this.armsParams, this.params, this.lightParam, this.lights, this.lightColors];
+		}
 		return [this.armsParams, this.params, this.lightParam, this.lights, this.lightColors];
 	}
 	setLightParam(param: LightShaderDataParam): void {
@@ -458,6 +506,9 @@ class BasePBRMaterial extends WGMaterial {
 		}
 		if(ppt.fogEnabled) {
 			preCode += '#define USE_FOG\n';
+		}
+		if(ppt.shadowReceived) {
+			preCode += '#define USE_VSM_SHADOW\n';
 		}
 		if(ts) {
 			for(let i = 0; i < ts.length; ++i) {
