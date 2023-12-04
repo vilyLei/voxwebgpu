@@ -4,7 +4,7 @@ import { MouseInteraction } from "../ui/MouseInteraction";
 import { WGMaterial, WGRShderSrcType } from "../material/WGMaterial";
 import { Entity3D } from "../entity/Entity3D";
 
-import shadowDepthWGSL from "./shaders/shadow/shadowDepth.wgsl";
+import shadowDepthWGSL from "../material/shader/shadow/shadowDepth.wgsl";
 import Camera from "../view/Camera";
 import { BoundsFrameEntity } from "../entity/BoundsFrameEntity";
 import { FixScreenPlaneEntity } from "../entity/FixScreenPlaneEntity";
@@ -23,7 +23,7 @@ class ShadowPassGraph extends WGRPassNodeGraph {
 	private entities: Entity3D[] = [];
 	private mDepthMaterials: WGMaterial[];
 
-	shadowDepthRTT = { uuid: "rtt-shadow-depth", rttTexture: {}, shdVarName: 'shadowDepth' };
+	shadowDepthRTT = { uuid: "rtt-shadow-depth", rttTexture: {}, shdVarName: 'shadowData' };
 	depAttachment: WGRPassColorAttachment = {
 		texture: this.shadowDepthRTT,
 		// green clear background color
@@ -32,8 +32,8 @@ class ShadowPassGraph extends WGRPassNodeGraph {
 		storeOp: "store"
 	};
 
-	occVRTT = { uuid: "rtt--occV", rttTexture: {}, shdVarName: 'shadowDepth' };
-	occHRTT = { uuid: "rtt--occH", rttTexture: {}, shdVarName: 'shadowDepth' };
+	occVRTT = { uuid: "rtt-shadow-occV", rttTexture: {}, shdVarName: 'shadowData' };
+	occHRTT = { uuid: "rtt-shadow-occH", rttTexture: {}, shdVarName: 'shadowData' };
 	occVEntity: FixScreenPlaneEntity;
 	occHEntity: FixScreenPlaneEntity;
 
@@ -89,8 +89,10 @@ class ShadowPassGraph extends WGRPassNodeGraph {
 		let et = new Entity3D({ transform: entity.transform });
 		et.materials = this.mDepthMaterials;
 		et.geometry = entity.geometry;
+		et.rstate.copyFrom(entity.rstate);
 		this.entities.push(et);
 		pass.addEntity(et);
+		
 		return this;
 	}
 	addEntities(entities: Entity3D[]): ShadowPassGraph {
@@ -173,7 +175,6 @@ class ShadowPassGraph extends WGRPassNodeGraph {
 }
 export class ShadowTest {
 	private mRscene = new RendererScene();
-
 	private mGraph = new ShadowPassGraph();
 
 	initialize(): void {
@@ -222,11 +223,11 @@ export class ShadowTest {
 		this.mEntities.push(torus);
 		rc.addEntity(torus);
 
-		this.applyShadow();
+		this.buildShadow();
 		this.buildShadowCamFrame();
 	}
 
-	private applyShadow(): void {
+	private buildShadow(): void {
 		this.initShadowPass();
 		this.buildShadowReceiveEntity();
 	}
@@ -263,7 +264,6 @@ export class ShadowTest {
 		rc.addEventListener(MouseEvent.MOUSE_DOWN, this.mouseDown);
 		new MouseInteraction().initialize(rc, 0, false).setAutoRunning(true);
 	}
-	private mFlag = -1;
 	private buildShadowReceiveEntity(): void {
 
 		const graph = this.mGraph;

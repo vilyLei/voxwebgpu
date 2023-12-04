@@ -32,8 +32,8 @@ class ShadowPassGraph extends WGRPassNodeGraph {
 		storeOp: "store"
 	};
 
-	occVRTT = { uuid: "rtt--occV", rttTexture: {}, shdVarName: 'shadowData' };
-	occHRTT = { uuid: "rtt--occH", rttTexture: {}, shdVarName: 'shadowData' };
+	occVRTT = { uuid: "rtt-shadow-occV", rttTexture: {}, shdVarName: 'shadowData' };
+	occHRTT = { uuid: "rtt-shadow-occH", rttTexture: {}, shdVarName: 'shadowData' };
 	occVEntity: FixScreenPlaneEntity;
 	occHEntity: FixScreenPlaneEntity;
 

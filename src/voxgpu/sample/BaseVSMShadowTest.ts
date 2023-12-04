@@ -70,11 +70,10 @@ export class BaseVSMShadowTest {
 		if (!this.mDebug) {
 			this.applyShadow();
 		}
-
 	}
 	private mShadowDepthRTT = { uuid: "rtt-shadow-depth", rttTexture: {}, shdVarName: 'shadowData' };
-	private mOccVRTT = { uuid: "rtt--occV", rttTexture: {}, shdVarName: 'shadowData' };
-	private mOccHRTT = { uuid: "rtt--occH", rttTexture: {}, shdVarName: 'shadowData' };
+	private mOccVRTT = { uuid: "rtt-shadow-occV", rttTexture: {}, shdVarName: 'shadowData' };
+	private mOccHRTT = { uuid: "rtt-shadow-occH", rttTexture: {}, shdVarName: 'shadowData' };
 	private applyShadowDepthRTT(): void {
 
 		let rc = this.mRscene;

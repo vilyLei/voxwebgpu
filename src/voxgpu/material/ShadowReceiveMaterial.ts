@@ -13,7 +13,7 @@ class BasePBRProperty {
         -0.0005             // shadowBias
         , 0.0               // shadowNormalBias
         , 4                 // shadowRadius
-        , 0.8               // shadow intensity
+        , 0.4               // shadow intensity
 
         , 512, 512           // shadowMapSize(width, height)
         , 0.0, 0.0           // undefined

@@ -127,6 +127,30 @@ fn getVSMShadow( shadowMapSize: vec2<f32>, shadowBias: f32, shadowRadius: f32, s
     return shadow;
 }
 
+fn getVSMShadowFactor(worldNormal: vec3<f32>, svPos: vec4<f32>) -> f32 {
+    
+    var shadow = getVSMShadow( params[1].xy, params[0].x, params[0].z, svPos );
+    let shadowIntensity = 1.0 - params[0].w;
+    shadow = clamp(shadow, 0.0, 1.0) * (1.0 - shadowIntensity) + shadowIntensity;
+    var f = clamp(dot(worldNormal,params[2].xyz),0.001,1.0);
+    // shadow = f > 0.0001 ? min(shadow,clamp(f, shadowIntensity,1.0)) : shadowIntensity;
+    if(f > 0.0001) {
+        shadow = min(shadow,clamp(f, shadowIntensity,1.0));
+    }else {
+        shadow = shadowIntensity;
+    }
+    f = params[1].z;
+    return shadow * (1.0 - f) + f;
+}
+fn useVSMShadow(worldNormal: vec3<f32>, svPos: vec4<f32>, color: ptr<function, vec4<f32>>) {
+    
+    let factor = getVSMShadowFactor(worldNormal, svPos);
+    // color.xyz *= vec3(factor);
+    let c = *color;
+    (*color) = vec4<f32>(c.xyz * vec3<f32>(factor), c.w);
+}
+
+
 @fragment
 fn fragMain(
     @location(0) uv: vec2<f32>,
@@ -134,15 +158,17 @@ fn fragMain(
     @location(2) svPos: vec4<f32>
 ) -> @location(0) vec4<f32> {
     var color = vec4<f32>(1.0);
-    var shadow = getVSMShadow(params[1].xy, params[0].x, params[0].z, svPos );
-    let shadowIntensity = 1.0 - params[0].w;
-    shadow = clamp(shadow, 0.0, 1.0) * (1.0 - shadowIntensity) + shadowIntensity;
-    var f = clamp(dot(worldNormal, params[2].xyz),0.0,1.0);
-    if(f > 0.0001) {
-        f = min(shadow,clamp(f, shadowIntensity,1.0));
-    }else {
-        f = shadowIntensity;
-    }
-    var color4 = vec4<f32>(color.xyz * vec3(f * 0.9 + 0.1), 1.0);
+    // var shadow = getVSMShadow(params[1].xy, params[0].x, params[0].z, svPos );
+    // let shadowIntensity = 1.0 - params[0].w;
+    // shadow = clamp(shadow, 0.0, 1.0) * (1.0 - shadowIntensity) + shadowIntensity;
+    // var f = clamp(dot(worldNormal, params[2].xyz),0.0,1.0);
+    // if(f > 0.0001) {
+    //     f = min(shadow,clamp(f, shadowIntensity,1.0));
+    // }else {
+    //     f = shadowIntensity;
+    // }
+    // var color4 = vec4<f32>(color.xyz * vec3(f * 0.9 + 0.1), 1.0);
+    var color4 = color;
+    useVSMShadow(worldNormal, svPos, &color4);
     return color4;
 }
