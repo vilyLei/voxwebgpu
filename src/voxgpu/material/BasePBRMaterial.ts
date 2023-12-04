@@ -13,7 +13,8 @@ import { WGShaderConstructor } from "./shader/WGShaderConstructor";
 import {
 	MaterialUniformDataImpl,
 	MaterialUniformData,
-	MaterialUniformColor4Data,
+	MaterialUniformVec4ArrayData,
+	MaterialUniformMat44Data,
 	MaterialUniformVec4Data,
 	MaterialUniformVec4Wrapper,
 	MaterialUniformColor4Wrapper,
@@ -107,6 +108,8 @@ class PBRParamsVec4Data implements MaterialUniformDataImpl {
 	specularFactor = new Color4();
 	fogParam = new Vector3();
 	fogColor = new Color4();
+	ambient = new Color4();
+	uvParam = new Vector3();
 	constructor(data: Float32Array, shdVarName: string, visibility?: string) {
 
 		this.storage = new MaterialUniformData(data, shdVarName, visibility);
@@ -127,6 +130,10 @@ class PBRParamsVec4Data implements MaterialUniformDataImpl {
 		this.fogParam.fromArray4(data, pos);
 		pos += 4;
 		this.fogColor.fromArray4(data, pos);
+		pos += 4;
+		this.ambient.fromArray4(data, pos);
+		pos += 4;
+		this.uvParam.fromArray4(data, pos);
 	}
 	update(): void {
 		const data = this.storage.data;
@@ -144,6 +151,10 @@ class PBRParamsVec4Data implements MaterialUniformDataImpl {
 		this.fogParam.toArray4(data as NumberArrayType, pos);
 		pos += 4;
 		this.fogColor.toArray4(data as NumberArrayType, pos);
+		pos += 4;
+		this.ambient.toArray4(data as NumberArrayType, pos);
+		pos += 4;
+		this.uvParam.toArray4(data as NumberArrayType, pos);
 		this.version++;
 		this.storage.update();
 	}
@@ -291,12 +302,12 @@ class LightParamData extends MaterialUniformVec4Data {
 	}
 }
 class BasePBRProperty {
-	ambient = new MaterialUniformColor4Data(new Float32Array([0.1, 0.1, 0.1, 1]), "ambient", "frag");
+	// ambient = new MaterialUniformColor4Data(new Float32Array([0.1, 0.1, 0.1, 1]), "ambient", "frag");
 	/**
 	 * default values, arms: [1, 1, 1, 0], armsBase: [0, 0, 0, 0]
 	 */
 	private armsParams = new BasePBRArmsData(new Float32Array([1, 1, 1, 0, 0, 0, 0, 0]), "armsParams", "frag");
-	uvParam = new MaterialUniformVec4Data(new Float32Array([1, 1, 0, 0]), "uvParam", "frag");
+	// uvParam = new MaterialUniformVec4Data(new Float32Array([1, 1, 0, 0]), "uvParam", "frag");
 	/**
 	 * albedo: [1, 1, 1, 1],
 	 * fresnel: [0, 0, 0, 0],
@@ -315,7 +326,23 @@ class BasePBRProperty {
 
 		600, 3500, 0, 0.0005,	// fogParam
 		1.0, 1.0, 1.0, 1.0,	// fogColor
+		0.1, 0.1, 0.1, 1, // ambient
+		1, 1, 0, 0, // uvParam
 	]), "params", "frag");
+	vsmParams = new MaterialUniformVec4ArrayData(new Float32Array([
+        -0.0005             // shadowBias
+        , 0.0               // shadowNormalBias
+        , 4                 // shadowRadius
+        , 0.4               // shadow intensity
+
+        , 512, 512           // shadowMapSize(width, height)
+        , 0.0, 0.0           // undefined
+
+        
+        , 1.0, 1.0, 1.0      // direc light nv(x,y,z)
+        , 0.0                // undefined
+    ]), "vsmParams", "frag");
+	matrixParam = new MaterialUniformMat44Data(null, "shadowMatrix", "vert");
 
 	lightParam = new LightParamData(new Uint32Array([1, 0, 0, 0]), "lightParam", "frag");
 	lights = new BaseLightData(new Float32Array([0.0, 200.0, 0, 0.0001]), "lights", "frag");
@@ -328,6 +355,8 @@ class BasePBRProperty {
 	specularFactor: MaterialUniformColor4Wrapper;
 	fogParam: FogParamDataWrapper;
 	fogColor: MaterialUniformColor4Wrapper;
+	ambient: MaterialUniformColor4Wrapper;
+	uvParam: MaterialUniformVec4Wrapper;
 
 	arms: ArmsDataWrapper;
 	armsBase: ArmsDataWrapper;
@@ -350,9 +379,13 @@ class BasePBRProperty {
 		this.specularFactor = new MaterialUniformColor4Wrapper(params.specularFactor, params);
 		this.fogParam = new FogParamDataWrapper(params.fogParam, params);
 		this.fogColor = new MaterialUniformColor4Wrapper(params.fogColor, params);
+		this.ambient = new MaterialUniformColor4Wrapper(params.ambient, params);
+		this.uvParam = new MaterialUniformVec4Wrapper(params.uvParam, params);
 	}
 	get uniformValues(): WGRBufferData[] {
-		return [this.ambient, this.armsParams, this.uvParam, this.params, this.lightParam, this.lights, this.lightColors];
+		// return [this.ambient, this.armsParams, this.uvParam, this.params, this.lightParam, this.lights, this.lightColors];
+		// return [this.armsParams, this.uvParam, this.params, this.lightParam, this.lights, this.lightColors];
+		return [this.armsParams, this.params, this.lightParam, this.lights, this.lightColors];
 	}
 	setLightParam(param: LightShaderDataParam): void {
 		if (param) {

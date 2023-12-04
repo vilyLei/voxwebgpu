@@ -29,5 +29,9 @@ fn vertMain(
     output.worldCamPos = (inverseM44(viewMat) * vec4<f32>(0.0, 0.0, 0.0, 1.0)).xyz;
     output.worldPos = wpos;
     output.viewPos = viewPos;
+    
+    #ifdef USE_VSM_SHADOW
+    output.svPos = shadowMatrix * wpos;
+    #endif
     return output;
 }

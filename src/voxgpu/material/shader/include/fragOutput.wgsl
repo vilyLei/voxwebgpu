@@ -75,7 +75,8 @@ fn calcColor4(calcParam: CalcColor4Param) -> vec4<f32> {
     var roughness = arms.y;
     var ao = arms.x;
 
-	var texUV = uv.xy * uvParam.xy;
+	// var texUV = uv.xy * uvParam.xy;
+	var texUV = uv.xy * params[8].xy;
 	let worldPosition = worldPos.xyz;
 
 	let V = normalize(worldCamPos.xyz - worldPosition);
@@ -202,7 +203,8 @@ fn calcColor4(calcParam: CalcColor4Param) -> vec4<f32> {
 
 	// ambient lighting (note that the next IBL tutorial will replace
     // this ambient lighting with environment lighting).
-	var amb = ambient.xyz;
+	// var amb = ambient.xyz;
+	var amb = params[7].xyz;
 	#ifdef USE_EMISSIVE_MAP
 	amb += textureSample(emissiveTexture, emissiveSampler, texUV).xyz;
 	// return vec4<f32>(amb, 1.0);
@@ -233,6 +235,11 @@ fn calcColor4(calcParam: CalcColor4Param) -> vec4<f32> {
 	#endif
 	#else
 	color4 = vec4<f32>(color, 1.0);
+	#endif
+
+	
+	#ifdef USE_VSM_SHADOW	
+    useVSMShadow(worldNormal, calcParam.svPos, &color4);
 	#endif
 	#ifdef USE_FOG
     useFog( &color4, calcParam);

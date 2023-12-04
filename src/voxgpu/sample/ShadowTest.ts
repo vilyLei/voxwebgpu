@@ -1,7 +1,7 @@
 import MouseEvent from "../event/MouseEvent";
 import { RendererScene } from "../rscene/RendererScene";
 import { MouseInteraction } from "../ui/MouseInteraction";
-import { WGMaterial, WGRShderSrcType } from "../material/WGMaterial";
+import { WGMaterial, WGRShderSrcType, WGTextureDataDescriptor } from "../material/WGMaterial";
 import { Entity3D } from "../entity/Entity3D";
 
 import shadowDepthWGSL from "../material/shader/shadow/shadowDepth.wgsl";
@@ -18,6 +18,7 @@ import { TorusEntity } from "../entity/TorusEntity";
 import { WGRPassColorAttachment } from "../render/pipeline/WGRPassColorAttachment";
 
 import { WGRPassNodeGraph } from "../render/pass/WGRPassNodeGraph";
+import { SpecularEnvBrnTexture } from "../texture/SpecularEnvBrnTexture";
 class ShadowPassGraph extends WGRPassNodeGraph {
 
 	private entities: Entity3D[] = [];
@@ -296,6 +297,20 @@ export class ShadowTest {
 			materials: [material]
 		});
 		rc.addEntity(plane);
+	}
+	
+	private hdrEnvtex = new SpecularEnvBrnTexture();
+	private createBaseTextures(): WGTextureDataDescriptor[] {
+		const albedoTex = { albedo: { url: `static/assets/pbrtex/rough_plaster_broken_diff_1k.jpg` } };
+		const normalTex = { normal: { url: `static/assets/pbrtex/rough_plaster_broken_nor_1k.jpg` } };
+		const armTex = { arm: { url: `static/assets/pbrtex/rough_plaster_broken_arm_1k.jpg` } };
+		let textures = [
+			this.hdrEnvtex,
+			albedoTex,
+			normalTex,
+			armTex
+		] as WGTextureDataDescriptor[];
+		return textures;
 	}
 	private mouseDown = (evt: MouseEvent): void => {};
 	run(): void {

@@ -85,7 +85,7 @@ class WGRUniformCtxInstance {
 		if(ets.length < 1) {
 			return undefined;
 		}
-		console.log("WGRUniformCtxInstance:: getBindGroupLayout(), CCCCCCC ets: ", ets);
+		// console.log("WGRUniformCtxInstance:: getBindGroupLayout(), CCCCCCC ets: ", ets);
 		const desc = {
 			label: "(BindGroupLayout)WGRUniformCtxInstance" + this.mUid,
 			entries: ets

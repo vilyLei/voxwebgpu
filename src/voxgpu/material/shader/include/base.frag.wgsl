@@ -1,17 +1,24 @@
 #include <mathDefine>
 #include <pbrFunctions>
 
-
 struct CalcColor4Param {
 	worldPos: vec4<f32>,
 	viewPos: vec4<f32>,
 	uv: vec2<f32>,
 	worldNormal: vec3<f32>,
+  
+  #ifdef USE_VSM_SHADOW
+	svPos: vec4<f32>,
+  #endif
 	worldCamPos: vec3<f32>
 }
 
 #ifdef USE_FOG
 #include <fogFragHead>
+#endif
+
+#ifdef USE_VSM_SHADOW
+#include <vsmShadowHead>
 #endif
 #include <fragOutput>
 
