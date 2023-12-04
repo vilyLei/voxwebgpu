@@ -18,13 +18,21 @@ export class MaskTextureEffect {
 		const body = document.body;
 		// body.style.background = '#000000';
 
-		this.mRscene.initialize({ canvasWith: 512, canvasHeight: 512, rpassparam: { multisampleEnabled: true } });
+		this.mRscene.initialize({
+			canvasWith: 512,
+			canvasHeight: 512,
+			rpassparam:
+			{
+				multisampleEnabled: true,
+				clearColor: [0.2,0.3,0.1]
+			}
+		});
 		this.initScene();
 		this.initEvent();
 	}
 
 	private hdrEnvtex = new SpecularEnvBrnTexture();
-	private createMaskTextures(ns: string, maskns='displacement_01.jpg'): WGTextureDataDescriptor[] {
+	private createMaskTextures(ns: string, maskns = 'displacement_01.jpg'): WGTextureDataDescriptor[] {
 
 		const albedoTex = { albedo: { url: `static/assets/pbr/${ns}/albedo.jpg` } };
 		const normalTex = { normal: { url: `static/assets/pbr/${ns}/normal.jpg` } };
@@ -60,9 +68,9 @@ export class MaskTextureEffect {
 	}
 
 	private initScene(): void {
-		const rc = this.mRscene;
-		let entity0 = new FixScreenPlaneEntity().setColor([0.2, 0.5, 0.4]);
-		rc.addEntity(entity0);
+		// const rc = this.mRscene;
+		// let entity0 = new FixScreenPlaneEntity().setColor([0.2, 0.5, 0.4]);
+		// rc.addEntity(entity0);
 		this.initEntities();
 	}
 	private initEntities(): void {
@@ -84,7 +92,7 @@ export class MaskTextureEffect {
 		rc.addEntity(sphere);
 
 		position = new Vector3(0, 0, -180);
-		materials = this.createMaterials(position, [4,1]);
+		materials = this.createMaterials(position, [4, 1]);
 		let torus = new TorusEntity({
 			axisType: 1,
 			materials,
@@ -104,15 +112,15 @@ export class MaskTextureEffect {
 		let material1 = this.createMaterial(position, textures1, ["transparent"], 'less-equal', material0.getLightParam());
 		material1.property.inverseMask = false;
 		this.applyMaterialPPt(material1);
-		
+
 		let material2 = this.createMaterial(position, textures2, ["transparent"], 'less-equal', material0.getLightParam());
 		material2.property.inverseMask = true;
 		this.applyMaterialPPt(material2);
 		let list = [material0, material1, material2];
 
 		// let list = [material0, material1];
-		if(uvParam) {
-			for(let i = 0; i < list.length; ++i) {
+		if (uvParam) {
+			for (let i = 0; i < list.length; ++i) {
 				list[i].property.uvParam.value = uvParam;
 			}
 		}

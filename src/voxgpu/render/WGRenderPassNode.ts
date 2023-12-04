@@ -46,9 +46,9 @@ class WGRenderPassNode implements IWGRenderPassNode {
 		this.rpass.clearColor = this.clearColor;
 	}
 	setColorAttachmentClearEnabledAt(enabled: boolean, index: number = 0): void {
-		if(this.mPassBuilded) {
+		if (this.mPassBuilded) {
 			const ca = this.rpass.passColors[index];
-			if(ca) {
+			if (ca) {
 				ca.loadOp = enabled ? "clear" : "load";
 			}
 		}
@@ -85,23 +85,27 @@ class WGRenderPassNode implements IWGRenderPassNode {
 			if (this.prevNode) {
 				this.rpass.prevPass = this.prevNode.rpass;
 			}
-			console.log('WGRenderPassNode::initialize(), this.param: ', this.param);
+			let param = this.param;
+			if (param.clearColor) {
+				this.clearColor.setColor(param.clearColor);
+			}
+			console.log('WGRenderPassNode::initialize(), param: ', param);
 			this.rpass.initialize(wgCtx);
-			this.checkRPassParam(this.param);
-			this.rpass.build(this.param);
+			this.checkRPassParam(param);
+			this.rpass.build(param);
 			this.mPassBuilded = true;
 			this.colorAttachments = this.rpass.passColors;
 		}
 	}
 
 	hasMaterial(material: WGMaterialDescripter): boolean {
-		if(this.unitBlock) {
+		if (this.unitBlock) {
 			return this.unitBlock.hasMaterial(material);
 		}
 		return false;
 	}
 	setMaterial(material: WGMaterialDescripter): void {
-		if(this.unitBlock) {
+		if (this.unitBlock) {
 			this.unitBlock.setMaterial(material);
 		}
 	}
@@ -114,7 +118,7 @@ class WGRenderPassNode implements IWGRenderPassNode {
 			ub.rbParam = this.mRBParam;
 			ub.builder = this;
 			console.log("WGRenderPassNode::addEntity(), ub.builder: ", ub.builder);
-			this.unitBlock.addEntity( entity );
+			this.unitBlock.addEntity(entity);
 		}
 	}
 	private checkRPassParam(param: WGRPassParam): void {
