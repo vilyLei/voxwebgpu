@@ -67,12 +67,7 @@ class ShadowOccBlurMaterial extends WGMaterial {
 		}
 
 		console.log('ShadowOccBlurMaterial::__$build() preCode: \n', preCode);
-		// console.log('ShadowOccBlurMaterial::__$build() ...');
 		let uuid = preCode + "-ins01";
-		// let pdp = this.pipelineDefParam;
-		// if (pdp) {
-		// 	uuid += pdp.faceCullMode + pdp.blendModes;
-		// }
 		let shaderCode = this.mShdBuilder.build(preCode);
 		let shaderSrc = {
 			shaderSrc: { code: shaderCode, uuid }

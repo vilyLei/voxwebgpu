@@ -4,7 +4,10 @@ import mathDefineWGSL from "./include/mathDefine.wgsl";
 import matrixWGSL from "./include/matrix.wgsl";
 import pbrFunctionsWGSL from "./include/pbrFunctions.wgsl";
 import fogFragHeadWGSL from "./include/fogFragHead.wgsl";
+import vsmShadowHeadWGSL from "./include/vsmShadowHead.wgsl";
+
 import fragOutputWGSL from "./include/fragOutput.wgsl";
+
 import { WGShaderPredefine } from "./WGShaderPredefine";
 
 const shdSrcModules: Map<string, string> = new Map();
@@ -13,6 +16,7 @@ function initModules() {
 	shdSrcModules.set("mathDefine", mathDefineWGSL);
 	shdSrcModules.set("pbrFunctions", pbrFunctionsWGSL);
 	shdSrcModules.set("fogFragHead", fogFragHeadWGSL);
+	shdSrcModules.set("vsmShadowHead", vsmShadowHeadWGSL);
 	shdSrcModules.set("fragOutput", fragOutputWGSL);
 }
 initModules();

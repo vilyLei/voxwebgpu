@@ -77,12 +77,12 @@
 // import { ShaderConstructing as Demo } from "./voxgpu/sample/ShaderConstructing";
 // import { DynamicShaderBuilding as Demo } from "./voxgpu/sample/DynamicShaderBuilding";
 // import { DynamicShaderBuilding2 as Demo } from "./voxgpu/sample/DynamicShaderBuilding2";
-// import { MaskTextureEffect as Demo } from "./voxgpu/sample/MaskTextureEffect";
+import { MaskTextureEffect as Demo } from "./voxgpu/sample/MaskTextureEffect";
 // import { FogTest as Demo } from "./voxgpu/sample/FogTest";
 // import { OrthoCamraTest as Demo } from "./voxgpu/sample/OrthoCamraTest";
 // import { BaseVSMShadowTest as Demo } from "./voxgpu/sample/BaseVSMShadowTest";
 // import { PassGraphShadowTest as Demo } from "./voxgpu/sample/PassGraphShadowTest";
-import { ShadowTest as Demo } from "./voxgpu/sample/ShadowTest";
+// import { ShadowTest as Demo } from "./voxgpu/sample/ShadowTest";
 
 
 

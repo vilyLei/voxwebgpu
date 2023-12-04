@@ -6,7 +6,9 @@ import {
 } from "./MaterialUniformData";
 import Matrix4 from "../math/Matrix4";
 import Vector3 from "../math/Vector3";
-import shaderSrcCode from "./shader/shadow/shadowReceive.wgsl";
+// import shaderSrcCode from "./shader/shadow/shadowReceive.wgsl";
+
+import { ShadowReceiveShdCtor } from "./shader/ShadowReceiveShdCtor";
 
 class BasePBRProperty {
 	params = new MaterialUniformVec4ArrayData(new Float32Array([
@@ -21,7 +23,7 @@ class BasePBRProperty {
         
         , 1.0, 1.0, 1.0      // direc light nv(x,y,z)
         , 0.0                // undefined
-    ]), "params", "frag");
+    ]), "vsmParams", "frag");
 	matrixParam = new MaterialUniformMat44Data(null, "shadowMatrix", "vert");
 	constructor() {
 	}
@@ -69,6 +71,7 @@ class BasePBRProperty {
 	}
 }
 class ShadowReceiveMaterial extends WGMaterial {
+	private mShdBuilder = new ShadowReceiveShdCtor();
 	property = new BasePBRProperty();
 	constructor(descriptor?: WGMaterialDescripter) {
 		super(descriptor);
@@ -91,8 +94,12 @@ class ShadowReceiveMaterial extends WGMaterial {
 		console.log('ShadowReceiveMaterial::__$build() ...');
 		console.log(this.property.matrixParam);
 		let uuid = 'shadow-receive-ins01';
+		
+		let shaderCode = this.mShdBuilder.build('');
+
 		let shaderSrc = {
-			shaderSrc: { code: shaderSrcCode, uuid }
+			// shaderSrc: { code: shaderSrcCode, uuid }
+			shaderSrc: { code: shaderCode, uuid }
 		}
 		this.shadinguuid = uuid + '-material';
 		this.shaderSrc = shaderSrc;
