@@ -1,12 +1,12 @@
-import { WGMaterialDescripter, WGMaterial } from "../../material/WGMaterial";
+import { WGMaterialDescripter, WGMaterial } from "./WGMaterial";
 import {
 	MaterialUniformMat44Data,
 	MaterialUniformVec4ArrayData,
 	WGRBufferData
-} from "../../material/MaterialUniformData";
-import Matrix4 from "../../math/Matrix4";
-import Vector3 from "../../math/Vector3";
-import shaderSrcCode from "../shaders/shadow/shadowReceive.wgsl";
+} from "./MaterialUniformData";
+import Matrix4 from "../math/Matrix4";
+import Vector3 from "../math/Vector3";
+import shaderSrcCode from "./shader/shadow/shadowReceive.wgsl";
 
 class BasePBRProperty {
 	params = new MaterialUniformVec4ArrayData(new Float32Array([

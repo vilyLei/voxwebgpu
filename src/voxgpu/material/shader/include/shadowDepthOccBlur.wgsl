@@ -55,7 +55,7 @@ fn fragMain(
     let fragCoord = resolution * uv;
     
     let radius = param[3];
-    let c4 = textureSample(shadowDepthTexture, shadowDepthSampler, uv);   
+    let c4 = textureSample(shadowDataTexture, shadowDataSampler, uv);   
     // This seems totally useless but it's a crazy work around for a Adreno compiler bug
     var depth = unpackRGBAToDepth( c4 );
 
@@ -63,13 +63,13 @@ fn fragMain(
 
         #ifdef USE_HORIZONAL_PASS
 
-            let distribution = unpackRGBATo2Half( textureSample(shadowDepthTexture, shadowDepthSampler, ( fragCoord.xy + vec2( i, 0.0 ) * radius ) / resolution ) );
+            let distribution = unpackRGBATo2Half( textureSample(shadowDataTexture, shadowDataSampler, ( fragCoord.xy + vec2( i, 0.0 ) * radius ) / resolution ) );
             mean += distribution.x;
             squared_mean += distribution.y * distribution.y + distribution.x * distribution.x;
 
         #else
 
-            depth = unpackRGBAToDepth( textureSample(shadowDepthTexture, shadowDepthSampler, ( fragCoord.xy + vec2( 0.0, i ) * radius ) / resolution ) );
+            depth = unpackRGBAToDepth( textureSample(shadowDataTexture, shadowDataSampler, ( fragCoord.xy + vec2( 0.0, i ) * radius ) / resolution ) );
             mean += depth;
             squared_mean += depth * depth;
 

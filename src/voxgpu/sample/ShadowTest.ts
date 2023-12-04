@@ -11,7 +11,7 @@ import { FixScreenPlaneEntity } from "../entity/FixScreenPlaneEntity";
 import { SphereEntity } from "../entity/SphereEntity";
 import { PlaneEntity } from "../entity/PlaneEntity";
 import { ShadowOccBlurMaterial } from "../material/ShadowOccBlurMaterial";
-import { ShadowReceiveMaterial } from "./material/ShadowReceiveMaterial";
+import { ShadowReceiveMaterial } from "../material/ShadowReceiveMaterial";
 import Matrix4 from "../math/Matrix4";
 import { BoxEntity } from "../entity/BoxEntity";
 import { TorusEntity } from "../entity/TorusEntity";

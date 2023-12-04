@@ -88,7 +88,7 @@ fn unpackRGBATo2Half( v: vec4<f32> ) -> vec2<f32> {
 }
 
 fn texture2DDistribution( uv: vec2<f32> ) -> vec2<f32> {
-    let v4 = textureSample(shadowDepthTexture, shadowDepthSampler, uv );
+    let v4 = textureSample(shadowDataTexture, shadowDataSampler, uv );
     return unpackRGBATo2Half( v4 );
 
 }

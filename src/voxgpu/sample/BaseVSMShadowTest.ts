@@ -1,18 +1,17 @@
 import MouseEvent from "../event/MouseEvent";
 import { RendererScene } from "../rscene/RendererScene";
 import { MouseInteraction } from "../ui/MouseInteraction";
-import { GeomDataBuilder } from "../geometry/GeomDataBuilder";
 import { WGMaterial, WGRShderSrcType } from "../material/WGMaterial";
 import { Entity3D } from "../entity/Entity3D";
 
-import shadowDepthWGSL from "./shaders/shadow/shadowDepth.wgsl";
+import shadowDepthWGSL from "../material/shader/shadow/shadowDepth.wgsl";
 import Camera from "../view/Camera";
 import { BoundsFrameEntity } from "../entity/BoundsFrameEntity";
 import { FixScreenPlaneEntity } from "../entity/FixScreenPlaneEntity";
 import { SphereEntity } from "../entity/SphereEntity";
 import { PlaneEntity } from "../entity/PlaneEntity";
 import { ShadowOccBlurMaterial } from "../material/ShadowOccBlurMaterial";
-import { ShadowReceiveMaterial } from "./material/ShadowReceiveMaterial";
+import { ShadowReceiveMaterial } from "../material/ShadowReceiveMaterial";
 import Matrix4 from "../math/Matrix4";
 import { BoxEntity } from "../entity/BoxEntity";
 import { TorusEntity } from "../entity/TorusEntity";
@@ -73,9 +72,9 @@ export class BaseVSMShadowTest {
 		}
 
 	}
-	private mShadowDepthRTT = { uuid: "rtt-shadow-depth", rttTexture: {}, shdVarName: 'shadowDepth' };
-	private mOccVRTT = { uuid: "rtt--occV", rttTexture: {}, shdVarName: 'shadowDepth' };
-	private mOccHRTT = { uuid: "rtt--occH", rttTexture: {}, shdVarName: 'shadowDepth' };
+	private mShadowDepthRTT = { uuid: "rtt-shadow-depth", rttTexture: {}, shdVarName: 'shadowData' };
+	private mOccVRTT = { uuid: "rtt--occV", rttTexture: {}, shdVarName: 'shadowData' };
+	private mOccHRTT = { uuid: "rtt--occH", rttTexture: {}, shdVarName: 'shadowData' };
 	private applyShadowDepthRTT(): void {
 
 		let rc = this.mRscene;

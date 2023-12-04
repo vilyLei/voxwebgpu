@@ -4,14 +4,14 @@ import { MouseInteraction } from "../ui/MouseInteraction";
 import { WGMaterial, WGRShderSrcType } from "../material/WGMaterial";
 import { Entity3D } from "../entity/Entity3D";
 
-import shadowDepthWGSL from "./shaders/shadow/shadowDepth.wgsl";
+import shadowDepthWGSL from "../material/shader/shadow/shadowDepth.wgsl";
 import Camera from "../view/Camera";
 import { BoundsFrameEntity } from "../entity/BoundsFrameEntity";
 import { FixScreenPlaneEntity } from "../entity/FixScreenPlaneEntity";
 import { SphereEntity } from "../entity/SphereEntity";
 import { PlaneEntity } from "../entity/PlaneEntity";
 import { ShadowOccBlurMaterial } from "../material/ShadowOccBlurMaterial";
-import { ShadowReceiveMaterial } from "./material/ShadowReceiveMaterial";
+import { ShadowReceiveMaterial } from "../material/ShadowReceiveMaterial";
 import Matrix4 from "../math/Matrix4";
 import { BoxEntity } from "../entity/BoxEntity";
 import { TorusEntity } from "../entity/TorusEntity";
@@ -23,7 +23,7 @@ class ShadowPassGraph extends WGRPassNodeGraph {
 	private entities: Entity3D[] = [];
 	private mDepthMaterials: WGMaterial[];
 
-	shadowDepthRTT = { uuid: "rtt-shadow-depth", rttTexture: {}, shdVarName: 'shadowDepth' };
+	shadowDepthRTT = { uuid: "rtt-shadow-depth", rttTexture: {}, shdVarName: 'shadowData' };
 	depAttachment: WGRPassColorAttachment = {
 		texture: this.shadowDepthRTT,
 		// green clear background color
@@ -32,8 +32,8 @@ class ShadowPassGraph extends WGRPassNodeGraph {
 		storeOp: "store"
 	};
 
-	occVRTT = { uuid: "rtt--occV", rttTexture: {}, shdVarName: 'shadowDepth' };
-	occHRTT = { uuid: "rtt--occH", rttTexture: {}, shdVarName: 'shadowDepth' };
+	occVRTT = { uuid: "rtt--occV", rttTexture: {}, shdVarName: 'shadowData' };
+	occHRTT = { uuid: "rtt--occH", rttTexture: {}, shdVarName: 'shadowData' };
 	occVEntity: FixScreenPlaneEntity;
 	occHEntity: FixScreenPlaneEntity;
 
