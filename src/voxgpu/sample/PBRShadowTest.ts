@@ -182,8 +182,6 @@ export class PBRShadowTest {
 	private mGraph = new ShadowPassGraph();
 
 	initialize(): void {
-		console.log("PBRShadowTest::initialize() ...");
-
 		this.mRscene.initialize({
 			canvasWith: 512,
 			canvasHeight: 512,
@@ -348,11 +346,11 @@ export class PBRShadowTest {
 		if(shadowReceived) {
 			property.shadowMatrix.setShadowMatrix(this.mShadowTransMat);
 			let vsmParams = property.vsmParams;
-			vsmParams.setShadowRadius(graph.shadowRadius);
-			vsmParams.setShadowBias(graph.shadowBias);
-			vsmParams.setShadowSize(graph.shadowMapW, graph.shadowMapH);
-			vsmParams.setDirec(cam.nv);
-			vsmParams.setIntensity(0.5);
+			vsmParams.radius = graph.shadowRadius;
+			vsmParams.bias = graph.shadowBias;
+			vsmParams.setSize(graph.shadowMapW, graph.shadowMapH);
+			vsmParams.direction = cam.nv;
+			vsmParams.intensity = 0.5;
 		}
 	}
 	private mLightParams: LightShaderDataParam[] = [];
@@ -373,13 +371,7 @@ export class PBRShadowTest {
 		material.addTextures(textures);
 		return material;
 	}
-	private mFlag = -1;
-	private mouseDown = (evt: MouseEvent): void => {
-		// this.mFlag ++;
-		// if(this.mFlag == 0) {
-		// 	this.initShadowReceiveDisp(true);
-		// }
-	};
+	private mouseDown = (evt: MouseEvent): void => {};
 	run(): void {
 		this.mRscene.run();
 	}

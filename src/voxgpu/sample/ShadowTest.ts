@@ -432,11 +432,11 @@ let position = new Vector3(0, -1, 0);
 		if(shadowReceived) {
 			property.shadowMatrix.setShadowMatrix(this.mShadowTransMat);
 			let vsmParams = property.vsmParams;
-			vsmParams.setShadowRadius(graph.shadowRadius);
-			vsmParams.setShadowBias(graph.shadowBias);
-			vsmParams.setShadowSize(graph.shadowMapW, graph.shadowMapH);
-			vsmParams.setDirec(cam.nv);
-			vsmParams.setIntensity(0.5);
+			vsmParams.radius = graph.shadowRadius;
+			vsmParams.bias = graph.shadowBias;
+			vsmParams.setSize(graph.shadowMapW, graph.shadowMapH);
+			vsmParams.direction = cam.nv;
+			vsmParams.intensity = 0.5;
 		}
 	}
 	private mLightParams: LightShaderDataParam[] = [];

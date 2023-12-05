@@ -259,27 +259,36 @@ class VSMParamUniformData extends MaterialUniformVec4ArrayData {
         vs[2] = shadowRadius;
 		this.update();
     }
-    setIntensity(intensity: number): void {
+    set intensity(intensity: number) {
 		let vs = this.data as Float32Array;
         vs[3] = intensity;
 		this.update();
     }
-    setShadowRadius(radius: number): void {
+	get intensity(): number {
+		return (this.data as Float32Array)[3];
+	}
+    set radius(radius: number) {
 		let vs = this.data as Float32Array;
         vs[2] = radius;
 		this.update();
     }
-    setShadowBias(bias: number): void {
+	get radius(): number {
+		return (this.data as Float32Array)[2];
+	}
+    set bias(bias: number)  {
 		let vs = this.data as Float32Array;
         vs[0] = bias;
     }
-    setShadowSize(width: number, height: number): void {
+	get bias(): number {
+		return (this.data as Float32Array)[0];
+	}
+    setSize(width: number, height: number): void {
 		let vs = this.data as Float32Array;
         vs[4] = width;
         vs[5] = height;
 		this.update();
     }
-    setDirec(v3d: Vector3DataType): void {
+    set direction(v3d: Vector3DataType) {
 		let v3 = new Vector3().setVector3(v3d);
 		let vs = this.data as Float32Array;
         vs[8] = -v3.x;
@@ -287,6 +296,10 @@ class VSMParamUniformData extends MaterialUniformVec4ArrayData {
         vs[10] = -v3.z;
 		this.update();
     }
+	get direction(): Vector3DataType {
+		let vs = this.data as Float32Array;
+		return [vs[8], vs[9], vs[10]];
+	}
 }
 
 class BaseLightData implements WGRBufferData {
