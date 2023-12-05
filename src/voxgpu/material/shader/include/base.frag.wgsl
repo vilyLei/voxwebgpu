@@ -13,6 +13,8 @@ struct CalcColor4Param {
 	worldCamPos: vec3<f32>
 }
 
+//#include <heightFogFragHead>
+
 #ifdef USE_FOG
 #include <fogFragHead>
 #endif

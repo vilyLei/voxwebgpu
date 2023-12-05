@@ -1,5 +1,6 @@
 
 import { WGShaderPredefine } from "./WGShaderPredefine";
+import { getCodeLine, codeLineCommentTest } from "./utils";
 
 class WGShdCodeCtor {
 	readonly predefine = new WGShaderPredefine();
@@ -29,6 +30,11 @@ class WGShdCodeCtor {
 			let end = dst.indexOf(">", begin + 1);
 			// console.log("parseInclude(), begin, end: ", begin, end);
 			if (end > 0) {
+				let codeLine = getCodeLine(dst, begin + 1);
+				if (codeLineCommentTest(codeLine)) {
+					index = end + 1;
+					continue;
+				}
 				let moduleName = dst.slice(begin + 1, end).trim();
 				// console.log("parseInclude(), moduleName: ", moduleName);
 				let includeCmd = dst.slice(index, end + 1);
