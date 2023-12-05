@@ -13,6 +13,7 @@ import { WGRPColorAttachment } from "./WGRPColorAttachment";
 import { WGRPDepthStencilAttachment } from "./WGRPDepthStencilAttachment";
 import { texDescriptorFilter } from "../../texture/WGTextureDataDescriptor";
 import { WGRPassColorAttachment } from "./WGRPassColorAttachment";
+import Extent2 from "../../cgeom/Extent2";
 
 class WGRendererPass implements WGRendererPassImpl {
 	private mWGCtx: WebGPUContext;
@@ -34,6 +35,7 @@ class WGRendererPass implements WGRendererPassImpl {
 	prevPass: WGRendererPass;
 	separate = false;
 	enabled = true;
+	viewExtent = new Extent2([0, 0, 512, 512]);
 	constructor(wgCtx?: WebGPUContext, drawing = true) {
 		// console.log("WGRendererPass::constructor(), drawing: ", drawing);
 		this.mDrawing = drawing;
@@ -48,6 +50,7 @@ class WGRendererPass implements WGRendererPassImpl {
 		return this.mDepthTexture;
 	}
 	initialize(wgCtx: WebGPUContext): void {
+		
 		this.mWGCtx = wgCtx;
 	}
 	getPassParams(): WGRPassParam {
@@ -56,6 +59,12 @@ class WGRendererPass implements WGRendererPassImpl {
 	build(params: WGRPassParam): void {
 		console.log("WGRendererPass::build() mDrawing: ", this.mDrawing, "params: ", params);
 		if (this.mDrawing) {
+			let wgCtx = this.mWGCtx;
+			if(params.viewWidth !== undefined && params.viewHeight !== undefined) {
+				this.viewExtent.setSize(params.viewWidth, params.viewHeight);
+			}else if (wgCtx) {
+				this.viewExtent.setSize(wgCtx.canvasWidth, wgCtx.canvasHeight);
+			}
 			params.multisampleEnabled = params.sampleCount && params.sampleCount > 1;
 			this.mParam = params;
 			if (this.prevPass) {
@@ -69,20 +78,20 @@ class WGRendererPass implements WGRendererPassImpl {
 	private mColorAttachments: WGRPassColorAttachment[];
 	private updateColorAttachmentView(colorAtt: WGRPColorAttachment, t: WGRPassColorAttachment, onlyViewChange = false): void {
 		if (!colorAtt.view) {
-			if(!onlyViewChange) {
+			if (!onlyViewChange) {
 				colorAtt.setParam(t);
 			}
 			if (!colorAtt.view) {
 				let td = texDescriptorFilter(t.texture);
 				if (td) {
 					const rttData = td.rttTexture;
-					if(rttData) {
+					if (rttData) {
 						const ctx = this.mWGCtx;
 						if (rttData.texture === undefined) {
 							let sampleCount = 1;
 							sampleCount = this.mParam.sampleCount;
 							td.multisampled = sampleCount > 1;
-							const rtt = ctx.texture.createColorRTTTexture({format: td.format, sampleCount});
+							const rtt = ctx.texture.createColorRTTTexture({ format: td.format, sampleCount });
 							// const rtt = ctx.texture.createColorRTTTexture({format: td.format});
 							rttData.texture = rtt;
 							let tview = rtt.createView();
@@ -94,7 +103,7 @@ class WGRendererPass implements WGRendererPassImpl {
 							console.log("动态创建一个 color rtt gpu texture instance, \ncolorAtt.textureFormat: ", colorAtt.textureFormat, ", sampleCount: ", sampleCount);
 							// console.log("动态创建一个 color rtt gpu texture instance, view: ", colorAtt.view);
 							console.log("动态创建一个 color rtt gpu texture instance, td: ", td);
-						}else {
+						} else {
 							colorAtt.view = rttData.textureView;
 						}
 						// console.log("updateColorAttachmentView(), rttData.textureView: ", rttData.textureView);
@@ -234,16 +243,16 @@ class WGRendererPass implements WGRendererPassImpl {
 					if (this.separate) {
 						// console.log("run a rpass, this.separate: ", this.separate,", multisampleEnabled: ", multisampleEnabled);
 						const cts = this.mColorAttachments;
-						if(cts !== undefined) {
-							for(let i = 0; i < pcs.length; ++i) {
+						if (cts !== undefined) {
+							for (let i = 0; i < pcs.length; ++i) {
 								const ct = pcs[i];
 								const p = ct.param;
 								const t = cts[i];
 								if (!ct.view || p !== t || ct.texture !== t.texture) {
-									if(t.texture !== undefined) {
+									if (t.texture !== undefined) {
 										ct.view = null;
-										this.updateColorAttachmentView( ct, t, p === t );
-										if(i < 1 && p !== t) {
+										this.updateColorAttachmentView(ct, t, p === t);
+										if (i < 1 && p !== t) {
 											this.clearColor.setColor(ct.clearValue);
 										}
 									}
@@ -285,6 +294,8 @@ class WGRendererPass implements WGRendererPassImpl {
 				// console.log(renderPassDescriptor);
 
 				this.passEncoder = cmdEncoder.beginRenderPass(renderPassDescriptor);
+				let ext = this.viewExtent;
+				this.passEncoder.setViewport(ext.x, ext.y, ext.width, ext.height, 0, 1);
 			} else {
 				this.compPassEncoder = cmdEncoder.beginComputePass();
 			}

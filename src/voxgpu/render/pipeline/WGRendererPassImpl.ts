@@ -26,6 +26,8 @@ interface WGRPassParam {
 	colorAttachments?: WGRPassColorAttachment[];
 	depthStencilAttachment?: GPURenderPassDepthStencilAttachment;
 	clearColor?: ColorDataType;
+	viewWidth?: number;
+	viewHeight?: number;
 }
 interface WGRendererPassImpl {
 

@@ -44,6 +44,7 @@
 // import { MultiGPUPassTest as Demo } from "./voxgpu/sample/MultiGPUPassTest";
 // import { RTTFixScreenTest as Demo } from "./voxgpu/sample/RTTFixScreenTest";
 // import { RTTTest as Demo } from "./voxgpu/sample/RTTTest";
+import { SpecSizeRTTTest as Demo } from "./voxgpu/sample/SpecSizeRTTTest";
 // import { AddEntityIntoMultiRPasses as Demo } from "./voxgpu/sample/AddEntityIntoMultiRPasses";
 
 // import { PassNodeGraphTest as Demo } from "./voxgpu/sample/PassNodeGraphTest";
@@ -84,7 +85,7 @@
 // import { BaseVSMShadowTest as Demo } from "./voxgpu/sample/BaseVSMShadowTest";
 // import { PassGraphShadowTest as Demo } from "./voxgpu/sample/PassGraphShadowTest";
 // import { ShadowTest as Demo } from "./voxgpu/sample/ShadowTest";
-import { PBRShadowTest as Demo } from "./voxgpu/sample/PBRShadowTest";
+// import { PBRShadowTest as Demo } from "./voxgpu/sample/PBRShadowTest";
 
 
 

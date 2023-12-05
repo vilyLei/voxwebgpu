@@ -25,6 +25,16 @@ export default class Extent2 {
 		this.height = height;
 		return this;
 	}
+	setXY(x: number, y: number): Extent2 {
+		this.x = x;
+		this.y = y;
+		return this;
+	}
+	setSize(w: number, h: number): Extent2 {
+		this.width = w;
+		this.height = h;
+		return this;
+	}
 	setExtent(extent: Extent2DataType): Extent2 {
 		let v = extent;
 		if (v) {
