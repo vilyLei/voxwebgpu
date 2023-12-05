@@ -8,7 +8,6 @@ import shaderWGSL from "./shaders/gameOfLife.wgsl";
 import { WGRUniformValue } from "../render/uniform/WGRUniformValue";
 import { WGRStorageValue } from "../render/buffer/WGRStorageValue";
 import { ComputeEntity } from "../entity/ComputeEntity";
-import { WGRShderSrcType } from "../material/WGMaterialDescripter";
 
 type NodeType = { rendEntity: FixScreenPlaneEntity; compEntity?: ComputeEntity };
 

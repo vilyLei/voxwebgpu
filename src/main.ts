@@ -33,7 +33,7 @@
 // import { DrawInstanceTest as Demo } from "./voxgpu/sample/DrawInstanceTest";
 
 // import { ComputeEntityTest as Demo } from "./voxgpu/sample/ComputeEntityTest";
-// import { GameOfLifeTest as Demo } from "./voxgpu/sample/GameOfLifeTest";
+import { GameOfLifeTest as Demo } from "./voxgpu/sample/GameOfLifeTest";
 // import { ComputeMaterialTest as Demo } from "./voxgpu/sample/ComputeMaterialTest";
 // import { GameOfLifeMultiMaterialPass as Demo } from "./voxgpu/sample/GameOfLifeMultiMaterialPass";
 // import { GameOfLifePretty as Demo } from "./voxgpu/sample/GameOfLifePretty";
@@ -83,7 +83,7 @@
 // import { BaseVSMShadowTest as Demo } from "./voxgpu/sample/BaseVSMShadowTest";
 // import { PassGraphShadowTest as Demo } from "./voxgpu/sample/PassGraphShadowTest";
 // import { ShadowTest as Demo } from "./voxgpu/sample/ShadowTest";
-import { PBRShadowTest as Demo } from "./voxgpu/sample/PBRShadowTest";
+// import { PBRShadowTest as Demo } from "./voxgpu/sample/PBRShadowTest";
 
 
 

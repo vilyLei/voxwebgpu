@@ -4,8 +4,8 @@ import { IWGRUnit } from "./IWGRUnit";
 import { WGRUnit } from "./WGRUnit";
 import { GPUBuffer } from "../gpu/GPUBuffer";
 
+import { getCodeLine, codeLineCommentTest } from "../material/shader/utils";
 import { IWGRPassNodeBuilder } from "./IWGRPassNodeBuilder";
-import { GPUTextureView } from "../gpu/GPUTextureView";
 import { WGRCompUnit } from "./WGRCompUnit";
 import { IRenderableObject } from "./IRenderableObject";
 import { WGCompMaterial } from "../material/WGCompMaterial";
@@ -71,7 +71,18 @@ class WGRObjBuilder {
 		if (shd) {
 
 			let code = shd.code;
-			if (code.indexOf('@binding(') >= 0) {
+			let bi = code.indexOf('@binding(');
+			for(let i = 0; i < 30; ++i) {
+				if(bi >= 0) {
+					let codeLine = getCodeLine(code, bi);
+					if (!codeLineCommentTest(codeLine)) {
+						break;
+					}
+				}else {
+					break;
+				}
+			}
+			if (bi >= 0) {
 				let begin = code.indexOf('@group(');
 				let end = code.lastIndexOf(' @binding(');
 				end = code.indexOf(';', end + 1);
@@ -80,7 +91,7 @@ class WGRObjBuilder {
 			}
 			// console.log('oooooooooo code: ', code);
 			// console.log(`code.indexOf('@binding(') < 0: `, code.indexOf('@binding(') < 0);
-			if (code.indexOf('@binding(') < 0) {
+			if (bi < 0) {
 				let codeStr = '';
 				let index = 0;
 				if (uvalues && uvalues.length > 0) {
