@@ -13,7 +13,7 @@ import { WGRPColorAttachment } from "./WGRPColorAttachment";
 import { WGRPDepthStencilAttachment } from "./WGRPDepthStencilAttachment";
 import { texDescriptorFilter } from "../../texture/WGTextureDataDescriptor";
 import { WGRPassColorAttachment } from "./WGRPassColorAttachment";
-import Extent2 from "../../cgeom/Extent2";
+import { WGRPassViewport } from "./WGRPassViewport";
 
 class WGRendererPass implements WGRendererPassImpl {
 	private mWGCtx: WebGPUContext;
@@ -31,13 +31,12 @@ class WGRendererPass implements WGRendererPassImpl {
 
 	passColors = [new WGRPColorAttachment()];
 	passDepthStencil: WGRPDepthStencilAttachment;
+	viewport = new WGRPassViewport();
 
 	prevPass: WGRendererPass;
 	separate = false;
 	enabled = true;
-	viewExtent = new Extent2([0, 0, 512, 512]);
-	minDepth = 0;
-	maxDepth = 1;
+	
 	constructor(wgCtx?: WebGPUContext, drawing = true) {
 		// console.log("WGRendererPass::constructor(), drawing: ", drawing);
 		this.mDrawing = drawing;
@@ -52,7 +51,7 @@ class WGRendererPass implements WGRendererPassImpl {
 		return this.mDepthTexture;
 	}
 	initialize(wgCtx: WebGPUContext): void {
-		
+
 		this.mWGCtx = wgCtx;
 	}
 	getPassParams(): WGRPassParam {
@@ -62,10 +61,11 @@ class WGRendererPass implements WGRendererPassImpl {
 		console.log("WGRendererPass::build() mDrawing: ", this.mDrawing, "params: ", params);
 		if (this.mDrawing) {
 			let wgCtx = this.mWGCtx;
-			if(params.viewWidth !== undefined && params.viewHeight !== undefined) {
-				this.viewExtent.setSize(params.viewWidth, params.viewHeight);
-			}else if (wgCtx) {
-				this.viewExtent.setSize(wgCtx.canvasWidth, wgCtx.canvasHeight);
+			let vext = this.viewport.extent;
+			if (params.viewWidth !== undefined && params.viewHeight !== undefined) {
+				vext.setSize(params.viewWidth, params.viewHeight);
+			} else if (wgCtx) {
+				vext.setSize(wgCtx.canvasWidth, wgCtx.canvasHeight);
 			}
 			params.multisampleEnabled = params.sampleCount && params.sampleCount > 1;
 			this.mParam = params;
@@ -296,8 +296,10 @@ class WGRendererPass implements WGRendererPassImpl {
 				// console.log(renderPassDescriptor);
 
 				this.passEncoder = cmdEncoder.beginRenderPass(renderPassDescriptor);
-				let ext = this.viewExtent;
-				this.passEncoder.setViewport(ext.x, ext.y, ext.width, ext.height, this.minDepth, this.maxDepth);
+
+				const vport = this.viewport;
+				const ext = vport.extent;
+				this.passEncoder.setViewport(ext.x, ext.y, ext.width, ext.height, vport.minDepth, vport.maxDepth);
 			} else {
 				this.compPassEncoder = cmdEncoder.beginComputePass();
 			}
