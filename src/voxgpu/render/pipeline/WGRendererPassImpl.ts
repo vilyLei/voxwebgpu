@@ -7,6 +7,7 @@ import { GPUTextureView } from "../../gpu/GPUTextureView";
 import { WGRPassWrapperImpl } from "./WGRPassWrapperImpl";
 import { WGRPassColorAttachment } from "./WGRPassColorAttachment";
 import { GPURenderPassDepthStencilAttachment } from "../../gpu/GPURenderPassDepthStencilAttachment";
+import { WGRPassViewport } from "./WGRPassViewport";
 
 interface WGRPassParam {
     multisampleEnabled?: boolean;
@@ -37,6 +38,7 @@ interface WGRendererPassImpl {
     compPassEncoder?: GPUComputePassEncoder;
     commandEncoder: GPUCommandEncoder;
     clearColor: Color4;
+    viewport: WGRPassViewport;
 	passColors: WGRPassColorAttachment[];
 	passDepthStencil?: GPURenderPassDepthStencilAttachment;
 	isDrawing(): boolean;

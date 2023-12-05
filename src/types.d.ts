@@ -22,45 +22,45 @@ declare namespace GPUBufferUsage {
 	 * The buffer can be mapped for writing. (Example: calling mapAsync() with GPUMapMode.WRITE).
 	 * May only be combined with COPY_SRC.
 	 */
-    const MAP_WRITE: number;			//     = 0x0002;
+	const MAP_WRITE: number;			//     = 0x0002;
 	/**
 	 * The buffer can be used as the source of a copy operation.
 	 * (Examples: as the source argument of a copyBufferToBuffer() or copyBufferToTexture() call.)
 	 */
-    const COPY_SRC: number;				//      = 0x0004;
+	const COPY_SRC: number;				//      = 0x0004;
 	/**
 	 * The buffer can be used as the destination of a copy or write operation.
 	 * (Examples: as the destination argument of a copyBufferToBuffer() or copyTextureToBuffer() call, or as the target of a writeBuffer() call.)
 	 */
-    const COPY_DST: number;				//      = 0x0008;
+	const COPY_DST: number;				//      = 0x0008;
 	/**
 	 * The buffer can be used as an index buffer. (Example: passed to setIndexBuffer().)
 	 */
-    const INDEX: number;				//         = 0x0010;
+	const INDEX: number;				//         = 0x0010;
 	/**
 	 * The buffer can be used as a vertex buffer. (Example: passed to setVertexBuffer().)
 	 */
-    const VERTEX: number;				//        = 0x0020;
+	const VERTEX: number;				//        = 0x0020;
 	/**
 	 * The buffer can be used as a uniform buffer.
 	 * (Example: as a bind group entry for a GPUBufferBindingLayout with a buffer.type of "uniform".)
 	 */
-    const UNIFORM: number;				//       = 0x0040;
+	const UNIFORM: number;				//       = 0x0040;
 	/**
 	 * The buffer can be used as a storage buffer.
 	 * (Example: as a bind group entry for a GPUBufferBindingLayout with a buffer.type of "storage" or "read-only-storage".)
 	 */
-    const STORAGE: number;				//       = 0x0080;
+	const STORAGE: number;				//       = 0x0080;
 	/**
 	 * The buffer can be used as to store indirect command arguments.
 	 * (Examples: as the indirectBuffer argument of a drawIndirect() or dispatchWorkgroupsIndirect() call.)
 	 */
-    const INDIRECT: number;				//      = 0x0100;
+	const INDIRECT: number;				//      = 0x0100;
 	/**
 	 * The buffer can be used to capture query results.
 	 * (Example: as the destination argument of a resolveQuerySet() call.)
 	 */
-    const QUERY_RESOLVE: number;		// = 0x0200;
+	const QUERY_RESOLVE: number;		// = 0x0200;
 }
 
 declare namespace GPUTextureUsage {
@@ -101,11 +101,11 @@ declare namespace GPUShaderStage {
 	/**
 	 * The bind group entry will be accessible to fragment shaders.
 	 */
-    const FRAGMENT: number;		// = 0x2;
+	const FRAGMENT: number;		// = 0x2;
 	/**
 	 * The bind group entry will be accessible to compute shaders.
 	 */
-    const COMPUTE: number;		// = 0x4;
+	const COMPUTE: number;		// = 0x4;
 }
 
 declare type IndexArrayViewType = Uint32Array | Uint16Array;
@@ -115,46 +115,48 @@ declare type FloatArrayType = number[] | Float32Array;
 declare type NumberArrayType = FloatArrayType | Uint32Array | Uint16Array | Int32Array | Int16Array | Uint8Array | Int8Array;
 declare type NumberArrayDataType = DataView | Float32Array | Uint32Array | Uint16Array | Int32Array | Int16Array | Uint8Array | Int8Array;
 declare type WebImageType = HTMLImageElement | HTMLCanvasElement | HTMLVideoElement | ImageBitmap;
-declare type ColorRGBAType = {r?: number, g?: number, b?: number, a?: number};
+declare type ColorRGBAType = { r?: number, g?: number, b?: number, a?: number };
 declare type ColorDataType = ColorRGBAType | number[] | Float32Array;
-declare type Extent2Type = {x?: number, y?: number, width?: number, height?: number};
+declare type Extent2Type = { x?: number, y?: number, width?: number, height?: number };
 declare type Extent2DataType = Extent2Type | number[] | Float32Array;
 
-declare type Vector3Type = {x?: number, y?: number, z?: number, w?: number};
+declare type ViewportDataType = { extent?: Extent2Type, minDepth?: number, maxDepth?: number, depths?: number[] }
+
+declare type Vector3Type = { x?: number, y?: number, z?: number, w?: number };
 declare type Vector3DataType = Vector3Type | number[] | Float32Array | Uint16Array | Uint32Array | Int16Array | Int32Array;
 
-declare type ArmsType = {a?: number, r?: number, m?: number, s?: number};
+declare type ArmsType = { a?: number, r?: number, m?: number, s?: number };
 declare type ArmsDataType = ArmsType | number[] | Float32Array;
 
 declare enum GPUBufferBindingType {
-    "uniform",
-    "storage",
-    "read-only-storage"
+	"uniform",
+	"storage",
+	"read-only-storage"
 }
 declare enum GPUSamplerBindingType {
-    "filtering",
-    "non-filtering",
-    "comparison"
+	"filtering",
+	"non-filtering",
+	"comparison"
 }
 declare enum GPUTextureSampleType {
-    "float",
-    "unfilterable-float",
-    "depth",
-    "sint",
-    "uint"
+	"float",
+	"unfilterable-float",
+	"depth",
+	"sint",
+	"uint"
 }
 declare enum GPUTextureViewDimension {
-    "1d",
-    "2d",
-    "2d-array",
-    "cube",
-    "cube-array",
-    "3d"
+	"1d",
+	"2d",
+	"2d-array",
+	"cube",
+	"cube-array",
+	"3d"
 }
 declare enum GPUStorageTextureAccess {
-    "write-only",
-    "read-only",
-    "read-write"
+	"write-only",
+	"read-only",
+	"read-write"
 }
 
 declare module "*.wgsl" {
