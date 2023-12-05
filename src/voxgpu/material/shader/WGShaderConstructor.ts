@@ -138,6 +138,8 @@ class WGShaderConstructor extends WGShdCodeCtor {
 	}
 	testBuild(predefine: string): string {
 
+		this.reset();
+
 		predefine =
 			`
 		#define VOX_BURLEY
@@ -181,6 +183,8 @@ class WGShaderConstructor extends WGShdCodeCtor {
 	}
 	build(predefine: string): string {
 
+		this.reset();
+		
 		const preDef = this.predefine;
 		preDef.parsePredefineVar(predefine);
 

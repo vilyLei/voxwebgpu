@@ -7,6 +7,7 @@ class WGShdCodeCtor {
 	codeModules: Map<string, string>;
 	constructor() { }
 	reset(): void {
+		this.moduleNames = [];
 		this.predefine.reset();
 	}
 	destroy(): void {

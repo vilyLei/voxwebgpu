@@ -1,15 +1,11 @@
 import shaderSrcCode from "./include/shadowDepthOccBlur.wgsl";
-import { WGShaderPredefine } from "./WGShaderPredefine";
+import { WGShdCodeCtor } from "./WGShdCodeCtor";
 
-class ShadowOccBlurShdConstructor {
-	readonly predefine = new WGShaderPredefine();
-	constructor() { }
-	reset(): void {
-		this.predefine.reset();
-	}
-
+class ShadowOccBlurShdCtor extends WGShdCodeCtor {
 	build(predefine: string): string {
 
+		this.reset();
+		
 		const preDef = this.predefine;
 		preDef.parsePredefineVar(predefine);
 
@@ -23,4 +19,4 @@ class ShadowOccBlurShdConstructor {
 		return shdWGSL;
 	}
 }
-export { ShadowOccBlurShdConstructor };
+export { ShadowOccBlurShdCtor };

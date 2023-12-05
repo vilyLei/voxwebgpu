@@ -1,5 +1,5 @@
 import { WGMaterialDescripter, WGMaterial } from "./WGMaterial";
-import { ShadowOccBlurShdConstructor } from "./shader/ShadowOccBlurShdConstructor";
+import { ShadowOccBlurShdCtor } from "./shader/ShadowOccBlurShdCtor";
 import {
 	MaterialUniformVec4Data,
 	WGRBufferData
@@ -40,15 +40,15 @@ class BasePBRProperty {
 	}
 }
 class ShadowOccBlurMaterial extends WGMaterial {
-	private mShdBuilder = new ShadowOccBlurShdConstructor();
+	private mShdBuilder = new ShadowOccBlurShdCtor();
 	property = new BasePBRProperty();
 	constructor(descriptor?: WGMaterialDescripter) {
 		super(descriptor);
 	}
 	setDescriptor(descriptor: WGMaterialDescripter): void {
-		if (!descriptor || descriptor.shaderSrc === undefined) {
-			if (!descriptor) descriptor = { shadinguuid: "ShadowOccBlurMaterial" };
-		}
+		// if (!descriptor || descriptor.shaderSrc === undefined) {
+		// 	if (!descriptor) descriptor = { shadinguuid: "ShadowOccBlurMaterial" };
+		// }
 		super.setDescriptor(descriptor);
 	}
 	get uniformValues(): WGRBufferData[] {
@@ -67,7 +67,7 @@ class ShadowOccBlurMaterial extends WGMaterial {
 		}
 
 		console.log('ShadowOccBlurMaterial::__$build() preCode: \n', preCode);
-		let uuid = preCode + "-ins01";
+		let uuid = preCode + "-shadowOccBlurIns01";
 		let shaderCode = this.mShdBuilder.build(preCode);
 		let shaderSrc = {
 			shaderSrc: { code: shaderCode, uuid }
