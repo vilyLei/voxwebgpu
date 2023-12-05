@@ -430,7 +430,7 @@ let position = new Vector3(0, -1, 0);
 		let cam = graph.shadowCamera;
 		property.shadowReceived = shadowReceived;
 		if(shadowReceived) {
-			property.shadowMatrix.setShadowMatrix(this.mShadowTransMat);
+			property.shadowMatrix.shadowMatrix = this.mShadowTransMat;
 			let vsmParams = property.vsmParams;
 			vsmParams.radius = graph.shadowRadius;
 			vsmParams.bias = graph.shadowBias;

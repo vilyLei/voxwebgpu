@@ -344,7 +344,7 @@ export class PBRShadowTest {
 		let cam = graph.shadowCamera;
 		property.shadowReceived = shadowReceived;
 		if(shadowReceived) {
-			property.shadowMatrix.setShadowMatrix(this.mShadowTransMat);
+			property.shadowMatrix.shadowMatrix = this.mShadowTransMat;
 			let vsmParams = property.vsmParams;
 			vsmParams.radius = graph.shadowRadius;
 			vsmParams.bias = graph.shadowBias;
