@@ -9,6 +9,7 @@ import vsmShadowHeadWGSL from "./include/vsmShadowHead.wgsl";
 import fragOutputWGSL from "./include/fragOutput.wgsl";
 
 import { WGShaderPredefine } from "./WGShaderPredefine";
+import { WGShdCodeCtor } from "./WGShdCodeCtor";
 
 const shdSrcModules: Map<string, string> = new Map();
 function initModules() {
@@ -130,14 +131,11 @@ $$$$$$$$$ DOLL 02
 #endif
 AAAAAAAAAA 04
 `;
-class WGShaderConstructor {
-	readonly predefine = new WGShaderPredefine();
-	private moduleNames: string[] = [];
-	constructor() { }
-	reset(): void {
-		this.predefine.reset();
+class WGShaderConstructor extends WGShdCodeCtor {
+	constructor() {
+		super();
+		this.codeModules = shdSrcModules;
 	}
-
 	testBuild(predefine: string): string {
 
 		predefine =
@@ -205,41 +203,6 @@ class WGShaderConstructor {
 		// console.log("\n###### whole shader:");
 		// console.log(code);
 		return code;
-	}
-	parseInclude(src: string): string {
-		// 第一步, 去除注释, 然后再接着处理(或者想法子越过注释)
-		let dst = src;
-		let keyStr = "#include ";
-		let index = src.indexOf(keyStr);
-
-		const moduleNames = this.moduleNames;
-
-		for (; index >= 0;) {
-			let begin = dst.indexOf("<", index + 1);
-			let end = dst.indexOf(">", begin + 1);
-			// console.log("parseInclude(), begin, end: ", begin, end);
-			if (end > 0) {
-				let moduleName = dst.slice(begin + 1, end).trim();
-				// console.log("parseInclude(), moduleName: ", moduleName);
-				let includeCmd = dst.slice(index, end + 1);
-				// 同一个代码块不用载入两次
-				if (moduleNames.includes(moduleName)) {
-					dst = dst.replace(includeCmd, `\n\r`);
-					end = index + 1;
-				} else {
-					moduleNames.push(moduleName);
-					let moduleCode = shdSrcModules.get(moduleName);
-					// console.log("parseInclude(), includeCmd: ", includeCmd);
-					dst = dst.replace(includeCmd, `\n\r${moduleCode}\n\r`);
-				}
-				// console.log('parseInclude(), dst:');
-				// console.log(dst);
-				index = dst.indexOf(keyStr, end);
-			} else {
-				break;
-			}
-		}
-		return dst;
 	}
 }
 export { WGShaderConstructor };
