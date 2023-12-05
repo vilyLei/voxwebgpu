@@ -31,7 +31,7 @@ class WGRendererPass implements WGRendererPassImpl {
 
 	passColors = [new WGRPColorAttachment()];
 	passDepthStencil: WGRPDepthStencilAttachment;
-	viewport = new WGRPassViewport();
+	viewport: WGRPassViewport;
 
 	prevPass: WGRendererPass;
 	separate = false;
@@ -67,11 +67,6 @@ class WGRendererPass implements WGRendererPassImpl {
 			} else if (wgCtx) {
 				vext.setSize(wgCtx.canvasWidth, wgCtx.canvasHeight);
 			}
-			// if (params.viewWidth !== undefined && params.viewHeight !== undefined) {
-			// 	vext.setSize(params.viewWidth, params.viewHeight);
-			// } else if (wgCtx) {
-			// 	vext.setSize(wgCtx.canvasWidth, wgCtx.canvasHeight);
-			// }
 			params.multisampleEnabled = params.sampleCount && params.sampleCount > 1;
 			this.mParam = params;
 			if (this.prevPass) {

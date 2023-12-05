@@ -119,6 +119,9 @@ class ShadowPassGraph extends WGRPassNodeGraph {
 
 		this.buildShadowCam();
 		pass.node.camera = this.shadowCamera;
+
+		console.log('pass.node.viewport: ', pass.node.viewport);
+
 		this.initMaterial();
 		this.initocc();
 

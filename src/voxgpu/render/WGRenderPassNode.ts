@@ -11,6 +11,7 @@ import Camera from "../view/Camera";
 import { BlockParam, WGRenderUnitBlock } from "./WGRenderUnitBlock";
 import { Entity3D } from "../entity/Entity3D";
 import { WGRPColorAttachmentImpl } from "./pipeline/WGRPColorAttachmentImpl";
+import { WGRPassViewport } from "./pipeline/WGRPassViewport";
 class WGRenderPassNode implements IWGRenderPassNode {
 	private static sUid = 0;
 	private mUid = WGRenderPassNode.sUid++;
@@ -20,7 +21,7 @@ class WGRenderPassNode implements IWGRenderPassNode {
 	private mPassBuilded = false;
 	readonly clearColor = new Color4(0.0, 0.0, 0.0, 1.0);
 
-
+	viewport = new WGRPassViewport();
 	colorAttachments: WGRPColorAttachmentImpl[];
 	camera: Camera;
 	name = "";
@@ -44,6 +45,7 @@ class WGRenderPassNode implements IWGRenderPassNode {
 		this.mDrawing = drawing;
 		this.rpass = new WGRendererPass(null, drawing);
 		this.rpass.clearColor = this.clearColor;
+		this.rpass.viewport = this.viewport;
 	}
 	setColorAttachmentClearEnabledAt(enabled: boolean, index: number = 0): void {
 		if (this.mPassBuilded) {
