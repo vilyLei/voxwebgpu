@@ -12,8 +12,9 @@ export class SpecSizeRTTTest {
 			canvasHeight: 512,
 			rpassparam: {
 				multisampleEnabled: true,
-				viewWidth: 256,
-				viewHeight: 256
+				// viewport: {extent:[0,0, 256,256]}
+				// viewport: { width: 256, height: 256 }
+				viewport: [0,0,256,256,0,1]
 			}
 		});
 		this.applyRTT();
@@ -76,7 +77,7 @@ export class SpecSizeRTTTest {
 		// if(this.mFlag < 0) {
 		// 	return;
 		// }
-		this.mFlag --;
+		this.mFlag--;
 
 		this.mRscene.run();
 	}

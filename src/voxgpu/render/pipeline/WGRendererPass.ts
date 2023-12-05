@@ -36,7 +36,7 @@ class WGRendererPass implements WGRendererPassImpl {
 	prevPass: WGRendererPass;
 	separate = false;
 	enabled = true;
-	
+
 	constructor(wgCtx?: WebGPUContext, drawing = true) {
 		// console.log("WGRendererPass::constructor(), drawing: ", drawing);
 		this.mDrawing = drawing;
@@ -62,11 +62,16 @@ class WGRendererPass implements WGRendererPassImpl {
 		if (this.mDrawing) {
 			let wgCtx = this.mWGCtx;
 			let vext = this.viewport.extent;
-			if (params.viewWidth !== undefined && params.viewHeight !== undefined) {
-				vext.setSize(params.viewWidth, params.viewHeight);
+			if(params.viewport) {
+				this.viewport.setViewport(params.viewport);
 			} else if (wgCtx) {
 				vext.setSize(wgCtx.canvasWidth, wgCtx.canvasHeight);
 			}
+			// if (params.viewWidth !== undefined && params.viewHeight !== undefined) {
+			// 	vext.setSize(params.viewWidth, params.viewHeight);
+			// } else if (wgCtx) {
+			// 	vext.setSize(wgCtx.canvasWidth, wgCtx.canvasHeight);
+			// }
 			params.multisampleEnabled = params.sampleCount && params.sampleCount > 1;
 			this.mParam = params;
 			if (this.prevPass) {

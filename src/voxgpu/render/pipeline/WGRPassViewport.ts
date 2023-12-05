@@ -11,21 +11,34 @@ export class WGRPassViewport {
 	}
 	setViewport(vp: ViewportDataType): void {
 		if(vp) {
-			this.extent.setExtent(vp.extent);
-			let ls = vp.depths;
+			this.extent.setExtent(vp);
+			let ls = vp as number[];
+			let minI = 4;
+			let maxI = 5;
+			if(ls.length === undefined) {
+				let p = vp as ViewportDataParamType;
+				this.extent.setExtent(p.extent);
+				ls = p.depths;
+				minI = 0;
+				maxI = 1;
+				if(p.x !== undefined){
+					this.minDepth = p.minDepth;
+				}
+				if(p.minDepth !== undefined){
+					this.minDepth = p.minDepth;
+				}
+				if(p.maxDepth !== undefined){
+					this.maxDepth = p.maxDepth;
+				}
+			}
+			
 			if(ls) {
-				if(ls.length > 0) {
-					this.minDepth = ls[0];
+				if(ls.length > minI) {
+					this.minDepth = ls[minI];
 				}
-				if(ls.length > 1) {
-					this.maxDepth = ls[1];
+				if(ls.length > maxI) {
+					this.maxDepth = ls[maxI];
 				}
-			}
-			if(vp.minDepth !== undefined){
-				this.minDepth = vp.minDepth;
-			}
-			if(vp.maxDepth !== undefined){
-				this.maxDepth = vp.maxDepth;
 			}
 		}
 	}

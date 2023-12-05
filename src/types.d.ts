@@ -120,7 +120,12 @@ declare type ColorDataType = ColorRGBAType | number[] | Float32Array;
 declare type Extent2Type = { x?: number, y?: number, width?: number, height?: number };
 declare type Extent2DataType = Extent2Type | number[] | Float32Array;
 
-declare type ViewportDataType = { extent?: Extent2Type, minDepth?: number, maxDepth?: number, depths?: number[] }
+declare type ViewportDataParamType = {
+	x?: number, y?: number, width?: number, height?: number,
+	extent?: Extent2DataType,
+	minDepth?: number, maxDepth?: number, depths?: number[]
+};
+declare type ViewportDataType = ViewportDataParamType | number[];
 
 declare type Vector3Type = { x?: number, y?: number, z?: number, w?: number };
 declare type Vector3DataType = Vector3Type | number[] | Float32Array | Uint16Array | Uint32Array | Int16Array | Int32Array;
