@@ -36,6 +36,8 @@ class WGRendererPass implements WGRendererPassImpl {
 	separate = false;
 	enabled = true;
 	viewExtent = new Extent2([0, 0, 512, 512]);
+	minDepth = 0;
+	maxDepth = 1;
 	constructor(wgCtx?: WebGPUContext, drawing = true) {
 		// console.log("WGRendererPass::constructor(), drawing: ", drawing);
 		this.mDrawing = drawing;
@@ -295,7 +297,7 @@ class WGRendererPass implements WGRendererPassImpl {
 
 				this.passEncoder = cmdEncoder.beginRenderPass(renderPassDescriptor);
 				let ext = this.viewExtent;
-				this.passEncoder.setViewport(ext.x, ext.y, ext.width, ext.height, 0, 1);
+				this.passEncoder.setViewport(ext.x, ext.y, ext.width, ext.height, this.minDepth, this.maxDepth);
 			} else {
 				this.compPassEncoder = cmdEncoder.beginComputePass();
 			}
