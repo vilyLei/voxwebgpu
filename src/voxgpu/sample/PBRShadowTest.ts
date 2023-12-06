@@ -11,7 +11,6 @@ import { FixScreenPlaneEntity } from "../entity/FixScreenPlaneEntity";
 import { SphereEntity } from "../entity/SphereEntity";
 import { PlaneEntity } from "../entity/PlaneEntity";
 import { ShadowOccBlurMaterial } from "../material/ShadowOccBlurMaterial";
-import { ShadowReceiveMaterial } from "../material/ShadowReceiveMaterial";
 import Matrix4 from "../math/Matrix4";
 import { BoxEntity } from "../entity/BoxEntity";
 import { TorusEntity } from "../entity/TorusEntity";
@@ -201,7 +200,7 @@ export class PBRShadowTest {
 
 		let rc = this.mRscene;
 		
-		let position = new Vector3(-230.0, 100.0, -200.0);
+		let position = [-230.0, 100.0, -200.0];
 		let materials = this.createMaterials(position);
 		let sph = new SphereEntity({
 			radius: 80,
@@ -212,7 +211,7 @@ export class PBRShadowTest {
 		});
 		this.mEntities.push(sph);
 		rc.addEntity(sph);
-		position = new Vector3(160.0, 100.0, -210.0);
+		position = [160.0, 100.0, -210.0];
 		materials = this.createMaterials(position);
 		let box = new BoxEntity({
 			minPos: [-30, -30, -30],
@@ -226,7 +225,7 @@ export class PBRShadowTest {
 		this.mEntities.push(box);
 		rc.addEntity(box);
 
-		position = new Vector3(160.0, 100.0, 210.0);
+		position = [160.0, 100.0, 210.0];
 		materials = this.createMaterials(position);
 		let torus = new TorusEntity({
 			transform: {
@@ -321,7 +320,7 @@ export class PBRShadowTest {
 		return textures;
 	}
 	
-	private createMaterials(position: Vector3, shadowReceived = false, uvParam?: number[]): BasePBRMaterial[] {
+	private createMaterials(position: Vector3DataType, shadowReceived = false, uvParam?: number[]): BasePBRMaterial[] {
 		let textures0 = this.createBaseTextures(shadowReceived);
 		
 		let material0 = this.createMaterial(position, textures0, ["solid"]);
