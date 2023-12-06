@@ -45,7 +45,7 @@ export default class TorusGeometry extends GeometryBase {
     getCVS(): Float32Array { return this.m_cvs; }
     getIVS(): Uint16Array | Uint32Array { return this.mivs; }
 
-    initialize(ringRadius: number, axisRadius: number, longitudeNumSegments: number, latitudeNumSegments: number, uvType: number = 1, alignYRatio: number = -0.5): void {
+    initialize(ringRadius: number, axisRadius: number, rings: number, segments: number, uvType: number = 1, alignYRatio: number = -0.5): void {
 
         if (this.mvs == null) {
 
@@ -61,7 +61,7 @@ export default class TorusGeometry extends GeometryBase {
                     g.axisType = 1;
                     break;
             }
-            g.initialize(axisRadius, 0.0, longitudeNumSegments, latitudeNumSegments, uvType, alignYRatio);
+            g.initialize(axisRadius, 0.0, rings, segments, uvType, alignYRatio);
 
             let nvFlag = true;
             let vs = g.getVS();
@@ -78,10 +78,10 @@ export default class TorusGeometry extends GeometryBase {
             let pv = new Vector3();
             let nv = new Vector3();
             let mat4 = new Matrix4();
-            for (let i = 0; i <= latitudeNumSegments; ++i) {
+            for (let i = 0; i <= segments; ++i) {
 
                 mat4.identity();
-                rad = pi2 * i / latitudeNumSegments;
+                rad = pi2 * i / segments;
                 switch (this.axisType) {
                     case 1:
                         pv.x = Math.cos(rad) * ringRadius;

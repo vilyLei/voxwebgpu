@@ -15,8 +15,8 @@ export default class SphereGeometry extends GeometryBase {
     constructor() {
         super();
     }
-    private mLongitudeNumSegments = 10;
-    private mLatitudeNumSegments = 10;
+    private mRings = 10;
+    private mSegments = 10;
     private mRadius = 50;
     private mvs: Float32Array;
     private muvs: Float32Array;
@@ -36,22 +36,22 @@ export default class SphereGeometry extends GeometryBase {
     getNVS(): Float32Array { return this.mnvs; }
     getIVS(): IndexArrayViewType { return this.mivs; }
 
-    initialize(radius: number, longitudeNumSegments: number, latitudeNumSegments: number, doubleTriFaceEnabled: boolean): void {
+    initialize(radius: number, segments: number, rings: number, doubleTriFaceEnabled: boolean): void {
         if (this.vtxTotal < 1) {
             if (radius < 0.0001) radius = 0.0001;
-
+            
             this.bounds = new AABB();
-            if (longitudeNumSegments < 2) longitudeNumSegments = 2;
-            if (latitudeNumSegments < 2) latitudeNumSegments = 2;
+            if (rings < 2) rings = 2;
+            if (segments < 2) segments = 2;
             this.mRadius = Math.abs(radius);
-            this.mLongitudeNumSegments = longitudeNumSegments;
-            this.mLatitudeNumSegments = latitudeNumSegments;
+            this.mRings = rings;
+            this.mSegments = segments;
 
-            if ((this.mLatitudeNumSegments + 1) % 2 == 0) {
-                this.mLatitudeNumSegments += 1;
+            if ((this.mSegments + 1) % 2 == 0) {
+                this.mSegments += 1;
             }
-            if (this.mLongitudeNumSegments = this.mLatitudeNumSegments) {
-                this.mLongitudeNumSegments += 1;
+            if (this.mRings == this.mSegments) {
+                this.mRings += 1;
             }
 
             let i = 1, j = 0, trisTot = 0;
@@ -69,7 +69,7 @@ export default class SphereGeometry extends GeometryBase {
             vtx.nx = 0.0; vtx.ny = -1.0; vtx.nz = 0.0;
 
             let v0 = vtx.cloneVertex();
-            for (j = 0; j <= this.mLongitudeNumSegments; ++j) {
+            for (j = 0; j <= this.mRings; ++j) {
                 vtxRow.push(v0);
             }
             vtxVec.push(v0);
@@ -79,8 +79,8 @@ export default class SphereGeometry extends GeometryBase {
             let py2 = 0.0;
             let f = 1.0 / this.mRadius;
 
-            for (i = 1; i < this.mLatitudeNumSegments; ++i) {
-                yRad = Math.PI * i / this.mLatitudeNumSegments;
+            for (i = 1; i < this.mSegments; ++i) {
+                yRad = Math.PI * i / this.mSegments;
                 px = Math.sin(yRad);
                 py = Math.cos(yRad);
 
@@ -96,8 +96,8 @@ export default class SphereGeometry extends GeometryBase {
                 py2 *= this.uvScale;
                 vtxRows.push([]);
                 let row = vtxRows[i];
-                for (j = 0; j < this.mLongitudeNumSegments; ++j) {
-                    xRad = (Math.PI * 2 * j) / this.mLongitudeNumSegments;
+                for (j = 0; j < this.mRings; ++j) {
+                    xRad = (Math.PI * 2 * j) / this.mRings;
                     ++trisTot;
                     px = Math.sin(xRad);
                     py = Math.cos(xRad);
@@ -120,9 +120,9 @@ export default class SphereGeometry extends GeometryBase {
             vtx.u = vtx.v = centerUV;
             vtx.nx = 0.0; vtx.ny = 1.0; vtx.nz = 0.0;
             vtxRows.push([]);
-            let lastRow = vtxRows[this.mLatitudeNumSegments];
+            let lastRow = vtxRows[this.mSegments];
             let v1 = vtx.cloneVertex();
-            for (j = 0; j <= this.mLongitudeNumSegments; ++j) {
+            for (j = 0; j <= this.mRings; ++j) {
                 lastRow.push(v1);
             }
             vtxVec.push(v1);
@@ -133,13 +133,13 @@ export default class SphereGeometry extends GeometryBase {
 
             let rowa = null;
             let rowb = null;
-            let layerN = this.mLatitudeNumSegments;
+            let layerN = this.mSegments;
             if (this.mode == 1) {
                 let halfN = layerN / 2 + 1;
                 for (i = halfN; i <= layerN; ++i) {
                     rowa = vtxRows[i - 1];
                     rowb = vtxRows[i];
-                    for (j = 1; j <= this.mLongitudeNumSegments; ++j) {
+                    for (j = 1; j <= this.mRings; ++j) {
                         pivs.push(rowa[j].index); pivs.push(rowb[j - 1].index); pivs.push(rowa[j - 1].index);
                         pivs.push(rowa[j].index); pivs.push(rowb[j].index); pivs.push(rowb[j - 1].index);
                     }
@@ -152,7 +152,7 @@ export default class SphereGeometry extends GeometryBase {
                 for (i = 1; i < halfN; ++i) {
                     rowa = vtxRows[i - 1];
                     rowb = vtxRows[i];
-                    for (j = 1; j <= this.mLongitudeNumSegments; ++j) {
+                    for (j = 1; j <= this.mRings; ++j) {
                         pivs.push(rowa[j].index); pivs.push(rowb[j - 1].index); pivs.push(rowa[j - 1].index);
                         pivs.push(rowa[j].index); pivs.push(rowb[j].index); pivs.push(rowb[j - 1].index);
                     }
@@ -189,7 +189,7 @@ export default class SphereGeometry extends GeometryBase {
                 console.log("calc UV_U XXXXX");
                 ///*
                 for (i = 1; i < halfN; ++i) {
-                    yRad = Math.PI * i / this.mLatitudeNumSegments;
+                    yRad = Math.PI * i / this.mSegments;
                     px = Math.sin(yRad);
                     py = Math.cos(yRad);
                     if (this.inverseUV) {
@@ -201,9 +201,9 @@ export default class SphereGeometry extends GeometryBase {
                     py2 *= this.uvScale;
 
                     const ls = list0[i];
-                    for (j = 0; j < this.mLongitudeNumSegments; ++j) {
+                    for (j = 0; j < this.mRings; ++j) {
                         vtx = ls[j];
-                        xRad = (Math.PI * 2 * j) / this.mLongitudeNumSegments;
+                        xRad = (Math.PI * 2 * j) / this.mRings;
                         // calc uv
                         vtx.u = 0.25 + Math.sin(xRad) * py2 * 0.5;
                         vtx.v = 0.5 + Math.cos(xRad) * py2;
@@ -214,7 +214,7 @@ export default class SphereGeometry extends GeometryBase {
                 vtx.v = 0.5;
                 //*/
                 for (i = halfN - 1; i < layerN; ++i) {
-                    yRad = Math.PI * i / this.mLatitudeNumSegments;
+                    yRad = Math.PI * i / this.mSegments;
                     px = Math.sin(yRad);
                     py = Math.cos(yRad);
                     if (this.inverseUV) {
@@ -226,9 +226,9 @@ export default class SphereGeometry extends GeometryBase {
                     py2 *= this.uvScale;
 
                     const ls = list1[i];
-                    for (j = 0; j < this.mLongitudeNumSegments; ++j) {
+                    for (j = 0; j < this.mRings; ++j) {
                         vtx = ls[j];
-                        xRad = (Math.PI * 2 * j) / this.mLongitudeNumSegments;
+                        xRad = (Math.PI * 2 * j) / this.mRings;
                         // calc uv
                         vtx.u = 0.75 + Math.sin(xRad) * py2 * 0.5;
                         vtx.v = 0.5 + Math.cos(xRad) * py2;
@@ -241,7 +241,7 @@ export default class SphereGeometry extends GeometryBase {
                 for (i = 1; i < halfN; ++i) {
                     rowa = list0[i - 1];
                     rowb = list0[i];
-                    for (j = 1; j <= this.mLongitudeNumSegments; ++j) {
+                    for (j = 1; j <= this.mRings; ++j) {
                         pivs.push(rowa[j].index); pivs.push(rowb[j - 1].index); pivs.push(rowa[j - 1].index);
                         pivs.push(rowa[j].index); pivs.push(rowb[j].index); pivs.push(rowb[j - 1].index);
                     }
@@ -249,7 +249,7 @@ export default class SphereGeometry extends GeometryBase {
                 for (i = halfN; i <= layerN; ++i) {
                     rowa = list1[i - 1];
                     rowb = list1[i];
-                    for (j = 1; j <= this.mLongitudeNumSegments; ++j) {
+                    for (j = 1; j <= this.mRings; ++j) {
                         pivs.push(rowa[j].index); pivs.push(rowb[j - 1].index); pivs.push(rowa[j - 1].index);
                         pivs.push(rowa[j].index); pivs.push(rowb[j].index); pivs.push(rowb[j - 1].index);
                     }
@@ -260,7 +260,7 @@ export default class SphereGeometry extends GeometryBase {
                 for (i = 1; i <= layerN; ++i) {
                     rowa = vtxRows[i - 1];
                     rowb = vtxRows[i];
-                    for (j = 1; j <= this.mLongitudeNumSegments; ++j) {
+                    for (j = 1; j <= this.mRings; ++j) {
                         pivs.push(rowa[j].index); pivs.push(rowb[j - 1].index); pivs.push(rowa[j - 1].index);
                         pivs.push(rowa[j].index); pivs.push(rowb[j].index); pivs.push(rowb[j - 1].index);
                     }

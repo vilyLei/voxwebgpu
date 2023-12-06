@@ -36,11 +36,11 @@ export default class ConeGeometry extends GeometryBase {
 		return this.mivs;
 	}
 
-	initialize(radius: number, height: number, longitudeNumSegments: number, alignYRatio = -0.5) {
+	initialize(radius: number, height: number, rings: number, alignYRatio = -0.5) {
 		if (this.vtxTotal < 1) {
 			if (radius < 0.01) radius = 0.01;
-			if (longitudeNumSegments < 2) longitudeNumSegments = 2;
-			let latitudeNumSegments = 2;
+			if (rings < 2) rings = 2;
+			let segments = 2;
 
 			let i = 1;
 			let j = 0;
@@ -82,14 +82,14 @@ export default class ConeGeometry extends GeometryBase {
 			let pos0 = new Vector3(0, minY + height, 0);
 			let pos1 = new Vector3(0, minY + height, 0);
 			let pos2 = new Vector3(0, minY + height, 0);
-			for (; i < latitudeNumSegments; ++i) {
-				yRad = (Math.PI * i) / latitudeNumSegments;
+			for (; i < segments; ++i) {
+				yRad = (Math.PI * i) / segments;
 				vtx.y = py;
 
 				vtxRows.push([]);
 				let rowa: GeometryVertex[] = vtxRows[i];
-				for (j = 0; j < longitudeNumSegments; ++j) {
-					yRad = (Math.PI * 2.0 * j) / longitudeNumSegments;
+				for (j = 0; j < rings; ++j) {
+					yRad = (Math.PI * 2.0 * j) / rings;
 
 					px = Math.sin(yRad);
 					py = Math.cos(yRad);
@@ -128,7 +128,7 @@ export default class ConeGeometry extends GeometryBase {
 			let rowa: GeometryVertex[] = vtxRows[vtxRows.length - 1];
 			let rowb: GeometryVertex[] = vtxRows[vtxRows.length - 2];
 
-			for (j = 0; j < longitudeNumSegments; ++j) {
+			for (j = 0; j < rings; ++j) {
 				let pv = rowb[j].cloneVertex();
 				pv.f = 1;
 
@@ -156,7 +156,7 @@ export default class ConeGeometry extends GeometryBase {
 			vtx.nz = 0.0;
 			vtxRows.push([]);
 			let lastRow = vtxRows[vtxRows.length - 1];
-			for (j = 0; j < longitudeNumSegments; ++j) {
+			for (j = 0; j < rings; ++j) {
 				vtx.index = trisTot;
 				++trisTot;
 				lastRow.push(vtx.cloneVertex());
@@ -169,16 +169,16 @@ export default class ConeGeometry extends GeometryBase {
 			let pivs: number[] = [];
 
 			i = 1;
-			latitudeNumSegments += 1;
-			for (; i <= latitudeNumSegments; ++i) {
+			segments += 1;
+			for (; i <= segments; ++i) {
 				let rowa = vtxRows[i - 1];
 				let rowb = vtxRows[i];
-				for (j = 1; j <= longitudeNumSegments; ++j) {
+				for (j = 1; j <= rings; ++j) {
 					if (i == 1) {
 						pivs.push(rowa[0].index);
 						pivs.push(rowb[j].index);
 						pivs.push(rowb[j - 1].index);
-					} else if (i == latitudeNumSegments) {
+					} else if (i == segments) {
 						pivs.push(rowa[j].index);
 						pivs.push(rowb[j].index);
 						pivs.push(rowa[j - 1].index);

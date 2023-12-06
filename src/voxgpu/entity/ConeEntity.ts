@@ -5,7 +5,7 @@ import ConeGeometry from "../geometry/primitive/ConeGeometry";
 interface ConeEntityParam extends PrimitiveEntityParam {
 	radius?: number;
 	height?: number;
-	longitudeNumSegments?: number;
+	rings?: number;
 	alignYRatio?: number;
 }
 class ConeEntity extends PrimitiveEntity {
@@ -17,10 +17,10 @@ class ConeEntity extends PrimitiveEntity {
 		if (!param) param = {};
 		if (param.radius === undefined) param.radius = 100.0;
 		if (param.height === undefined) param.height = 200.0;
-		if (param.longitudeNumSegments === undefined) param.longitudeNumSegments = 20;
+		if (param.rings === undefined) param.rings = 20;
 		if (param.alignYRatio === undefined) param.alignYRatio = -0.5;
 		let g = new ConeGeometry();
-		g.initialize(param.radius, param.height, param.longitudeNumSegments, param.alignYRatio);
+		g.initialize(param.radius, param.height, param.rings, param.alignYRatio);
 		return g;
 	}
 }

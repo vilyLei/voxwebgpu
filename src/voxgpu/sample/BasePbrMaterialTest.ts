@@ -41,8 +41,8 @@ export class BasePbrMaterialTest {
 		});
 		let sphSrc = new SphereEntity({
 			radius: 100,
-			latitudeNumSegments: 30,
-			longitudeNumSegments: 30
+			segments: 30,
+			rings: 30
 		});
 
 		let lightData = this.createLightData();

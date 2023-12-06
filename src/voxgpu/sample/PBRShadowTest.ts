@@ -188,7 +188,6 @@ export class PBRShadowTest {
 			canvasWith: 512,
 			canvasHeight: 512,
 			rpassparam: { multisampled: true }
-			//multisampled
 		});
 		
 		this.initShadowScene();

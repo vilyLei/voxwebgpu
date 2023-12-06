@@ -31,7 +31,7 @@ export class PrimitiveEntityTest {
 		rc.addEntity( axis );
 
 		let entities = [
-			new SphereEntity(),
+			new SphereEntity({rings: 10, segments: 3}),
 			new BoxEntity(),
 			new CylinderEntity({alignYRatio : 0.0}),
 			new CubeEntity({cubeSize: 130}),

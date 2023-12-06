@@ -29,18 +29,18 @@ export default class CylinderGeometry extends GeometryBase {
     getNVS(): Float32Array { return this.mnvs; }
     getIVS(): Uint16Array | Uint32Array { return this.mivs; }
 
-    initialize(radius: number, height: number, longitudeNumSegments: number, latitudeNumSegments: number, uvType: number = 1, alignYRatio: number = -0.5) {
+    initialize(radius: number, height: number, rings: number, segments: number, uvType: number = 1, alignYRatio: number = -0.5) {
         if (this.vtxTotal < 1) {
             if (radius < 0.01) return;
 
-            if (longitudeNumSegments < 2) longitudeNumSegments = 2;
-            latitudeNumSegments = 3;
+            if (rings < 2) rings = 2;
+            segments = 3;
 
             let mRadius = Math.abs(radius);
             let m_height = Math.abs(height);
 
-            let plongitudeNumSegments = longitudeNumSegments;
-            let platitudeNumSegments = latitudeNumSegments;
+            let plongitudeNumSegments = rings;
+            let platitudeNumSegments = segments;
 
             let i = 1
             let j = 0;

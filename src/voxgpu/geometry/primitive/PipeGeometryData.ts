@@ -79,14 +79,14 @@ export default class PipeGeometryData extends GeometryData {
         }
         return null;
     }
-    initialize(radius: number, height: number, longitudeNumSegments: number, latitudeNumSegments: number, uvType: number = 1, alignYRatio: number = -0.5): void {
+    initialize(radius: number, height: number, rings: number, segments: number, uvType: number = 1, alignYRatio: number = -0.5): void {
         let i = 0;
         let j = 0;
         if (radius < 0.01) radius = 0.01;
-        if (longitudeNumSegments < 2) longitudeNumSegments = 2;
-        if (latitudeNumSegments < 1) latitudeNumSegments = 1;
-        this.m_longitudeNum = longitudeNumSegments;
-        this.m_latitudeNum = latitudeNumSegments;
+        if (rings < 2) rings = 2;
+        if (segments < 1) segments = 1;
+        this.m_longitudeNum = rings;
+        this.m_latitudeNum = segments;
 
         let mRadius = Math.abs(radius);
         let ph = Math.abs(height);
@@ -105,8 +105,8 @@ export default class PipeGeometryData extends GeometryData {
         let pv: Vector3;
         let pi2 = Math.PI * 2;
         for (i = 0; i < 1; ++i) {
-            for (j = 0; j < longitudeNumSegments; ++j) {
-                yRad = (pi2 * j) / longitudeNumSegments;
+            for (j = 0; j < rings; ++j) {
+                yRad = (pi2 * j) / rings;
                 px = Math.sin(yRad);
                 py = Math.cos(yRad);
                 vtx.x = px * mRadius;
@@ -116,25 +116,25 @@ export default class PipeGeometryData extends GeometryData {
             }
             srcRow.push(srcRow[0]);
         }
-        this.vtxTotal = (longitudeNumSegments + 1) * (latitudeNumSegments + 1);
+        this.vtxTotal = (rings + 1) * (segments + 1);
         this.mvs = new Float32Array(this.vtxTotal * 3);
         this.muvs = new Float32Array(this.vtxTotal * 2);
         // calc cylinder wall vertexes
-        let tot = latitudeNumSegments;
+        let tot = segments;
         let k = 0;
         let l = 0;
 
         for (i = 0; i <= tot; ++i) {
             px = i / tot;
             py = minY + ph * px;
-            for (j = 0; j <= longitudeNumSegments; ++j) {
+            for (j = 0; j <= rings; ++j) {
                 if (uvType < 1) {
-                    this.muvs[l++] = this.uScale * (j / longitudeNumSegments);
+                    this.muvs[l++] = this.uScale * (j / rings);
                     this.muvs[l++] = this.uScale * px;
                 }
                 else {
                     this.muvs[l++] = this.uScale * px;
-                    this.muvs[l++] = this.uScale * (j / longitudeNumSegments);
+                    this.muvs[l++] = this.uScale * (j / rings);
                 }
                 const vtx = srcRow[j];
                 switch (this.axisType) {
@@ -150,16 +150,16 @@ export default class PipeGeometryData extends GeometryData {
                 }
             }
         }
-        let cn = longitudeNumSegments + 1;
+        let cn = rings + 1;
         let a = 0;
         let b = 0;
-        const size = tot * longitudeNumSegments * 6;
+        const size = tot * rings * 6;
         this.mivs = size <= 56635 ? new Uint16Array(size) : new Uint32Array(size);
         k = 0;
         for (i = 0; i < tot; ++i) {
             a = i * cn;
             b = (i + 1) * cn;
-            for (j = 1; j <= longitudeNumSegments; ++j) {
+            for (j = 1; j <= rings; ++j) {
                 this.mivs[k++] = a + j; this.mivs[k++] = b + j - 1; this.mivs[k++] = a + j - 1;
                 this.mivs[k++] = a + j; this.mivs[k++] = b + j; this.mivs[k++] = b + j - 1;
             }

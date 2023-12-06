@@ -193,7 +193,7 @@ export class GameOfLifeSphere {
 
 		let entity = new SphereEntity({
 			transufvShared: true,
-			radius: 20, longitudeNumSegments:10, latitudeNumSegments:10,
+			radius: 20, rings:10, segments:10,
 			materials
 		});
 		rc.addEntity(entity);

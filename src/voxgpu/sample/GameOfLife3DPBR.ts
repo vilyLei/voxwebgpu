@@ -188,7 +188,7 @@ export class GameOfLife3DPBR {
 		];
 		let entity = new CylinderEntity({
 			radius: 20, height: 38,
-			longitudeNumSegments: 10, latitudeNumSegments: 10,
+			rings: 10, segments: 10,
 			alignYRatio : 0.0, materials
 		});
 		rc.addEntity(entity);

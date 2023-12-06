@@ -85,11 +85,11 @@ export class BaseMaterialTest {
 		// let box = new BoxEntity({shaderSrc, minPos: [-100, -100, -100], maxPos: [100, 100, 100]});
 		// rc.addEntity(box);
 
-		let sph = new SphereEntity({ shaderSrc, radius: 100, latitudeNumSegments: 30, longitudeNumSegments: 30, textures, uniformValues });
+		let sph = new SphereEntity({ shaderSrc, radius: 100, segments: 30, rings: 30, textures, uniformValues });
 		sph.transform.setPosition([0, 0, 300]);
 		rc.addEntity(sph);
 
-		// let cone = new ConeEntity({shaderSrc, radius: 100, height: 260, longitudeNumSegments: 30, textures, uniformValues});
+		// let cone = new ConeEntity({shaderSrc, radius: 100, height: 260, rings: 30, textures, uniformValues});
 		// rc.addEntity(cone);
 		textures = this.createTextures("rusted_iron");
 		let monkey = new ModelEntity({

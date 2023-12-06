@@ -4,8 +4,8 @@ import SphereGeometry from "../geometry/primitive/SphereGeometry";
 
 interface SphereEntityParam extends PrimitiveEntityParam {
 	radius?: number;
-	longitudeNumSegments?: number;
-	latitudeNumSegments?: number;
+	rings?: number;
+	segments?: number;
 }
 class SphereEntity extends PrimitiveEntity {
 	constructor(param?: SphereEntityParam) {
@@ -15,10 +15,10 @@ class SphereEntity extends PrimitiveEntity {
 	protected getGeometryData(param: SphereEntityParam): GeometryBase {
 		if (!param) param = {};
 		if (param.radius === undefined) param.radius = 100.0;
-		if (param.longitudeNumSegments === undefined) param.longitudeNumSegments = 20;
-		if (param.latitudeNumSegments === undefined) param.latitudeNumSegments = 20;
+		if (param.rings === undefined) param.rings = 20;
+		if (param.segments === undefined) param.segments = 20;
 		let sph = new SphereGeometry();
-		sph.initialize(param.radius, param.longitudeNumSegments, param.latitudeNumSegments, false);
+		sph.initialize(param.radius, param.rings, param.segments, false);
 		return sph;
 	}
 }

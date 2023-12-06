@@ -5,8 +5,8 @@ import TorusGeometry from "../geometry/primitive/TorusGeometry";
 interface TorusEntityParam extends PrimitiveEntityParam {
 	radius?: number;
 	axisRadius?: number;
-	longitudeNumSegments?: number;
-	latitudeNumSegments?: number;
+	rings?: number;
+	segments?: number;
 	/**
 	 * Possible values are: 0, 1, 2
 	 */
@@ -20,13 +20,13 @@ class TorusEntity extends PrimitiveEntity {
 		if (!param) param = {};
 		if (param.radius === undefined) param.radius = 100.0;
 		if (param.axisRadius === undefined) param.axisRadius = 30.0;
-		if (param.longitudeNumSegments === undefined) param.longitudeNumSegments = 10;
-		if (param.latitudeNumSegments === undefined) param.latitudeNumSegments = 20;
+		if (param.rings === undefined) param.rings = 10;
+		if (param.segments === undefined) param.segments = 20;
 		if (param.axisType === undefined) param.axisType = 0;
 
 		let g = new TorusGeometry();
 		g.axisType = param.axisType;
-		g.initialize(param.radius, param.axisRadius, param.longitudeNumSegments, param.latitudeNumSegments);
+		g.initialize(param.radius, param.axisRadius, param.rings, param.segments);
 		return g;
 	}
 }

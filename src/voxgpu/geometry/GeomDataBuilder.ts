@@ -28,10 +28,10 @@ class GeomDataBuilder {
 		this.mWGCtx = wgCtx;
 	}
 
-	createTorus(ringRadius: number, axisRadius = 20, longitudeNumSegments = 20, latitudeNumSegments = 20): GeomRDataType {
+	createTorus(ringRadius: number, axisRadius = 20, rings = 20, segments = 20): GeomRDataType {
 		let geom = new TorusGeometry();
 		geom.setBufSortFormat(0xfffffff);
-		geom.initialize(ringRadius, axisRadius, longitudeNumSegments, latitudeNumSegments);
+		geom.initialize(ringRadius, axisRadius, rings, segments);
 
 		let vbufs: GPUBuffer[];
 		let ibuf: GPUBuffer;
@@ -50,10 +50,10 @@ class GeomDataBuilder {
 		const vtxDescParam = { vertex: { buffers: vbufs, attributeIndicesArray: [[0], [0]] } } as VtxPipelinDescParam;
 		return {ivs, vs, uvs, nvs, vbufs: vbufs, ibuf: ibuf, vtxDescParam: vtxDescParam, bounds: geom.bounds};
 	}
-	createCylinder(radius: number, height = 200, longitudeNumSegments = 20, latitudeNumSegments = 20): GeomRDataType {
+	createCylinder(radius: number, height = 200, rings = 20, segments = 20): GeomRDataType {
 		let geom = new CylinderGeometry();
 		geom.setBufSortFormat(0xfffffff);
-		geom.initialize(radius, height, longitudeNumSegments, latitudeNumSegments);
+		geom.initialize(radius, height, rings, segments);
 
 		let vbufs: GPUBuffer[];
 		let ibuf: GPUBuffer;
@@ -72,10 +72,10 @@ class GeomDataBuilder {
 		const vtxDescParam = { vertex: { buffers: vbufs, attributeIndicesArray: [[0], [0]] } };
 		return {ivs, vs, uvs, nvs, vbufs: vbufs, ibuf: ibuf, vtxDescParam: vtxDescParam, bounds: geom.bounds};
 	}
-	createSphere(radius: number, longitudeNumSegments = 20, latitudeNumSegments = 20): GeomRDataType {
+	createSphere(radius: number, rings = 20, segments = 20): GeomRDataType {
 		let geom = new SphereGeometry();
 		geom.setBufSortFormat(0xfffffff);
-		geom.initialize(radius, longitudeNumSegments, latitudeNumSegments, false);
+		geom.initialize(radius, rings, segments, false);
 
 		let vbufs: GPUBuffer[];
 		let ibuf: GPUBuffer;

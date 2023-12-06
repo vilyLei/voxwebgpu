@@ -26,7 +26,7 @@
 // import { RSceneEntityManagement as Demo } from "./voxgpu/sample/RSceneEntityManagement";
 // import { SimplePBRTest as Demo } from "./voxgpu/sample/SimplePBRTest";
 // import { FixScreenPlaneTest as Demo } from "./voxgpu/sample/FixScreenPlaneTest";
-// import { PrimitiveEntityTest as Demo } from "./voxgpu/sample/PrimitiveEntityTest";
+import { PrimitiveEntityTest as Demo } from "./voxgpu/sample/PrimitiveEntityTest";
 
 // import { ScreenPostEffect as Demo } from "./voxgpu/sample/ScreenPostEffect";
 // import { ModelLoadTest as Demo } from "./voxgpu/sample/ModelLoadTest";
@@ -85,7 +85,7 @@
 // import { BaseVSMShadowTest as Demo } from "./voxgpu/sample/BaseVSMShadowTest";
 // import { PassGraphShadowTest as Demo } from "./voxgpu/sample/PassGraphShadowTest";
 // import { ShadowTest as Demo } from "./voxgpu/sample/ShadowTest";
-import { PBRShadowTest as Demo } from "./voxgpu/sample/PBRShadowTest";
+// import { PBRShadowTest as Demo } from "./voxgpu/sample/PBRShadowTest";
 
 
 

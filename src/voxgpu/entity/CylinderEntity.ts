@@ -5,8 +5,8 @@ import CylinderGeometry from "../geometry/primitive/CylinderGeometry";
 interface CylinderEntityParam extends PrimitiveEntityParam {
 	radius?: number;
 	height?: number;
-	longitudeNumSegments?: number;
-	latitudeNumSegments?: number;
+	rings?: number;
+	segments?: number;
 	uvType?: number;
 	alignYRatio?: number;
 }
@@ -19,18 +19,18 @@ class CylinderEntity extends PrimitiveEntity {
 		if (!param) param = {};
 		// param.radius ??= 100;
 		// param.height ??= 300;
-		// param.longitudeNumSegments ??= 20;
-		// param.latitudeNumSegments ??= 20;
+		// param.rings ??= 20;
+		// param.segments ??= 20;
 		// param.uvType ??= 1;
 		// param.alignYRatio ??= -0.5;
 		if (param.radius === undefined) param.radius = 100.0;
 		if (param.height === undefined) param.height = 300.0;
-		if (param.longitudeNumSegments === undefined) param.longitudeNumSegments = 20;
-		if (param.latitudeNumSegments === undefined) param.latitudeNumSegments = 20;
+		if (param.rings === undefined) param.rings = 20;
+		if (param.segments === undefined) param.segments = 20;
 		if (param.uvType === undefined) param.uvType = 1;
 		if (param.alignYRatio === undefined) param.alignYRatio = -0.5;
 		let g = new CylinderGeometry();
-		g.initialize(param.radius, param.height, param.longitudeNumSegments, param.latitudeNumSegments,param.uvType,param.alignYRatio);
+		g.initialize(param.radius, param.height, param.rings, param.segments,param.uvType,param.alignYRatio);
 		return g;
 	}
 }
