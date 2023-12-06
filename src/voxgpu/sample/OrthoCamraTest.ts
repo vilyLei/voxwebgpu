@@ -22,7 +22,7 @@ export class OrthoCamraTest {
 			camera: {
 				perspective: false
 			},
-			rpassparam: { multisampleEnabled: true }
+			rpassparam: { multisampled: true }
 		});
 		this.initEvent();
 		this.initScene();

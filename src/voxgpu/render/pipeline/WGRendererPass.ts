@@ -67,7 +67,7 @@ class WGRendererPass implements WGRendererPassImpl {
 			} else if (wgCtx) {
 				vext.setSize(wgCtx.canvasWidth, wgCtx.canvasHeight);
 			}
-			params.multisampleEnabled = params.sampleCount && params.sampleCount > 1;
+			params.multisampled = params.sampleCount && params.sampleCount > 1;
 			this.mParam = params;
 			if (this.prevPass) {
 				this.mDepthTexture = this.prevPass.mDepthTexture;
@@ -120,8 +120,8 @@ class WGRendererPass implements WGRendererPassImpl {
 		let separate = this.separate;
 
 		let sampleCount = 1;
-		const multisampled = param.multisampleEnabled === true;
-		param.multisampleEnabled = multisampled;
+		const multisampled = param.multisampled === true;
+		param.multisampled = multisampled;
 		if (multisampled) {
 			sampleCount = param.sampleCount;
 		}
@@ -216,14 +216,14 @@ class WGRendererPass implements WGRendererPassImpl {
 				const colorT = pcs[0];
 
 				let dsAtt = this.passDepthStencil;
-				const multisampleEnabled = param.multisampleEnabled;
+				const multisampled = param.multisampled;
 				if (prev) {
 					const prevColorAtt = prev.passColors[0];
 					const prevDSAtt = prev.passDepthStencil;
 
 					colorT.loadOp = "load";
 
-					if (multisampleEnabled) {
+					if (multisampled) {
 						colorT.view = prevColorAtt.view;
 						colorT.resolveTarget = prevColorAtt.resolveTarget;
 					} else {
@@ -243,7 +243,7 @@ class WGRendererPass implements WGRendererPassImpl {
 						pcs[0].clearValue.copyFrom(this.clearColor);
 					}
 					if (this.separate) {
-						// console.log("run a rpass, this.separate: ", this.separate,", multisampleEnabled: ", multisampleEnabled);
+						// console.log("run a rpass, this.separate: ", this.separate,", multisampled: ", multisampled);
 						const cts = this.mColorAttachments;
 						if (cts !== undefined) {
 							for (let i = 0; i < pcs.length; ++i) {
@@ -262,7 +262,7 @@ class WGRendererPass implements WGRendererPassImpl {
 							}
 						}
 					} else {
-						if (multisampleEnabled) {
+						if (multisampled) {
 							colorT.resolveTarget = colorT.resolveTargetTexture ? colorT.resolveTarget : ctx.createCurrentView();
 						} else {
 							colorT.view = colorT.viewTexture ? colorT.view : ctx.createCurrentView();

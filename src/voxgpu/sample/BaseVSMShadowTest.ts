@@ -26,7 +26,7 @@ export class BaseVSMShadowTest {
 		this.mRscene.initialize({
 			canvasWith: 512,
 			canvasHeight: 512,
-			rpassparam: { multisampleEnabled: true }
+			rpassparam: { multisampled: true }
 		});
 		this.initScene();
 		this.initEvent();

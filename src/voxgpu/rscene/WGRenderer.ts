@@ -119,7 +119,7 @@ class WGRenderer implements IRenderer {
 			if (!param) {
 				param = {
 					sampleCount: 4,
-					multisampleEnabled: true,
+					multisampled: true,
 					depthFormat: "depth24plus"
 				};
 			}

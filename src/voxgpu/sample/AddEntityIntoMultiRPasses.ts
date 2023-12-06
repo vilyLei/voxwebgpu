@@ -8,7 +8,7 @@ export class AddEntityIntoMultiRPasses {
 	initialize(): void {
 		console.log("AddEntityIntoMultiRPasses::initialize() ...");
 
-		this.mRscene.initialize({ rpassparam: { multisampleEnabled: true, depthTestEnabled: false } });
+		this.mRscene.initialize({ rpassparam: { multisampled: true, depthTestEnabled: false } });
 		this.initEvent();
 		this.initScene();
 	}

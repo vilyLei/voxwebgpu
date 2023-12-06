@@ -23,7 +23,7 @@ export class MaskTextureEffect {
 			canvasHeight: 512,
 			rpassparam:
 			{
-				multisampleEnabled: true,
+				multisampled: true,
 				clearColor: [0.2,0.3,0.1]
 			}
 		});

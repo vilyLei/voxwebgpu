@@ -36,8 +36,8 @@ export class RTTTest {
 			}
 		];
 		// create a separate rtt rendering pass
-		let multisampleEnabled = false;
-		let rPass = rc.createRTTPass({ colorAttachments, multisampleEnabled });
+		let multisampled = false;
+		let rPass = rc.createRTTPass({ colorAttachments, multisampled });
 
 		const diffuseTex = { diffuse: { url: "static/assets/default.jpg", flipY: true } };
 		let extent = [-0.5, -0.5, 0.8, 0.8];

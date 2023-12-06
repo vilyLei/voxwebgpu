@@ -67,9 +67,9 @@ export class DepthBlur {
 	initialize(): void {
 		console.log("DepthBlur::initialize() ...");
 
-		let multisampleEnabled = true;
+		let multisampled = true;
 		let depthTestEnabled = false;
-		let rpassparam = { multisampleEnabled, depthTestEnabled };
+		let rpassparam = { multisampled, depthTestEnabled };
 		this.mRscene.initialize({ rpassparam, camera: { eye: [260, 260, 260] } });
 
 		this.initEvent();

@@ -125,11 +125,11 @@ class WGRenderPassNode implements IWGRenderPassNode {
 	}
 	private checkRPassParam(param: WGRPassParam): void {
 		if (param.sampleCount !== undefined && param.sampleCount > 1) {
-			param.multisampleEnabled = true;
-		} else if (param.multisampleEnabled === true) {
+			param.multisampled = true;
+		} else if (param.multisampled === true) {
 			param.sampleCount = 4;
 		} else {
-			param.multisampleEnabled = false;
+			param.multisampled = false;
 		}
 		if (param.depthFormat == undefined) {
 			param.depthFormat = "depth24plus";
@@ -197,8 +197,8 @@ class WGRenderPassNode implements IWGRenderPassNode {
 			}
 
 			const passParam = this.rpass.getPassParams();
-			if (passParam.multisampleEnabled) {
-				pipelineParams.multisampleEnabled = true;
+			if (passParam.multisampled) {
+				pipelineParams.multisampled = true;
 				if (pipelineParams.multisample) {
 					pipelineParams.multisample.count = passParam.sampleCount;
 				} else {

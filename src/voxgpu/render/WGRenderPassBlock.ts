@@ -128,7 +128,7 @@ class WGRenderPassBlock implements IWGRPassNodeBuilder {
 
 				prevNode = prevPass.node as WGRenderPassNode;
 				prevNodeParam = prevNode.param;
-				param.multisampleEnabled = prevNodeParam.multisampleEnabled;
+				param.multisampled = prevNodeParam.multisampled;
 				param.depthFormat = prevNodeParam.depthFormat;
 
 				passNode.builder = this;
@@ -145,7 +145,7 @@ class WGRenderPassBlock implements IWGRPassNodeBuilder {
 
 				prevNode = this.mRPassNodes[this.mRPassNodes.length - 1];
 				prevNodeParam = prevNode.param;
-				param.multisampleEnabled = prevNodeParam.multisampleEnabled;
+				param.multisampled = prevNodeParam.multisampled;
 				param.depthFormat = prevNodeParam.depthFormat;
 
 				passNode.prevNode = prevNode;

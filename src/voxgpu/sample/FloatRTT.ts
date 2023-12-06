@@ -14,9 +14,9 @@ export class FloatRTT {
 	initialize(): void {
 		console.log("FloatRTT::initialize() ...");
 
-		let multisampleEnabled = true;
+		let multisampled = true;
 		let depthTestEnabled = false;
-		let rpassparam = { multisampleEnabled, depthTestEnabled };
+		let rpassparam = { multisampled, depthTestEnabled };
 		this.mRscene.initialize({ rpassparam });
 
 		this.initScene();

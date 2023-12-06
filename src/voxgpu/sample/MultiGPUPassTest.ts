@@ -25,7 +25,7 @@ export class MultiGPUPassTest {
 		console.log("MultiGPUPassTest::initialize() ...");
 
 		this.mRscene.initialize({
-			rpassparam: {multisampleEnabled: true, depthTestEnabled: true},
+			rpassparam: {multisampled: true, depthTestEnabled: true},
 			camera: {eye: new Vector3(600.0, 600.0, 0.0)},
 		});
 		this.initEvent();

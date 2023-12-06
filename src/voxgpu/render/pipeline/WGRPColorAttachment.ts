@@ -55,8 +55,8 @@ class WGRPColorAttachment implements WGRPColorAttachmentImpl {
 		}
 		return this;
 	}
-	linkToPrev(prev: WGRPColorAttachment, multisampleEnabled: boolean): void {
-		if (multisampleEnabled) {
+	linkToPrev(prev: WGRPColorAttachment, multisampled: boolean): void {
+		if (multisampled) {
 			this.view = prev.view;
 			this.resolveTarget = prev.resolveTarget;
 		} else {

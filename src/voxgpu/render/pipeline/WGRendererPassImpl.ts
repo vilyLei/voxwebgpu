@@ -10,7 +10,7 @@ import { GPURenderPassDepthStencilAttachment } from "../../gpu/GPURenderPassDept
 import { WGRPassViewport } from "./WGRPassViewport";
 
 interface WGRPassParam {
-    multisampleEnabled?: boolean;
+    multisampled?: boolean;
     sampleCount?: number;
     /**
      * Possible values are: 'depth24plus','depth32float'

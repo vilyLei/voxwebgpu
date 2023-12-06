@@ -31,7 +31,7 @@ interface WGRPipelineContextDefParam {
 }
 interface WGRPipelineParamType {
 	sampleCount?: number;
-	multisampleEnabled?: boolean;
+	multisampled?: boolean;
 	depthStencilEnabled?: boolean;
 	fragmentEnabled?: boolean;
 	shaderSrc?: WGRShadeSrcParam;
@@ -44,7 +44,7 @@ class WGRPipelineCtxParams implements GPURenderPipelineDescriptor {
 	label?: string;
 	buildDeferred = true;
 	sampleCount = 1;
-	multisampleEnabled = false;
+	multisampled = false;
 	depthStencilEnabled = false;
 	fragmentEnabled = true;
 	shaderSrc?: WGRShadeSrcParam;
@@ -86,7 +86,7 @@ class WGRPipelineCtxParams implements GPURenderPipelineDescriptor {
 				topology: "triangle-list",
 				cullMode: "back"
 			};
-			if (this.multisampleEnabled) {
+			if (this.multisampled) {
 				this.multisample = {
 					count: this.sampleCount
 				};

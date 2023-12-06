@@ -11,7 +11,7 @@ export class SpecSizeRTTTest {
 			canvasWith: 512,
 			canvasHeight: 512,
 			rpassparam: {
-				multisampleEnabled: true,
+				multisampled: true,
 				// viewport: {extent:[0,0, 256,256]}	// yes
 				// viewport: { width: 256, height: 256, minDepth:0, maxDepth:1 }	// yes
 				viewport: [0, 0, 256, 256, 0, 1]
@@ -46,8 +46,8 @@ export class SpecSizeRTTTest {
 			}
 		];
 		// create a separate rtt rendering pass
-		let multisampleEnabled = false;
-		let rPass = rc.createRTTPass({ colorAttachments, multisampleEnabled });
+		let multisampled = false;
+		let rPass = rc.createRTTPass({ colorAttachments, multisampled });
 
 		const diffuseTex = { diffuse: { url: "static/assets/default.jpg", flipY: true } };
 		let extent = [-0.5, -0.5, 0.8, 0.8];

@@ -21,7 +21,7 @@ export class ShaderConstructing {
 	initialize(): void {
 		console.log("ShaderConstructing::initialize() ...");
 
-		// this.mRscene.initialize({ rpassparam: { multisampleEnabled: true } });
+		// this.mRscene.initialize({ rpassparam: { multisampled: true } });
 		// this.initShaderBuild();
 		this.initScene();
 		this.initEvent();

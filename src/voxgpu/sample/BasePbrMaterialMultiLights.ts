@@ -17,7 +17,7 @@ export class BasePbrMaterialMultiLights {
 	initialize(): void {
 		console.log("BasePbrMaterialMultiLights::initialize() ...");
 
-		this.mRscene.initialize({ rpassparam: { multisampleEnabled: true } });
+		this.mRscene.initialize({ rpassparam: { multisampled: true } });
 		this.initScene();
 		this.initEvent();
 	}

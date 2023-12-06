@@ -48,9 +48,9 @@ export class RTTFixScreenTest {
 			entity.setColor(new Color4(1.0, 0.3,0.9));
 			rc.addEntity(entity);
 		}
-		this.mRscene.initialize({rpassparam: {multisampleEnabled: true, depthTestEnabled: false}, callback});
+		this.mRscene.initialize({rpassparam: {multisampled: true, depthTestEnabled: false}, callback});
 		//*/
-		this.mRscene.initialize({ rpassparam: { multisampleEnabled: true, depthTestEnabled: false } });
+		this.mRscene.initialize({ rpassparam: { multisampled: true, depthTestEnabled: false } });
 		this.initEvent();
 		this.applyRTT();
 		this.initScene();

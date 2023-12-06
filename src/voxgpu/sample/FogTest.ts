@@ -18,7 +18,7 @@ export class FogTest {
 		const body = document.body;
 		// body.style.background = '#000000';
 
-		this.mRscene.initialize({ canvasWith: 512, canvasHeight: 512, rpassparam: { multisampleEnabled: true } });
+		this.mRscene.initialize({ canvasWith: 512, canvasHeight: 512, rpassparam: { multisampled: true } });
 		this.initScene();
 		this.initEvent();
 	}

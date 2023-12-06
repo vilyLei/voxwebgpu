@@ -22,9 +22,9 @@ export class MRT {
 	initialize(): void {
 		console.log("MRT::initialize() ...");
 
-		let multisampleEnabled = true;
+		let multisampled = true;
 		let depthTestEnabled = true;
-		let rpassparam = { multisampleEnabled, depthTestEnabled };
+		let rpassparam = { multisampled, depthTestEnabled };
 		this.mRscene.initialize({ rpassparam });
 
 		this.initEvent();

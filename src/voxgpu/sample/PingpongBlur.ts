@@ -58,9 +58,9 @@ export class PingpongBlur {
 	initialize(): void {
 		console.log("PingpongBlur::initialize() ...");
 
-		const multisampleEnabled = true;
+		const multisampled = true;
 		const depthTestEnabled = false;
-		const rpassparam = { multisampleEnabled, depthTestEnabled };
+		const rpassparam = { multisampled, depthTestEnabled };
 		this.mRscene.initialize({ rpassparam });
 
 		this.initScene();

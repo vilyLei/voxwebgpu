@@ -112,8 +112,8 @@ class ShadowPassGraph extends WGRPassNodeGraph {
 			this.depAttachment
 		];
 		// create a separate rtt rendering pass
-		let multisampleEnabled = false;
-		let pass = rc.createRTTPass({ colorAttachments, multisampleEnabled });
+		let multisampled = false;
+		let pass = rc.createRTTPass({ colorAttachments, multisampled });
 		this.passes = [pass];
 		rc.setPassNodeGraph(this);
 
@@ -187,7 +187,7 @@ export class ShadowTest {
 		this.mRscene.initialize({
 			canvasWith: 512,
 			canvasHeight: 512,
-			rpassparam: { multisampleEnabled: true }
+			rpassparam: { multisampled: true }
 		});
 		// this.initScene();
 		this.initShadowScene();

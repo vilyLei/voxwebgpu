@@ -16,7 +16,7 @@ export class BasePbrMaterialTest {
 	initialize(): void {
 		console.log("BasePbrMaterialTest::initialize() ...");
 
-		this.mRscene.initialize({ canvasWith: 512, canvasHeight: 512, rpassparam: { multisampleEnabled: true } });
+		this.mRscene.initialize({ canvasWith: 512, canvasHeight: 512, rpassparam: { multisampled: true } });
 		this.initScene();
 		this.initEvent();
 	}
