@@ -9,7 +9,7 @@ import { IWGRenderPassNode } from "./IWGRenderPassNode";
 import Color4 from "../material/Color4";
 import Camera from "../view/Camera";
 import { BlockParam, WGRenderUnitBlock } from "./WGRenderUnitBlock";
-import { Entity3D } from "../entity/Entity3D";
+import { Entity3D, Entity3DParam } from "../entity/Entity3D";
 import { WGRPColorAttachmentImpl } from "./pipeline/WGRPColorAttachmentImpl";
 import { WGRPassViewport } from "./pipeline/WGRPassViewport";
 class WGRenderPassNode implements IWGRenderPassNode {
@@ -111,7 +111,7 @@ class WGRenderPassNode implements IWGRenderPassNode {
 			this.unitBlock.setMaterial(material);
 		}
 	}
-	addEntity(entity: Entity3D): void {
+	addEntity(entity: Entity3D, param?: Entity3DParam): void {
 		if (entity) {
 			if (!this.unitBlock) {
 				this.unitBlock = WGRenderUnitBlock.createBlock();
@@ -120,7 +120,7 @@ class WGRenderPassNode implements IWGRenderPassNode {
 			ub.rbParam = this.mRBParam;
 			ub.builder = this;
 			console.log("WGRenderPassNode::addEntity(), ub.builder: ", ub.builder);
-			this.unitBlock.addEntity(entity);
+			this.unitBlock.addEntity(entity, param);
 		}
 	}
 	private checkRPassParam(param: WGRPassParam): void {

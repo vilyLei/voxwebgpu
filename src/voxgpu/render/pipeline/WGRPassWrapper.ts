@@ -26,7 +26,7 @@ class WGRPassWrapper implements WGRPassWrapperImpl {
 	}
 	addEntity(entity: Entity3D, param?: Entity3DParam): WGRPassWrapperImpl {
 		if(this.node) {
-			this.node.addEntity( entity );
+			this.node.addEntity( entity, param );
 		}
 		return this;
 	}

@@ -4,7 +4,7 @@ import { WGRObjBuilder } from "../render/WGRObjBuilder";
 import { WGEntityNodeMana } from "../rscene/WGEntityNodeMana";
 import Camera from "../view/Camera";
 import { WGREntityNode } from "./WGREntityNode";
-import { Entity3D } from "../entity/Entity3D";
+import { Entity3D, Entity3DParam } from "../entity/Entity3D";
 import { IWGRPassNodeBuilder } from "./IWGRPassNodeBuilder";
 import { WGMaterialDescripter } from "../material/WGMaterialDescripter";
 
@@ -52,14 +52,14 @@ class WGRenderUnitBlock {
 			}
 		}
 	}
-	addEntityToBlock(entity: Entity3D, node: WGREntityNode): void {
+	addEntityToBlock(entity: Entity3D, node: WGREntityNode, param?: Entity3DParam): void {
 		entity.update();
 		node.rstate.__$rever++;
-		const runit = this.rbParam.roBuilder.createRUnit(entity, this.builder, node, this.uid);
+		const runit = this.rbParam.roBuilder.createRUnit(entity, this.builder, node, this.uid, param);
 		runit.etuuid = entity.uuid + '-[block(' + this.uid+')]';
 		this.addRUnit(runit);
 	}
-	addEntity(entity: Entity3D): void {
+	addEntity(entity: Entity3D, param?: Entity3DParam): void {
 		// console.log("Renderer::addEntity(), entity.isInRenderer(): ", entity.isInRenderer());
 		if (entity) {
 			const map = this.mENodeMap;
@@ -89,7 +89,11 @@ class WGRenderUnitBlock {
 					}
 				}
 				if (flag) {
-					this.rbParam.entityMana.addEntity({ entity: entity, rever: node.rstate.__$rever, builder: this.builder, node, block: this });
+					let rever = node.rstate.__$rever;
+					let builder = this.builder;
+					let block = this;
+					let entityParam = param;
+					this.rbParam.entityMana.addEntity({ entity, rever, builder, node, block, entityParam });
 				}
 			}else {
 				console.log("has exist the entity in the unit bolck...");

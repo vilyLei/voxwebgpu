@@ -90,11 +90,11 @@ class ShadowPassGraph extends WGRPassNodeGraph {
 
 		let pass = this.passes[0];
 		let et = new Entity3D({ transform: entity.transform });
-		et.materials = this.mDepthMaterials;
+		// et.materials = this.mDepthMaterials;
 		et.geometry = entity.geometry;
 		et.rstate.copyFrom(entity.rstate);
 		this.entities.push(et);
-		pass.addEntity(et);
+		pass.addEntity(et, {materials: this.mDepthMaterials});
 		
 		return this;
 	}
@@ -179,11 +179,12 @@ class ShadowPassGraph extends WGRPassNodeGraph {
 		this.occHEntity.visible = false;
 	}
 }
-export class PBRShadowTest {
+export class ShadowMaterialSysTest {
 	private mRscene = new RendererScene();
 	private mGraph = new ShadowPassGraph();
 
 	initialize(): void {
+
 		console.log("ShadowMaterialSysTest::initialize() ...");
 		this.mRscene.initialize({
 			canvasWith: 512,

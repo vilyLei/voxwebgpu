@@ -84,7 +84,7 @@ class WGRenderPassBlock implements IWGRPassNodeBuilder {
 			const ub = this.unitBlock;
 			ub.rbParam = this.mRBParam;
 			ub.builder = this;
-			ub.addEntity(entity);
+			ub.addEntity(entity, param);
 		}
 	}
 	getRenderPassAt(index: number): WGRPassWrapperImpl {

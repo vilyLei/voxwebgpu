@@ -1,4 +1,4 @@
-import { Entity3D } from "../entity/Entity3D";
+import { Entity3D, Entity3DParam } from "../entity/Entity3D";
 import { WGRPrimitive } from "./WGRPrimitive";
 import { IWGRUnit } from "./IWGRUnit";
 import { WGRUnit } from "./WGRUnit";
@@ -19,6 +19,7 @@ import { WGRDrawMode } from "./Define";
 import { checkBufferData, WGRBufferValue } from "./buffer/WGRBufferValue";
 import { createNewWRGBufferViewUid } from "./buffer/WGRBufferView";
 import { WGRTexLayoutParam } from "./uniform/IWGRUniformContext";
+import { WGMaterial } from "../material/WGMaterial";
 
 type GeomType = { indexBuffer?: GPUBuffer, vertexBuffers: GPUBuffer[], indexCount?: number, vertexCount?: number, drawMode?: WGRDrawMode };
 const bufValue = new WGRBufferValue({ shdVarName: 'bufValue' });
@@ -152,9 +153,9 @@ class WGRObjBuilder {
 		}
 	}
 
-	createRPass(entity: Entity3D, builder: IWGRPassNodeBuilder, geometry: WGGeometry, materialIndex = 0, blockUid = 0): IWGRUnit {
+	createRPass(entity: Entity3D, builder: IWGRPassNodeBuilder, geometry: WGGeometry, material: WGMaterial, blockUid = 0): IWGRUnit {
 
-		const material = entity.materials[materialIndex];
+		//const material = entity.materials[materialIndex];
 		// console.log("XXXXXXX material: ", material);
 		let primitive: WGRPrimitive;
 		let pctx = material.getRCtx();
@@ -330,7 +331,7 @@ class WGRObjBuilder {
 		ru.etuuid = entity.uuid + '-[block(' + blockUid + '), material(' + material.shadinguuid + ')]';
 		return ru;
 	}
-	createRUnit(entity: Entity3D, builder: IWGRPassNodeBuilder, node: WGREntityNode, blockUid = 0): IWGRUnit {
+	createRUnit(entity: Entity3D, builder: IWGRPassNodeBuilder, node: WGREntityNode, blockUid = 0, param?: Entity3DParam): IWGRUnit {
 
 		const wgctx = builder.getWGCtx();
 
@@ -357,18 +358,18 @@ class WGRObjBuilder {
 		}
 
 		let ru: IWGRUnit;
-		const mts = entity.materials;
+		const mts = param && param.materials && param.materials.length > 0 ? param.materials : entity.materials;
 		if (mts.length > 1) {
 			const passes: IWGRUnit[] = new Array(mts.length);
 			for (let i = 0; i < mts.length; ++i) {
-				passes[i] = this.createRPass(entity, builder, geometry, i, blockUid);
+				passes[i] = this.createRPass(entity, builder, geometry, mts[i], blockUid);
 				// passes[i].etuuid = entity.uuid + '-[block(' + blockUid+')]';
 			}
 			ru = new WGRUnit();
 			// console.log("xxxxxxxxx passes: ", passes);
 			ru.passes = passes;
 		} else {
-			ru = this.createRPass(entity, builder, geometry);
+			ru = this.createRPass(entity, builder, geometry, mts[0]);
 		}
 		ru.bounds = entity.globalBounds;
 		ru.st = entity.rstate;
