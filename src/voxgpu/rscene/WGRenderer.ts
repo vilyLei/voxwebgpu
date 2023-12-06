@@ -1,5 +1,5 @@
 import Camera from "../view/Camera";
-import { Entity3D } from "../entity/Entity3D";
+import { Entity3D, Entity3DParam } from "../entity/Entity3D";
 import { WebGPUContext } from "../gpu/WebGPUContext";
 import { WGRObjBuilder } from "../render/WGRObjBuilder";
 import { WGRPipelineContextDefParam, WGRPassParam, WGRenderPassBlock } from "../render/WGRenderPassBlock";
@@ -138,18 +138,24 @@ class WGRenderer implements IRenderer {
 		}
 	}
 
-	addEntity(entity: Entity3D, blockIndex = 0): void {
+	addEntity(entity: Entity3D, param?: Entity3DParam): void {
 		// console.log("Renderer::addEntity(), entity.isInRenderer(): ", entity.isInRenderer());
 		const bs = this.mRPBlocks;
 		if (bs.length < 1) {
 			this.initialize();
 			this.intDefaultBlock();
 		}
+		let blockIndex = 0;
+		if(param) {
+			if(param.processIndex !== undefined) {
+				blockIndex = param.processIndex;
+			}
+		}
 		if (blockIndex < 0 || blockIndex >= bs.length) {
 			throw Error("Illegal operation !!!");
 		}
 		const rb = bs[blockIndex];
-		rb.addEntity(entity);
+		rb.addEntity(entity, param);
 	}
 
 	removeEntity(entity: Entity3D): void {

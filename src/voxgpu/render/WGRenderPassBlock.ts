@@ -11,7 +11,7 @@ import Camera from "../view/Camera";
 import { WGRenderPassNode } from "./WGRenderPassNode";
 import { BlockParam, WGRenderUnitBlock } from "./WGRenderUnitBlock";
 import { IWGRPassNodeBuilder } from "./IWGRPassNodeBuilder";
-import { Entity3D } from "../entity/Entity3D";
+import { Entity3D, Entity3DParam } from "../entity/Entity3D";
 import { WGRPassNodeGraph } from "./pass/WGRPassNodeGraph";
 
 class WGRenderPassBlock implements IWGRPassNodeBuilder {
@@ -75,7 +75,7 @@ class WGRenderPassBlock implements IWGRPassNodeBuilder {
 			this.unitBlock.setMaterial(material);
 		}
 	}
-	addEntity(entity: Entity3D): void {
+	addEntity(entity: Entity3D, param?: Entity3DParam): void {
 		// console.log("Renderer::addEntity(), entity.isInRenderer(): ", entity.isInRenderer());
 		if (entity) {
 			if (!this.unitBlock) {

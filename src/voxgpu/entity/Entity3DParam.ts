@@ -9,6 +9,7 @@ import { TransformParam } from "./TransformParam";
 import { WGRUnitState } from "../render/WGRUnitState";
 
 interface Entity3DParam {
+	processIndex?:number,
 	cameraViewing?: boolean;
 	transformEnabled?: boolean;
 	transform?: ROTransform | IMatrix4 | Float32Array | TransformParam;

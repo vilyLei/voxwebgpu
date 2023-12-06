@@ -113,7 +113,7 @@ class Entity3DContainer implements IRenderableEntityContainer {
 				for (; i < this.m_entitiesTotal; ++i) {
 					const et = this.m_entities[i];
 					et.__$rseFlag = REF.RemoveContainerFlag(et.__$rseFlag);
-					this.__$renderer.addEntity(et, this.__$wprocuid, false);
+					this.__$renderer.addEntity(et, {processIndex: this.__$wprocuid});
 					et.__$rseFlag = REF.AddContainerFlag(et.__$rseFlag);
 				}
 			}
@@ -331,7 +331,7 @@ class Entity3DContainer implements IRenderableEntityContainer {
 					entity.__$setParent(this);
 					if (this.__$renderer) {
 						entity.__$rseFlag = REF.RemoveContainerFlag(entity.__$rseFlag);
-						this.__$renderer.addEntity(this.m_entities[i], this.__$wprocuid, false);
+						this.__$renderer.addEntity(this.m_entities[i], {processIndex: this.__$wprocuid});
 					}
 					entity.__$rseFlag = REF.AddContainerFlag(entity.__$rseFlag);
 					entity.update();

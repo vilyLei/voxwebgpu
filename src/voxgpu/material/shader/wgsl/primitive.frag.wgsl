@@ -261,6 +261,6 @@ fn main(
   @location(2) normal: vec3<f32>,
   @location(3) camPos: vec3<f32>
 ) -> @location(0) vec4<f32> {
-  var color4 = vec4(calcPBRColor3(normal, pos.xyz, camPos) * abs(normal), 1.0);
+  var color4 = vec4(calcPBRColor3(normal, pos.xyz, camPos), 1.0);
   return color4;
 }

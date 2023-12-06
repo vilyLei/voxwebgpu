@@ -20,16 +20,16 @@ export default class CylinderGeometry extends GeometryBase {
     private muvs: Float32Array = null;
     private mnvs: Float32Array = null;
 
-    inverseUV: boolean = false;
-    uScale: number = 1.0;
-    vScale: number = 1.0;
+    inverseUV = false;
+    uScale = 1.0;
+    vScale = 1.0;
 
     getVS(): Float32Array { return this.mvs; }
     getUVS(): Float32Array { return this.muvs; }
     getNVS(): Float32Array { return this.mnvs; }
     getIVS(): Uint16Array | Uint32Array { return this.mivs; }
 
-    initialize(radius: number, height: number, rings: number, segments: number, uvType: number = 1, alignYRatio: number = -0.5) {
+    initialize(radius: number, height: number, segments: number, rings: number, uvType = 1, alignYRatio = -0.5) {
         if (this.vtxTotal < 1) {
             if (radius < 0.01) return;
 

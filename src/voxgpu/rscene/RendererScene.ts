@@ -6,7 +6,7 @@ import { IRendererScene } from "./IRendererScene";
 import Stage3D from "./Stage3D";
 import { WGRendererConfig, checkConfig } from "./WGRendererParam";
 import { WGRenderer } from "./WGRenderer";
-import { Entity3D } from "../entity/Entity3D";
+import { Entity3D, Entity3DParam } from "../entity/Entity3D";
 import { IRenderableObject } from "../render/IRenderableObject";
 import { IRenderableEntityContainer } from "../render/IRenderableEntityContainer";
 import { WebGPUContext } from "../gpu/WebGPUContext";
@@ -102,13 +102,13 @@ class RendererScene implements IRendererScene {
 			throw Error("illegal operation !!!");
 		}
 	}
-	addEntity(entity: IRenderableObject, processIndex = 0): RendererScene {
+	addEntity(entity: IRenderableObject, param?: Entity3DParam): RendererScene {
 		if(entity) {
 			this.initialize();
 			if (entity.isContainer()) {
-				this.addContainer(entity as IRenderableEntityContainer, processIndex);
+				this.addContainer(entity as IRenderableEntityContainer);
 			} else {
-				this.mRenderer.addEntity(entity as Entity3D, processIndex);
+				this.mRenderer.addEntity(entity as Entity3D, param);
 			}
 		}
 		return this;

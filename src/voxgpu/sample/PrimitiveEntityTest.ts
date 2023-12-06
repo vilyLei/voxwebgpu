@@ -31,9 +31,9 @@ export class PrimitiveEntityTest {
 		rc.addEntity( axis );
 
 		let entities = [
-			new SphereEntity({rings: 10, segments: 3}),
+			new SphereEntity({rings: 20, segments: 20}),
 			new BoxEntity(),
-			new CylinderEntity({alignYRatio : 0.0}),
+			new CylinderEntity({alignYRatio : 0.0, segments: 25}),
 			new CubeEntity({cubeSize: 130}),
 			new TorusEntity({radius: 110, axisType: 1}),
 			new PlaneEntity({axisType: 1, extent: [-80, -80, 160, 160], doubleFace: true}),

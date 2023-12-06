@@ -1,5 +1,5 @@
 
-import { Entity3D } from "../../entity/Entity3D";
+import { Entity3D, Entity3DParam } from "../../entity/Entity3D";
 import { IWGRenderPassNode } from "../IWGRenderPassNode";
 import { WGRCmdWrapper, WGRPassWrapperImpl } from "./WGRPassWrapperImpl";
 import { WGRPColorAttachmentImpl } from "../pipeline/WGRPColorAttachmentImpl";
@@ -24,7 +24,7 @@ class WGRPassWrapper implements WGRPassWrapperImpl {
 		}
 		return undefined;
 	}
-	addEntity(entity: Entity3D): WGRPassWrapperImpl {
+	addEntity(entity: Entity3D, param?: Entity3DParam): WGRPassWrapperImpl {
 		if(this.node) {
 			this.node.addEntity( entity );
 		}
