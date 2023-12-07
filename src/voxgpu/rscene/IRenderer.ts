@@ -8,7 +8,7 @@
 import IRenderStage3D from "../render/IRenderStage3D";
 import { IRenderCamera } from "../render/IRenderCamera";
 import { IRenderableEntity } from "../render/IRenderableEntity";
-import { Entity3DParam } from "../entity/Entity3DParam";
+import { WGREntityParam } from "../render/WGREntityParam";
 /**
  * define the renderer instance behaviours;
  */
@@ -24,10 +24,9 @@ interface IRenderer {
 	/**
 	 * add an entity to the renderer process of the renderer instance
 	 * @param entity IRenderEntity instance(for example: DisplayEntity class instance)
-	 * @param processid this destination renderer process id, the default value is 0
-	 * @param deferred if the value is true,the entity will not to be immediately add to the renderer process by its id, the defaule value is true
+	 * @param WGREntityParam WGREntityParam instance
 	 */
-	addEntity(entity: IRenderableEntity, param?: Entity3DParam): void;
+	addEntity(entity: IRenderableEntity, param?: WGREntityParam): void;
 	/**
 	 * remove an entity from the renderer instance
 	 * @param entity IRenderEntity instance(for example: DisplayEntity class instance)

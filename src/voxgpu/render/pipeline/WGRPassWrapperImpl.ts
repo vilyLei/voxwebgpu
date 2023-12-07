@@ -1,7 +1,8 @@
 
-import { Entity3D, Entity3DParam } from "../../entity/Entity3D";
+import { Entity3D } from "../../entity/Entity3D";
 import { GPUCommandBuffer } from "../../gpu/GPUCommandBuffer";
 import { IWGRenderPassNode } from "../IWGRenderPassNode";
+import { WGREntityParam } from "../WGREntityParam";
 import { WGRPColorAttachmentImpl } from "./WGRPColorAttachmentImpl";
 interface WGRCmdWrapper {
 	uid?: number;
@@ -17,7 +18,7 @@ interface WGRPassWrapperImpl {
 	colorAttachments?: WGRPColorAttachmentImpl[];
 	cmdWrapper?: WGRCmdWrapper;
 	rcommands?: GPUCommandBuffer[];
-	addEntity?(entity: Entity3D, param?: Entity3DParam): WGRPassWrapperImpl;
+	addEntity?(entity: Entity3D, param?: WGREntityParam): WGRPassWrapperImpl;
 	render?(): void;
 	setColorAttachmentClearEnabledAt?(enabled: boolean, index?: number): WGRPassWrapperImpl;
 }

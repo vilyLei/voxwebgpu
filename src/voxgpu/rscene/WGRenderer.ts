@@ -1,6 +1,7 @@
 import Camera from "../view/Camera";
-import { Entity3D, Entity3DParam } from "../entity/Entity3D";
+import { Entity3D } from "../entity/Entity3D";
 import { WebGPUContext } from "../gpu/WebGPUContext";
+import { WGREntityParam } from "../render/WGREntityParam";
 import { WGRObjBuilder } from "../render/WGRObjBuilder";
 import { WGRPipelineContextDefParam, WGRPassParam, WGRenderPassBlock } from "../render/WGRenderPassBlock";
 import { WGEntityNodeMana } from "./WGEntityNodeMana";
@@ -138,7 +139,7 @@ class WGRenderer implements IRenderer {
 		}
 	}
 
-	addEntity(entity: Entity3D, param?: Entity3DParam): void {
+	addEntity(entity: Entity3D, param?: WGREntityParam): void {
 		// console.log("Renderer::addEntity(), entity.isInRenderer(): ", entity.isInRenderer());
 		const bs = this.mRPBlocks;
 		if (bs.length < 1) {

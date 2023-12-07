@@ -1,10 +1,11 @@
 import { IWGRUnit } from "./IWGRUnit";
 
+import { WGREntityParam } from "../render/WGREntityParam";
 import { WGRObjBuilder } from "../render/WGRObjBuilder";
 import { WGEntityNodeMana } from "../rscene/WGEntityNodeMana";
 import Camera from "../view/Camera";
 import { WGREntityNode } from "./WGREntityNode";
-import { Entity3D, Entity3DParam } from "../entity/Entity3D";
+import { Entity3D } from "../entity/Entity3D";
 import { IWGRPassNodeBuilder } from "./IWGRPassNodeBuilder";
 import { WGMaterialDescripter } from "../material/WGMaterialDescripter";
 
@@ -52,14 +53,14 @@ class WGRenderUnitBlock {
 			}
 		}
 	}
-	addEntityToBlock(entity: Entity3D, node: WGREntityNode, param?: Entity3DParam): void {
+	addEntityToBlock(entity: Entity3D, node: WGREntityNode, param?: WGREntityParam): void {
 		entity.update();
 		node.rstate.__$rever++;
 		const runit = this.rbParam.roBuilder.createRUnit(entity, this.builder, node, this.uid, param);
 		runit.etuuid = entity.uuid + '-[block(' + this.uid+')]';
 		this.addRUnit(runit);
 	}
-	addEntity(entity: Entity3D, param?: Entity3DParam): void {
+	addEntity(entity: Entity3D, param?: WGREntityParam): void {
 		// console.log("Renderer::addEntity(), entity.isInRenderer(): ", entity.isInRenderer());
 		if (entity) {
 			const map = this.mENodeMap;

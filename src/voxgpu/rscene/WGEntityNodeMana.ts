@@ -2,7 +2,7 @@ import { WebGPUContext } from "../gpu/WebGPUContext";
 import { WGMaterial } from "../material/WGMaterial";
 import { WGWaitEntityNode } from "./WGEntityNode";
 import { WGRObjBuilder } from "../render/WGRObjBuilder";
-import { Entity3D, Entity3DParam } from "../entity/Entity3D";
+import { Entity3D } from "../entity/Entity3D";
 
 class WGEntityNodeMana {
 	private mNodes: WGWaitEntityNode[] = [];
@@ -30,29 +30,20 @@ class WGEntityNodeMana {
 		// console.log("WGEntityNodeMana::addEntity(), this.mNodes.length: ", this.mNodes.length);
 	}
 	
-	testEntity(entity: Entity3D, ms: WGMaterial[], mflag = false): boolean {
+	testEntity(entity: Entity3D, ms: WGMaterial[], debufFlag = false): boolean {
 		// const ms = entity.materials;
 		
 		if (ms) {
 			for (let i = 0; i < ms.length; ++i) {
 				if (!ms[i].isREnabled()) {
-					if(mflag) {
-						console.log('fdfdfddfdf 0');
-					}
 					return false;
 				}
 			}
 		} else {
-			if(mflag) {
-				console.log('fdfdfddfdf 1');
-			}
 			return false;
 		}
 		let g = entity.geometry;
 		if (!g || !g.isREnabled()) {
-			if(mflag) {
-				console.log('fdfdfddfdf 2');
-			}
 			// console.log("aaa g.isREnabled(), !g: ", !g,', ', this.geometry);
 			return false;
 		}
@@ -72,9 +63,6 @@ class WGEntityNodeMana {
 					let param = node.entityParam;
 					let mflag = param && param.materials && param.materials.length > 0;
 					const ms = mflag ? param.materials : entity.materials;
-					// if(mflag) {
-					// 	console.log('param.materials: ', param.materials);
-					// }
 					mflag = this.testEntity(entity, ms, mflag);
 					if (!mflag) {
 						if (ms) {

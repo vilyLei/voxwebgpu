@@ -9,9 +9,11 @@ import { IWGRenderPassNode } from "./IWGRenderPassNode";
 import Color4 from "../material/Color4";
 import Camera from "../view/Camera";
 import { BlockParam, WGRenderUnitBlock } from "./WGRenderUnitBlock";
-import { Entity3D, Entity3DParam } from "../entity/Entity3D";
+import { WGREntityParam } from "./WGREntityParam";
+import { Entity3D } from "../entity/Entity3D";
 import { WGRPColorAttachmentImpl } from "./pipeline/WGRPColorAttachmentImpl";
 import { WGRPassViewport } from "./pipeline/WGRPassViewport";
+
 class WGRenderPassNode implements IWGRenderPassNode {
 	private static sUid = 0;
 	private mUid = WGRenderPassNode.sUid++;
@@ -111,7 +113,7 @@ class WGRenderPassNode implements IWGRenderPassNode {
 			this.unitBlock.setMaterial(material);
 		}
 	}
-	addEntity(entity: Entity3D, param?: Entity3DParam): void {
+	addEntity(entity: Entity3D, param?: WGREntityParam): void {
 		if (entity) {
 			if (!this.unitBlock) {
 				this.unitBlock = WGRenderUnitBlock.createBlock();

@@ -1,8 +1,9 @@
-import { Entity3D, Entity3DParam } from "../entity/Entity3D";
+import { Entity3D } from "../entity/Entity3D";
 import { WGRPrimitive } from "./WGRPrimitive";
 import { IWGRUnit } from "./IWGRUnit";
 import { WGRUnit } from "./WGRUnit";
 import { GPUBuffer } from "../gpu/GPUBuffer";
+import { WGREntityParam } from "./WGREntityParam";
 
 import { getCodeLine, codeLineCommentTest } from "../material/shader/utils";
 import { IWGRPassNodeBuilder } from "./IWGRPassNodeBuilder";
@@ -331,7 +332,7 @@ class WGRObjBuilder {
 		ru.etuuid = entity.uuid + '-[block(' + blockUid + '), material(' + material.shadinguuid + ')]';
 		return ru;
 	}
-	createRUnit(entity: Entity3D, builder: IWGRPassNodeBuilder, node: WGREntityNode, blockUid = 0, param?: Entity3DParam): IWGRUnit {
+	createRUnit(entity: Entity3D, builder: IWGRPassNodeBuilder, node: WGREntityNode, blockUid = 0, param?: WGREntityParam): IWGRUnit {
 
 		const wgctx = builder.getWGCtx();
 

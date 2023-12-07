@@ -1,12 +1,13 @@
 import Camera from "../view/Camera";
 import IRenderStage3D from "../render/IRenderStage3D";
+import { WGREntityParam } from "../render/WGREntityParam";
 import { IRenderCamera } from "../render/IRenderCamera";
 import { RAdapterContext } from "./context/RAdapterContext";
 import { IRendererScene } from "./IRendererScene";
 import Stage3D from "./Stage3D";
 import { WGRendererConfig, checkConfig } from "./WGRendererParam";
 import { WGRenderer } from "./WGRenderer";
-import { Entity3D, Entity3DParam } from "../entity/Entity3D";
+import { Entity3D } from "../entity/Entity3D";
 import { IRenderableObject } from "../render/IRenderableObject";
 import { IRenderableEntityContainer } from "../render/IRenderableEntityContainer";
 import { WebGPUContext } from "../gpu/WebGPUContext";
@@ -25,7 +26,7 @@ class RendererScene implements IRendererScene {
 	enabled = true;
 	private mRenderer: WGRenderer;
 	racontext: RAdapterContext;
-	camera:Camera;// = new Camera;
+	camera: Camera;
 
 	constructor(uidBase = 0) {
 		this.mUid = uidBase + RendererScene.sUid++;
@@ -59,7 +60,7 @@ class RendererScene implements IRendererScene {
 	}
 	createRTTPass(param?: WGRPassParam, blockIndex = 0): WGRPassWrapperImpl {
 		this.initialize();
-		if(!param) param = {};
+		if (!param) param = {};
 		param.separate = true;
 		return this.renderer.appendRenderPass(param, blockIndex);
 	}
@@ -76,11 +77,11 @@ class RendererScene implements IRendererScene {
 	getCamera(): IRenderCamera {
 		return this.camera;
 	}
-	enableMouseEvent(enabled = true): void {}
+	enableMouseEvent(enabled = true): void { }
 
 	private addContainer(container: IRenderableEntityContainer, processid: number = 0): void {
 
-		if(container.isContainer()) {
+		if (container.isContainer()) {
 			this.initialize();
 			if (container.__$wuid < 0 && container.__$contId < 1) {
 				let i = 0;
@@ -98,12 +99,12 @@ class RendererScene implements IRendererScene {
 					container.update();
 				}
 			}
-		}else {
+		} else {
 			throw Error("illegal operation !!!");
 		}
 	}
-	addEntity(entity: IRenderableObject, param?: Entity3DParam): RendererScene {
-		if(entity) {
+	addEntity(entity: IRenderableObject, param?: WGREntityParam): RendererScene {
+		if (entity) {
 			this.initialize();
 			if (entity.isContainer()) {
 				this.addContainer(entity as IRenderableEntityContainer);
@@ -117,7 +118,7 @@ class RendererScene implements IRendererScene {
 		if (entity.isContainer()) {
 
 		} else {
-			this.mRenderer.removeEntity( entity as Entity3D );
+			this.mRenderer.removeEntity(entity as Entity3D);
 		}
 	}
 	/**
@@ -150,6 +151,6 @@ class RendererScene implements IRendererScene {
 			r.run(rendering);
 		}
 	}
-	destroy(): void {}
+	destroy(): void { }
 }
 export { RendererScene };

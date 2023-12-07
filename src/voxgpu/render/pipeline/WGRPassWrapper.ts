@@ -1,6 +1,7 @@
 
-import { Entity3D, Entity3DParam } from "../../entity/Entity3D";
+import { Entity3D } from "../../entity/Entity3D";
 import { IWGRenderPassNode } from "../IWGRenderPassNode";
+import { WGREntityParam } from "../WGREntityParam";
 import { WGRCmdWrapper, WGRPassWrapperImpl } from "./WGRPassWrapperImpl";
 import { WGRPColorAttachmentImpl } from "../pipeline/WGRPColorAttachmentImpl";
 import { GPUCommandBuffer } from "../../gpu/GPUCommandBuffer";
@@ -24,7 +25,7 @@ class WGRPassWrapper implements WGRPassWrapperImpl {
 		}
 		return undefined;
 	}
-	addEntity(entity: Entity3D, param?: Entity3DParam): WGRPassWrapperImpl {
+	addEntity(entity: Entity3D, param?: WGREntityParam): WGRPassWrapperImpl {
 		if(this.node) {
 			this.node.addEntity( entity, param );
 		}
