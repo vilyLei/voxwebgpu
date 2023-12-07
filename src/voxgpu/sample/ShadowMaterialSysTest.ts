@@ -202,8 +202,13 @@ export class ShadowMaterialSysTest {
 
 		let rc = this.mRscene;
 		
+		let mtpl = rc.renderer.materialPipeline;
+
 		// let position = [-230.0, 100.0, -200.0];
 		let position = [0,0,0];
+		let lightParam = createLightData(position, 600);
+		mtpl.light.data = lightParam;
+
 		let materials = this.createMaterials(position);
 		let sph = new SphereEntity({
 			radius: 80,

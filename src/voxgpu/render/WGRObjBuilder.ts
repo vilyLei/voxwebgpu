@@ -24,10 +24,12 @@ import { MaterialPipeline } from "../material/pipeline/MaterialPipeline";
 type GeomType = { indexBuffer?: GPUBuffer, vertexBuffers: GPUBuffer[], indexCount?: number, vertexCount?: number, drawMode?: WGRDrawMode };
 
 class WGRObjBuilder {
-
+	
 	wgctx: WebGPUContext;
 	mtpl = new MaterialPipeline();
-	constructor() { }
+	constructor() {
+		this.mtpl.initialize();
+	}
 	createPrimitive(geomParam?: GeomType): WGRPrimitive {
 		// console.log('XXXXXX createPrimitive() ...');
 		const g = new WGRPrimitive();
@@ -49,8 +51,8 @@ class WGRObjBuilder {
 
 		//const material = entity.materials[materialIndex];
 		// console.log("XXXXXXX material: ", material);
-		this.mtpl.initialize();
-		
+		// this.mtpl.initialize();
+
 		let primitive: WGRPrimitive;
 		let pctx = material.getRCtx();
 		if (geometry) {

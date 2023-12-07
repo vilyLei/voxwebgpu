@@ -30,28 +30,33 @@ class PipeNodePool {
 class MaterialPipeline {
     private mInit = true;
     private pool = new PipeNodePool();
+    light: LightPipeNode;
     constructor() { }
     initialize(): void {
         if (this.mInit) {
             this.mInit = false;
+
             let pool = this.pool;
             pool.initialize();
+
+            let type = 'lighting';
+            this.light = pool.getNodeByType(type) as LightPipeNode;
         }
     }
     checkUniforms(material: IWGMaterial, uvalues: WGRBufferData[]): void {
         let ls = material.uniformValues;
         if (ls) {
-            for(let i = 0; i < ls.length; i++) {
+            for (let i = 0; i < ls.length; i++) {
                 uvalues.push(ls[i]);
             }
-		}
+        }
         let ppt = material.property;
-        if(ppt) {
+        if (ppt) {
             let type = '';
             let pool = this.pool;
-            if(ppt.lighting === true) {
+            if (ppt.lighting === true) {
                 type = 'lighting';
-                let light = pool.getNodeByType( type );
+                let light = pool.getNodeByType(type);
                 light.merge(uvalues);
             }
         }

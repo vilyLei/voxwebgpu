@@ -11,7 +11,7 @@ class LightPipeNode extends MtPlPipeNode implements MtlPipeNodeImpl {
     lights = new BaseLightData(new Float32Array([0.0, 200.0, 0, 0.0001]), "lights", "frag");
     lightColors = new BaseLightData(new Float32Array([5.0, 5.0, 5.0, 0.0001]), "lightColors", "frag");
 
-	setLightParam(param: LightShaderDataParam): void {
+	set data(param: LightShaderDataParam) {
 		if (param) {
 			if (param.lights) {
 				this.lights.data = param.lights;
@@ -23,7 +23,7 @@ class LightPipeNode extends MtPlPipeNode implements MtlPipeNodeImpl {
 			this.param = param;
 		}
 	}
-	getLightParam(): LightShaderDataParam {
+	get data(): LightShaderDataParam {
 		return this.param;
 	}
     merge(ls: WGRBufferData[]): void {
