@@ -3,7 +3,7 @@ import { ShadowOccBlurShdCtor } from "./shader/ShadowOccBlurShdCtor";
 import {
 	MaterialUniformVec4Data,
 	WGRBufferData
-} from "./MaterialUniformData";
+} from "./mdata/MaterialUniformData";
 
 class BasePBRProperty {
 	param = new MaterialUniformVec4Data(new Float32Array([1,1,1, 2]), "param", "frag");

@@ -1,8 +1,8 @@
-import Vector4 from "../math/Vector4";
-import { WGRBufferData } from "../render/buffer/WGRBufferData";
-import Color4 from "./Color4";
-import Vector3 from "../math/Vector3";
-import IMatrix4 from "../math/IMatrix4";
+import Vector4 from "../../math/Vector4";
+import { WGRBufferData } from "../../render/buffer/WGRBufferData";
+import Color4 from "../Color4";
+import Vector3 from "../../math/Vector3";
+import IMatrix4 from "../../math/IMatrix4";
 
 interface MaterialUniformDataImpl extends WGRBufferData {
 	update(): void;

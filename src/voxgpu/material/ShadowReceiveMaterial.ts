@@ -3,7 +3,7 @@ import {
 	MaterialUniformMat44Data,
 	MaterialUniformVec4ArrayData,
 	WGRBufferData
-} from "./MaterialUniformData";
+} from "./mdata/MaterialUniformData";
 import Matrix4 from "../math/Matrix4";
 import Vector3 from "../math/Vector3";
 // import shaderSrcCode from "./shader/shadow/shadowReceive.wgsl";
