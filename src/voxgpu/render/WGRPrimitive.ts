@@ -1,9 +1,10 @@
 import { GPUBuffer } from "../gpu/GPUBuffer";
 import { GPURenderPassEncoder } from "../gpu/GPURenderPassEncoder";
 import { WGRDrawMode } from "./Define";
+import { WGRPrimitiveImpl } from "./WGRPrimitiveImpl";
 // dynamic or static for materials?
 // shared or private for materials?
-class WGRPrimitive {
+class WGRPrimitive implements WGRPrimitiveImpl {
 
 	vbufs: GPUBuffer[];
 	ibuf: GPUBuffer;

@@ -1,13 +1,52 @@
 import { WGRBufferValue } from "../../render/buffer/WGRBufferValue";
 import { WGRTexLayoutParam } from "../../render/uniform/IWGRUniformContext";
-import { WGRShderSrcType } from "../WGMaterialDescripter";
+import { findShaderEntryPoint, WGRShderSrcType } from "../../render/pipeline/WGRPipelineCtxParams";
 import { WGRBufferData } from "../mdata/MaterialUniformData";
 import { getCodeLine, codeLineCommentTest } from "../shader/utils";
+import { IWGMaterial } from "../IWGMaterial";
+import { WGRPrimitiveImpl } from "../../render/WGRPrimitiveImpl";
 
 const bufValue = new WGRBufferValue({ shdVarName: 'bufValue' });
 class MaterialPipeline {
     constructor(){}
     
+    checkMaterial(material: IWGMaterial, primitive: WGRPrimitiveImpl): void {
+		if (!material.shaderSrc.compShaderSrc) {
+			const vtxParam = material.pipelineVtxParam;
+			if (primitive && vtxParam) {
+				const vert = vtxParam.vertex;
+				vert.buffers = primitive.vbufs;
+				vert.drawMode = primitive.drawMode;
+			}
+			const pipeDef = material.pipelineDefParam;
+			if (material.doubleFace !== undefined) {
+				pipeDef.faceCullMode = material.doubleFace === true ? 'none' : pipeDef.faceCullMode;
+			}
+		}
+	}
+	checkShaderSrc(shdSrc: WGRShderSrcType): void {
+		if (shdSrc) {
+			if (shdSrc.code !== undefined && !shdSrc.shaderSrc) {
+				const obj = { code: shdSrc.code, uuid: shdSrc.uuid };
+				if (findShaderEntryPoint('@compute', shdSrc.code) != '') {
+					// console.log(">>>>>>>>>>> find comp shader >>>>>>>>>>>>>>>>>>>>>");
+					shdSrc.compShaderSrc = shdSrc.compShaderSrc ? shdSrc.compShaderSrc : obj;
+				} else {
+					// console.log(">>>>>>>>>>> find curr shader >>>>>>>>>>>>>>>>>>>>>");
+					shdSrc.shaderSrc = shdSrc.shaderSrc ? shdSrc.shaderSrc : obj;
+				}
+			}
+			if (shdSrc.vert) {
+				shdSrc.vertShaderSrc = shdSrc.vert;
+			}
+			if (shdSrc.frag) {
+				shdSrc.fragShaderSrc = shdSrc.frag;
+			}
+			if (shdSrc.comp) {
+				shdSrc.compShaderSrc = shdSrc.comp;
+			}
+		}
+	}
 	shaderBuild(shdSrc: WGRShderSrcType, uvalues: WGRBufferData[], utexes: WGRTexLayoutParam[]): WGRShderSrcType {
 		let shd = shdSrc.shaderSrc;
 		if (shd) {
