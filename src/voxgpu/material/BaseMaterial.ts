@@ -1,4 +1,6 @@
+
 import { WGMaterialDescripter, WGMaterial } from "./WGMaterial";
+
 import { WGShaderConstructor } from "./shader/WGShaderConstructor";
 
 import {
@@ -15,9 +17,9 @@ import {
 	PBRParamsVec4Data,
 	ToneParamDataWrapper,
 	PBRParamDataWrapper,
-	FogParamDataWrapper,
+	FogDataWrapper,
 	LightShaderDataParam,
-	VSMParamUniformData,
+	VSMUniformData,
 	BaseLightData
 
 } from "./mdata/PBRParamsData";
@@ -51,7 +53,7 @@ class BasePBRProperty {
 		1, 1, 0, 0, // uvParam
 	]), "params", "frag");
 	// vsmParams = new MaterialUniformVec4ArrayData(new Float32Array([
-	vsmParams = new VSMParamUniformData(null, "vsmParams", "frag");
+	vsmParams = new VSMUniformData(null, "vsmParams", "frag");
 	shadowMatrix = new MaterialUniformMat44Data(null, "shadowMatrix", "vert");
 
 	lightParam = new LightParamData(new Uint32Array([1, 0, 0, 0]), "lightParam", "frag");
@@ -63,7 +65,7 @@ class BasePBRProperty {
 	toneParam: ToneParamDataWrapper;
 	param: PBRParamDataWrapper;
 	specularFactor: MaterialUniformColor4Wrapper;
-	fogParam: FogParamDataWrapper;
+	fogParam: FogDataWrapper;
 	fogColor: MaterialUniformColor4Wrapper;
 	ambient: MaterialUniformColor4Wrapper;
 	uvParam: MaterialUniformVec4Wrapper;
@@ -88,7 +90,7 @@ class BasePBRProperty {
 		this.toneParam = new ToneParamDataWrapper(params.toneParam, params);
 		this.param = new PBRParamDataWrapper(params.toneParam, params);
 		this.specularFactor = new MaterialUniformColor4Wrapper(params.specularFactor, params);
-		this.fogParam = new FogParamDataWrapper(params.fogParam, params);
+		this.fogParam = new FogDataWrapper(params.fogParam, params);
 		this.fogColor = new MaterialUniformColor4Wrapper(params.fogColor, params);
 		this.ambient = new MaterialUniformColor4Wrapper(params.ambient, params);
 		this.uvParam = new MaterialUniformVec4Wrapper(params.uvParam, params);
@@ -136,10 +138,6 @@ class BaseMaterial extends WGMaterial {
 	setDescriptor(descriptor: WGMaterialDescripter): void {
 		if (!descriptor || descriptor.shaderSrc === undefined) {
 			if (!descriptor) descriptor = { shadinguuid: "BaseMaterial" };
-			// descriptor.shaderSrc = basePBRShaderSrc;
-			// descriptor.shaderSrc = {
-			// 	shaderSrc: { code: "", uuid: "wholeBasePBRShdCode-test01" }
-			// }
 		}
 		super.setDescriptor(descriptor);
 	}
@@ -230,4 +228,4 @@ class BaseMaterial extends WGMaterial {
 		// this.shaderSrc = basePBRShaderSrc;
 	}
 }
-export { BaseMaterial };
+export { LightShaderDataParam, BaseMaterial };
