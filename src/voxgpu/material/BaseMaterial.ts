@@ -1,374 +1,27 @@
-import Arms from "./Arms";
-import Color4 from "./Color4";
 import { WGMaterialDescripter, WGMaterial } from "./WGMaterial";
-
-// import basePBRVertWGSL from "./shader/wgsl/pbr.vert.wgsl";
-// import basePBRFragWGSL from "./shader/wgsl/pbr.frag.wgsl";
-// import basePBRWholeWGSL from "./shader/wgsl/pbr.wgsl";
-// import basePBRWholeInitWGSL from "./shader/wgsl/pbrInit.wgsl";
-
-import MathConst from "../math/MathConst";
-import Vector3 from "../math/Vector3";
 import { WGShaderConstructor } from "./shader/WGShaderConstructor";
+
 import {
-	MaterialUniformDataImpl,
-	MaterialUniformData,
-	MaterialUniformVec4ArrayData,
 	MaterialUniformMat44Data,
-	MaterialUniformVec4Data,
 	MaterialUniformVec4Wrapper,
 	MaterialUniformColor4Wrapper,
 	WGRBufferData
 } from "./mdata/MaterialUniformData";
 
-class BasePBRArmsData implements MaterialUniformDataImpl {
-	version = -1;
-	storage: MaterialUniformData;
-	arms = new Arms();
-	base = new Arms();
-	constructor(data: Float32Array, shdVarName: string, visibility?: string) {
-		this.storage = new MaterialUniformData(data, shdVarName, visibility);
-		this.storage.arraying = true;
-		this.storage.shdVarFormat = 'array<vec4<f32>>';
-		this.arms.fromArray4(data);
-		this.base.fromArray4(data, 4);
-	}
-	update(): void {
-		const data = this.storage.data;
-		this.arms.toArray4(data as NumberArrayType);
-		this.base.toArray4(data as NumberArrayType, 4);
-		this.version++;
-	}
-}
+import {
+	BasePBRArmsData,
+	LightParamData,
+	ArmsDataWrapper,
+	PBRParamsVec4Data,
+	ToneParamDataWrapper,
+	PBRParamDataWrapper,
+	FogParamDataWrapper,
+	LightShaderDataParam,
+	VSMParamUniformData,
+	BaseLightData
 
-class ArmsDataWrapper {
-	property: Arms;
-	private target: MaterialUniformDataImpl;
-	constructor(property: Arms, target: MaterialUniformDataImpl) {
-		this.property = property;
-		this.target = target;
-	}
-	set ao(v: number) {
-		this.property.a = v;
-		this.update();
-	}
-	get ao(): number {
-		return this.property.a;
-	}
-	set roughness(v: number) {
-		this.property.r = v;
-		this.update();
-	}
-	get roughness(): number {
-		return this.property.r;
-	}
-	set metallic(v: number) {
-		this.property.m = v;
-		this.update();
-	}
-	get metallic(): number {
-		return this.property.m;
-	}
+} from "./mdata/PBRParamsData";
 
-	set specular(v: number) {
-		this.property.s = v;
-		this.update();
-	}
-	get specular(): number {
-		return this.property.s;
-	}
-	set value(v: ArmsDataType) {
-		this.property.setArms(v);
-		this.update();
-	}
-	get value(): ArmsDataType {
-		return this.property;
-	}
-	update(): void {
-		this.target.update();
-	}
-}
-
-/**
- * albedo: [1, 1, 1, 1],
- * fresnel: [0, 0, 0, 0],
- * toneParam: [1, 0.1, 1, 1],
- * param: [0, 0, 0.07, 1],
- * specularFactor: [1,1,1, 1],
- * fogParam: [600, 3500, 0, 0.0005],
- * fogColor: [1.0, 1.0, 1.0, 1.0],
- */
-class PBRParamsVec4Data implements MaterialUniformDataImpl {
-	version = -1;
-	storage: MaterialUniformData;
-	albedo = new Color4();
-	fresnel = new Color4();
-	toneParam = new Vector3();
-	param = new Vector3();
-	specularFactor = new Color4();
-	fogParam = new Vector3();
-	fogColor = new Color4();
-	ambient = new Color4();
-	uvParam = new Vector3();
-	constructor(data: Float32Array, shdVarName: string, visibility?: string) {
-
-		this.storage = new MaterialUniformData(data, shdVarName, visibility);
-		this.storage.arraying = true;
-		this.storage.shdVarFormat = 'array<vec4<f32>>';
-
-		let pos = 0;
-		this.albedo.fromArray4(data, pos);
-		pos += 4;
-		this.fresnel.fromArray4(data, pos);
-		pos += 4;
-		this.toneParam.fromArray4(data, pos);
-		pos += 4;
-		this.param.fromArray4(data, pos);
-		pos += 4;
-		this.specularFactor.fromArray4(data, pos);
-		pos += 4;
-		this.fogParam.fromArray4(data, pos);
-		pos += 4;
-		this.fogColor.fromArray4(data, pos);
-		pos += 4;
-		this.ambient.fromArray4(data, pos);
-		pos += 4;
-		this.uvParam.fromArray4(data, pos);
-	}
-	update(): void {
-		const data = this.storage.data;
-		let pos = 0;
-		this.albedo.toArray4(data as NumberArrayType, pos);
-		pos += 4;
-		this.fresnel.toArray4(data as NumberArrayType, pos);
-		pos += 4;
-		this.toneParam.toArray4(data as NumberArrayType, pos);
-		pos += 4;
-		this.param.toArray4(data as NumberArrayType, pos);
-		pos += 4;
-		this.specularFactor.toArray4(data as NumberArrayType, pos);
-		pos += 4;
-		this.fogParam.toArray4(data as NumberArrayType, pos);
-		pos += 4;
-		this.fogColor.toArray4(data as NumberArrayType, pos);
-		pos += 4;
-		this.ambient.toArray4(data as NumberArrayType, pos);
-		pos += 4;
-		this.uvParam.toArray4(data as NumberArrayType, pos);
-		this.version++;
-		this.storage.update();
-	}
-}
-
-class ToneParamDataWrapper extends MaterialUniformVec4Wrapper {
-	set toneExposure(v: number) {
-		this.property.x = v;
-		this.update();
-	}
-	get toneExposure(): number {
-		return this.property.x;
-	}
-	set frontIntensity(v: number) {
-		this.property.z = v;
-		this.update();
-	}
-	get frontIntensity(): number {
-		return this.property.z;
-	}
-	set sideIntensity(v: number) {
-		this.property.w = v;
-		this.update();
-	}
-	get sideIntensity(): number {
-		return this.property.w;
-	}
-}
-class PBRParamDataWrapper extends MaterialUniformVec4Wrapper {
-	set scatterIntensity(v: number) {
-		this.property.w = v;
-		this.update();
-	}
-	get scatterIntensity(): number {
-		return this.property.w;
-	}
-	/**
-	 * (lod mipmap level) = base + (maxMipLevel - k * maxMipLevel)
-	 * @param maxMipLevel envmap texture lod max mipmap level, the vaue is a int number
-	 * @param base envmap texture lod max mipmap level base, value range: -7.0 -> 12.0
-	 */
-	setEnvMapLodMipMapLevel(maxMipLevel: number, base: number = 0.0): void {
-		maxMipLevel = Math.min(Math.max(maxMipLevel, 0.0), 14.0);
-		base = Math.min(Math.max(base, -7.0), 12.0);
-		this.property.z = Math.round(maxMipLevel) * 0.01 + base;
-		this.update();
-	}
-	setEnvMapLodMipMapLevelWithSize(envMapWidth: number, envMapHeight: number, base: number = 0.0): void {
-		base = Math.min(Math.max(base, -7.0), 12.0);
-		this.property.z = MathConst.GetMaxMipMapLevel(envMapWidth, envMapHeight) * 0.01 + base;
-		this.update();
-	}
-}
-
-
-class FogParamDataWrapper extends MaterialUniformVec4Wrapper {
-	set near(v: number) {
-		this.property.x = v;
-		this.update();
-	}
-	get near(): number {
-		return this.property.x;
-	}
-	set far(v: number) {
-		this.property.y = v;
-		this.update();
-	}
-	get far(): number {
-		return this.property.y;
-	}
-	set density(v: number) {
-		this.property.w = v;
-		this.update();
-	}
-	get density(): number {
-		return this.property.w;
-	}
-}
-
-
-class VSMParamUniformData extends MaterialUniformVec4ArrayData {
-	constructor(data: Float32Array, shdVarName: string, visibility?: string) {
-		super(data, shdVarName, visibility);
-		this.data = new Float32Array([
-			-0.0005             // shadowBias
-			, 0.0               // shadowNormalBias
-			, 4                 // shadowRadius
-			, 0.4               // shadow intensity
-	
-			, 512, 512           // shadowMapSize(width, height)
-			, 0.0, 0.0           // undefined
-	
-			
-			, 1.0, 1.0, 1.0      // direc light nv(x,y,z)
-			, 0.0                // undefined
-		])
-	}
-    setParam(shadowBias: number, shadowNormalBias: number, shadowRadius: number): void {
-		let vs = this.data as Float32Array;
-        vs[0] = shadowBias;
-        vs[1] = shadowNormalBias;
-        vs[2] = shadowRadius;
-		this.update();
-    }
-    set intensity(intensity: number) {
-		let vs = this.data as Float32Array;
-        vs[3] = intensity;
-		this.update();
-    }
-	get intensity(): number {
-		return (this.data as Float32Array)[3];
-	}
-    set radius(radius: number) {
-		let vs = this.data as Float32Array;
-        vs[2] = radius;
-		this.update();
-    }
-	get radius(): number {
-		return (this.data as Float32Array)[2];
-	}
-    set bias(bias: number)  {
-		let vs = this.data as Float32Array;
-        vs[0] = bias;
-    }
-	get bias(): number {
-		return (this.data as Float32Array)[0];
-	}
-    setSize(width: number, height: number): void {
-		let vs = this.data as Float32Array;
-        vs[4] = width;
-        vs[5] = height;
-		this.update();
-    }
-    set direction(v3d: Vector3DataType) {
-		let v3 = new Vector3().setVector3(v3d);
-		let vs = this.data as Float32Array;
-        vs[8] = -v3.x;
-        vs[9] = -v3.y;
-        vs[10] = -v3.z;
-		this.update();
-    }
-	get direction(): Vector3DataType {
-		let vs = this.data as Float32Array;
-		return [vs[8], vs[9], vs[10]];
-	}
-}
-
-class BaseLightData implements WGRBufferData {
-	version = -1;
-	storage: MaterialUniformData;
-	constructor(data: Float32Array, shdVarName: string, visibility?: string) {
-		this.storage = new MaterialUniformData(data, shdVarName, visibility);
-		this.storage.arraying = true;
-		this.storage.shdVarFormat = 'array<vec4<f32>>';
-	}
-	set shared(b: boolean) {
-		this.storage.shared = b;
-	}
-	get shared(): boolean {
-		return this.storage.shared === true;
-	}
-	set data(d: Float32Array) {
-		this.storage.data = d;
-		this.update();
-	}
-	get data(): Float32Array {
-		return this.storage.data as Float32Array;
-	}
-	update(): void {
-		this.version++;
-		if (this.storage && this.storage.update !== undefined) {
-			this.storage.update();
-		}
-	}
-}
-type LightShaderDataParam = {
-	lights?: Float32Array;
-	colors?: Float32Array;
-	pointLightsTotal?: number;
-	directLightsTotal?: number;
-	spotLightsTotal?: number;
-};
-class LightParamData extends MaterialUniformVec4Data {
-	constructor(data: NumberArrayType, shdVarName: string, visibility?: string) {
-		super(data, shdVarName, visibility);
-		this.shdVarFormat = 'vec4<u32>';
-	}
-	set param(param: LightShaderDataParam) {
-		if (param) {
-			if (param.pointLightsTotal !== undefined) {
-				this.property.x = param.pointLightsTotal;
-			}
-			if (param.directLightsTotal !== undefined) {
-				this.property.y = param.directLightsTotal;
-			}
-			if (param.spotLightsTotal !== undefined) {
-				this.property.z = param.spotLightsTotal;
-			}
-			this.update();
-		}
-	}
-	set pointLightsTotal(n: number) {
-		this.property.x = n;
-		this.update();
-	}
-	set directLightsTotal(n: number) {
-		this.property.y = n;
-		this.update();
-	}
-	set spotLightsTotal(n: number) {
-		this.property.z = n;
-		this.update();
-	}
-}
 class BasePBRProperty {
 	// ambient = new MaterialUniformColor4Data(new Float32Array([0.1, 0.1, 0.1, 1]), "ambient", "frag");
 	/**
@@ -467,13 +120,13 @@ class BasePBRProperty {
 		return this.lightParam.param;
 	}
 }
-class BasePBRMaterial extends WGMaterial {
+class BaseMaterial extends WGMaterial {
 	private mShdBuilder = new WGShaderConstructor();
 	property = new BasePBRProperty();
 	constructor(descriptor?: WGMaterialDescripter) {
 		super(descriptor);
 	}
-	setLightParam(param: LightShaderDataParam): BasePBRMaterial {
+	setLightParam(param: LightShaderDataParam): BaseMaterial {
 		this.property.setLightParam( param );
 		return this;
 	}
@@ -482,7 +135,7 @@ class BasePBRMaterial extends WGMaterial {
 	}
 	setDescriptor(descriptor: WGMaterialDescripter): void {
 		if (!descriptor || descriptor.shaderSrc === undefined) {
-			if (!descriptor) descriptor = { shadinguuid: "BasePBRMaterial" };
+			if (!descriptor) descriptor = { shadinguuid: "BaseMaterial" };
 			// descriptor.shaderSrc = basePBRShaderSrc;
 			// descriptor.shaderSrc = {
 			// 	shaderSrc: { code: "", uuid: "wholeBasePBRShdCode-test01" }
@@ -560,8 +213,8 @@ class BasePBRMaterial extends WGMaterial {
 			}
 		}
 
-		console.log('BasePBRMaterial::__$build() preCode: \n',preCode);
-		// console.log('BasePBRMaterial::__$build() ...');
+		console.log('BaseMaterial::__$build() preCode: \n',preCode);
+		// console.log('BaseMaterial::__$build() ...');
 		let uuid = preCode + "-ins01";
 		let pdp = this.pipelineDefParam;
 		if(pdp) {
@@ -577,4 +230,4 @@ class BasePBRMaterial extends WGMaterial {
 		// this.shaderSrc = basePBRShaderSrc;
 	}
 }
-export { LightShaderDataParam, BasePBRMaterial };
+export { BaseMaterial };
