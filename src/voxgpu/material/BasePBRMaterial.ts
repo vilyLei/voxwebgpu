@@ -12,11 +12,7 @@ import Vector3 from "../math/Vector3";
 import { WGShaderConstructor } from "./shader/WGShaderConstructor";
 
 import {
-	MaterialUniformDataImpl,
-	MaterialUniformData,
-	MaterialUniformVec4ArrayData,
 	MaterialUniformMat44Data,
-	MaterialUniformVec4Data,
 	MaterialUniformVec4Wrapper,
 	MaterialUniformColor4Wrapper,
 	WGRBufferData
@@ -29,9 +25,9 @@ import {
 	PBRParamsVec4Data,
 	ToneParamDataWrapper,
 	PBRParamDataWrapper,
-	FogParamDataWrapper,
+	FogDataWrapper,
 	LightShaderDataParam,
-	VSMParamUniformData,
+	VSMUniformData,
 	BaseLightData
 
 } from "./mdata/PBRParamsData";
@@ -212,7 +208,7 @@ class PBRParamDataWrapper extends MaterialUniformVec4Wrapper {
 }
 
 
-class FogParamDataWrapper extends MaterialUniformVec4Wrapper {
+class FogDataWrapper extends MaterialUniformVec4Wrapper {
 	set near(v: number) {
 		this.property.x = v;
 		this.update();
@@ -237,7 +233,7 @@ class FogParamDataWrapper extends MaterialUniformVec4Wrapper {
 }
 
 
-class VSMParamUniformData extends MaterialUniformVec4ArrayData {
+class VSMUniformData extends MaterialUniformVec4ArrayData {
 	constructor(data: Float32Array, shdVarName: string, visibility?: string) {
 		super(data, shdVarName, visibility);
 		this.data = new Float32Array([
@@ -401,7 +397,7 @@ class BasePBRProperty {
 		1, 1, 0, 0, // uvParam
 	]), "params", "frag");
 	// vsmParams = new MaterialUniformVec4ArrayData(new Float32Array([
-	vsmParams = new VSMParamUniformData(null, "vsmParams", "frag");
+	vsmParams = new VSMUniformData(null, "vsmParams", "frag");
 	shadowMatrix = new MaterialUniformMat44Data(null, "shadowMatrix", "vert");
 
 	lightParam = new LightParamData(new Uint32Array([1, 0, 0, 0]), "lightParam", "frag");
@@ -413,7 +409,7 @@ class BasePBRProperty {
 	toneParam: ToneParamDataWrapper;
 	param: PBRParamDataWrapper;
 	specularFactor: MaterialUniformColor4Wrapper;
-	fogParam: FogParamDataWrapper;
+	fogParam: FogDataWrapper;
 	fogColor: MaterialUniformColor4Wrapper;
 	ambient: MaterialUniformColor4Wrapper;
 	uvParam: MaterialUniformVec4Wrapper;
@@ -438,7 +434,7 @@ class BasePBRProperty {
 		this.toneParam = new ToneParamDataWrapper(params.toneParam, params);
 		this.param = new PBRParamDataWrapper(params.toneParam, params);
 		this.specularFactor = new MaterialUniformColor4Wrapper(params.specularFactor, params);
-		this.fogParam = new FogParamDataWrapper(params.fogParam, params);
+		this.fogParam = new FogDataWrapper(params.fogParam, params);
 		this.fogColor = new MaterialUniformColor4Wrapper(params.fogColor, params);
 		this.ambient = new MaterialUniformColor4Wrapper(params.ambient, params);
 		this.uvParam = new MaterialUniformVec4Wrapper(params.uvParam, params);
