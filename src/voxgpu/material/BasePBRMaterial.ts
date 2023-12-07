@@ -105,9 +105,9 @@ class BasePBRProperty implements MaterialProperty {
 		if (this.shadowReceived) {
 			vs.push(this.vsmParams, this.shadowMatrix);
 		}
-		if (this.lighting) {
-			vs.push(this.lightParam, this.lights, this.lightColors);
-		}
+		// if (this.lighting) {
+		// 	vs.push(this.lightParam, this.lights, this.lightColors);
+		// }
 		return vs;
 	}
 	setLightParam(param: LightShaderDataParam): void {

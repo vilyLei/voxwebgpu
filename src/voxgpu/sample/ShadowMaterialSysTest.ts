@@ -202,7 +202,8 @@ export class ShadowMaterialSysTest {
 
 		let rc = this.mRscene;
 		
-		let position = [-230.0, 100.0, -200.0];
+		// let position = [-230.0, 100.0, -200.0];
+		let position = [0,0,0];
 		let materials = this.createMaterials(position);
 		let sph = new SphereEntity({
 			radius: 80,
@@ -344,7 +345,8 @@ export class ShadowMaterialSysTest {
 		property.arms.roughness = 0.8;
 		property.armsBase.value = [0, 0, 0];
 		property.param.scatterIntensity = 32;
-		property.lighting = false;
+
+		property.lighting = true;
 		
 		const graph = this.mGraph;
 		let cam = graph.shadowCamera;
