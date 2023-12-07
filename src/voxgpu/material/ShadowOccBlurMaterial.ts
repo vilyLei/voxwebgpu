@@ -4,11 +4,13 @@ import {
 	MaterialUniformVec4Data,
 	WGRBufferData
 } from "./mdata/MaterialUniformData";
+import { MaterialProperty } from "./pipeline/MaterialProperty";
 
-class BasePBRProperty {
+class BasePBRProperty implements MaterialProperty {
 	param = new MaterialUniformVec4Data(new Float32Array([1,1,1, 2]), "param", "frag");
 	viewParam = new MaterialUniformVec4Data(new Float32Array([0, 0, 512, 512]), "viewParam", "frag");
 
+	uuid = "property";
 	private mType = 1;
 	toVerticalBlur(): BasePBRProperty {
 		this.mType = 1;

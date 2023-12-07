@@ -22,8 +22,9 @@ import {
 	BaseLightData
 
 } from "./mdata/PBRParamsData";
+import { MaterialProperty } from "./pipeline/MaterialProperty";
 
-class BasePBRProperty {
+class BasePBRProperty implements MaterialProperty {
 	/**
 	 * default values, arms: [1, 1, 1, 0], armsBase: [0, 0, 0, 0]
 	 */

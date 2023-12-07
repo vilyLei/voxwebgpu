@@ -13,6 +13,7 @@ import { WGMaterialDescripter } from "./WGMaterialDescripter";
 import { checkMaterialRPasses, IWGMaterial } from "./IWGMaterial";
 import { IWGMaterialGraph } from "./IWGMaterialGraph";
 import { WGRBufferData } from "../render/buffer/WGRBufferValueParam";
+import { MaterialProperty } from "./pipeline/MaterialProperty";
 
 class WGMaterial implements IWGMaterial {
 	private static sUid = 0;
@@ -32,6 +33,7 @@ class WGMaterial implements IWGMaterial {
 	pipelineDefParam?: WGRPipelineContextDefParam;
 	rpass: WGRMaterialPassViewImpl = {rpass: { index: 0 } };
 	pipeline?: MaterialPipelineParam;
+	property?: MaterialProperty;
 	/**
 	 * material uniforms append to pipeline, or not
 	 */

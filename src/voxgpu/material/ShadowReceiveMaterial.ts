@@ -25,6 +25,7 @@ class BasePBRProperty {
         , 0.0                // undefined
     ]), "vsmParams", "frag");
 	matrixParam = new MaterialUniformMat44Data(null, "shadowMatrix", "vert");
+	uuid = "property";
 	constructor() {
 	}
 	setShadowMatrix(mat4: Matrix4): void {
