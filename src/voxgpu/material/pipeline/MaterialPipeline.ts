@@ -7,6 +7,7 @@ import { IWGMaterial } from "../IWGMaterial";
 import { WGRPrimitiveImpl } from "../../render/WGRPrimitiveImpl";
 import { MtlPipeNodeImpl } from "./MtlPipeNodeImpl";
 import { LightPipeNode } from "./LightPipeNode";
+import { VSMPipeNode } from "./VSMPipeNode";
 
 const bufValue = new WGRBufferValue({ shdVarName: 'mpl-bufValue' });
 class PipeNodePool {
@@ -25,12 +26,16 @@ class PipeNodePool {
     initialize(): void {
         let lightNode = new LightPipeNode();
         this.addNode(lightNode);
+        
+        let vsmNode = new VSMPipeNode();
+        this.addNode(vsmNode);
     }
 }
 class MaterialPipeline {
     private mInit = true;
     private pool = new PipeNodePool();
     light: LightPipeNode;
+    vsm: VSMPipeNode;
     constructor() { }
     initialize(): void {
         if (this.mInit) {
@@ -41,6 +46,9 @@ class MaterialPipeline {
 
             let type = 'lighting';
             this.light = pool.getNodeByType(type) as LightPipeNode;
+            
+            type = 'vsmShadow';
+            this.vsm = pool.getNodeByType(type) as VSMPipeNode;
         }
     }
     checkUniforms(material: IWGMaterial, uvalues: WGRBufferData[]): void {

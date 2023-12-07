@@ -187,7 +187,7 @@ class ShadowPassGraph extends WGRPassNodeGraph {
 
 class VSMPipeNode extends MtPlPipeNode implements MtlPipeNodeImpl {
 
-    type = 'vsm_shadow';
+    type = 'vsmShadow';
     macro = 'USE_VSM_SHADOW';
 
     vsm = new VSMUniformData(null, "vsmParams", "frag");

@@ -209,6 +209,7 @@ export class ShadowMaterialSysTest {
 		let position = [0,0,0];
 		let lightParam = createLightData(position, 600);
 		mtpl.light.data = lightParam;
+		mtpl.vsm.passGraph.initialize(rc);
 
 		let materials = this.createMaterials(position);
 		let sph = new SphereEntity({
