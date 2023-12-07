@@ -5,7 +5,7 @@ import { WGRUnit } from "./WGRUnit";
 import { GPUBuffer } from "../gpu/GPUBuffer";
 import { WGREntityParam } from "./WGREntityParam";
 
-import { getCodeLine, codeLineCommentTest } from "../material/shader/utils";
+// import { getCodeLine, codeLineCommentTest } from "../material/shader/utils";
 import { IWGRPassNodeBuilder } from "./IWGRPassNodeBuilder";
 import { WGRCompUnit } from "./WGRCompUnit";
 import { IRenderableObject } from "./IRenderableObject";
@@ -21,13 +21,14 @@ import { checkBufferData, WGRBufferValue } from "./buffer/WGRBufferValue";
 import { createNewWRGBufferViewUid } from "./buffer/WGRBufferView";
 import { WGRTexLayoutParam } from "./uniform/IWGRUniformContext";
 import { WGMaterial } from "../material/WGMaterial";
+import { MaterialPipeline } from "../material/pipeline/MaterialPipeline";
 
 type GeomType = { indexBuffer?: GPUBuffer, vertexBuffers: GPUBuffer[], indexCount?: number, vertexCount?: number, drawMode?: WGRDrawMode };
-const bufValue = new WGRBufferValue({ shdVarName: 'bufValue' });
+// const bufValue = new WGRBufferValue({ shdVarName: 'bufValue' });
 class WGRObjBuilder {
 
 	wgctx: WebGPUContext;
-
+	materialPipe = new MaterialPipeline();
 	constructor() { }
 	createPrimitive(geomParam?: GeomType): WGRPrimitive {
 		// console.log('XXXXXX createPrimitive() ...');
@@ -67,77 +68,6 @@ class WGRObjBuilder {
 				shdSrc.compShaderSrc = shdSrc.comp;
 			}
 		}
-	}
-	private checkUniforms(shdSrc: WGRShderSrcType, uvalues: WGRBufferData[], utexes: WGRTexLayoutParam[]): WGRShderSrcType {
-		let shd = shdSrc.shaderSrc;
-		if (shd) {
-
-			let code = shd.code;
-			let bi = code.indexOf('@binding(');
-			for(let i = 0; i < 30; ++i) {
-				if(bi >= 0) {
-					let codeLine = getCodeLine(code, bi);
-					if (!codeLineCommentTest(codeLine)) {
-						break;
-					}
-				}else {
-					break;
-				}
-			}
-			if (bi >= 0) {
-				let begin = code.indexOf('@group(');
-				let end = code.lastIndexOf(' @binding(');
-				end = code.indexOf(';', end + 1);
-				code = code.slice(0, begin) + code.slice(end + 1);
-				// console.log('oooooooooo begin, end: ', begin, end);
-			}
-			// console.log('oooooooooo code: ', code);
-			// console.log(`code.indexOf('@binding(') < 0: `, code.indexOf('@binding(') < 0);
-			if (bi < 0) {
-				let codeStr = '';
-				let index = 0;
-				if (uvalues && uvalues.length > 0) {
-					// @group(0) @binding(0) var<uniform> objMat : mat4x4<f32>;
-					for (let i = 0; i < uvalues.length; ++i) {
-						bufValue.usage = uvalues[i].usage;
-						let varType = bufValue.isStorage() ? 'storage' : 'uniform';
-						let str = `@group(0) @binding(${index++}) var<${varType}> ${uvalues[i].shdVarName} : ${uvalues[i].shdVarFormat};\n`;
-						codeStr += str;
-					}
-				}
-				if (utexes && utexes.length > 0) {
-					// console.log('utexes: ', utexes);
-					for (let i = 0; i < utexes.length; ++i) {
-						let tex = utexes[i];
-						let varType = 'texture_2d';
-						switch (tex.viewDimension) {
-							case 'cube':
-								varType = 'texture_cube';
-								break;
-							default:
-								break;
-						}
-						let str = `@group(0) @binding(${index++}) var ${tex.shdVarName}Sampler: sampler;\n`;
-						str += `@group(0) @binding(${index++}) var ${tex.shdVarName}Texture: ${varType}<f32>;\n`;
-						codeStr += str;
-					}
-				}
-				// console.log("checkUniforms(), codeStr:");
-				// console.log(codeStr);
-				if (codeStr !== '') {
-					codeStr = codeStr + code;
-					let shaderSrc = {
-						// shaderSrc: { code: basePBRVertWGSL + basePBRFragWGSL, uuid: "wholeBasePBRShdCode" },
-						shaderSrc: { code: codeStr, uuid: shd.uuid },
-						// shaderSrc: { code: basePBRWholeInitWGSL, uuid: "wholeBasePBRShdCode" },
-					};
-					// console.log("checkUniforms() VVVVVVVVVVVVVVVVVVVVVVVV, codeStr: ");
-					// console.log( codeStr );
-					return shaderSrc;
-				}
-			}
-		}
-		return shdSrc;
 	}
 	private checkMaterial(material: IWGMaterial, primitive: WGRPrimitive): void {
 		if (!material.shaderSrc.compShaderSrc) {
@@ -271,7 +201,7 @@ class WGRObjBuilder {
 			builder.setMaterial(material);
 			if (!pctx) {
 				// this.checkShaderSrc(material.shaderSrc);
-				material.shaderSrc = this.checkUniforms(material.shaderSrc, uvalues, utexes);
+				material.shaderSrc = this.materialPipe.shaderBuild(material.shaderSrc, uvalues, utexes);
 
 				if (!material.pipelineVtxParam) {
 					if (primitive) {

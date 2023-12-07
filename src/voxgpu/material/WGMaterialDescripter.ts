@@ -11,6 +11,11 @@ interface WGMaterialDescripter {
 	pipelineVtxParam?: VtxPipelinDescParam;
 	pipelineDefParam?: WGRPipelineContextDefParam;
 	rpass?: WGRMaterialPassViewImpl;
+	
+	/**
+	 * 如果这个属性有值，则这个material会经过 material pipeline 动态组装
+	 */
+	pipeline?: MaterialPipelineParam;
 	/**
 	 * material uniforms append to pipeline, or not
 	 */

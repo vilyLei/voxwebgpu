@@ -31,7 +31,7 @@ class WGMaterial implements IWGMaterial {
 	pipelineVtxParam?: VtxPipelinDescParam;
 	pipelineDefParam?: WGRPipelineContextDefParam;
 	rpass: WGRMaterialPassViewImpl = {rpass: { index: 0 } };
-
+	pipeline?: MaterialPipelineParam;
 	/**
 	 * material uniforms append to pipeline, or not
 	 */

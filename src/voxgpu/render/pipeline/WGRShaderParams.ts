@@ -2,24 +2,25 @@ import { GPUFragmentState } from "../../gpu/GPUFragmentState";
 import { GPUComputeState } from "../../gpu/GPUComputeState";
 import { GPUShaderModule } from "../../gpu/GPUShaderModule";
 import { GPUColorTargetState } from "../../gpu/GPUColorTargetState";
+import { WGRShadeSrcParam, WGRShderSrcType } from "./WGRShderSrcType";
 
-interface WGRShadeSrcParam {
-	code?: string;
-	uuid?: string;
-	vertEntryPoint?: string;
-	fragEntryPoint?: string;
-	compEntryPoint?: string
-}
-interface WGRShderSrcType extends WGRShadeSrcParam {
-	shaderSrc?: WGRShadeSrcParam;
-	vertShaderSrc?: WGRShadeSrcParam;
-	fragShaderSrc?: WGRShadeSrcParam;
-	compShaderSrc?: WGRShadeSrcParam;
+// interface WGRShadeSrcParam {
+// 	code?: string;
+// 	uuid?: string;
+// 	vertEntryPoint?: string;
+// 	fragEntryPoint?: string;
+// 	compEntryPoint?: string
+// }
+// interface WGRShderSrcType extends WGRShadeSrcParam {
+// 	shaderSrc?: WGRShadeSrcParam;
+// 	vertShaderSrc?: WGRShadeSrcParam;
+// 	fragShaderSrc?: WGRShadeSrcParam;
+// 	compShaderSrc?: WGRShadeSrcParam;
 
-	vert?: WGRShadeSrcParam;
-	frag?: WGRShadeSrcParam;
-	comp?: WGRShadeSrcParam;
-}
+// 	vert?: WGRShadeSrcParam;
+// 	frag?: WGRShadeSrcParam;
+// 	comp?: WGRShadeSrcParam;
+// }
 
 function findShaderEntryPoint(keyStr: string, src: string): string {
 	let i = src.indexOf(keyStr);
