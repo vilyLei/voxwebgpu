@@ -62,10 +62,10 @@ fn calcColor4(calcParam: CalcColor4Param) -> vec4<f32> {
 	var color = vec3f(0.0);
 
 
-	var albedo = params[0].xyz;
-	let fresnel = params[1].xyz;
-	let toneParam = params[2];
-	let param = params[3];
+	var albedo = pbrParams[0].xyz;
+	let fresnel = pbrParams[1].xyz;
+	let toneParam = pbrParams[2];
+	let param = pbrParams[3];
 
 	let arms = armsParams[0];
 	let armsBase = armsParams[1];
@@ -76,7 +76,7 @@ fn calcColor4(calcParam: CalcColor4Param) -> vec4<f32> {
     var ao = arms.x;
 
 	// var texUV = uv.xy * uvParam.xy;
-	var texUV = uv.xy * params[8].xy;
+	var texUV = uv.xy * pbrParams[8].xy;
 	let worldPosition = worldPos.xyz;
 
 	let V = normalize(worldCamPos.xyz - worldPosition);
@@ -140,7 +140,7 @@ fn calcColor4(calcParam: CalcColor4Param) -> vec4<f32> {
     albedo = mix(albedo, F0, metallic);
 
 	// let specularFactor = vec3<f32>(1.0);
-	let specularFactor = params[4].xyz;
+	let specularFactor = pbrParams[4].xyz;
     specularColor *= specularFactor;
 
 	var specularEnvColor3 = vec3One;
@@ -168,6 +168,7 @@ fn calcColor4(calcParam: CalcColor4Param) -> vec4<f32> {
 
 	let sColor0 = specularColor;
 
+	#ifdef USE_LIGHT
 	rL.scatterIntensity = param.www;
     rL.F0 = F0;
     rL.specularColor = specularColor;
@@ -198,13 +199,15 @@ fn calcColor4(calcParam: CalcColor4Param) -> vec4<f32> {
 	}
 
 	specularColor = (rL.specular + specularColor);
-
-	var Lo = (rL.diffuse * diffuse + specularColor) * ao;
+	diffuse = rL.diffuse * diffuse;
+	#endif
+	// var Lo = (rL.diffuse * diffuse + specularColor) * ao;
+	var Lo = (diffuse + specularColor) * ao;
 
 	// ambient lighting (note that the next IBL tutorial will replace
     // this ambient lighting with environment lighting).
 	// var amb = ambient.xyz;
-	var amb = params[7].xyz;
+	var amb = pbrParams[7].xyz;
 	#ifdef USE_EMISSIVE_MAP
 	amb += textureSample(emissiveTexture, emissiveSampler, texUV).xyz;
 	// return vec4<f32>(amb, 1.0);

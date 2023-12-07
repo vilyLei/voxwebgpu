@@ -213,6 +213,7 @@ export class ShadowMaterialSysTest {
 		});
 		this.mEntities.push(sph);
 		rc.addEntity(sph);
+		/*
 		position = [160.0, 100.0, -210.0];
 		materials = this.createMaterials(position);
 		let box = new BoxEntity({
@@ -238,8 +239,8 @@ export class ShadowMaterialSysTest {
 		});
 		this.mEntities.push(torus);
 		rc.addEntity(torus);
-
-		this.buildShadow();
+		//*/
+		// this.buildShadow();
 	}
 
 	private buildShadow(): void {
@@ -343,6 +344,7 @@ export class ShadowMaterialSysTest {
 		property.arms.roughness = 0.8;
 		property.armsBase.value = [0, 0, 0];
 		property.param.scatterIntensity = 32;
+		property.lighting = false;
 		
 		const graph = this.mGraph;
 		let cam = graph.shadowCamera;

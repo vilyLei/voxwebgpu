@@ -395,7 +395,7 @@ class BasePBRProperty {
 		1.0, 1.0, 1.0, 1.0,	// fogColor
 		0.1, 0.1, 0.1, 1, // ambient
 		1, 1, 0, 0, // uvParam
-	]), "params", "frag");
+	]), "pbrParams", "frag");
 	// vsmParams = new MaterialUniformVec4ArrayData(new Float32Array([
 	vsmParams = new VSMUniformData(null, "vsmParams", "frag");
 	shadowMatrix = new MaterialUniformMat44Data(null, "shadowMatrix", "vert");
@@ -424,6 +424,7 @@ class BasePBRProperty {
 	fogEnabled = false;
 	fogExp2Enabled = false;
 	shadowReceived = false;
+	lighting = true;
 	constructor() {
 		let armsSrc = this.armsParams;
 		this.arms = new ArmsDataWrapper(armsSrc.arms, armsSrc);
@@ -442,10 +443,16 @@ class BasePBRProperty {
 	get uniformValues(): WGRBufferData[] {
 		// return [this.ambient, this.armsParams, this.uvParam, this.params, this.lightParam, this.lights, this.lightColors];
 		// return [this.armsParams, this.uvParam, this.params, this.lightParam, this.lights, this.lightColors];
+		let vs = [this.armsParams, this.params] as WGRBufferData[];
 		if(this.shadowReceived) {
-			return [this.vsmParams, this.shadowMatrix,this.armsParams, this.params, this.lightParam, this.lights, this.lightColors];
+			// return [this.vsmParams, this.shadowMatrix,, this.lightParam, this.lights, this.lightColors];
+			vs.push(this.vsmParams, this.shadowMatrix);
 		}
-		return [this.armsParams, this.params, this.lightParam, this.lights, this.lightColors];
+		if(this.lighting) {
+			vs.push(this.lightParam, this.lights, this.lightColors);
+		}
+		return vs;
+		// return [this.armsParams, this.params, this.lightParam, this.lights, this.lightColors];
 	}
 	setLightParam(param: LightShaderDataParam): void {
 		if (param) {
@@ -521,6 +528,9 @@ class BasePBRMaterial extends WGMaterial {
 		}
 		if(ppt.shadowReceived) {
 			preCode += '#define USE_VSM_SHADOW\n';
+		}
+		if(ppt.lighting) {
+			preCode += '#define USE_LIGHT\n';
 		}
 		if(ts) {
 			for(let i = 0; i < ts.length; ++i) {

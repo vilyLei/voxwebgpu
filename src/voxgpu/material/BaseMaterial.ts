@@ -96,10 +96,8 @@ class BasePBRProperty {
 		this.uvParam = new MaterialUniformVec4Wrapper(params.uvParam, params);
 	}
 	get uniformValues(): WGRBufferData[] {
-		// return [this.ambient, this.armsParams, this.uvParam, this.params, this.lightParam, this.lights, this.lightColors];
-		// return [this.armsParams, this.uvParam, this.params, this.lightParam, this.lights, this.lightColors];
-		if(this.shadowReceived) {
-			return [this.vsmParams, this.shadowMatrix,this.armsParams, this.params, this.lightParam, this.lights, this.lightColors];
+		if (this.shadowReceived) {
+			return [this.vsmParams, this.shadowMatrix, this.armsParams, this.params, this.lightParam, this.lights, this.lightColors];
 		}
 		return [this.armsParams, this.params, this.lightParam, this.lights, this.lightColors];
 	}
@@ -129,7 +127,7 @@ class BaseMaterial extends WGMaterial {
 		super(descriptor);
 	}
 	setLightParam(param: LightShaderDataParam): BaseMaterial {
-		this.property.setLightParam( param );
+		this.property.setLightParam(param);
 		return this;
 	}
 	getLightParam(): LightShaderDataParam {
@@ -147,37 +145,37 @@ class BaseMaterial extends WGMaterial {
 		}
 		return this.mUniformValues;
 	}
-	
+
 	__$build(): void {
 		let preCode = '';
 		let ts = this.textures;
 		let ppt = this.property;
-		if(ppt.glossiness) {
+		if (ppt.glossiness) {
 			preCode += '#define USE_GLOSSINESS 1\n';
 		}
-		if(ppt.toneMapping) {
+		if (ppt.toneMapping) {
 			preCode += '#define USE_TONE_MAPPING\n';
 		}
-		if(ppt.metallicCorrection) {
+		if (ppt.metallicCorrection) {
 			preCode += '#define USE_METALLIC_CORRECTION\n';
 		}
-		if(ppt.inverseMask) {
+		if (ppt.inverseMask) {
 			preCode += '#define USE_INVERSE_MASK\n';
 		}
-		if(ppt.fogExp2Enabled) {
+		if (ppt.fogExp2Enabled) {
 			ppt.fogEnabled = true;
 			preCode += '#define USE_FOG_EXP2\n';
 		}
-		if(ppt.fogEnabled) {
+		if (ppt.fogEnabled) {
 			preCode += '#define USE_FOG\n';
 		}
-		if(ppt.shadowReceived) {
+		if (ppt.shadowReceived) {
 			preCode += '#define USE_VSM_SHADOW\n';
 		}
-		if(ts) {
-			for(let i = 0; i < ts.length; ++i) {
+		if (ts) {
+			for (let i = 0; i < ts.length; ++i) {
 				console.log('ts[i].texture.shdVarName: ', ts[i].texture.shdVarName);
-				switch(ts[i].texture.shdVarName) {
+				switch (ts[i].texture.shdVarName) {
 					case 'normal':
 						preCode += '#define USE_NORMAL_MAP\n';
 						break;
@@ -211,11 +209,11 @@ class BaseMaterial extends WGMaterial {
 			}
 		}
 
-		console.log('BaseMaterial::__$build() preCode: \n',preCode);
+		console.log('BaseMaterial::__$build() preCode: \n', preCode);
 		// console.log('BaseMaterial::__$build() ...');
 		let uuid = preCode + "-ins01";
 		let pdp = this.pipelineDefParam;
-		if(pdp) {
+		if (pdp) {
 			uuid += pdp.faceCullMode + pdp.blendModes;
 			// console.log("pdp.faceCullMode: ", pdp.faceCullMode);
 		}
