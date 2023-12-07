@@ -41,8 +41,10 @@ class ShadowPassGraph extends WGRPassNodeGraph {
 
     shadowCamera: Camera;
     private mMatrixData: MaterialUniformMat44Data;
-    constructor(matrixData: MaterialUniformMat44Data) {
+    private mVSMData: VSMUniformData;
+    constructor(vsmData: VSMUniformData, matrixData: MaterialUniformMat44Data) {
         super();
+        this.mVSMData = vsmData;
         this.mMatrixData = matrixData;
     }
     private initMaterial(): void {
@@ -87,6 +89,7 @@ class ShadowPassGraph extends WGRPassNodeGraph {
         shadowMat.copyFrom(cam.viewProjMatrix);
         shadowMat.append(transMatrix);
         this.mMatrixData.shadowMatrix = transMatrix;
+        this.mVSMData.direction = cam.nv;
     }
     addEntity(entity: Entity3D): ShadowPassGraph {
 
@@ -187,15 +190,13 @@ class VSMPipeNode extends MtPlPipeNode implements MtlPipeNodeImpl {
     type = 'vsm_shadow';
     macro = 'USE_VSM_SHADOW';
 
-    // shadowCamera = new Camera();
-
     vsm = new VSMUniformData(null, "vsmParams", "frag");
     /**
      * shadow material
      */
     matrix = new MaterialUniformMat44Data(null, "shadowMatrix", "vert");
 
-    passGraph = new ShadowPassGraph(this.matrix);
+    passGraph = new ShadowPassGraph(this.vsm, this.matrix);
 
     merge(ls: WGRBufferData[]): void {
         let end = ls.length - 1;
