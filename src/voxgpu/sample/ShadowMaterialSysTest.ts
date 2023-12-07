@@ -21,6 +21,7 @@ import { SpecularEnvBrnTexture } from "../texture/SpecularEnvBrnTexture";
 import Vector3 from "../math/Vector3";
 import {createLightData} from "./utils/lightUtil";
 import { BasePBRMaterial, LightShaderDataParam } from "../material/BasePBRMaterial";
+import { IRendererScene } from "../rscene/IRendererScene";
 class ShadowPassGraph extends WGRPassNodeGraph {
 
 	private entities: Entity3D[] = [];
@@ -105,7 +106,7 @@ class ShadowPassGraph extends WGRPassNodeGraph {
 		}
 		return this;
 	}
-	initialize(rc: RendererScene): ShadowPassGraph {
+	initialize(rc: IRendererScene): ShadowPassGraph {
 
 		let colorAttachments = [
 			this.depAttachment

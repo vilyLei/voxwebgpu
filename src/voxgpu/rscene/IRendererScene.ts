@@ -2,12 +2,18 @@ import IRenderStage3D from "../render/IRenderStage3D";
 import { IRenderCamera } from "../render/IRenderCamera";
 
 import IRenderer from "./IRenderer";
+import { WGRPassParam } from "../render/WGRenderPassBlock";
+import { WGRPassWrapperImpl } from "../render/pipeline/WGRPassWrapperImpl";
+import { WGRPassNodeGraph } from "../render/pass/WGRPassNodeGraph";
 
 interface IRendererScene extends IRenderer {
 	getStage3D(): IRenderStage3D;
 	getCamera(): IRenderCamera;
 	enableMouseEvent(enabled?: boolean): void;
 
+	setPassNodeGraph(graph: WGRPassNodeGraph, blockIndex?: number): void;
+	createRTTPass(param?: WGRPassParam, blockIndex?: number): WGRPassWrapperImpl;
+	createRenderPass(param?: WGRPassParam, blockIndex?: number): WGRPassWrapperImpl;
 	/**
 	 * @param type event type
 	 * @param target event listerner

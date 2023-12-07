@@ -198,6 +198,12 @@ class WGRenderer implements IRenderer {
 			throw Error("Illegal operations !!!");
 		}
 	}
+	// createRTTPass(param?: WGRPassParam, blockIndex = 0): WGRPassWrapperImpl {
+	// 	this.initialize();
+	// 	if (!param) param = {};
+	// 	param.separate = true;
+	// 	return this.appendRenderPass(param, blockIndex);
+	// }
 	appendRenderPass(param?: WGRPassParam, blockIndex = 0): WGRPassWrapperImpl {
 		this.initialize();
 		this.intDefaultBlock();
