@@ -219,7 +219,7 @@ export class ShadowMaterialSysTest {
 		});
 		this.mEntities.push(sph);
 		rc.addEntity(sph);
-		/*
+		///*
 		position = [160.0, 100.0, -210.0];
 		materials = this.createMaterials(position);
 		let box = new BoxEntity({
@@ -369,10 +369,10 @@ export class ShadowMaterialSysTest {
 	private mLightParams: LightShaderDataParam[] = [];
 	private createMaterial(position: Vector3DataType, textures: WGTextureDataDescriptor[], blendModes: string[], depthCompare = 'less', lightParam?: LightShaderDataParam): BasePBRMaterial {
 
-		if (!lightParam) {
-			lightParam = createLightData(position);
-			this.mLightParams.push(lightParam);
-		}
+		// if (!lightParam) {
+		// 	lightParam = createLightData(position);
+		// 	this.mLightParams.push(lightParam);
+		// }
 		let pipelineDefParam = {
 			depthWriteEnabled: true,
 			faceCullMode: 'back',

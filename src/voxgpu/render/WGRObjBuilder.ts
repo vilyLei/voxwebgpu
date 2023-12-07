@@ -15,7 +15,7 @@ import { WebGPUContext } from "../gpu/WebGPUContext";
 import { IWGMaterial } from "../material/IWGMaterial";
 import { WGRPrimitiveDict, WGGeometry } from "../geometry/WGGeometry";
 import { WGRDrawMode } from "./Define";
-import { checkBufferData, WGRBufferValue } from "./buffer/WGRBufferValue";
+import { checkBufferData } from "./buffer/WGRBufferValue";
 import { createNewWRGBufferViewUid } from "./buffer/WGRBufferView";
 import { WGRTexLayoutParam } from "./uniform/IWGRUniformContext";
 import { WGMaterial } from "../material/WGMaterial";
@@ -24,7 +24,7 @@ import { MaterialPipeline } from "../material/pipeline/MaterialPipeline";
 type GeomType = { indexBuffer?: GPUBuffer, vertexBuffers: GPUBuffer[], indexCount?: number, vertexCount?: number, drawMode?: WGRDrawMode };
 
 class WGRObjBuilder {
-	
+
 	wgctx: WebGPUContext;
 	mtpl = new MaterialPipeline();
 	constructor() {
