@@ -45,7 +45,7 @@ export default class TorusGeometry extends GeometryBase {
     getCVS(): Float32Array { return this.m_cvs; }
     getIVS(): Uint16Array | Uint32Array { return this.mivs; }
 
-    initialize(ringRadius: number, axisRadius: number, rings: number, segments: number, uvType: number = 1, alignYRatio: number = -0.5): void {
+    initialize(ringRadius: number, axisRadius: number, segments: number, rings: number, uvType: number = 1, alignYRatio: number = -0.5): void {
 
         if (this.mvs == null) {
 

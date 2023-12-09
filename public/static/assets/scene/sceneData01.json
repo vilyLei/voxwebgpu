@@ -21,8 +21,8 @@
 				"entity": {
 					"radius": 90,
 					"axisType": 1,
-					"rings": 20,
-					"segments": 50,
+					"rings": 50,
+					"segments": 30,
 					"transform": { "position": [0, 150, 0] },
 					"albedo": [0.9, 0.1, 0.7],
 					"arm": [1.0, 0.3, 0]

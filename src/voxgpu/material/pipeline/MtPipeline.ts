@@ -2,6 +2,7 @@ import { LightPipeNode } from "./LightPipeNode";
 import { VSMPipeNode } from "./VSMPipeNode";
 import { MtBuilder } from "./MtBuilder";
 import { MtPlNodePool } from "./MtPlNodePool";
+import { IWGMaterial } from "../IWGMaterial";
 
 /**
  * material pipeline
@@ -26,6 +27,24 @@ class MtPipeline {
             type = 'vsmShadow';
             this.shadow = pool.getNodeByType(type) as VSMPipeNode;
         }
+    }
+    testRMaterials(ms: IWGMaterial[]): boolean {
+        if (ms) {
+			for (let i = 0; i < ms.length; ++i) {
+				const m = ms[i];
+				const ppt = m.property;
+				if(ppt && ppt.shadowReceived) {
+					if(!this.shadow.isEnabled()) {
+						return false;
+					}
+				}
+				if (!ms[i].isREnabled()) {
+					return false;
+				}
+			}
+            return true;
+		}
+        return false;
     }
 }
 export { MtPipeline };

@@ -4,6 +4,7 @@ import { WGWaitEntityNode } from "./WGEntityNode";
 import { WGRObjBuilder } from "../render/WGRObjBuilder";
 import { Entity3D } from "../entity/Entity3D";
 import { updateMaterialData } from "../material/MtUtils";
+import { IWGMaterial } from "../material/IWGMaterial";
 
 class WGEntityNodeMana {
 	private mNodes: WGWaitEntityNode[] = [];
@@ -31,27 +32,13 @@ class WGEntityNodeMana {
 		// console.log("WGEntityNodeMana::addEntity(), this.mNodes.length: ", this.mNodes.length);
 	}
 	
-	testEntity(entity: Entity3D, ms: WGMaterial[], wnode: WGWaitEntityNode, debufFlag = false): boolean {
-		// const ms = entity.materials;
+	testEntity(entity: Entity3D, ms: IWGMaterial[], wnode: WGWaitEntityNode, debufFlag = false): boolean {
 		
-		if (ms) {
-			for (let i = 0; i < ms.length; ++i) {
-				const m = ms[i];
-				const ppt = m.property;
-				if(ppt && ppt.shadowReceived) {
-					const mtpl = this.roBuilder.mtpl;
-					if(!mtpl.shadow.isEnabled()) {
-						// console.log("fsfsfsfs");
-						return false;
-					}
-				}
-				if (!ms[i].isREnabled()) {
-					return false;
-				}
-			}
-		} else {
+		const mtpl = this.roBuilder.mtpl;
+		if(!mtpl.testRMaterials(ms)) {
 			return false;
 		}
+
 		if(!entity.isREnabled()) {
 			let g = entity.geometry;
 			if (!g || !g.isREnabled()) {
