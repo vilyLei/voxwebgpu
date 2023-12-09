@@ -209,9 +209,10 @@ export class ShadowMaterialSysTest {
 		let position = [0,0,0];
 		let lightParam = createLightData(position, 600, 5.0);
 		mtpl.light.data = lightParam;
-		mtpl.vsm.passGraph.initialize(rc);
+		mtpl.vsm.initialize(rc);
 
-		let materials = this.createMaterials(position);
+		position = [0,80,0];
+		let materials = this.createMaterials();
 		let sph = new SphereEntity({
 			radius: 80,
 			transform: {
@@ -223,7 +224,7 @@ export class ShadowMaterialSysTest {
 		rc.addEntity(sph);
 		/*
 		position = [160.0, 100.0, -210.0];
-		materials = this.createMaterials(position);
+		materials = this.createMaterials();
 		let box = new BoxEntity({
 			minPos: [-30, -30, -30],
 			maxPos: [130, 230, 80],
@@ -237,7 +238,7 @@ export class ShadowMaterialSysTest {
 		rc.addEntity(box);
 
 		position = [160.0, 100.0, 210.0];
-		materials = this.createMaterials(position);
+		materials = this.createMaterials();
 		let torus = new TorusEntity({
 			transform: {
 				position,
@@ -249,8 +250,27 @@ export class ShadowMaterialSysTest {
 		rc.addEntity(torus);
 		//*/
 		// this.buildShadow();
+
+		// this.initSceneShadow();
 	}
 
+	private initSceneShadow(): void {
+		this.applyShadowReceiveDisp(true);
+	}
+	
+	private applyShadowReceiveDisp(shadowReceived = false): void {
+		let rc = this.mRscene;
+		console.log("applyShadowReceiveDisp() ...");
+		let position = new Vector3(0, -1, 0);
+		let materials = this.createMaterials(shadowReceived);
+		let plane = new PlaneEntity({
+			axisType: 1,
+			materials,
+			extent:[-600,-600,1200,1200],
+			transform: { position }
+		});
+		rc.addEntity(plane);
+	}
 	private buildShadow(): void {
 		this.initShadowPass();
 		this.initShadowReceiveDisp(true);
@@ -304,7 +324,7 @@ export class ShadowMaterialSysTest {
 		let rc = this.mRscene;
 
 		let position = new Vector3(0, -1, 0);
-		let materials = this.createMaterials(position, shadowReceived);
+		let materials = this.createMaterials(shadowReceived);
 		let plane = new PlaneEntity({
 			axisType: 1,
 			materials,
@@ -325,16 +345,16 @@ export class ShadowMaterialSysTest {
 			normalTex,
 			armTex
 		] as WGTextureDataDescriptor[];
-		if(shadowReceived) {
-			textures.push( this.mGraph.occHRTT );
-		}
+		// if(shadowReceived) {
+		// 	textures.push( this.mGraph.occHRTT );
+		// }
 		return textures;
 	}
 	
-	private createMaterials(position: Vector3DataType, shadowReceived = false, uvParam?: number[]): BasePBRMaterial[] {
+	private createMaterials(shadowReceived = false, uvParam?: number[]): BasePBRMaterial[] {
 		let textures0 = this.createBaseTextures(shadowReceived);
 		
-		let material0 = this.createMaterial(position, textures0, ["solid"]);
+		let material0 = this.createMaterial(textures0, ["solid"]);
 		this.applyMaterialPPt(material0, shadowReceived);
 
 		let list = [material0];
@@ -355,26 +375,22 @@ export class ShadowMaterialSysTest {
 
 		property.lighting = true;
 		
-		const graph = this.mGraph;
-		let cam = graph.shadowCamera;
 		property.shadowReceived = shadowReceived;
-		if(shadowReceived) {
-			property.shadowMatrix.shadowMatrix = this.mShadowTransMat;
-			let vsmParams = property.vsmParams;
-			vsmParams.radius = graph.shadowRadius;
-			vsmParams.bias = graph.shadowBias;
-			vsmParams.setSize(graph.shadowMapW, graph.shadowMapH);
-			vsmParams.direction = cam.nv;
-			vsmParams.intensity = 0.5;
-		}
-	}
-	private mLightParams: LightShaderDataParam[] = [];
-	private createMaterial(position: Vector3DataType, textures: WGTextureDataDescriptor[], blendModes: string[], depthCompare = 'less', lightParam?: LightShaderDataParam): BasePBRMaterial {
 
-		// if (!lightParam) {
-		// 	lightParam = createLightData(position);
-		// 	this.mLightParams.push(lightParam);
+		// const graph = this.mGraph;
+		// let cam = graph.shadowCamera;
+		// if(shadowReceived) {
+		// 	property.shadowMatrix.shadowMatrix = this.mShadowTransMat;
+		// 	let vsmParams = property.vsmParams;
+		// 	vsmParams.radius = graph.shadowRadius;
+		// 	vsmParams.bias = graph.shadowBias;
+		// 	vsmParams.setSize(graph.shadowMapW, graph.shadowMapH);
+		// 	vsmParams.direction = cam.nv;
+		// 	vsmParams.intensity = 0.5;
 		// }
+	}
+	private createMaterial(textures: WGTextureDataDescriptor[], blendModes: string[], depthCompare = 'less', lightParam?: LightShaderDataParam): BasePBRMaterial {
+
 		let pipelineDefParam = {
 			depthWriteEnabled: true,
 			faceCullMode: 'back',
@@ -386,7 +402,13 @@ export class ShadowMaterialSysTest {
 		material.addTextures(textures);
 		return material;
 	}
-	private mouseDown = (evt: MouseEvent): void => {};
+	private mFlag = -1;
+	private mouseDown = (evt: MouseEvent): void => {
+		this.mFlag ++;
+		if(this.mFlag == 0) {
+			this.initSceneShadow();
+		}
+	};
 	run(): void {
 		this.mRscene.run();
 	}

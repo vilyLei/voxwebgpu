@@ -25,5 +25,9 @@ class MtPlNode {
     getDataList(): WGRBufferData[] {
         return [];
     }
+    
+    isEnabled(): boolean {
+        return true;
+    }
 }
 export { MtPlNode }

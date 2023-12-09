@@ -7,4 +7,5 @@ export interface MtPlNodeImpl {
     macro: string;
     merge(ls: WGRBufferData[]): void;
     getDataList(): WGRBufferData[];
+    isEnabled(): boolean;
 }

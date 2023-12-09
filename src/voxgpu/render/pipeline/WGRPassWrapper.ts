@@ -5,6 +5,7 @@ import { WGREntityParam } from "../WGREntityParam";
 import { WGRCmdWrapper, WGRPassWrapperImpl } from "./WGRPassWrapperImpl";
 import { WGRPColorAttachmentImpl } from "../pipeline/WGRPColorAttachmentImpl";
 import { GPUCommandBuffer } from "../../gpu/GPUCommandBuffer";
+import { WebGPUContext } from "../../gpu/WebGPUContext";
 /**
  * render pass reference
  */
@@ -13,6 +14,10 @@ class WGRPassWrapper implements WGRPassWrapperImpl {
 	name?: string;
 	node?: IWGRenderPassNode;
 	cmdWrapper?: WGRCmdWrapper;
+	
+	getWGCtx(): WebGPUContext {
+		return this.node ? this.node.getWGCtx() : null;
+	}
 	get rcommands(): GPUCommandBuffer[] {
 		if(this.node) {
 			return this.node.rcommands;

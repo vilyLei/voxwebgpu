@@ -22,6 +22,9 @@ type GeomType = { indexBuffer?: GPUBuffer, vertexBuffers: GPUBuffer[], indexCoun
 class WGRObjBuilder {
 
 	wgctx: WebGPUContext;
+	/**
+	 * material pipeline
+	 */
 	mtpl = new MtPipeline();
 	constructor() {
 		this.mtpl.initialize();

@@ -14,6 +14,7 @@ import { MtPlNode } from "./MtPlNode";
 import shadowDepthWGSL from "../shader/shadow/shadowDepth.wgsl";
 import Matrix4 from "../../math/Matrix4";
 import { WGTextureWrapper } from "../../texture/WGTextureWrapper";
+import { updateMaterialData } from "../MtUtils";
 class ShadowPassGraph extends WGRPassNodeGraph {
 
     private entities: Entity3D[] = [];
@@ -49,7 +50,8 @@ class ShadowPassGraph extends WGRPassNodeGraph {
         this.mMatrixData = matrixData;
     }
     get texture(): WGTextureWrapper {
-        return this.material.textures[0];
+        let ls = this.material.textures;
+        return ls.length > 0 ? ls[0] : null;
     }
     private initMaterial(): void {
         const shadowDepthShdSrc = {
@@ -164,7 +166,6 @@ class ShadowPassGraph extends WGRPassNodeGraph {
         this.material.addTextures([this.occHRTT]);
     }
     run(): void {
-
         let pass = this.passes[0];
 
         let attachment = this.depAttachment;
@@ -188,6 +189,11 @@ class ShadowPassGraph extends WGRPassNodeGraph {
         this.occHEntity.visible = true;
         pass.render();
         this.occHEntity.visible = false;
+
+        const mt = this.material;
+        if(!mt.isREnabled()) {
+            updateMaterialData(pass.getWGCtx(), mt);
+        }
     }
 }
 
@@ -204,6 +210,16 @@ class VSMPipeNode extends MtPlNode implements MtPlNodeImpl {
 
     passGraph = new ShadowPassGraph(this.vsm, this.matrix);
 
+    initialize(rc: IRendererScene): void {
+        this.passGraph.initialize( rc );
+    }
+    addEntity(entity: Entity3D): void {
+
+        this.passGraph.addEntity(entity);
+    }
+    addEntities(entities: Entity3D[]): void {
+        this.passGraph.addEntities(entities);
+    }
     get texture(): WGTextureWrapper {
         return this.passGraph.texture;
     }
@@ -214,6 +230,12 @@ class VSMPipeNode extends MtPlNode implements MtPlNodeImpl {
     }
     getDataList(): WGRBufferData[] {
         return [this.vsm, this.matrix];
+    }
+    isEnabled(): boolean {
+        let mt = this.passGraph.material;
+        // console.log('occHRTT: ', this.passGraph.occHRTT);
+        // console.log('tex: ', tex);
+        return mt.isREnabled();
     }
 }
 export { VSMPipeNode }

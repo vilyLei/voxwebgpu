@@ -112,6 +112,8 @@ class MtBuilder {
     private getTexParam(texWrapper: WGTextureWrapper): WGRTexLayoutParam {
         const tex = texWrapper.texture;
         let dimension = tex.viewDimension;
+        // console.log("getTexParam(), texWrapper: ", texWrapper);
+        // console.log("getTexParam(), tex.texture: ", tex.texture);
         if (!tex.view) {
             tex.view = tex.texture.createView({ dimension });
             tex.view.dimension = dimension;
@@ -122,8 +124,21 @@ class MtBuilder {
             shdVarName: tex.shdVarName,
             multisampled: tex.data.multisampled
         }
-        return null;
     }
+    // private getTexParamA(texWrapper: WGTextureWrapper): WGRTexLayoutParam {
+    //     const tex = texWrapper.texture;
+    //     let dimension = tex.viewDimension;
+    //     if (!tex.view) {
+    //         tex.view = tex.texture.createView({ dimension });
+    //         tex.view.dimension = dimension;
+    //     }
+    //     return {
+    //         texView: tex.view,
+    //         viewDimension: tex.viewDimension,
+    //         shdVarName: tex.shdVarName,
+    //         multisampled: tex.data.multisampled
+    //     }
+    // }
     private checkTextures(material: IWGMaterial, utexes: WGRTexLayoutParam[]): void {
         let texList = material.textures;
         if (texList && texList.length > 0) {

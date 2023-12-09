@@ -3,6 +3,7 @@ import { WGMaterial } from "../material/WGMaterial";
 import { WGWaitEntityNode } from "./WGEntityNode";
 import { WGRObjBuilder } from "../render/WGRObjBuilder";
 import { Entity3D } from "../entity/Entity3D";
+import { updateMaterialData } from "../material/MtUtils";
 
 class WGEntityNodeMana {
 	private mNodes: WGWaitEntityNode[] = [];
@@ -30,11 +31,20 @@ class WGEntityNodeMana {
 		// console.log("WGEntityNodeMana::addEntity(), this.mNodes.length: ", this.mNodes.length);
 	}
 	
-	testEntity(entity: Entity3D, ms: WGMaterial[], debufFlag = false): boolean {
+	testEntity(entity: Entity3D, ms: WGMaterial[], wnode: WGWaitEntityNode, debufFlag = false): boolean {
 		// const ms = entity.materials;
 		
 		if (ms) {
 			for (let i = 0; i < ms.length; ++i) {
+				const m = ms[i];
+				const ppt = m.property;
+				if(ppt && ppt.shadowReceived) {
+					const mtpl = this.roBuilder.mtpl;
+					if(!mtpl.vsm.isEnabled()) {
+						// console.log("fsfsfsfs");
+						return false;
+					}
+				}
 				if (!ms[i].isREnabled()) {
 					return false;
 				}
@@ -65,12 +75,13 @@ class WGEntityNodeMana {
 					let param = node.entityParam;
 					let mflag = param && param.materials && param.materials.length > 0;
 					const ms = mflag ? param.materials : entity.materials;
-					mflag = this.testEntity(entity, ms, mflag);
+					mflag = this.testEntity(entity, ms, node, mflag);
 					if (!mflag) {
 						if (ms) {
 							// console.log("ppp b 03");
 							for (let j = 0; j < ms.length; ++j) {
-								this.updateMaterial(ms[j]);
+								// this.updateMaterial(ms[j]);
+								updateMaterialData(this.wgctx, ms[j]);
 							}
 						}
 						// 保证顺序
@@ -93,18 +104,18 @@ class WGEntityNodeMana {
 			}
 		}
 	}
-	private updateMaterial(m: WGMaterial): void {
-		if (!m.isREnabled()) {
-			const ctx = this.wgctx;
-			const texs = m.textures;
-			for (let i = 0; i < texs.length; ++i) {
-				const tex = texs[i];
-				if (tex.texture && tex.texture.data && !tex.texture.texture) {
-					tex.texture.texture = tex.texture.data.build(ctx);
-				}
-			}
-		}
-	}
+	// private updateMaterial(m: WGMaterial): void {
+	// 	if (!m.isREnabled()) {
+	// 		const ctx = this.wgctx;
+	// 		const texs = m.textures;
+	// 		for (let i = 0; i < texs.length; ++i) {
+	// 			const tex = texs[i];
+	// 			if (tex.texture && tex.texture.data && !tex.texture.texture) {
+	// 				tex.texture.texture = tex.texture.data.build(ctx);
+	// 			}
+	// 		}
+	// 	}
+	// }
 	updateToTarget(): void {
 		this.mEnabled = true;
 	}
