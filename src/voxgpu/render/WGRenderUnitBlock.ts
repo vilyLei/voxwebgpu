@@ -64,7 +64,7 @@ class WGRenderUnitBlock {
 		let flag = true;
 		if(param) {
 			console.log('addEntityToBlock(), param.phase: ', param.phase);
-			if(param.phase === 'dst') {
+			if(param.phase === 'finish') {
 				flag = false;
 			}
 		}

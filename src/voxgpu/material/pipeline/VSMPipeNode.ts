@@ -35,7 +35,7 @@ class ShadowPassGraph extends WGRPassNodeGraph {
     occHEntity: FixScreenPlaneEntity;
 
     shadowBias = -0.0005;
-    shadowRadius = 2.0;
+    shadowRadius = 4.0;
     shadowMapW = 512;
     shadowMapH = 512;
     shadowViewW = 1300;
@@ -110,13 +110,12 @@ class ShadowPassGraph extends WGRPassNodeGraph {
             }
         }
         if (flag) {
-            console.log("add a shadow making entity ...");
             let pass = this.passes[0];
             let et = new Entity3D({ transform: entity.transform });
             et.geometry = entity.geometry;
             et.rstate.copyFrom(entity.rstate);
             this.entities.push(et);
-            pass.addEntity(et, { materials: this.mDepthMaterials, phase: 'dst' });
+            pass.addEntity(et, { materials: this.mDepthMaterials, phase: 'finish' });
         }
 
         return this;
