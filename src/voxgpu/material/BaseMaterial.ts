@@ -109,12 +109,6 @@ class BasePBRProperty implements MaterialProperty {
 	get uniformValues(): WGRBufferData[] {
 
 		let vs = [this.armsParams, this.mPBRParams] as WGRBufferData[];
-		// if (this.shadowReceived) {
-		// 	vs.push(this.vsmParams, this.shadowMatrix);
-		// }
-		// if (this.lighting) {
-		// 	vs.push(this.lightParam, this.lights, this.lightColors);
-		// }
 		return vs;
 	}
 	setLightParam(param: LightShaderDataParam): void {
