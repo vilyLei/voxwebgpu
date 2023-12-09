@@ -8,7 +8,6 @@ import { FixScreenPlaneEntity } from "../entity/FixScreenPlaneEntity";
 import { SphereEntity } from "../entity/SphereEntity";
 import { PlaneEntity } from "../entity/PlaneEntity";
 import { SpecularEnvBrnTexture } from "../texture/SpecularEnvBrnTexture";
-import Vector3 from "../math/Vector3";
 import {createLightData} from "./utils/lightUtil";
 import { BasePBRMaterial, LightShaderDataParam } from "../material/BasePBRMaterial";
 import { BoxEntity } from "../entity/BoxEntity";
@@ -40,8 +39,7 @@ export class MaterialPipelineTest {
 
 		// let position = [-230.0, 100.0, -200.0];
 		let position = [0,0,0];
-		let lightParam = createLightData(position, 600, 5.0);
-		mtpl.light.data = lightParam;
+		mtpl.light.data = createLightData(position, 600, 5.0);
 		let shadow = mtpl.vsm;
 		shadow.initialize(rc);
 		shadow.param.intensity = 0.7;
@@ -108,7 +106,7 @@ export class MaterialPipelineTest {
 	
 	private applyShadowReceiveDisp(shadowReceived = false): void {
 		let rc = this.mRscene;
-		let position = new Vector3(0, -1, 0);
+		let position = [0, -1, 0];
 		let materials = this.createMaterials(shadowReceived);
 		let plane = new PlaneEntity({
 			axisType: 1,
