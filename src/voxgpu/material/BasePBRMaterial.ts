@@ -89,10 +89,11 @@ class BasePBRProperty implements MaterialProperty {
 	 */
 	lighting = true;
 	constructor() {
-
+		
 		let armsSrc = this.armsParams;
 		this.arms = new ArmsDataWrapper(armsSrc.arms, armsSrc);
 		this.armsBase = new ArmsDataWrapper(armsSrc.base, armsSrc);
+
 		let params = this.mPBRParams;
 		this.albedo = new MaterialUniformColor4Wrapper(params.albedo, params);
 		this.fresnel = new MaterialUniformColor4Wrapper(params.fresnel, params);
