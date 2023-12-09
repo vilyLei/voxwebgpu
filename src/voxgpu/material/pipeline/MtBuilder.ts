@@ -5,63 +5,33 @@ import { WGRBufferData } from "../mdata/MaterialUniformData";
 import { getCodeLine, codeLineCommentTest } from "../shader/utils";
 import { IWGMaterial } from "../IWGMaterial";
 import { WGRPrimitiveImpl } from "../../render/WGRPrimitiveImpl";
-import { MtPlNodeImpl } from "./MtPlNodeImpl";
-import { LightPipeNode } from "./LightPipeNode";
-import { VSMPipeNode } from "./VSMPipeNode";
 import { checkBufferData } from "../../render/buffer/WGRBufferValue";
 import { createNewWRGBufferViewUid } from "../../render/buffer/WGRBufferView";
 import { IRenderableEntity } from "../../render/IRenderableEntity";
 import { IWGRPassNodeBuilder } from "../../render/IWGRPassNodeBuilder";
+import { MtPlNodePool } from "./MtPlNodePool";
 
 const bufValue = new WGRBufferValue({ shdVarName: 'mpl-bufValue' });
-class PipeNodePool {
-    pool: Map<string, MtPlNodeImpl> = new Map();
-    addNode(node: MtPlNodeImpl): void {
-        if (node) {
-            this.pool.set(node.type, node);
-        }
-    }
-    hasNodeByType(type: string): boolean {
-        return this.pool.has(type);
-    }
-    getNodeByType(type: string): MtPlNodeImpl {
-        return this.pool.get(type);
-    }
-    initialize(): void {
-        let lightNode = new LightPipeNode();
-        this.addNode(lightNode);
 
-        let vsmNode = new VSMPipeNode();
-        this.addNode(vsmNode);
-    }
-}
 /**
  * material pipeline
  */
-class MtlPipeline {
+class MtBuilder {
     private mInit = true;
-    private pool = new PipeNodePool();
+    private mPool: MtPlNodePool;
     uvalues: WGRBufferData[];
     utexes: WGRTexLayoutParam[];
-    light: LightPipeNode;
-    vsm: VSMPipeNode;
 
     entity?: IRenderableEntity;
     builder?: IWGRPassNodeBuilder;
 
-    constructor() { }
+    constructor(pool: MtPlNodePool) {
+        this.mPool = pool;
+    }
     initialize(): void {
         if (this.mInit) {
             this.mInit = false;
 
-            let pool = this.pool;
-            pool.initialize();
-
-            let type = 'lighting';
-            this.light = pool.getNodeByType(type) as LightPipeNode;
-
-            type = 'vsmShadow';
-            this.vsm = pool.getNodeByType(type) as VSMPipeNode;
         }
     }
     checkShader(material: IWGMaterial): void {
@@ -111,7 +81,7 @@ class MtlPipeline {
         let ppt = material.property;
         if (ppt) {
             let type = '';
-            let pool = this.pool;
+            let pool = this.mPool;
             if (ppt.lighting === true) {
                 type = 'lighting';
                 let light = pool.getNodeByType(type);
@@ -288,4 +258,4 @@ class MtlPipeline {
         return shdSrc;
     }
 }
-export { MtlPipeline };
+export { MtBuilder };

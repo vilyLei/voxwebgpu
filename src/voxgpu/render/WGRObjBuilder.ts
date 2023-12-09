@@ -9,24 +9,20 @@ import { IWGRPassNodeBuilder } from "./IWGRPassNodeBuilder";
 import { WGRCompUnit } from "./WGRCompUnit";
 import { IRenderableObject } from "./IRenderableObject";
 import { WGCompMaterial } from "../material/WGCompMaterial";
-import { WGRBufferData } from "../render/buffer/WGRBufferData";
 import { WGREntityNode } from "./WGREntityNode";
 import { WebGPUContext } from "../gpu/WebGPUContext";
 import { IWGMaterial } from "../material/IWGMaterial";
 import { WGRPrimitiveDict, WGGeometry } from "../geometry/WGGeometry";
 import { WGRDrawMode } from "./Define";
-// import { checkBufferData } from "./buffer/WGRBufferValue";
-// import { createNewWRGBufferViewUid } from "./buffer/WGRBufferView";
-import { WGRTexLayoutParam } from "./uniform/IWGRUniformContext";
 import { WGMaterial } from "../material/WGMaterial";
-import { MtlPipeline } from "../material/pipeline/MtlPipeline";
+import { MtPipeline } from "../material/pipeline/MtPipeline";
 
 type GeomType = { indexBuffer?: GPUBuffer, vertexBuffers: GPUBuffer[], indexCount?: number, vertexCount?: number, drawMode?: WGRDrawMode };
 
 class WGRObjBuilder {
 
 	wgctx: WebGPUContext;
-	mtpl = new MtlPipeline();
+	mtpl = new MtPipeline();
 	constructor() {
 		this.mtpl.initialize();
 	}
@@ -47,13 +43,14 @@ class WGRObjBuilder {
 		return g;
 	}
 
-	createRPass(entity: Entity3D, builder: IWGRPassNodeBuilder, geometry: WGGeometry, material: WGMaterial, blockUid = 0): IWGRUnit {
+	createRPass(entity: Entity3D, builder: IWGRPassNodeBuilder, geometry: WGGeometry, material: IWGMaterial, blockUid = 0): IWGRUnit {
 
 		// console.log("XXXXXXX material: ", material);
 		
 		let mtpl = this.mtpl;
-		mtpl.builder = builder;
-		mtpl.entity = entity;
+		let mtb = mtpl.builder;
+		mtb.builder = builder;
+		mtb.entity = entity;
 
 		let primitive: WGRPrimitive;
 		let pctx = material.getRCtx();
@@ -87,52 +84,26 @@ class WGRObjBuilder {
 				}
 			}
 		}
-		mtpl.checkShader( material );
+		mtb.checkShader( material );
 
 		let groupIndex = 0;
 		// console.log("createRUnit(), utexes: ", utexes);
-		const isComputing = material.shaderSrc.compShaderSrc !== undefined;
 
 
-		mtpl.checkUniforms(material);
+		mtb.checkUniforms(material);
 		
-		let uvalues = mtpl.uvalues;
-		let utexes = mtpl.utexes;
-
-		// let uvalues: WGRBufferData[] = [];
-		// let utexes: WGRTexLayoutParam[] = [];
-		// mtpl.checkUniforms(material, uvalues);
-		// mtpl.checkTextures(material, utexes);
+		let uvalues = mtb.uvalues;
+		let utexes = mtb.utexes;
 
 		let uniformFlag = uvalues.length > 0 || utexes.length > 0;
 
-		mtpl.buildMaterial(material, primitive);
+		mtb.buildMaterial(material, primitive);
 		pctx = material.getRCtx();
 		
-		// if (!builder.hasMaterial(material)) {
-		// 	builder.setMaterial(material);
-		// 	if (!pctx) {
-		// 		material.shaderSrc = mtpl.shaderBuild(material.shaderSrc, uvalues, utexes);
-		// 		if (!material.pipelineVtxParam) {
-		// 			if (primitive) {
-		// 				material.pipelineVtxParam = { vertex: { attributeIndicesArray: [] } };
-		// 				const ls = [];
-		// 				for (let i = 0; i < primitive.vbufs.length; ++i) {
-		// 					ls.push([0]);
-		// 				}
-		// 				material.pipelineVtxParam.vertex.attributeIndicesArray = ls;
-		// 			}
-		// 		}
-		// 	}
-		// 	mtpl.checkMaterialParam(material, primitive);
-		// 	const node = builder.getPassNodeWithMaterial(material);
-		// 	// console.log('WGRObjBuilder::createRPass(), node.uid: ', node.uid, ", node: ", node);
-		// 	pctx = node.createRenderPipelineCtxWithMaterial(material);
-		// 	material.initialize(pctx);
-		// }
 
 		let ru: IWGRUnit;
 
+		const isComputing = material.shaderSrc.compShaderSrc !== undefined;
 		if (isComputing) {
 			let et = (entity as IRenderableObject);
 			let rcompunit = new WGRCompUnit();
