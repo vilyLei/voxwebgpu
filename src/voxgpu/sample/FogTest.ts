@@ -49,7 +49,7 @@ export class FogTest {
 			}
 		);
 		rc.addEntity(box);
-
+		
 		position = new Vector3(-580, 280, -580);
 		materials = this.createMaterials(position, textures1);
 		let sphere = new SphereEntity(

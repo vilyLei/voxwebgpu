@@ -98,26 +98,28 @@ class ShadowPassGraph extends WGRPassNodeGraph {
         this.mVSMParam.direction = cam.nv;
     }
     addEntity(entity: Entity3D): ShadowPassGraph {
-        let flag = false;
-        let ms = entity.materials;
-        if (ms) {
-            for (let i = 0; i < ms.length; i++) {
-                let ppt = ms[i].property;
-                if (ppt && ppt.shadow === true) {
-                    flag = true;
-                    break;
+        if (this.passes && this.passes.length > 0) {
+            let flag = false;
+            let ms = entity.materials;
+            if (ms) {
+                for (let i = 0; i < ms.length; i++) {
+                    let ppt = ms[i].property;
+                    if (ppt && ppt.shadow === true) {
+                        flag = true;
+                        break;
+                    }
                 }
             }
-        }
-        if (flag) {
-            let pass = this.passes[0];
-            let et = new Entity3D({ transform: entity.transform });
-            et.geometry = entity.geometry;
-            et.rstate.copyFrom(entity.rstate);
-            this.entities.push(et);
-            pass.addEntity(et, { materials: this.mDepthMaterials, phase: 'finish' });
-        }
+            if (flag) {
+                let pass = this.passes[0];
+                let et = new Entity3D({ transform: entity.transform });
+                et.geometry = entity.geometry;
+                et.rstate.copyFrom(entity.rstate);
+                this.entities.push(et);
+                pass.addEntity(et, { materials: this.mDepthMaterials, phase: 'finish' });
+            }
 
+        }
         return this;
     }
     addEntities(entities: Entity3D[]): ShadowPassGraph {

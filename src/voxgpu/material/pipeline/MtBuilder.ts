@@ -27,7 +27,7 @@ class MtBuilder {
 
     entity?: IRenderableEntity;
     builder?: IWGRPassNodeBuilder;
-
+    enabled = false;
     constructor(pool: MtPlNodePool) {
         this.mPool = pool;
     }
@@ -81,20 +81,23 @@ class MtBuilder {
                 uvalues.push(ls[i]);
             }
         }
-        let ppt = material.property;
-        if (ppt) {
-            let type = '';
-            let pool = this.mPool;
-            if (ppt.lighting === true) {
-                type = 'lighting';
-                let light = pool.getNodeByType(type);
-                light.merge(uvalues);
-            }
-            if (ppt.shadowReceived === true) {
-                type = 'vsmShadow';
-                let vsm = pool.getNodeByType(type) as VSMPipeNode;
-                vsm.merge(uvalues);
-                utexes.push(this.getTexParam(vsm.texture));
+        if (this.enabled) {
+            let ppt = material.property;
+            if (ppt) {
+                let type = '';
+                let pool = this.mPool;
+
+                if (ppt.lighting === true) {
+                    type = 'lighting';
+                    let light = pool.getNodeByType(type);
+                    light.merge(uvalues);
+                }
+                if (ppt.shadowReceived === true) {
+                    type = 'vsmShadow';
+                    let vsm = pool.getNodeByType(type) as VSMPipeNode;
+                    vsm.merge(uvalues);
+                    utexes.push(this.getTexParam(vsm.texture));
+                }
             }
         }
         if (uvalues && uvalues.length > 0) {
@@ -143,7 +146,7 @@ class MtBuilder {
         let texList = material.textures;
         if (texList && texList.length > 0) {
             for (let i = 0; i < texList.length; i++) {
-                utexes.push(this.getTexParam( texList[i] ));
+                utexes.push(this.getTexParam(texList[i]));
                 // const tex = texList[i].texture;
                 // let dimension = tex.viewDimension;
                 // if (!tex.view) {
@@ -166,27 +169,27 @@ class MtBuilder {
         if (!builder.hasMaterial(material)) {
             const uvalues = this.uvalues;
             const utexes = this.utexes;
-			builder.setMaterial(material);
-			if (!material.getRCtx()) {
-				material.shaderSrc = this.shaderBuild(material.shaderSrc, uvalues, utexes);
+            builder.setMaterial(material);
+            if (!material.getRCtx()) {
+                material.shaderSrc = this.shaderBuild(material.shaderSrc, uvalues, utexes);
 
-				if (!material.pipelineVtxParam) {
-					if (primitive) {
-						material.pipelineVtxParam = { vertex: { attributeIndicesArray: [] } };
-						const ls = [];
-						for (let i = 0; i < primitive.vbufs.length; ++i) {
-							ls.push([0]);
-						}
-						material.pipelineVtxParam.vertex.attributeIndicesArray = ls;
-					}
-				}
-			}
-			this.checkMaterialParam(material, primitive);
-			const node = builder.getPassNodeWithMaterial(material);
-			// console.log('WGRObjBuilder::createRPass(), node.uid: ', node.uid, ", node: ", node);
-			let pctx = node.createRenderPipelineCtxWithMaterial(material);
-			material.initialize(pctx);
-		}
+                if (!material.pipelineVtxParam) {
+                    if (primitive) {
+                        material.pipelineVtxParam = { vertex: { attributeIndicesArray: [] } };
+                        const ls = [];
+                        for (let i = 0; i < primitive.vbufs.length; ++i) {
+                            ls.push([0]);
+                        }
+                        material.pipelineVtxParam.vertex.attributeIndicesArray = ls;
+                    }
+                }
+            }
+            this.checkMaterialParam(material, primitive);
+            const node = builder.getPassNodeWithMaterial(material);
+            // console.log('WGRObjBuilder::createRPass(), node.uid: ', node.uid, ", node: ", node);
+            let pctx = node.createRenderPipelineCtxWithMaterial(material);
+            material.initialize(pctx);
+        }
     }
     checkMaterialParam(material: IWGMaterial, primitive: WGRPrimitiveImpl): void {
         if (!material.shaderSrc.compShaderSrc) {

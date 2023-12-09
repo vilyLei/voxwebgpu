@@ -2,12 +2,11 @@ import MouseEvent from "../event/MouseEvent";
 import { RendererScene } from "../rscene/RendererScene";
 import { MouseInteraction } from "../ui/MouseInteraction";
 import { WGTextureDataDescriptor } from "../material/WGMaterial";
-import { Entity3D } from "../entity/Entity3D";
 import { SphereEntity } from "../entity/SphereEntity";
 import { PlaneEntity } from "../entity/PlaneEntity";
 import { SpecularEnvBrnTexture } from "../texture/SpecularEnvBrnTexture";
 import { createLightData } from "./utils/lightUtil";
-import { BasePBRMaterial } from "../material/BasePBRMaterial";
+import { BaseMaterial } from "../material/BaseMaterial";
 import { BoxEntity } from "../entity/BoxEntity";
 import { TorusEntity } from "../entity/TorusEntity";
 
@@ -20,6 +19,7 @@ export class MaterialPipelineTest {
 		this.mRscene.initialize({
 			canvasWith: 512,
 			canvasHeight: 512,
+			mtplEnabled: true,
 			rpassparam: { multisampled: true }
 		});
 
@@ -114,7 +114,7 @@ export class MaterialPipelineTest {
 		return textures;
 	}
 
-	private createMaterials(shadowReceived = false, shadow = true, uvParam?: number[]): BasePBRMaterial[] {
+	private createMaterials(shadowReceived = false, shadow = true, uvParam?: number[]): BaseMaterial[] {
 		let textures0 = this.createBaseTextures();
 
 		let material0 = this.createMaterial(textures0);
@@ -128,7 +128,7 @@ export class MaterialPipelineTest {
 		}
 		return list;
 	}
-	private applyMaterialPPt(material: BasePBRMaterial, shadowReceived = false, shadow = true): void {
+	private applyMaterialPPt(material: BaseMaterial, shadowReceived = false, shadow = true): void {
 		let property = material.property;
 		property.ambient.value = [0.0, 0.2, 0.2];
 		property.albedo.value = [0.7, 0.7, 0.3];
@@ -141,12 +141,12 @@ export class MaterialPipelineTest {
 
 		property.shadowReceived = shadowReceived;
 	}
-	private createMaterial(textures: WGTextureDataDescriptor[]): BasePBRMaterial {
+	private createMaterial(textures: WGTextureDataDescriptor[]): BaseMaterial {
 
 		let pipelineDefParam = {
 			depthWriteEnabled: true
 		};
-		let material = new BasePBRMaterial({ pipelineDefParam });
+		let material = new BaseMaterial({ pipelineDefParam });
 		material.addTextures(textures);
 		return material;
 	}

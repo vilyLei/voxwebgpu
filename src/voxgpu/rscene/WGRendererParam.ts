@@ -26,6 +26,7 @@ interface WGRendererConfig {
 	div?: HTMLDivElement;
 	rpassparam?: WGRPassParam;
 	camera?: WGCameraParam;
+	mtplEnabled?: boolean;
 	callback?: (type?: string) => void;
 }
 class RPassInfoParam {

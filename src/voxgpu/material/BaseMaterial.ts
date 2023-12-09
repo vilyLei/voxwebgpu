@@ -1,6 +1,5 @@
 
 import { WGMaterialDescripter, WGMaterial } from "./WGMaterial";
-
 import { WGShaderConstructor } from "./shader/WGShaderConstructor";
 
 import {
@@ -23,14 +22,13 @@ import {
 	BaseLightData
 
 } from "./mdata/PBRParamsData";
+import { MaterialProperty } from "./pipeline/MaterialProperty";
 
-class BasePBRProperty {
-	// ambient = new MaterialUniformColor4Data(new Float32Array([0.1, 0.1, 0.1, 1]), "ambient", "frag");
+class BasePBRProperty implements MaterialProperty {
 	/**
 	 * default values, arms: [1, 1, 1, 0], armsBase: [0, 0, 0, 0]
 	 */
 	private armsParams = new BasePBRArmsData(new Float32Array([1, 1, 1, 0, 0, 0, 0, 0]), "armsParams", "frag");
-	// uvParam = new MaterialUniformVec4Data(new Float32Array([1, 1, 0, 0]), "uvParam", "frag");
 	/**
 	 * albedo: [1, 1, 1, 1],
 	 * fresnel: [0, 0, 0, 0],
@@ -40,7 +38,7 @@ class BasePBRProperty {
 	 * fogParam: [100, 1000, 0, 0.0005],
 	 * fogColor: [1.0, 1.0, 1.0, 1.0],
 	 */
-	private params = new PBRParamsVec4Data(new Float32Array([
+	private mPBRParams = new PBRParamsVec4Data(new Float32Array([
 		1, 1, 1, 1,
 		0, 0, 0, 0,
 		1, 0.1, 1, 1,
@@ -51,8 +49,7 @@ class BasePBRProperty {
 		1.0, 1.0, 1.0, 1.0,	// fogColor
 		0.1, 0.1, 0.1, 1, // ambient
 		1, 1, 0, 0, // uvParam
-	]), "params", "frag");
-	// vsmParams = new MaterialUniformVec4ArrayData(new Float32Array([
+	]), "pbrParams", "frag");
 	vsmParams = new VSMUniformData(null, "vsmParams", "frag");
 	shadowMatrix = new MaterialUniformMat44Data(null, "shadowMatrix", "vert");
 
@@ -76,30 +73,49 @@ class BasePBRProperty {
 	glossiness = true;
 	toneMapping = true;
 	metallicCorrection = true;
+
 	inverseMask = false;
+
 	fogEnabled = false;
 	fogExp2Enabled = false;
+
+	/**
+	 * make shadow or not
+	 */
+	shadow = true;
 	shadowReceived = false;
+	/**
+	 * lighting enabled or not
+	 */
+	lighting = true;
 	constructor() {
+
 		let armsSrc = this.armsParams;
 		this.arms = new ArmsDataWrapper(armsSrc.arms, armsSrc);
 		this.armsBase = new ArmsDataWrapper(armsSrc.base, armsSrc);
-		let params = this.params;
+		let params = this.mPBRParams;
 		this.albedo = new MaterialUniformColor4Wrapper(params.albedo, params);
 		this.fresnel = new MaterialUniformColor4Wrapper(params.fresnel, params);
 		this.toneParam = new ToneParamDataWrapper(params.toneParam, params);
 		this.param = new PBRParamDataWrapper(params.toneParam, params);
 		this.specularFactor = new MaterialUniformColor4Wrapper(params.specularFactor, params);
-		this.fogParam = new FogDataWrapper(params.fogParam, params);
-		this.fogColor = new MaterialUniformColor4Wrapper(params.fogColor, params);
 		this.ambient = new MaterialUniformColor4Wrapper(params.ambient, params);
 		this.uvParam = new MaterialUniformVec4Wrapper(params.uvParam, params);
+
+		this.fogParam = new FogDataWrapper(params.fogParam, params);
+		this.fogColor = new MaterialUniformColor4Wrapper(params.fogColor, params);
 	}
+
 	get uniformValues(): WGRBufferData[] {
-		if (this.shadowReceived) {
-			return [this.vsmParams, this.shadowMatrix, this.armsParams, this.params, this.lightParam, this.lights, this.lightColors];
-		}
-		return [this.armsParams, this.params, this.lightParam, this.lights, this.lightColors];
+
+		let vs = [this.armsParams, this.mPBRParams] as WGRBufferData[];
+		// if (this.shadowReceived) {
+		// 	vs.push(this.vsmParams, this.shadowMatrix);
+		// }
+		// if (this.lighting) {
+		// 	vs.push(this.lightParam, this.lights, this.lightColors);
+		// }
+		return vs;
 	}
 	setLightParam(param: LightShaderDataParam): void {
 		if (param) {
@@ -134,10 +150,13 @@ class BaseMaterial extends WGMaterial {
 		return this.property.getLightParam();
 	}
 	setDescriptor(descriptor: WGMaterialDescripter): void {
-		if (!descriptor || descriptor.shaderSrc === undefined) {
-			if (!descriptor) descriptor = { shadinguuid: "BaseMaterial" };
-		}
+		// if (!descriptor || descriptor.shaderSrc === undefined) {
+		// 	if (!descriptor) descriptor = { shadinguuid: "BaseMaterial" };
+		// }
 		super.setDescriptor(descriptor);
+		if (!this.pipeline) {
+			this.pipeline = { uid: 0 };
+		}
 	}
 	get uniformValues(): WGRBufferData[] {
 		if (!this.mUniformValues) {
@@ -171,6 +190,9 @@ class BaseMaterial extends WGMaterial {
 		}
 		if (ppt.shadowReceived) {
 			preCode += '#define USE_VSM_SHADOW\n';
+		}
+		if (ppt.lighting) {
+			preCode += '#define USE_LIGHT\n';
 		}
 		if (ts) {
 			for (let i = 0; i < ts.length; ++i) {
@@ -226,4 +248,4 @@ class BaseMaterial extends WGMaterial {
 		// this.shaderSrc = basePBRShaderSrc;
 	}
 }
-export { LightShaderDataParam, BaseMaterial };
+export { BaseMaterial };

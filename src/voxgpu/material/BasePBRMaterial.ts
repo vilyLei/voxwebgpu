@@ -109,12 +109,12 @@ class BasePBRProperty implements MaterialProperty {
 	get uniformValues(): WGRBufferData[] {
 
 		let vs = [this.armsParams, this.mPBRParams] as WGRBufferData[];
-		// if (this.shadowReceived) {
-		// 	vs.push(this.vsmParams, this.shadowMatrix);
-		// }
-		// if (this.lighting) {
-		// 	vs.push(this.lightParam, this.lights, this.lightColors);
-		// }
+		if (this.shadowReceived) {
+			vs.push(this.vsmParams, this.shadowMatrix);
+		}
+		if (this.lighting) {
+			vs.push(this.lightParam, this.lights, this.lightColors);
+		}
 		return vs;
 	}
 	setLightParam(param: LightShaderDataParam): void {
@@ -149,15 +149,9 @@ class BasePBRMaterial extends WGMaterial {
 	getLightParam(): LightShaderDataParam {
 		return this.property.getLightParam();
 	}
-	setDescriptor(descriptor: WGMaterialDescripter): void {
-		// if (!descriptor || descriptor.shaderSrc === undefined) {
-		// 	if (!descriptor) descriptor = { shadinguuid: "BasePBRMaterial" };
-		// }
-		super.setDescriptor(descriptor);
-		if (!this.pipeline) {
-			this.pipeline = { uid: 0 };
-		}
-	}
+	// setDescriptor(descriptor: WGMaterialDescripter): void {
+	// 	super.setDescriptor(descriptor);
+	// }
 	get uniformValues(): WGRBufferData[] {
 		if (!this.mUniformValues) {
 			this.mUniformValues = this.property.uniformValues;

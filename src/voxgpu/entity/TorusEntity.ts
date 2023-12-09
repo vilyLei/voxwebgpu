@@ -18,10 +18,10 @@ class TorusEntity extends PrimitiveEntity {
 	}
 	protected getGeometryData(param: TorusEntityParam): GeometryBase {
 		if (!param) param = {};
-		if (param.radius === undefined) param.radius = 100.0;
-		if (param.axisRadius === undefined) param.axisRadius = 30.0;
-		if (param.rings === undefined) param.rings = 10;
-		if (param.segments === undefined) param.segments = 20;
+		if (param.radius === undefined) param.radius = 100;
+		if (param.axisRadius === undefined) param.axisRadius = 30;
+		if (param.rings === undefined) param.rings = 20;
+		if (param.segments === undefined) param.segments = 10;
 		if (param.axisType === undefined) param.axisType = 0;
 
 		let g = new TorusGeometry();

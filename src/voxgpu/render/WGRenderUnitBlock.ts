@@ -63,13 +63,13 @@ class WGRenderUnitBlock {
 		this.addRUnit(runit);
 		let flag = true;
 		if(param) {
-			console.log('addEntityToBlock(), param.phase: ', param.phase);
+			// console.log('addEntityToBlock(), param.phase: ', param.phase);
 			if(param.phase === 'finish') {
 				flag = false;
 			}
 		}
 		if(flag) {
-			console.log('addEntityToBlock(), phase useful ...');
+			// console.log('addEntityToBlock(), phase useful ...');
 			rob.mtpl.shadow.addEntity(entity);
 		}
 	}

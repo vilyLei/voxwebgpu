@@ -63,7 +63,7 @@
 // import { ModelEntityTest as Demo } from "./voxgpu/sample/ModelEntityTest";
 // import { BillboardEntityTest as Demo } from "./voxgpu/sample/BillboardEntityTest";
 
-import { DataDrivenTest as Demo } from "./voxgpu/sample/DataDrivenTest";
+// import { DataDrivenTest as Demo } from "./voxgpu/sample/DataDrivenTest";
 
 // import { DataTextureTest as Demo } from "./voxgpu/sample/DataTextureTest";
 // import { FloatTextureTest as Demo } from "./voxgpu/sample/FloatTextureTest";
@@ -87,7 +87,7 @@ import { DataDrivenTest as Demo } from "./voxgpu/sample/DataDrivenTest";
 // import { ShadowTest as Demo } from "./voxgpu/sample/ShadowTest";
 // import { PBRShadowTest as Demo } from "./voxgpu/sample/PBRShadowTest";
 // import { ShadowMaterialSysTest as Demo } from "./voxgpu/sample/ShadowMaterialSysTest";
-// import { MaterialPipelineTest as Demo } from "./voxgpu/sample/MaterialPipelineTest";
+import { MaterialPipelineTest as Demo } from "./voxgpu/sample/MaterialPipelineTest";
 
 
 

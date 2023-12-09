@@ -12,7 +12,7 @@ class MtPipeline {
     private mPool = new MtPlNodePool();
     light: LightPipeNode;
     shadow: VSMPipeNode;
-    readonly builder = new MtBuilder( this.mPool );
+    readonly builder = new MtBuilder(this.mPool);
     constructor() { }
     initialize(): void {
         if (this.mInit) {
@@ -30,20 +30,23 @@ class MtPipeline {
     }
     testRMaterials(ms: IWGMaterial[]): boolean {
         if (ms) {
-			for (let i = 0; i < ms.length; ++i) {
-				const m = ms[i];
-				const ppt = m.property;
-				if(ppt && ppt.shadowReceived) {
-					if(!this.shadow.isEnabled()) {
-						return false;
-					}
-				}
-				if (!ms[i].isREnabled()) {
-					return false;
-				}
-			}
+            const builder = this.builder;
+            for (let i = 0; i < ms.length; ++i) {
+                const m = ms[i];
+                if (builder.enabled) {
+                    const ppt = m.property;
+                    if (ppt && ppt.shadowReceived) {
+                        if (!this.shadow.isEnabled()) {
+                            return false;
+                        }
+                    }
+                }
+                if (!ms[i].isREnabled()) {
+                    return false;
+                }
+            }
             return true;
-		}
+        }
         return false;
     }
 }
