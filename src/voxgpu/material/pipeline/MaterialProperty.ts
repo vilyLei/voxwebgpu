@@ -1,4 +1,6 @@
-
+/**
+ * material property
+ */
 export interface MaterialProperty {
     uuid?: string;
     shadowReceived?: boolean;

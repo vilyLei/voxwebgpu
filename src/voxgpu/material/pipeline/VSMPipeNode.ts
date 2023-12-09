@@ -7,7 +7,7 @@ import Camera from "../../view/Camera";
 import { MaterialUniformMat44Data, WGRBufferData } from "../mdata/MaterialUniformData";
 import { VSMUniformData } from "../mdata/VSMUniformData";
 import { ShadowOccBlurMaterial } from "../ShadowOccBlurMaterial";
-import { WGRShderSrcType, WGMaterial } from "../WGMaterial";
+import { WGRShderSrcType, WGMaterial, WGTextureDataDescriptor } from "../WGMaterial";
 import { MtPlNodeImpl } from "./MtPlNodeImpl";
 import { MtPlNode } from "./MtPlNode";
 
@@ -46,6 +46,9 @@ class ShadowPassGraph extends WGRPassNodeGraph {
         super();
         this.mVSMData = vsmData;
         this.mMatrixData = matrixData;
+    }
+    get dataTextue(): WGTextureDataDescriptor {
+        return this.occHRTT;
     }
     private initMaterial(): void {
         const shadowDepthShdSrc = {

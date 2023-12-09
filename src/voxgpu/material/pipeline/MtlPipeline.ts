@@ -8,6 +8,10 @@ import { WGRPrimitiveImpl } from "../../render/WGRPrimitiveImpl";
 import { MtPlNodeImpl } from "./MtPlNodeImpl";
 import { LightPipeNode } from "./LightPipeNode";
 import { VSMPipeNode } from "./VSMPipeNode";
+import { checkBufferData } from "../../render/buffer/WGRBufferValue";
+import { createNewWRGBufferViewUid } from "../../render/buffer/WGRBufferView";
+import { IRenderableEntity } from "../../render/IRenderableEntity";
+import { IWGRPassNodeBuilder } from "../../render/IWGRPassNodeBuilder";
 
 const bufValue = new WGRBufferValue({ shdVarName: 'mpl-bufValue' });
 class PipeNodePool {
@@ -26,7 +30,7 @@ class PipeNodePool {
     initialize(): void {
         let lightNode = new LightPipeNode();
         this.addNode(lightNode);
-        
+
         let vsmNode = new VSMPipeNode();
         this.addNode(vsmNode);
     }
@@ -37,8 +41,13 @@ class PipeNodePool {
 class MtlPipeline {
     private mInit = true;
     private pool = new PipeNodePool();
+
     light: LightPipeNode;
     vsm: VSMPipeNode;
+
+    entity?: IRenderableEntity;
+    builder?: IWGRPassNodeBuilder;
+
     constructor() { }
     initialize(): void {
         if (this.mInit) {
@@ -49,12 +58,23 @@ class MtlPipeline {
 
             let type = 'lighting';
             this.light = pool.getNodeByType(type) as LightPipeNode;
-            
+
             type = 'vsmShadow';
             this.vsm = pool.getNodeByType(type) as VSMPipeNode;
         }
     }
     checkUniforms(material: IWGMaterial, uvalues: WGRBufferData[]): void {
+
+        const entity = this.entity;
+        if (entity.transform) {
+			uvalues.push(entity.transform.uniformv);
+		}
+        const builder = this.builder;
+        const cam = builder.camera;
+		if (entity.cameraViewing) {
+			uvalues.push(cam.viewUniformV);
+			uvalues.push(cam.projUniformV);
+		}
         let ls = material.uniformValues;
         if (ls) {
             for (let i = 0; i < ls.length; i++) {
@@ -71,8 +91,38 @@ class MtlPipeline {
                 light.merge(uvalues);
             }
         }
+        if (uvalues && uvalues.length > 0) {
+			for (let i = 0; i < uvalues.length; ++i) {
+				uvalues[i] = checkBufferData(uvalues[i]);
+				if (uvalues[i].uid == undefined || uvalues[i].uid < 0) {
+					uvalues[i].uid = createNewWRGBufferViewUid();
+				}
+			}
+		}
     }
-    checkMaterial(material: IWGMaterial, primitive: WGRPrimitiveImpl): void {
+
+    checkTextures(material: IWGMaterial, utexes: WGRTexLayoutParam[]): void {
+        let texList = material.textures;
+        if (texList && texList.length > 0) {
+            for (let i = 0; i < texList.length; i++) {
+                const tex = texList[i].texture;
+                let dimension = tex.viewDimension;
+                if (!tex.view) {
+                    tex.view = tex.texture.createView({ dimension });
+                    tex.view.dimension = dimension;
+                }
+                utexes.push(
+                    {
+                        texView: tex.view,
+                        viewDimension: tex.viewDimension,
+                        shdVarName: tex.shdVarName,
+                        multisampled: tex.data.multisampled
+                    }
+                );
+            }
+        }
+    }
+    checkMaterialParam(material: IWGMaterial, primitive: WGRPrimitiveImpl): void {
         if (!material.shaderSrc.compShaderSrc) {
             const vtxParam = material.pipelineVtxParam;
             if (primitive && vtxParam) {

@@ -207,7 +207,7 @@ export class ShadowMaterialSysTest {
 
 		// let position = [-230.0, 100.0, -200.0];
 		let position = [0,0,0];
-		let lightParam = createLightData(position, 600);
+		let lightParam = createLightData(position, 600, 5.0);
 		mtpl.light.data = lightParam;
 		mtpl.vsm.passGraph.initialize(rc);
 
@@ -221,7 +221,7 @@ export class ShadowMaterialSysTest {
 		});
 		this.mEntities.push(sph);
 		rc.addEntity(sph);
-		///*
+		/*
 		position = [160.0, 100.0, -210.0];
 		materials = this.createMaterials(position);
 		let box = new BoxEntity({

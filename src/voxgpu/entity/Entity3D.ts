@@ -47,7 +47,6 @@ class Entity3D implements IRenderableEntity {
 	geometry?: WGGeometry;
 
 	transform?: ROTransform;
-
 	volume?: EntityVolume;
 
 	/**

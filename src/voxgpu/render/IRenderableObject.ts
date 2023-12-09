@@ -37,6 +37,8 @@ interface IRenderableObject {
 	 */
 	workcounts?: Uint16Array;
 
+	transform?: IROTransform;
+
 	isRendering(): boolean;
 	isInRenderer(): boolean;
 

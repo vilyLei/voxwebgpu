@@ -2,7 +2,7 @@ import { LightShaderDataParam } from "../../material/BasePBRMaterial";
 import Color4 from "../../material/Color4";
 import Vector3 from "../../math/Vector3";
 
-export function createLightData(position: Vector3DataType, dis = 200): LightShaderDataParam {
+export function createLightData(position: Vector3DataType, dis = 200, strength = 1.0): LightShaderDataParam {
     let pos = new Vector3().setVector4(position);
     let pv0 = pos.clone().addBy(new Vector3(0, dis, 0));
     let pv1 = pos.clone().addBy(new Vector3(dis, 0, 0));
@@ -11,11 +11,11 @@ export function createLightData(position: Vector3DataType, dis = 200): LightShad
     let pv4 = pos.clone().addBy(new Vector3(0, 0, -dis));
     let posList = [pv0, pv1, pv2, pv3, pv4];
 
-    let c0 = new Color4(0.1 + Math.random() * 13, 0.1 + Math.random() * 13, 0.0, 0.00002);
-    let c1 = new Color4(0.0, 0.1 + Math.random() * 13, 1.0, 0.00002);
-    let c2 = new Color4(0.0, 0.1 + Math.random() * 13, 0.1 + Math.random() * 13, 0.00002);
-    let c3 = new Color4(0.1 + Math.random() * 13, 1.0, 0.1 + Math.random() * 13, 0.00002);
-    let c4 = new Color4(0.5, 1.0, 0.1 + Math.random() * 13, 0.00002);
+    let c0 = new Color4(0.1 + Math.random() * 13, 0.1 + Math.random() * 13, 0.0, 0.00002).scaleBy(strength);
+    let c1 = new Color4(0.0, 0.1 + Math.random() * 13, 1.0, 0.00002).scaleBy(strength);
+    let c2 = new Color4(0.0, 0.1 + Math.random() * 13, 0.1 + Math.random() * 13, 0.00002).scaleBy(strength);
+    let c3 = new Color4(0.1 + Math.random() * 13, 1.0, 0.1 + Math.random() * 13, 0.00002).scaleBy(strength);
+    let c4 = new Color4(0.5, 1.0, 0.1 + Math.random() * 13, 0.00002).scaleBy(strength);
 
     let colorList = [c0, c1, c2, c3, c4];
 

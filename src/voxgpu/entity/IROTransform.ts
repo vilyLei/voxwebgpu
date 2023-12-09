@@ -8,6 +8,7 @@
 import IVector3 from "../math/IVector3";
 import IMatrix4 from "../math/IMatrix4";
 import { TransformParam } from "./TransformParam";
+import { WGRUniformValue } from "../render/uniform/WGRUniformValue";
 // import ITransUpdater from "../../vox/scene/ITransUpdater";
 // import IROTransUpdateWrapper from "./IROTransUpdateWrapper";
 export default interface IROTransform {
@@ -19,6 +20,8 @@ export default interface IROTransform {
 
     fs32Data: Float32Array;
     transform: TransformParam;
+    uniformv: WGRUniformValue;
+    
     getRotationFlag(): boolean;
     getX(): number;
     getY(): number;

@@ -79,7 +79,14 @@ class BasePBRProperty implements MaterialProperty {
 	fogEnabled = false;
 	fogExp2Enabled = false;
 
+	/**
+	 * make shadow or not
+	 */
+	shadow = true;
 	shadowReceived = false;
+	/**
+	 * lighting enabled or not
+	 */
 	lighting = true;
 	constructor() {
 
@@ -102,9 +109,9 @@ class BasePBRProperty implements MaterialProperty {
 	get uniformValues(): WGRBufferData[] {
 
 		let vs = [this.armsParams, this.mPBRParams] as WGRBufferData[];
-		if (this.shadowReceived) {
-			vs.push(this.vsmParams, this.shadowMatrix);
-		}
+		// if (this.shadowReceived) {
+		// 	vs.push(this.vsmParams, this.shadowMatrix);
+		// }
 		// if (this.lighting) {
 		// 	vs.push(this.lightParam, this.lights, this.lightColors);
 		// }

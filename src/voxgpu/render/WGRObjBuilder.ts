@@ -15,8 +15,8 @@ import { WebGPUContext } from "../gpu/WebGPUContext";
 import { IWGMaterial } from "../material/IWGMaterial";
 import { WGRPrimitiveDict, WGGeometry } from "../geometry/WGGeometry";
 import { WGRDrawMode } from "./Define";
-import { checkBufferData } from "./buffer/WGRBufferValue";
-import { createNewWRGBufferViewUid } from "./buffer/WGRBufferView";
+// import { checkBufferData } from "./buffer/WGRBufferValue";
+// import { createNewWRGBufferViewUid } from "./buffer/WGRBufferView";
 import { WGRTexLayoutParam } from "./uniform/IWGRUniformContext";
 import { WGMaterial } from "../material/WGMaterial";
 import { MtlPipeline } from "../material/pipeline/MtlPipeline";
@@ -52,6 +52,9 @@ class WGRObjBuilder {
 		//const material = entity.materials[materialIndex];
 		// console.log("XXXXXXX material: ", material);
 		// this.mtpl.initialize();
+		let mtpl = this.mtpl;
+		mtpl.builder = builder;
+		mtpl.entity = entity;
 
 		let primitive: WGRPrimitive;
 		let pctx = material.getRCtx();
@@ -97,7 +100,7 @@ class WGRObjBuilder {
 						console.log("building material shader loss time: ", time);
 					}
 				}
-				this.mtpl.checkShaderSrc(material.shaderSrc);
+				mtpl.checkShaderSrc(material.shaderSrc);
 			}
 		}
 
@@ -106,62 +109,37 @@ class WGRObjBuilder {
 		const isComputing = material.shaderSrc.compShaderSrc !== undefined;
 
 		let uvalues: WGRBufferData[] = [];
-		const cam = builder.camera;
-		if (!isComputing) {
-			if (entity.transform) {
-				uvalues.push(entity.transform.uniformv);
-			}
-			if (entity.cameraViewing) {
-				uvalues.push(cam.viewUniformV);
-				uvalues.push(cam.projUniformV);
-			}
-		}
+		let utexes: WGRTexLayoutParam[] = [];
 
-		// if (material.uniformValues) {
-		// 	uvalues = uvalues.concat(material.uniformValues);
+		// const cam = builder.camera;
+		// if (!isComputing) {
+		// if (entity.transform) {
+		// 	uvalues.push(entity.transform.uniformv);
 		// }
-		this.mtpl.checkUniforms(material, uvalues);
+		// if (entity.cameraViewing) {
+		// 	uvalues.push(cam.viewUniformV);
+		// 	uvalues.push(cam.projUniformV);
+		// }
+		// }
 
-		// transform 与 其他材质uniform数据构造和使用应该分开,
-		// 哪些uniform是依据material变化的，哪些是共享的，哪些是transform等变换的数据
+		mtpl.checkUniforms(material, uvalues);
+		mtpl.checkTextures(material, utexes);
 
-		let texList = material.textures;
-		let utexes: WGRTexLayoutParam[];
-		// console.log("createRUnit(), texList: ", texList);
-		if (!isComputing) {
-			if (texList && texList.length > 0) {
-				utexes = new Array(texList.length);
-				for (let i = 0; i < texList.length; i++) {
-					const tex = texList[i].texture;
-					let dimension = tex.viewDimension;
-					if (!tex.view) {
-						tex.view = tex.texture.createView({ dimension });
-					}
-					tex.view.dimension = dimension;
-					utexes[i] = {
-						texView: tex.view,
-						viewDimension: tex.viewDimension,
-						shdVarName: tex.shdVarName,
-						multisampled: tex.data.multisampled
-					};
-				}
-			}
-		}
-		
-		if (uvalues && uvalues.length > 0) {
-			for (let i = 0; i < uvalues.length; ++i) {
-				uvalues[i] = checkBufferData(uvalues[i]);
-				if (uvalues[i].uid == undefined || uvalues[i].uid < 0) {
-					uvalues[i].uid = createNewWRGBufferViewUid();
-				}
-			}
-		}
-		
+		// if (uvalues && uvalues.length > 0) {
+		// 	for (let i = 0; i < uvalues.length; ++i) {
+		// 		uvalues[i] = checkBufferData(uvalues[i]);
+		// 		if (uvalues[i].uid == undefined || uvalues[i].uid < 0) {
+		// 			uvalues[i].uid = createNewWRGBufferViewUid();
+		// 		}
+		// 	}
+		// }
+
 		let uniformFlag = (uvalues && uvalues.length > 0) || (utexes && utexes.length > 0);
+
 		if (!builder.hasMaterial(material)) {
 			builder.setMaterial(material);
 			if (!pctx) {
-				material.shaderSrc = this.mtpl.shaderBuild(material.shaderSrc, uvalues, utexes);
+				material.shaderSrc = mtpl.shaderBuild(material.shaderSrc, uvalues, utexes);
 
 				if (!material.pipelineVtxParam) {
 					if (primitive) {
@@ -174,7 +152,7 @@ class WGRObjBuilder {
 					}
 				}
 			}
-			this.mtpl.checkMaterial(material, primitive);
+			mtpl.checkMaterialParam(material, primitive);
 			const node = builder.getPassNodeWithMaterial(material);
 			// console.log('WGRObjBuilder::createRPass(), node.uid: ', node.uid, ", node: ", node);
 			pctx = node.createRenderPipelineCtxWithMaterial(material);
