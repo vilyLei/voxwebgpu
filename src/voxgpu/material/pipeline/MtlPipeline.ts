@@ -41,7 +41,8 @@ class PipeNodePool {
 class MtlPipeline {
     private mInit = true;
     private pool = new PipeNodePool();
-
+    uvalues: WGRBufferData[];
+    utexes: WGRTexLayoutParam[];
     light: LightPipeNode;
     vsm: VSMPipeNode;
 
@@ -80,15 +81,15 @@ class MtlPipeline {
             }
         }
     }
-    checkUniforms(material: IWGMaterial, uvalues: WGRBufferData[], sysFlag = true): void {
+    checkUniforms(material: IWGMaterial): void {
+
+        let uvalues: WGRBufferData[] = [];
+        let utexes: WGRTexLayoutParam[] = [];
 
         const entity = this.entity;
         const builder = this.builder;
         const cam = builder.camera;
         let exclueukeys = material.exclueukeys ? material.exclueukeys : [];
-        // if (sysFlag) {
-        // console.log("dfdggggggggfdfdfdf");
-        // let flag = !exclueukeys.indexOf('objMat');
         // 检测这些关键对象是否会被真正的执行和调用
         if (entity.transform && exclueukeys.indexOf('objMat') < 0) {
             uvalues.push(entity.transform.uniformv);
@@ -101,7 +102,6 @@ class MtlPipeline {
             if (exclueukeys.indexOf('projMat') < 0)
                 uvalues.push(cam.projUniformV);
         }
-        // }
         let ls = material.uniformValues;
         if (ls) {
             for (let i = 0; i < ls.length; i++) {
@@ -126,9 +126,12 @@ class MtlPipeline {
                 }
             }
         }
+        this.checkTextures(material, utexes);
+        this.uvalues = uvalues;
+        this.utexes = utexes;
     }
 
-    checkTextures(material: IWGMaterial, utexes: WGRTexLayoutParam[]): void {
+    private checkTextures(material: IWGMaterial, utexes: WGRTexLayoutParam[]): void {
         let texList = material.textures;
         if (texList && texList.length > 0) {
             for (let i = 0; i < texList.length; i++) {
@@ -148,6 +151,33 @@ class MtlPipeline {
                 );
             }
         }
+    }
+    buildMaterial(material: IWGMaterial, primitive: WGRPrimitiveImpl): void {
+        const builder = this.builder;
+        if (!builder.hasMaterial(material)) {
+            const uvalues = this.uvalues;
+            const utexes = this.utexes;
+			builder.setMaterial(material);
+			if (!material.getRCtx()) {
+				material.shaderSrc = this.shaderBuild(material.shaderSrc, uvalues, utexes);
+
+				if (!material.pipelineVtxParam) {
+					if (primitive) {
+						material.pipelineVtxParam = { vertex: { attributeIndicesArray: [] } };
+						const ls = [];
+						for (let i = 0; i < primitive.vbufs.length; ++i) {
+							ls.push([0]);
+						}
+						material.pipelineVtxParam.vertex.attributeIndicesArray = ls;
+					}
+				}
+			}
+			this.checkMaterialParam(material, primitive);
+			const node = builder.getPassNodeWithMaterial(material);
+			// console.log('WGRObjBuilder::createRPass(), node.uid: ', node.uid, ", node: ", node);
+			let pctx = node.createRenderPipelineCtxWithMaterial(material);
+			material.initialize(pctx);
+		}
     }
     checkMaterialParam(material: IWGMaterial, primitive: WGRPrimitiveImpl): void {
         if (!material.shaderSrc.compShaderSrc) {

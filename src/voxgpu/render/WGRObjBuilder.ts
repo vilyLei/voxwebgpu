@@ -93,36 +93,43 @@ class WGRObjBuilder {
 		// console.log("createRUnit(), utexes: ", utexes);
 		const isComputing = material.shaderSrc.compShaderSrc !== undefined;
 
-		let uvalues: WGRBufferData[] = [];
-		let utexes: WGRTexLayoutParam[] = [];
 
-		mtpl.checkUniforms(material, uvalues, !isComputing);
-		mtpl.checkTextures(material, utexes);
+		mtpl.checkUniforms(material);
+		
+		let uvalues = mtpl.uvalues;
+		let utexes = mtpl.utexes;
 
-		let uniformFlag = (uvalues && uvalues.length > 0) || (utexes && utexes.length > 0);
+		// let uvalues: WGRBufferData[] = [];
+		// let utexes: WGRTexLayoutParam[] = [];
+		// mtpl.checkUniforms(material, uvalues);
+		// mtpl.checkTextures(material, utexes);
 
-		if (!builder.hasMaterial(material)) {
-			builder.setMaterial(material);
-			if (!pctx) {
-				material.shaderSrc = mtpl.shaderBuild(material.shaderSrc, uvalues, utexes);
+		let uniformFlag = uvalues.length > 0 || utexes.length > 0;
 
-				if (!material.pipelineVtxParam) {
-					if (primitive) {
-						material.pipelineVtxParam = { vertex: { attributeIndicesArray: [] } };
-						const ls = [];
-						for (let i = 0; i < primitive.vbufs.length; ++i) {
-							ls.push([0]);
-						}
-						material.pipelineVtxParam.vertex.attributeIndicesArray = ls;
-					}
-				}
-			}
-			mtpl.checkMaterialParam(material, primitive);
-			const node = builder.getPassNodeWithMaterial(material);
-			// console.log('WGRObjBuilder::createRPass(), node.uid: ', node.uid, ", node: ", node);
-			pctx = node.createRenderPipelineCtxWithMaterial(material);
-			material.initialize(pctx);
-		}
+		mtpl.buildMaterial(material, primitive);
+		pctx = material.getRCtx();
+		
+		// if (!builder.hasMaterial(material)) {
+		// 	builder.setMaterial(material);
+		// 	if (!pctx) {
+		// 		material.shaderSrc = mtpl.shaderBuild(material.shaderSrc, uvalues, utexes);
+		// 		if (!material.pipelineVtxParam) {
+		// 			if (primitive) {
+		// 				material.pipelineVtxParam = { vertex: { attributeIndicesArray: [] } };
+		// 				const ls = [];
+		// 				for (let i = 0; i < primitive.vbufs.length; ++i) {
+		// 					ls.push([0]);
+		// 				}
+		// 				material.pipelineVtxParam.vertex.attributeIndicesArray = ls;
+		// 			}
+		// 		}
+		// 	}
+		// 	mtpl.checkMaterialParam(material, primitive);
+		// 	const node = builder.getPassNodeWithMaterial(material);
+		// 	// console.log('WGRObjBuilder::createRPass(), node.uid: ', node.uid, ", node: ", node);
+		// 	pctx = node.createRenderPipelineCtxWithMaterial(material);
+		// 	material.initialize(pctx);
+		// }
 
 		let ru: IWGRUnit;
 
