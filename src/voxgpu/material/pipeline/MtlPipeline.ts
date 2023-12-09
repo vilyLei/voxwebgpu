@@ -63,18 +63,35 @@ class MtlPipeline {
             this.vsm = pool.getNodeByType(type) as VSMPipeNode;
         }
     }
+    checkShader(material: IWGMaterial): void {
+        const builder = this.builder;
+        if (!builder.hasMaterial(material)) {
+			if (!material.getRCtx()) {
+				if (!material.shaderSrc) {
+					let pm = (material as IWGMaterial);
+					if (pm.__$build) {
+						let time = Date.now();
+						pm.__$build();
+						time = Date.now() - time;
+						console.log("building material shader loss time: ", time);
+					}
+				}
+				this.checkShaderSrc(material.shaderSrc);
+			}
+		}
+    }
     checkUniforms(material: IWGMaterial, uvalues: WGRBufferData[]): void {
 
         const entity = this.entity;
         if (entity.transform) {
-			uvalues.push(entity.transform.uniformv);
-		}
+            uvalues.push(entity.transform.uniformv);
+        }
         const builder = this.builder;
         const cam = builder.camera;
-		if (entity.cameraViewing) {
-			uvalues.push(cam.viewUniformV);
-			uvalues.push(cam.projUniformV);
-		}
+        if (entity.cameraViewing) {
+            uvalues.push(cam.viewUniformV);
+            uvalues.push(cam.projUniformV);
+        }
         let ls = material.uniformValues;
         if (ls) {
             for (let i = 0; i < ls.length; i++) {
@@ -92,13 +109,13 @@ class MtlPipeline {
             }
         }
         if (uvalues && uvalues.length > 0) {
-			for (let i = 0; i < uvalues.length; ++i) {
-				uvalues[i] = checkBufferData(uvalues[i]);
-				if (uvalues[i].uid == undefined || uvalues[i].uid < 0) {
-					uvalues[i].uid = createNewWRGBufferViewUid();
-				}
-			}
-		}
+            for (let i = 0; i < uvalues.length; ++i) {
+                uvalues[i] = checkBufferData(uvalues[i]);
+                if (uvalues[i].uid == undefined || uvalues[i].uid < 0) {
+                    uvalues[i].uid = createNewWRGBufferViewUid();
+                }
+            }
+        }
     }
 
     checkTextures(material: IWGMaterial, utexes: WGRTexLayoutParam[]): void {

@@ -49,9 +49,8 @@ class WGRObjBuilder {
 
 	createRPass(entity: Entity3D, builder: IWGRPassNodeBuilder, geometry: WGGeometry, material: WGMaterial, blockUid = 0): IWGRUnit {
 
-		//const material = entity.materials[materialIndex];
 		// console.log("XXXXXXX material: ", material);
-		// this.mtpl.initialize();
+		
 		let mtpl = this.mtpl;
 		mtpl.builder = builder;
 		mtpl.entity = entity;
@@ -70,7 +69,6 @@ class WGRObjBuilder {
 					gibuf.toWirframe();
 					const indexBuffer = gibuf ? (gibuf.gpuwibuf ? gibuf.gpuwibuf : wgctx.buffer.createIndexBuffer(gibuf.wireframeData)) : null;
 					if (indexBuffer) gibuf.gpuwibuf = indexBuffer;
-
 					const indexCount = indexBuffer ? indexBuffer.elementCount : 0;
 					primitive = this.createPrimitive({ vertexBuffers, indexBuffer, indexCount, vertexCount, drawMode: WGRDrawMode.LINES });
 					dict.wireframe = primitive;
@@ -89,20 +87,21 @@ class WGRObjBuilder {
 				}
 			}
 		}
-		if (!builder.hasMaterial(material)) {
-			if (!pctx) {
-				if (!material.shaderSrc) {
-					let pm = (material as IWGMaterial);
-					if (pm.__$build) {
-						let time = Date.now();
-						pm.__$build();
-						time = Date.now() - time;
-						console.log("building material shader loss time: ", time);
-					}
-				}
-				mtpl.checkShaderSrc(material.shaderSrc);
-			}
-		}
+		// if (!builder.hasMaterial(material)) {
+		// 	if (!pctx) {
+		// 		if (!material.shaderSrc) {
+		// 			let pm = (material as IWGMaterial);
+		// 			if (pm.__$build) {
+		// 				let time = Date.now();
+		// 				pm.__$build();
+		// 				time = Date.now() - time;
+		// 				console.log("building material shader loss time: ", time);
+		// 			}
+		// 		}
+		// 		mtpl.checkShaderSrc(material.shaderSrc);
+		// 	}
+		// }
+		mtpl.checkShader( material );
 
 		let groupIndex = 0;
 		// console.log("createRUnit(), utexes: ", utexes);
@@ -111,28 +110,8 @@ class WGRObjBuilder {
 		let uvalues: WGRBufferData[] = [];
 		let utexes: WGRTexLayoutParam[] = [];
 
-		// const cam = builder.camera;
-		// if (!isComputing) {
-		// if (entity.transform) {
-		// 	uvalues.push(entity.transform.uniformv);
-		// }
-		// if (entity.cameraViewing) {
-		// 	uvalues.push(cam.viewUniformV);
-		// 	uvalues.push(cam.projUniformV);
-		// }
-		// }
-
 		mtpl.checkUniforms(material, uvalues);
 		mtpl.checkTextures(material, utexes);
-
-		// if (uvalues && uvalues.length > 0) {
-		// 	for (let i = 0; i < uvalues.length; ++i) {
-		// 		uvalues[i] = checkBufferData(uvalues[i]);
-		// 		if (uvalues[i].uid == undefined || uvalues[i].uid < 0) {
-		// 			uvalues[i].uid = createNewWRGBufferViewUid();
-		// 		}
-		// 	}
-		// }
 
 		let uniformFlag = (uvalues && uvalues.length > 0) || (utexes && utexes.length > 0);
 
