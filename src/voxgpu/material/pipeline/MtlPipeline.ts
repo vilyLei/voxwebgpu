@@ -66,6 +66,7 @@ class MtlPipeline {
     checkShader(material: IWGMaterial): void {
         const builder = this.builder;
         if (!builder.hasMaterial(material)) {
+			// if (!material.getRCtx()) {
 			if (!material.getRCtx()) {
 				if (!material.shaderSrc) {
 					let pm = (material as IWGMaterial);
