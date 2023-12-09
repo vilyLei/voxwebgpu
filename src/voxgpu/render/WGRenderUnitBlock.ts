@@ -54,11 +54,24 @@ class WGRenderUnitBlock {
 		}
 	}
 	addEntityToBlock(entity: Entity3D, node: WGREntityNode, param?: WGREntityParam): void {
+
+		const rob = this.rbParam.roBuilder;
 		entity.update();
 		node.rstate.__$rever++;
-		const runit = this.rbParam.roBuilder.createRUnit(entity, this.builder, node, this.uid, param);
+		const runit = rob.createRUnit(entity, this.builder, node, this.uid, param);
 		runit.etuuid = entity.uuid + '-[block(' + this.uid+')]';
 		this.addRUnit(runit);
+		let flag = true;
+		if(param) {
+			console.log('addEntityToBlock(), param.phase: ', param.phase);
+			if(param.phase === 'dst') {
+				flag = false;
+			}
+		}
+		if(flag) {
+			console.log('addEntityToBlock(), phase useful ...');
+			rob.mtpl.shadow.addEntity(entity);
+		}
 	}
 	addEntity(entity: Entity3D, param?: WGREntityParam): void {
 		// console.log("Renderer::addEntity(), entity.isInRenderer(): ", entity.isInRenderer());

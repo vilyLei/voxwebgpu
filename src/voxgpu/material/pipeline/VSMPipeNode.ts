@@ -98,14 +98,26 @@ class ShadowPassGraph extends WGRPassNodeGraph {
         this.mVSMParam.direction = cam.nv;
     }
     addEntity(entity: Entity3D): ShadowPassGraph {
-
-        let pass = this.passes[0];
-        let et = new Entity3D({ transform: entity.transform });
-        // et.materials = this.mDepthMaterials;
-        et.geometry = entity.geometry;
-        et.rstate.copyFrom(entity.rstate);
-        this.entities.push(et);
-        pass.addEntity(et, { materials: this.mDepthMaterials });
+        let flag = false;
+        let ms = entity.materials;
+        if (ms) {
+            for (let i = 0; i < ms.length; i++) {
+                let ppt = ms[i].property;
+                if (ppt && ppt.shadow === true) {
+                    flag = true;
+                    break;
+                }
+            }
+        }
+        if (flag) {
+            console.log("add a shadow making entity ...");
+            let pass = this.passes[0];
+            let et = new Entity3D({ transform: entity.transform });
+            et.geometry = entity.geometry;
+            et.rstate.copyFrom(entity.rstate);
+            this.entities.push(et);
+            pass.addEntity(et, { materials: this.mDepthMaterials, phase: 'dst' });
+        }
 
         return this;
     }
@@ -191,7 +203,7 @@ class ShadowPassGraph extends WGRPassNodeGraph {
         this.occHEntity.visible = false;
 
         const mt = this.material;
-        if(!mt.isREnabled()) {
+        if (!mt.isREnabled()) {
             updateMaterialData(pass.getWGCtx(), mt);
         }
     }
@@ -211,7 +223,7 @@ class VSMPipeNode extends MtPlNode implements MtPlNodeImpl {
     passGraph = new ShadowPassGraph(this.param, this.matrix);
 
     initialize(rc: IRendererScene): void {
-        this.passGraph.initialize( rc );
+        this.passGraph.initialize(rc);
     }
     addEntity(entity: Entity3D): void {
 

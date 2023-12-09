@@ -40,7 +40,7 @@ class WGEntityNodeMana {
 				const ppt = m.property;
 				if(ppt && ppt.shadowReceived) {
 					const mtpl = this.roBuilder.mtpl;
-					if(!mtpl.vsm.isEnabled()) {
+					if(!mtpl.shadow.isEnabled()) {
 						// console.log("fsfsfsfs");
 						return false;
 					}

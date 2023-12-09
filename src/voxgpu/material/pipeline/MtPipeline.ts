@@ -10,7 +10,7 @@ class MtPipeline {
     private mInit = true;
     private mPool = new MtPlNodePool();
     light: LightPipeNode;
-    vsm: VSMPipeNode;
+    shadow: VSMPipeNode;
     readonly builder = new MtBuilder( this.mPool );
     constructor() { }
     initialize(): void {
@@ -24,7 +24,7 @@ class MtPipeline {
             this.light = pool.getNodeByType(type) as LightPipeNode;
 
             type = 'vsmShadow';
-            this.vsm = pool.getNodeByType(type) as VSMPipeNode;
+            this.shadow = pool.getNodeByType(type) as VSMPipeNode;
         }
     }
 }

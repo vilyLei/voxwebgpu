@@ -51,7 +51,7 @@ export class ShadowMaterialSysTest {
 		let position = [0,0,0];
 		let lightParam = createLightData(position, 600, 5.0);
 		mtpl.light.data = lightParam;
-		mtpl.vsm.initialize(rc);
+		mtpl.shadow.initialize(rc);
 
 		position = [-230.0, 100.0, -200.0];
 		let materials = this.createMaterials();
@@ -65,7 +65,7 @@ export class ShadowMaterialSysTest {
 		this.mEntities.push(sph);
 		rc.addEntity(sph);
 
-		mtpl.vsm.addEntities( this.mEntities );
+		mtpl.shadow.addEntities( this.mEntities );
 		/*
 		position = [160.0, 100.0, -210.0];
 		materials = this.createMaterials();
@@ -97,7 +97,7 @@ export class ShadowMaterialSysTest {
 
 		// this.initSceneShadow();
 
-		let graph = mtpl.vsm.passGraph;
+		let graph = mtpl.shadow.passGraph;
 
 		let extent = [-0.95, -0.95, 0.4, 0.4];
 		let entity = new FixScreenPlaneEntity({ extent, flipY: true, textures: [{ diffuse: graph.shadowDepthRTT }] });
@@ -134,7 +134,7 @@ export class ShadowMaterialSysTest {
 	private buildShadowCamFrame(): void {
 		let rc = this.mRscene;
 		let mtpl = rc.renderer.mtpl;
-		const graph = mtpl.vsm.passGraph;
+		const graph = mtpl.shadow.passGraph;
 		const cam = graph.shadowCamera;
 		const rsc = this.mRscene;
 		let frameColors = [[1.0, 0.0, 1.0], [0.0, 1.0, 1.0], [1.0, 0.0, 0.0], [0.0, 1.0, 1.0]];

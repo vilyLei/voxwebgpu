@@ -51,6 +51,9 @@ class RendererScene implements IRendererScene {
 
 			this.mRenderer = renderer;
 			this.camera = renderer.camera;
+
+			let mtpl = renderer.mtpl;
+			mtpl.shadow.initialize(this);
 		}
 	}
 

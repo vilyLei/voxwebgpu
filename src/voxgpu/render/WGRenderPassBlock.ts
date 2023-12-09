@@ -14,6 +14,7 @@ import { IWGRPassNodeBuilder } from "./IWGRPassNodeBuilder";
 import { WGREntityParam } from "./WGREntityParam";
 import { Entity3D } from "../entity/Entity3D";
 import { WGRPassNodeGraph } from "./pass/WGRPassNodeGraph";
+import { MtPipeline } from "../material/pipeline/MtPipeline";
 
 class WGRenderPassBlock implements IWGRPassNodeBuilder {
 	private mWGCtx: WebGPUContext;
@@ -30,7 +31,6 @@ class WGRenderPassBlock implements IWGRPassNodeBuilder {
 	camera: Camera;
 	rcommands: GPUCommandBuffer[];
 	unitBlock: WGRenderUnitBlock;
-
 	prev: WGRenderPassBlock;
 
 	enabled = true;

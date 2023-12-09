@@ -3,12 +3,10 @@ import { RendererScene } from "../rscene/RendererScene";
 import { MouseInteraction } from "../ui/MouseInteraction";
 import { WGTextureDataDescriptor } from "../material/WGMaterial";
 import { Entity3D } from "../entity/Entity3D";
-import { BoundsFrameEntity } from "../entity/BoundsFrameEntity";
-import { FixScreenPlaneEntity } from "../entity/FixScreenPlaneEntity";
 import { SphereEntity } from "../entity/SphereEntity";
 import { PlaneEntity } from "../entity/PlaneEntity";
 import { SpecularEnvBrnTexture } from "../texture/SpecularEnvBrnTexture";
-import {createLightData} from "./utils/lightUtil";
+import { createLightData } from "./utils/lightUtil";
 import { BasePBRMaterial, LightShaderDataParam } from "../material/BasePBRMaterial";
 import { BoxEntity } from "../entity/BoxEntity";
 import { TorusEntity } from "../entity/TorusEntity";
@@ -24,27 +22,23 @@ export class MaterialPipelineTest {
 			canvasHeight: 512,
 			rpassparam: { multisampled: true }
 		});
-		
-		this.initShadowScene();
+
+		this.initScene();
 		this.initEvent();
 	}
 
 	private mEntities: Entity3D[] = [];
-	
-	private initShadowScene(): void {
+
+	private initScene(): void {
 
 		let rc = this.mRscene;
-		
+
 		let mtpl = rc.renderer.mtpl;
 
-		// let position = [-230.0, 100.0, -200.0];
-		let position = [0,0,0];
-		mtpl.light.data = createLightData(position, 600, 5.0);
-		let shadow = mtpl.vsm;
-		shadow.initialize(rc);
-		shadow.param.intensity = 0.7;
+		mtpl.light.data = createLightData([0, 300, 0], 600, 5.0);
+		mtpl.shadow.param.intensity = 0.7;
 
-		position = [-230.0, 100.0, -200.0];
+		let position = [-230.0, 100.0, -200.0];
 		let materials = this.createMaterials(true);
 		let sph = new SphereEntity({
 			radius: 80,
@@ -93,46 +87,25 @@ export class MaterialPipelineTest {
 		});
 		this.mEntities.push(torus);
 		rc.addEntity(torus);
-		//*/
 
-		mtpl.vsm.addEntities( this.mEntities );
-
-		this.initSceneShadow();
-	}
-
-	private initSceneShadow(): void {
-		this.applyShadowReceiveDisp(true);
-	}
-	
-	private applyShadowReceiveDisp(shadowReceived = false): void {
-		let rc = this.mRscene;
-		let position = [0, -1, 0];
-		let materials = this.createMaterials(shadowReceived);
+		position = [0, -1, 0];
+		materials = this.createMaterials(true, false);
 		let plane = new PlaneEntity({
 			axisType: 1,
 			materials,
-			extent:[-600,-600,1200,1200],
+			extent: [-600, -600, 1200, 1200],
 			transform: { position }
 		});
 		rc.addEntity(plane);
 	}
 
-	// private buildShadowCamFrame(): void {
-	// 	let rc = this.mRscene;
-	// 	let mtpl = rc.renderer.mtpl;
-	// 	const graph = mtpl.vsm.passGraph;
-	// 	const cam = graph.shadowCamera;
-	// 	const rsc = this.mRscene;
-	// 	let frameColors = [[1.0, 0.0, 1.0], [0.0, 1.0, 1.0], [1.0, 0.0, 0.0], [0.0, 1.0, 1.0]];
-	// 	let boxFrame = new BoundsFrameEntity({ vertices8: cam.frustum.vertices, frameColors });
-	// 	rsc.addEntity(boxFrame);
-	// }
+
 	private initEvent(): void {
 		const rc = this.mRscene;
 		rc.addEventListener(MouseEvent.MOUSE_DOWN, this.mouseDown);
 		new MouseInteraction().initialize(rc, 0, false).setAutoRunning(true);
 	}
-	
+
 	private hdrEnvtex = new SpecularEnvBrnTexture();
 	private createBaseTextures(): WGTextureDataDescriptor[] {
 		const albedoTex = { albedo: { url: `static/assets/pbrtex/rough_plaster_broken_diff_1k.jpg` } };
@@ -146,12 +119,12 @@ export class MaterialPipelineTest {
 		] as WGTextureDataDescriptor[];
 		return textures;
 	}
-	
-	private createMaterials(shadowReceived = false, uvParam?: number[]): BasePBRMaterial[] {
+
+	private createMaterials(shadowReceived = false, shadow = true, uvParam?: number[]): BasePBRMaterial[] {
 		let textures0 = this.createBaseTextures();
-		
+
 		let material0 = this.createMaterial(textures0);
-		this.applyMaterialPPt(material0, shadowReceived);
+		this.applyMaterialPPt(material0, shadowReceived, shadow);
 
 		let list = [material0];
 		if (uvParam) {
@@ -161,7 +134,7 @@ export class MaterialPipelineTest {
 		}
 		return list;
 	}
-	private applyMaterialPPt(material: BasePBRMaterial, shadowReceived = false): void {
+	private applyMaterialPPt(material: BasePBRMaterial, shadowReceived = false, shadow = true): void {
 		let property = material.property;
 		property.ambient.value = [0.0, 0.2, 0.2];
 		property.albedo.value = [0.7, 0.7, 0.3];
@@ -169,8 +142,9 @@ export class MaterialPipelineTest {
 		property.armsBase.value = [0, 0, 0];
 		property.param.scatterIntensity = 32;
 
+		property.shadow = shadow;
 		property.lighting = true;
-		
+
 		property.shadowReceived = shadowReceived;
 	}
 	private createMaterial(textures: WGTextureDataDescriptor[]): BasePBRMaterial {
@@ -182,17 +156,7 @@ export class MaterialPipelineTest {
 		material.addTextures(textures);
 		return material;
 	}
-	private mFlag = -1;
-	private mouseDown = (evt: MouseEvent): void => {
-		let rc = this.mRscene;
-		let mtpl = rc.renderer.mtpl;
-		this.mFlag ++;
-		if(this.mFlag == 0) {
-			// mtpl.vsm.addEntities( this.mEntities );
-		}else if(this.mFlag == 1) {
-			// this.initSceneShadow();
-		}
-	};
+	private mouseDown = (evt: MouseEvent): void => {}
 	run(): void {
 		this.mRscene.run();
 	}
