@@ -7,6 +7,7 @@ import { IWGMaterialGraph } from "./IWGMaterialGraph";
 import { WGRBufferData } from "../render/buffer/WGRBufferData";
 import { WGRMaterialPassViewImpl } from "../render/pipeline/WGRMaterialPassViewImpl";
 import { MaterialProperty } from "./pipeline/MaterialProperty";
+import { MtPlParam } from "./pipeline/MtPlParam";
 
 interface IWGMaterial extends WGMaterialDescripter {
 
@@ -26,8 +27,10 @@ interface IWGMaterial extends WGMaterialDescripter {
 	textures: WGTextureWrapper[];
 
 	rpass: WGRMaterialPassViewImpl;
-
-	pipeline?: MaterialPipelineParam;
+	/**
+	 * material pipeline param
+	 */
+	pipeline?: MtPlParam;
 	property?: MaterialProperty;
 
 	wireframe?: boolean;

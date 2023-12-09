@@ -5,14 +5,14 @@ import { WGRBufferData } from "../mdata/MaterialUniformData";
 import { getCodeLine, codeLineCommentTest } from "../shader/utils";
 import { IWGMaterial } from "../IWGMaterial";
 import { WGRPrimitiveImpl } from "../../render/WGRPrimitiveImpl";
-import { MtlPipeNodeImpl } from "./MtlPipeNodeImpl";
+import { MtPlNodeImpl } from "./MtPlNodeImpl";
 import { LightPipeNode } from "./LightPipeNode";
 import { VSMPipeNode } from "./VSMPipeNode";
 
 const bufValue = new WGRBufferValue({ shdVarName: 'mpl-bufValue' });
 class PipeNodePool {
-    pool: Map<string, MtlPipeNodeImpl> = new Map();
-    addNode(node: MtlPipeNodeImpl): void {
+    pool: Map<string, MtPlNodeImpl> = new Map();
+    addNode(node: MtPlNodeImpl): void {
         if (node) {
             this.pool.set(node.type, node);
         }
@@ -20,7 +20,7 @@ class PipeNodePool {
     hasNodeByType(type: string): boolean {
         return this.pool.has(type);
     }
-    getNodeByType(type: string): MtlPipeNodeImpl {
+    getNodeByType(type: string): MtPlNodeImpl {
         return this.pool.get(type);
     }
     initialize(): void {
@@ -31,7 +31,10 @@ class PipeNodePool {
         this.addNode(vsmNode);
     }
 }
-class MaterialPipeline {
+/**
+ * material pipeline
+ */
+class MtlPipeline {
     private mInit = true;
     private pool = new PipeNodePool();
     light: LightPipeNode;
@@ -178,4 +181,4 @@ class MaterialPipeline {
         return shdSrc;
     }
 }
-export { MaterialPipeline };
+export { MtlPipeline };

@@ -1,6 +1,8 @@
 import { WGRBufferData } from "../mdata/MaterialUniformData";
-
-class MtPlPipeNode {
+/**
+ * material pipeline node
+ */
+class MtPlNode {
     constructor() { }
 
     contains(ls: WGRBufferData[], item: WGRBufferData, begin = 0, end = -1): boolean {
@@ -24,4 +26,4 @@ class MtPlPipeNode {
         return [];
     }
 }
-export { MtPlPipeNode }
+export { MtPlNode }

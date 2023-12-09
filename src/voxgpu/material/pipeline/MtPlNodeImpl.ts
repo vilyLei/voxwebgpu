@@ -1,6 +1,8 @@
 import { WGRBufferData } from "../mdata/MaterialUniformData";
-
-export interface MtlPipeNodeImpl {
+/**
+ * material pipeline node interface
+ */
+export interface MtPlNodeImpl {
     type: string;
     macro: string;
     merge(ls: WGRBufferData[]): void;

@@ -8,8 +8,8 @@ import { MaterialUniformMat44Data, WGRBufferData } from "../mdata/MaterialUnifor
 import { VSMUniformData } from "../mdata/VSMUniformData";
 import { ShadowOccBlurMaterial } from "../ShadowOccBlurMaterial";
 import { WGRShderSrcType, WGMaterial } from "../WGMaterial";
-import { MtlPipeNodeImpl } from "./MtlPipeNodeImpl";
-import { MtPlPipeNode } from "./MtPlPipeNode";
+import { MtPlNodeImpl } from "./MtPlNodeImpl";
+import { MtPlNode } from "./MtPlNode";
 
 import shadowDepthWGSL from "../shader/shadow/shadowDepth.wgsl";
 import Matrix4 from "../../math/Matrix4";
@@ -185,7 +185,7 @@ class ShadowPassGraph extends WGRPassNodeGraph {
     }
 }
 
-class VSMPipeNode extends MtPlPipeNode implements MtlPipeNodeImpl {
+class VSMPipeNode extends MtPlNode implements MtPlNodeImpl {
 
     type = 'vsmShadow';
     macro = 'USE_VSM_SHADOW';

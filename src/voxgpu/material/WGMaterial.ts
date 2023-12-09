@@ -14,6 +14,7 @@ import { checkMaterialRPasses, IWGMaterial } from "./IWGMaterial";
 import { IWGMaterialGraph } from "./IWGMaterialGraph";
 import { WGRBufferData } from "../render/buffer/WGRBufferValueParam";
 import { MaterialProperty } from "./pipeline/MaterialProperty";
+import { MtPlParam } from "./pipeline/MtPlParam";
 
 class WGMaterial implements IWGMaterial {
 	private static sUid = 0;
@@ -23,6 +24,7 @@ class WGMaterial implements IWGMaterial {
 
 	private mREnabled = false;
 	name?: string;
+	
 	/**
 	 * unique shading process uuid
 	 */
@@ -32,7 +34,10 @@ class WGMaterial implements IWGMaterial {
 	pipelineVtxParam?: VtxPipelinDescParam;
 	pipelineDefParam?: WGRPipelineContextDefParam;
 	rpass: WGRMaterialPassViewImpl = {rpass: { index: 0 } };
-	pipeline?: MaterialPipelineParam;
+	/**
+	 * material pipeline param
+	 */
+	pipeline?: MtPlParam;
 	property?: MaterialProperty;
 	/**
 	 * material uniforms append to pipeline, or not

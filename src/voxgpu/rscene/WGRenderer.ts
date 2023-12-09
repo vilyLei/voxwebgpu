@@ -13,7 +13,7 @@ import { WGRPassWrapperImpl } from "../render/pipeline/WGRPassWrapperImpl";
 import { WGRendererConfig, checkConfig } from "./WGRendererParam";
 import { WGRenderUnitBlock } from "../render/WGRenderUnitBlock";
 import { WGRPassNodeGraph } from "../render/pass/WGRPassNodeGraph";
-import { MaterialPipeline } from "../material/pipeline/MaterialPipeline";
+import { MtlPipeline } from "../material/pipeline/MtlPipeline";
 
 class WGRenderer implements IRenderer {
 	private ___$$$$$$$Author = "VilyLei(vily313@126.com)";
@@ -36,7 +36,7 @@ class WGRenderer implements IRenderer {
 			this.initialize(config);
 		}
 	}
-	get materialPipeline(): MaterialPipeline {
+	get materialPipeline(): MtlPipeline {
 		return this.mROBuilder.mtpl;
 	}
 	private initCamera(width: number, height: number): void {

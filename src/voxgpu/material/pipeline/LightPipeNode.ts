@@ -1,10 +1,11 @@
 import { BaseLightData, LightParamData, LightShaderDataParam } from "../mdata/LightUniformData";
 import { WGRBufferData } from "../mdata/MaterialUniformData";
-import { MtlPipeNodeImpl } from "./MtlPipeNodeImpl";
-import { MtPlPipeNode } from "./MtPlPipeNode";
+import { MtPlNodeImpl } from "./MtPlNodeImpl";
+import { MtPlNode } from "./MtPlNode";
 
-class LightPipeNode extends MtPlPipeNode implements MtlPipeNodeImpl {
+class LightPipeNode extends MtPlNode implements MtPlNodeImpl {
     private param: LightShaderDataParam;
+
     type = 'lighting';
     macro = 'USE_LIGHT';
     lightParam = new LightParamData(new Uint32Array([1, 0, 0, 0]), "lightParam", "frag");

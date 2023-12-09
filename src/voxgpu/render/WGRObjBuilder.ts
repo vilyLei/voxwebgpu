@@ -19,14 +19,14 @@ import { checkBufferData } from "./buffer/WGRBufferValue";
 import { createNewWRGBufferViewUid } from "./buffer/WGRBufferView";
 import { WGRTexLayoutParam } from "./uniform/IWGRUniformContext";
 import { WGMaterial } from "../material/WGMaterial";
-import { MaterialPipeline } from "../material/pipeline/MaterialPipeline";
+import { MtlPipeline } from "../material/pipeline/MtlPipeline";
 
 type GeomType = { indexBuffer?: GPUBuffer, vertexBuffers: GPUBuffer[], indexCount?: number, vertexCount?: number, drawMode?: WGRDrawMode };
 
 class WGRObjBuilder {
 
 	wgctx: WebGPUContext;
-	mtpl = new MaterialPipeline();
+	mtpl = new MtlPipeline();
 	constructor() {
 		this.mtpl.initialize();
 	}
