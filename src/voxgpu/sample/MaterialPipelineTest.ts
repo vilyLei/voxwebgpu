@@ -7,7 +7,7 @@ import { SphereEntity } from "../entity/SphereEntity";
 import { PlaneEntity } from "../entity/PlaneEntity";
 import { SpecularEnvBrnTexture } from "../texture/SpecularEnvBrnTexture";
 import { createLightData } from "./utils/lightUtil";
-import { BasePBRMaterial, LightShaderDataParam } from "../material/BasePBRMaterial";
+import { BasePBRMaterial } from "../material/BasePBRMaterial";
 import { BoxEntity } from "../entity/BoxEntity";
 import { TorusEntity } from "../entity/TorusEntity";
 
@@ -27,8 +27,6 @@ export class MaterialPipelineTest {
 		this.initEvent();
 	}
 
-	private mEntities: Entity3D[] = [];
-
 	private initScene(): void {
 
 		let rc = this.mRscene;
@@ -47,7 +45,6 @@ export class MaterialPipelineTest {
 			},
 			materials
 		});
-		this.mEntities.push(sph);
 		rc.addEntity(sph);
 
 		position = [10.0, 100.0, -180.0];
@@ -61,7 +58,6 @@ export class MaterialPipelineTest {
 			},
 			materials
 		});
-		this.mEntities.push(box);
 		rc.addEntity(box);
 
 		position = [160.0, 100.0, 210.0];
@@ -73,7 +69,6 @@ export class MaterialPipelineTest {
 			},
 			materials
 		});
-		this.mEntities.push(torus);
 		rc.addEntity(torus);
 
 		position = [130.0, 220.0, 180.0];
@@ -85,7 +80,6 @@ export class MaterialPipelineTest {
 			},
 			materials
 		});
-		this.mEntities.push(torus);
 		rc.addEntity(torus);
 
 		position = [0, -1, 0];
