@@ -43,10 +43,10 @@ class ShadowPassGraph extends WGRPassNodeGraph {
 
     shadowCamera: Camera;
     private mMatrixData: MaterialUniformMat44Data;
-    private mVSMData: VSMUniformData;
+    private mVSMParam: VSMUniformData;
     constructor(vsmData: VSMUniformData, matrixData: MaterialUniformMat44Data) {
         super();
-        this.mVSMData = vsmData;
+        this.mVSMParam = vsmData;
         this.mMatrixData = matrixData;
     }
     get texture(): WGTextureWrapper {
@@ -94,8 +94,8 @@ class ShadowPassGraph extends WGRPassNodeGraph {
         let shadowMat = new Matrix4();
         shadowMat.copyFrom(cam.viewProjMatrix);
         shadowMat.append(transMatrix);
-        this.mMatrixData.shadowMatrix = transMatrix;
-        this.mVSMData.direction = cam.nv;
+        this.mMatrixData.shadowMatrix = shadowMat;
+        this.mVSMParam.direction = cam.nv;
     }
     addEntity(entity: Entity3D): ShadowPassGraph {
 
@@ -202,13 +202,13 @@ class VSMPipeNode extends MtPlNode implements MtPlNodeImpl {
     type = 'vsmShadow';
     macro = 'USE_VSM_SHADOW';
 
-    vsm = new VSMUniformData(null, "vsmParams", "frag");
+    param = new VSMUniformData(null, "vsmParams", "frag");
     /**
      * shadow material
      */
     matrix = new MaterialUniformMat44Data(null, "shadowMatrix", "vert");
 
-    passGraph = new ShadowPassGraph(this.vsm, this.matrix);
+    passGraph = new ShadowPassGraph(this.param, this.matrix);
 
     initialize(rc: IRendererScene): void {
         this.passGraph.initialize( rc );
@@ -225,11 +225,11 @@ class VSMPipeNode extends MtPlNode implements MtPlNodeImpl {
     }
     merge(ls: WGRBufferData[]): void {
         let end = ls.length - 1;
-        this.addTo(ls, this.vsm, 0, end);
+        this.addTo(ls, this.param, 0, end);
         this.addTo(ls, this.matrix, 0, end);
     }
     getDataList(): WGRBufferData[] {
-        return [this.vsm, this.matrix];
+        return [this.param, this.matrix];
     }
     isEnabled(): boolean {
         let mt = this.passGraph.material;

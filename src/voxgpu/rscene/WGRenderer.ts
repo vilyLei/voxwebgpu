@@ -36,7 +36,10 @@ class WGRenderer implements IRenderer {
 			this.initialize(config);
 		}
 	}
-	get materialPipeline(): MtPipeline {
+	/**
+	 * material pipeline
+	 */
+	get mtpl(): MtPipeline {
 		return this.mROBuilder.mtpl;
 	}
 	private initCamera(width: number, height: number): void {

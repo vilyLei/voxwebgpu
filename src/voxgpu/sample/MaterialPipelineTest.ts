@@ -1,34 +1,25 @@
 import MouseEvent from "../event/MouseEvent";
 import { RendererScene } from "../rscene/RendererScene";
 import { MouseInteraction } from "../ui/MouseInteraction";
-import { WGMaterial, WGRShderSrcType, WGTextureDataDescriptor } from "../material/WGMaterial";
+import { WGTextureDataDescriptor } from "../material/WGMaterial";
 import { Entity3D } from "../entity/Entity3D";
-
-import shadowDepthWGSL from "../material/shader/shadow/shadowDepth.wgsl";
-import Camera from "../view/Camera";
 import { BoundsFrameEntity } from "../entity/BoundsFrameEntity";
 import { FixScreenPlaneEntity } from "../entity/FixScreenPlaneEntity";
 import { SphereEntity } from "../entity/SphereEntity";
 import { PlaneEntity } from "../entity/PlaneEntity";
-import { ShadowOccBlurMaterial } from "../material/ShadowOccBlurMaterial";
-import Matrix4 from "../math/Matrix4";
-import { BoxEntity } from "../entity/BoxEntity";
-import { TorusEntity } from "../entity/TorusEntity";
-import { WGRPassColorAttachment } from "../render/pipeline/WGRPassColorAttachment";
-
-import { WGRPassNodeGraph } from "../render/pass/WGRPassNodeGraph";
 import { SpecularEnvBrnTexture } from "../texture/SpecularEnvBrnTexture";
 import Vector3 from "../math/Vector3";
 import {createLightData} from "./utils/lightUtil";
 import { BasePBRMaterial, LightShaderDataParam } from "../material/BasePBRMaterial";
-import { IRendererScene } from "../rscene/IRendererScene";
+import { BoxEntity } from "../entity/BoxEntity";
+import { TorusEntity } from "../entity/TorusEntity";
 
-export class ShadowMaterialSysTest {
+export class MaterialPipelineTest {
 	private mRscene = new RendererScene();
 
 	initialize(): void {
 
-		console.log("ShadowMaterialSysTest::initialize() ...");
+		console.log("MaterialPipelineTest::initialize() ...");
 		this.mRscene.initialize({
 			canvasWith: 512,
 			canvasHeight: 512,
@@ -51,10 +42,12 @@ export class ShadowMaterialSysTest {
 		let position = [0,0,0];
 		let lightParam = createLightData(position, 600, 5.0);
 		mtpl.light.data = lightParam;
-		mtpl.vsm.initialize(rc);
+		let shadow = mtpl.vsm;
+		shadow.initialize(rc);
+		shadow.param.intensity = 0.7;
 
 		position = [-230.0, 100.0, -200.0];
-		let materials = this.createMaterials();
+		let materials = this.createMaterials(true);
 		let sph = new SphereEntity({
 			radius: 80,
 			transform: {
@@ -65,10 +58,9 @@ export class ShadowMaterialSysTest {
 		this.mEntities.push(sph);
 		rc.addEntity(sph);
 
-		mtpl.vsm.addEntities( this.mEntities );
-		/*
-		position = [160.0, 100.0, -210.0];
-		materials = this.createMaterials();
+		///*
+		position = [10.0, 100.0, -180.0];
+		materials = this.createMaterials(true);
 		let box = new BoxEntity({
 			minPos: [-30, -30, -30],
 			maxPos: [130, 230, 80],
@@ -82,7 +74,7 @@ export class ShadowMaterialSysTest {
 		rc.addEntity(box);
 
 		position = [160.0, 100.0, 210.0];
-		materials = this.createMaterials();
+		materials = this.createMaterials(true);
 		let torus = new TorusEntity({
 			transform: {
 				position,
@@ -92,25 +84,35 @@ export class ShadowMaterialSysTest {
 		});
 		this.mEntities.push(torus);
 		rc.addEntity(torus);
+
+		position = [130.0, 220.0, 180.0];
+		materials = this.createMaterials(true);
+		torus = new TorusEntity({
+			transform: {
+				position,
+				rotation: [50, 30, 80]
+			},
+			materials
+		});
+		this.mEntities.push(torus);
+		rc.addEntity(torus);
 		//*/
-		// this.buildShadow();
 
-		// this.initSceneShadow();
+		mtpl.vsm.addEntities( this.mEntities );
 
-		let graph = mtpl.vsm.passGraph;
+		this.initSceneShadow();
 
-		let extent = [-0.95, -0.95, 0.4, 0.4];
-		let entity = new FixScreenPlaneEntity({ extent, flipY: true, textures: [{ diffuse: graph.shadowDepthRTT }] });
-		rc.addEntity(entity);
-
-		extent = [-0.5, -0.95, 0.4, 0.4];
-		entity = new FixScreenPlaneEntity({ extent, flipY: true, textures: [{ diffuse: graph.occVRTT }] });
-		rc.addEntity(entity);
-
-		extent = [-0.05, -0.95, 0.4, 0.4];
-		entity = new FixScreenPlaneEntity({ extent, flipY: true, textures: [{ diffuse: graph.occHRTT }] });
-		rc.addEntity(entity);
-		this.buildShadowCamFrame();
+		// let graph = mtpl.vsm.passGraph;
+		// let extent = [-0.95, -0.95, 0.4, 0.4];
+		// let entity = new FixScreenPlaneEntity({ extent, flipY: true, textures: [{ diffuse: graph.shadowDepthRTT }] });
+		// rc.addEntity(entity);
+		// extent = [-0.5, -0.95, 0.4, 0.4];
+		// entity = new FixScreenPlaneEntity({ extent, flipY: true, textures: [{ diffuse: graph.occVRTT }] });
+		// rc.addEntity(entity);
+		// extent = [-0.05, -0.95, 0.4, 0.4];
+		// entity = new FixScreenPlaneEntity({ extent, flipY: true, textures: [{ diffuse: graph.occHRTT }] });
+		// rc.addEntity(entity);
+		// this.buildShadowCamFrame();
 	}
 
 	private initSceneShadow(): void {
@@ -119,7 +121,6 @@ export class ShadowMaterialSysTest {
 	
 	private applyShadowReceiveDisp(shadowReceived = false): void {
 		let rc = this.mRscene;
-		console.log("applyShadowReceiveDisp() ...");
 		let position = new Vector3(0, -1, 0);
 		let materials = this.createMaterials(shadowReceived);
 		let plane = new PlaneEntity({
@@ -148,7 +149,7 @@ export class ShadowMaterialSysTest {
 	}
 	
 	private hdrEnvtex = new SpecularEnvBrnTexture();
-	private createBaseTextures(shadowReceived = false): WGTextureDataDescriptor[] {
+	private createBaseTextures(): WGTextureDataDescriptor[] {
 		const albedoTex = { albedo: { url: `static/assets/pbrtex/rough_plaster_broken_diff_1k.jpg` } };
 		const normalTex = { normal: { url: `static/assets/pbrtex/rough_plaster_broken_nor_1k.jpg` } };
 		const armTex = { arm: { url: `static/assets/pbrtex/rough_plaster_broken_arm_1k.jpg` } };
@@ -162,7 +163,7 @@ export class ShadowMaterialSysTest {
 	}
 	
 	private createMaterials(shadowReceived = false, uvParam?: number[]): BasePBRMaterial[] {
-		let textures0 = this.createBaseTextures(shadowReceived);
+		let textures0 = this.createBaseTextures();
 		
 		let material0 = this.createMaterial(textures0, ["solid"]);
 		this.applyMaterialPPt(material0, shadowReceived);
@@ -208,7 +209,7 @@ export class ShadowMaterialSysTest {
 		if(this.mFlag == 0) {
 			// mtpl.vsm.addEntities( this.mEntities );
 		}else if(this.mFlag == 1) {
-			this.initSceneShadow();
+			// this.initSceneShadow();
 		}
 	};
 	run(): void {
