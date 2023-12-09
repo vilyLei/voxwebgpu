@@ -54,7 +54,7 @@ fn getVSMShadowFactor(worldNormal: vec3<f32>, svPos: vec4<f32>) -> f32 {
     var f = clamp(dot(worldNormal,vsmParams[2].xyz),0.001,1.0);
     // shadow = f > 0.0001 ? min(shadow,clamp(f, shadowIntensity,1.0)) : shadowIntensity;
     if(f > 0.0001) {
-        shadow = min(shadow,clamp(f, shadowIntensity,1.0));
+        shadow = min(shadow,clamp(f, shadowIntensity, 1.0));
     }else {
         shadow = shadowIntensity;
     }

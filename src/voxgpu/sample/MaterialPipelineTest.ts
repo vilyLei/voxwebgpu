@@ -58,7 +58,6 @@ export class MaterialPipelineTest {
 		this.mEntities.push(sph);
 		rc.addEntity(sph);
 
-		///*
 		position = [10.0, 100.0, -180.0];
 		materials = this.createMaterials(true);
 		let box = new BoxEntity({
@@ -101,18 +100,6 @@ export class MaterialPipelineTest {
 		mtpl.vsm.addEntities( this.mEntities );
 
 		this.initSceneShadow();
-
-		// let graph = mtpl.vsm.passGraph;
-		// let extent = [-0.95, -0.95, 0.4, 0.4];
-		// let entity = new FixScreenPlaneEntity({ extent, flipY: true, textures: [{ diffuse: graph.shadowDepthRTT }] });
-		// rc.addEntity(entity);
-		// extent = [-0.5, -0.95, 0.4, 0.4];
-		// entity = new FixScreenPlaneEntity({ extent, flipY: true, textures: [{ diffuse: graph.occVRTT }] });
-		// rc.addEntity(entity);
-		// extent = [-0.05, -0.95, 0.4, 0.4];
-		// entity = new FixScreenPlaneEntity({ extent, flipY: true, textures: [{ diffuse: graph.occHRTT }] });
-		// rc.addEntity(entity);
-		// this.buildShadowCamFrame();
 	}
 
 	private initSceneShadow(): void {
@@ -132,16 +119,16 @@ export class MaterialPipelineTest {
 		rc.addEntity(plane);
 	}
 
-	private buildShadowCamFrame(): void {
-		let rc = this.mRscene;
-		let mtpl = rc.renderer.mtpl;
-		const graph = mtpl.vsm.passGraph;
-		const cam = graph.shadowCamera;
-		const rsc = this.mRscene;
-		let frameColors = [[1.0, 0.0, 1.0], [0.0, 1.0, 1.0], [1.0, 0.0, 0.0], [0.0, 1.0, 1.0]];
-		let boxFrame = new BoundsFrameEntity({ vertices8: cam.frustum.vertices, frameColors });
-		rsc.addEntity(boxFrame);
-	}
+	// private buildShadowCamFrame(): void {
+	// 	let rc = this.mRscene;
+	// 	let mtpl = rc.renderer.mtpl;
+	// 	const graph = mtpl.vsm.passGraph;
+	// 	const cam = graph.shadowCamera;
+	// 	const rsc = this.mRscene;
+	// 	let frameColors = [[1.0, 0.0, 1.0], [0.0, 1.0, 1.0], [1.0, 0.0, 0.0], [0.0, 1.0, 1.0]];
+	// 	let boxFrame = new BoundsFrameEntity({ vertices8: cam.frustum.vertices, frameColors });
+	// 	rsc.addEntity(boxFrame);
+	// }
 	private initEvent(): void {
 		const rc = this.mRscene;
 		rc.addEventListener(MouseEvent.MOUSE_DOWN, this.mouseDown);
@@ -165,7 +152,7 @@ export class MaterialPipelineTest {
 	private createMaterials(shadowReceived = false, uvParam?: number[]): BasePBRMaterial[] {
 		let textures0 = this.createBaseTextures();
 		
-		let material0 = this.createMaterial(textures0, ["solid"]);
+		let material0 = this.createMaterial(textures0);
 		this.applyMaterialPPt(material0, shadowReceived);
 
 		let list = [material0];
@@ -188,16 +175,12 @@ export class MaterialPipelineTest {
 		
 		property.shadowReceived = shadowReceived;
 	}
-	private createMaterial(textures: WGTextureDataDescriptor[], blendModes: string[], depthCompare = 'less', lightParam?: LightShaderDataParam): BasePBRMaterial {
+	private createMaterial(textures: WGTextureDataDescriptor[]): BasePBRMaterial {
 
 		let pipelineDefParam = {
-			depthWriteEnabled: true,
-			faceCullMode: 'back',
-			blendModes,
-			depthCompare
+			depthWriteEnabled: true
 		};
 		let material = new BasePBRMaterial({ pipelineDefParam });
-		material.setLightParam(lightParam);
 		material.addTextures(textures);
 		return material;
 	}
