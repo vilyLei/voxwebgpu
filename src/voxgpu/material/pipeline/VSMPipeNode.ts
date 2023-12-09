@@ -13,11 +13,12 @@ import { MtPlNode } from "./MtPlNode";
 
 import shadowDepthWGSL from "../shader/shadow/shadowDepth.wgsl";
 import Matrix4 from "../../math/Matrix4";
+import { WGTextureWrapper } from "../../texture/WGTextureWrapper";
 class ShadowPassGraph extends WGRPassNodeGraph {
 
     private entities: Entity3D[] = [];
     private mDepthMaterials: WGMaterial[];
-
+    material = new WGMaterial();
     shadowDepthRTT = { uuid: "rtt-shadow-depth", rttTexture: {}, shdVarName: 'shadowData' };
     depAttachment: WGRPassColorAttachment = {
         texture: this.shadowDepthRTT,
@@ -47,8 +48,8 @@ class ShadowPassGraph extends WGRPassNodeGraph {
         this.mVSMData = vsmData;
         this.mMatrixData = matrixData;
     }
-    get dataTextue(): WGTextureDataDescriptor {
-        return this.occHRTT;
+    get texture(): WGTextureWrapper {
+        return this.material.textures[0];
     }
     private initMaterial(): void {
         const shadowDepthShdSrc = {
@@ -159,6 +160,8 @@ class ShadowPassGraph extends WGRPassNodeGraph {
         this.occHEntity = new FixScreenPlaneEntity({ extent, materials: [material] });
         this.occHEntity.visible = false;
         pass.addEntity(this.occHEntity);
+
+        this.material.addTextures([this.occHRTT]);
     }
     run(): void {
 
@@ -201,6 +204,9 @@ class VSMPipeNode extends MtPlNode implements MtPlNodeImpl {
 
     passGraph = new ShadowPassGraph(this.vsm, this.matrix);
 
+    get texture(): WGTextureWrapper {
+        return this.passGraph.texture;
+    }
     merge(ls: WGRBufferData[]): void {
         let end = ls.length - 1;
         this.addTo(ls, this.vsm, 0, end);

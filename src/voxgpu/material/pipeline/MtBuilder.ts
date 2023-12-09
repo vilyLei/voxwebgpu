@@ -10,6 +10,9 @@ import { createNewWRGBufferViewUid } from "../../render/buffer/WGRBufferView";
 import { IRenderableEntity } from "../../render/IRenderableEntity";
 import { IWGRPassNodeBuilder } from "../../render/IWGRPassNodeBuilder";
 import { MtPlNodePool } from "./MtPlNodePool";
+import { VSMPipeNode } from "./VSMPipeNode";
+import { WGTextureDataDescriptor } from "../WGMaterial";
+import { WGTextureWrapper } from "../../texture/WGTextureWrapper";
 
 const bufValue = new WGRBufferValue({ shdVarName: 'mpl-bufValue' });
 
@@ -87,6 +90,12 @@ class MtBuilder {
                 let light = pool.getNodeByType(type);
                 light.merge(uvalues);
             }
+            if (ppt.shadowReceived === true) {
+                type = 'vsmShadow';
+                let vsm = pool.getNodeByType(type) as VSMPipeNode;
+                vsm.merge(uvalues);
+                utexes.push(this.getTexParam(vsm.texture));
+            }
         }
         if (uvalues && uvalues.length > 0) {
             for (let i = 0; i < uvalues.length; ++i) {
@@ -100,25 +109,40 @@ class MtBuilder {
         this.uvalues = uvalues;
         this.utexes = utexes;
     }
-
+    private getTexParam(texWrapper: WGTextureWrapper): WGRTexLayoutParam {
+        const tex = texWrapper.texture;
+        let dimension = tex.viewDimension;
+        if (!tex.view) {
+            tex.view = tex.texture.createView({ dimension });
+            tex.view.dimension = dimension;
+        }
+        return {
+            texView: tex.view,
+            viewDimension: tex.viewDimension,
+            shdVarName: tex.shdVarName,
+            multisampled: tex.data.multisampled
+        }
+        return null;
+    }
     private checkTextures(material: IWGMaterial, utexes: WGRTexLayoutParam[]): void {
         let texList = material.textures;
         if (texList && texList.length > 0) {
             for (let i = 0; i < texList.length; i++) {
-                const tex = texList[i].texture;
-                let dimension = tex.viewDimension;
-                if (!tex.view) {
-                    tex.view = tex.texture.createView({ dimension });
-                    tex.view.dimension = dimension;
-                }
-                utexes.push(
-                    {
-                        texView: tex.view,
-                        viewDimension: tex.viewDimension,
-                        shdVarName: tex.shdVarName,
-                        multisampled: tex.data.multisampled
-                    }
-                );
+                utexes.push(this.getTexParam( texList[i] ));
+                // const tex = texList[i].texture;
+                // let dimension = tex.viewDimension;
+                // if (!tex.view) {
+                //     tex.view = tex.texture.createView({ dimension });
+                //     tex.view.dimension = dimension;
+                // }
+                // utexes.push(
+                //     {
+                //         texView: tex.view,
+                //         viewDimension: tex.viewDimension,
+                //         shdVarName: tex.shdVarName,
+                //         multisampled: tex.data.multisampled
+                //     }
+                // );
             }
         }
     }
