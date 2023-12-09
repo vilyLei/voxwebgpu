@@ -87,20 +87,6 @@ class WGRObjBuilder {
 				}
 			}
 		}
-		// if (!builder.hasMaterial(material)) {
-		// 	if (!pctx) {
-		// 		if (!material.shaderSrc) {
-		// 			let pm = (material as IWGMaterial);
-		// 			if (pm.__$build) {
-		// 				let time = Date.now();
-		// 				pm.__$build();
-		// 				time = Date.now() - time;
-		// 				console.log("building material shader loss time: ", time);
-		// 			}
-		// 		}
-		// 		mtpl.checkShaderSrc(material.shaderSrc);
-		// 	}
-		// }
 		mtpl.checkShader( material );
 
 		let groupIndex = 0;
@@ -110,7 +96,7 @@ class WGRObjBuilder {
 		let uvalues: WGRBufferData[] = [];
 		let utexes: WGRTexLayoutParam[] = [];
 
-		mtpl.checkUniforms(material, uvalues);
+		mtpl.checkUniforms(material, uvalues, !isComputing);
 		mtpl.checkTextures(material, utexes);
 
 		let uniformFlag = (uvalues && uvalues.length > 0) || (utexes && utexes.length > 0);

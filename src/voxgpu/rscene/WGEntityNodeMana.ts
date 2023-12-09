@@ -42,10 +42,12 @@ class WGEntityNodeMana {
 		} else {
 			return false;
 		}
-		let g = entity.geometry;
-		if (!g || !g.isREnabled()) {
-			// console.log("aaa g.isREnabled(), !g: ", !g,', ', this.geometry);
-			return false;
+		if(!entity.isREnabled()) {
+			let g = entity.geometry;
+			if (!g || !g.isREnabled()) {
+				// console.log("aaa g.isREnabled(), !g: ", !g,', ', this.geometry);
+				return false;
+			}
 		}
 		return true;
 	}

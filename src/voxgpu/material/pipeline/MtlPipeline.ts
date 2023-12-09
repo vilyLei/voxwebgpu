@@ -66,33 +66,42 @@ class MtlPipeline {
     checkShader(material: IWGMaterial): void {
         const builder = this.builder;
         if (!builder.hasMaterial(material)) {
-			// if (!material.getRCtx()) {
-			if (!material.getRCtx()) {
-				if (!material.shaderSrc) {
-					let pm = (material as IWGMaterial);
-					if (pm.__$build) {
-						let time = Date.now();
-						pm.__$build();
-						time = Date.now() - time;
-						console.log("building material shader loss time: ", time);
-					}
-				}
-				this.checkShaderSrc(material.shaderSrc);
-			}
-		}
+            if (!material.getRCtx()) {
+                if (!material.shaderSrc) {
+                    let pm = (material as IWGMaterial);
+                    if (pm.__$build) {
+                        let time = Date.now();
+                        pm.__$build();
+                        time = Date.now() - time;
+                        console.log("building material shader loss time: ", time);
+                    }
+                }
+                this.checkShaderSrc(material.shaderSrc);
+            }
+        }
     }
-    checkUniforms(material: IWGMaterial, uvalues: WGRBufferData[]): void {
+    checkUniforms(material: IWGMaterial, uvalues: WGRBufferData[], sysFlag = true): void {
 
         const entity = this.entity;
-        if (entity.transform) {
-            uvalues.push(entity.transform.uniformv);
-        }
         const builder = this.builder;
         const cam = builder.camera;
-        if (entity.cameraViewing) {
-            uvalues.push(cam.viewUniformV);
-            uvalues.push(cam.projUniformV);
+        let exclueukeys = material.exclueukeys ? material.exclueukeys : [];
+        // if (sysFlag) {
+        // console.log("dfdggggggggfdfdfdf");
+        // let flag = !exclueukeys.indexOf('objMat');
+        // 检测这些关键对象是否会被真正的执行和调用
+        if (entity.transform && exclueukeys.indexOf('objMat') < 0) {
+            uvalues.push(entity.transform.uniformv);
         }
+        if (entity.cameraViewing) {
+
+            if (exclueukeys.indexOf('viewMat') < 0)
+                uvalues.push(cam.viewUniformV);
+
+            if (exclueukeys.indexOf('projMat') < 0)
+                uvalues.push(cam.projUniformV);
+        }
+        // }
         let ls = material.uniformValues;
         if (ls) {
             for (let i = 0; i < ls.length; i++) {
