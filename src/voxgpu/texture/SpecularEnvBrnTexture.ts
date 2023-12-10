@@ -1,11 +1,6 @@
 import { TextureDataDescriptor, WGTextureDataDescriptor } from "../texture/WGTextureDataDescriptor";
 import { HttpFileLoader } from "../asset/loader/HttpFileLoader";
-/**
-let tex = {
-			diffuse: { uuid: "cubeTexBrn", dataTexture: { datas: datas, width, height }, viewDimension: 'cube', format: "rgba8unorm", generateMipmaps: false }
-			// diffuse: { uuid: "texCubeBrn", viewDimension: "cube", dataTexture: { texture }, format: "rgba8unorm", generateMipmaps: false }
-		};
- */
+
 class SpecularEnvBrnTexture implements WGTextureDataDescriptor {
 	private mUrl = "static/bytes/spb.bin";
 	private mLoadInit = true;
@@ -53,7 +48,7 @@ class SpecularEnvBrnTexture implements WGTextureDataDescriptor {
 		let width = data16[4];
 		let height = data16[5];
 		let mipMapMaxLv = data16[6];
-		console.log("SpecularEnvBrnTexture, width: ", width, "height: ", height, "mipMapMaxLv: ", mipMapMaxLv);
+		// console.log("SpecularEnvBrnTexture, width: ", width, "height: ", height, "mipMapMaxLv: ", mipMapMaxLv);
 		let size = 0;
 		let bytes = currBytes.subarray(32);
 		let dataU8: Uint8Array;

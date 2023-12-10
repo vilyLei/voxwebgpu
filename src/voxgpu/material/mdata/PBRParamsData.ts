@@ -124,26 +124,6 @@ class PBRParamsVec4Data implements MaterialUniformDataImpl {
 			this.uvParam
 		];
 
-		/*
-		let pos = 0;
-		this.albedo.fromArray4(data, pos);
-		pos += 4;
-		this.fresnel.fromArray4(data, pos);
-		pos += 4;
-		this.toneParam.fromArray4(data, pos);
-		pos += 4;
-		this.param.fromArray4(data, pos);
-		pos += 4;
-		this.specularFactor.fromArray4(data, pos);
-		pos += 4;
-		this.arms.fromArray4(data, pos);
-		pos += 4;
-		this.armsBase.fromArray4(data, pos);
-		pos += 4;
-		this.ambient.fromArray4(data, pos);
-		pos += 4;
-		this.uvParam.fromArray4(data, pos);
-		//*/
 		let pos = 0;
 		for(let i = 0; i < this.mls.length; ++i) {
 			this.mls[i].fromArray4(data, pos);
@@ -157,26 +137,6 @@ class PBRParamsVec4Data implements MaterialUniformDataImpl {
 			this.mls[i].toArray4(data as NumberArrayType, pos);
 			pos += 4;
 		}
-		/*
-		let pos = 0;
-		this.albedo.toArray4(data as NumberArrayType, pos);
-		pos += 4;
-		this.fresnel.toArray4(data as NumberArrayType, pos);
-		pos += 4;
-		this.toneParam.toArray4(data as NumberArrayType, pos);
-		pos += 4;
-		this.param.toArray4(data as NumberArrayType, pos);
-		pos += 4;
-		this.specularFactor.toArray4(data as NumberArrayType, pos);
-		pos += 4;
-		this.arms.toArray4(data as NumberArrayType, pos);
-		pos += 4;
-		this.armsBase.toArray4(data as NumberArrayType, pos);
-		pos += 4;
-		this.ambient.toArray4(data as NumberArrayType, pos);
-		pos += 4;
-		this.uvParam.toArray4(data as NumberArrayType, pos);
-		//*/
 		this.version++;
 		this.storage.update();
 	}
