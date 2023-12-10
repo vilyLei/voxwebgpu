@@ -9,6 +9,7 @@ import { WGTextureDataDescriptor } from "../texture/WGTextureDataDescriptor";
 import { SphereEntity } from "../entity/SphereEntity";
 import { TorusEntity } from "../entity/TorusEntity";
 import { CubeEntity } from "../entity/CubeEntity";
+import { createLightData } from "./utils/lightUtil";
 
 export class FogTest {
 	private mRscene = new RendererScene();
@@ -23,15 +24,7 @@ export class FogTest {
 		this.initEvent();
 	}
 
-
 	private initScene(): void {
-		this.initEntities();
-	}
-	private initEntities(): void {
-
-		this.initTexDisp();
-	}
-	private initTexDisp(): void {
 		let rc = this.mRscene;
 
 		let textures0 = this.createBaseTextures();
@@ -111,7 +104,7 @@ export class FogTest {
 	private createMaterial(position: Vector3DataType, textures: WGTextureDataDescriptor[], faceCullMode = 'back', blendModes?: string[], depthCompare = 'less', lightParam?: LightShaderDataParam): BasePBRMaterial {
 
 		if (!lightParam) {
-			lightParam = this.createLightData(position);
+			lightParam = createLightData(position);
 		}
 		let pipelineDefParam = {
 			depthWriteEnabled: true,
@@ -156,44 +149,6 @@ export class FogTest {
 			emissiveTex
 		] as WGTextureDataDescriptor[];
 		return textures;
-	}
-	private createLightData(position: Vector3DataType): LightShaderDataParam {
-		let pos = new Vector3().setVector4(position);
-		let pv0 = pos.clone().addBy(new Vector3(0, 200, 0));
-		let pv1 = pos.clone().addBy(new Vector3(200, 0, 0));
-		let pv2 = pos.clone().addBy(new Vector3(0, 0, 200));
-		let pv3 = pos.clone().addBy(new Vector3(-200, 0, 0));
-		let pv4 = pos.clone().addBy(new Vector3(0, 0, -200));
-		let posList = [pv0, pv1, pv2, pv3, pv4];
-
-		let c0 = new Color4(0.1 + Math.random() * 13, 0.1 + Math.random() * 13, 0.0, 0.00002);
-		let c1 = new Color4(0.0, 0.1 + Math.random() * 13, 1.0, 0.00002);
-		let c2 = new Color4(0.0, 0.1 + Math.random() * 13, 0.1 + Math.random() * 13, 0.00002);
-		let c3 = new Color4(0.1 + Math.random() * 13, 1.0, 0.1 + Math.random() * 13, 0.00002);
-		let c4 = new Color4(0.5, 1.0, 0.1 + Math.random() * 13, 0.00002);
-
-		let colorList = [c0, c1, c2, c3, c4];
-
-		let pointLightsTotal = posList.length;
-
-		let j = 0;
-		let lightsData = new Float32Array(4 * pointLightsTotal);
-		let lightColorsData = new Float32Array(4 * pointLightsTotal);
-
-		for (let i = 0; i < lightsData.length;) {
-			const pv = posList[j];
-			pv.w = 0.00002;
-			pv.toArray4(lightsData, i);
-
-			const c = colorList[j];
-			c.toArray4(lightColorsData, i);
-
-			j++;
-			i += 4;
-		}
-		let param = { lights: lightsData, colors: lightColorsData, pointLightsTotal };
-		this.mLightParams.push(param);
-		return param;
 	}
 	private initEvent(): void {
 		const rc = this.mRscene;
