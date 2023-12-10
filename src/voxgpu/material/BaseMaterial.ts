@@ -12,17 +12,13 @@ import {
 	ArmsDataWrapper,
 	PBRParamsVec4Data,
 	ToneParamDataWrapper,
-	PBRParamDataWrapper,
-	FogDataWrapper
+	PBRParamDataWrapper
 
 } from "./mdata/PBRParamsData";
 import { MaterialProperty } from "./pipeline/MaterialProperty";
 
 class BasePBRProperty implements MaterialProperty {
-	// /**
-	//  * default values, fogParam: [600, 3500, 0, 0.0005], fogColor: [1, 1, 1, 1]
-	//  */
-	// private fogParams = new FogUniformData(new Float32Array([600, 3500, 0, 0.0005, 1, 1, 1, 1]), "fogParams", "frag");
+
 	/**
 	 * albedo: [1, 1, 1, 1],
 	 * fresnel: [0, 0, 0, 0],
@@ -41,20 +37,11 @@ class BasePBRProperty implements MaterialProperty {
 		0, 0, 0.07, 1,
 		1, 1, 1, 1,
 
-		// 600, 3500, 0, 0.0005,	// fogParam
-		// 1.0, 1.0, 1.0, 1.0,	// fogColor
 		1, 1, 1, 0,	// arms
 		0, 0, 0, 0, // armsBase
 		0.1, 0.1, 0.1, 1, // ambient
 		1, 1, 0, 0, // uvParam
 	]), "pbrParams", "frag");
-
-	// vsmParams = new VSMUniformData(null, "vsmParams", "frag");
-	// shadowMatrix = new MaterialUniformMat44Data(null, "shadowMatrix", "vert");
-
-	// lightParam = new LightParamData(new Uint32Array([1, 0, 0, 0]), "lightParam", "frag");
-	// lights = new BaseLightData(new Float32Array([0.0, 200.0, 0, 0.0001]), "lights", "frag");
-	// lightColors = new BaseLightData(new Float32Array([5.0, 5.0, 5.0, 0.0001]), "lightColors", "frag");
 
 	albedo: MaterialUniformColor4Wrapper;
 	fresnel: MaterialUniformColor4Wrapper;
@@ -95,11 +82,6 @@ class BasePBRProperty implements MaterialProperty {
 	}
 	constructor() {
 
-		
-		// let fogSrc = this.fogParams;
-		// this.fogParam = new FogDataWrapper(fogSrc.fogParam, fogSrc);
-		// this.fogColor = new MaterialUniformColor4Wrapper(fogSrc.fogColor, fogSrc);
-
 		let params = this.mPBRParams;
 		this.albedo = new MaterialUniformColor4Wrapper(params.albedo, params);
 		this.fresnel = new MaterialUniformColor4Wrapper(params.fresnel, params);
@@ -126,9 +108,6 @@ class BaseMaterial extends WGMaterial {
 		super(descriptor);
 	}
 	setDescriptor(descriptor: WGMaterialDescripter): void {
-		// if (!descriptor || descriptor.shaderSrc === undefined) {
-		// 	if (!descriptor) descriptor = { shadinguuid: "BaseMaterial" };
-		// }
 		super.setDescriptor(descriptor);
 		if (!this.pipeline) {
 			this.pipeline = { uid: 0 };
@@ -219,9 +198,8 @@ class BaseMaterial extends WGMaterial {
 		let shaderSrc = {
 			shaderSrc: { code: shaderCode, uuid }
 		}
-		this.shadinguuid = uuid + '-material';
+		this.shadinguuid = uuid + '-base-material';
 		this.shaderSrc = shaderSrc;
-		// this.shaderSrc = basePBRShaderSrc;
 	}
 }
 export { BaseMaterial };

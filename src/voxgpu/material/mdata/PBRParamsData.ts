@@ -12,6 +12,7 @@ import {
 import { FogDataWrapper } from "./FogDataWrapper";
 import { VSMUniformData } from "./VSMUniformData";
 import { LightShaderDataParam, LightParamData, BaseLightData } from "./LightUniformData";
+import { NumberArrayDataImpl } from "../../base/NumberArrayDataImpl";
 
 class BasePBRArmsData implements MaterialUniformDataImpl {
 	version = -1;
@@ -100,18 +101,30 @@ class PBRParamsVec4Data implements MaterialUniformDataImpl {
 	toneParam = new Vector3();
 	param = new Vector3();
 	specularFactor = new Color4();
-	// fogParam = new Vector3();
-	// fogColor = new Color4();
 	arms = new Arms();
 	armsBase = new Arms();
 	ambient = new Color4();
 	uvParam = new Vector3();
+	private mls: NumberArrayDataImpl[];
 	constructor(data: Float32Array, shdVarName: string, visibility?: string) {
 
 		this.storage = new MaterialUniformData(data, shdVarName, visibility);
 		this.storage.arraying = true;
 		this.storage.shdVarFormat = 'array<vec4<f32>>';
 
+		this.mls = [
+			this.albedo,
+			this.fresnel,
+			this.toneParam,
+			this.param,
+			this.specularFactor,
+			this.arms,
+			this.armsBase,
+			this.ambient,
+			this.uvParam
+		];
+
+		/*
 		let pos = 0;
 		this.albedo.fromArray4(data, pos);
 		pos += 4;
@@ -130,9 +143,21 @@ class PBRParamsVec4Data implements MaterialUniformDataImpl {
 		this.ambient.fromArray4(data, pos);
 		pos += 4;
 		this.uvParam.fromArray4(data, pos);
+		//*/
+		let pos = 0;
+		for(let i = 0; i < this.mls.length; ++i) {
+			this.mls[i].fromArray4(data, pos);
+			pos += 4;
+		}
 	}
 	update(): void {
 		const data = this.storage.data;
+		let pos = 0;
+		for(let i = 0; i < this.mls.length; ++i) {
+			this.mls[i].toArray4(data as NumberArrayType, pos);
+			pos += 4;
+		}
+		/*
 		let pos = 0;
 		this.albedo.toArray4(data as NumberArrayType, pos);
 		pos += 4;
@@ -151,6 +176,7 @@ class PBRParamsVec4Data implements MaterialUniformDataImpl {
 		this.ambient.toArray4(data as NumberArrayType, pos);
 		pos += 4;
 		this.uvParam.toArray4(data as NumberArrayType, pos);
+		//*/
 		this.version++;
 		this.storage.update();
 	}
