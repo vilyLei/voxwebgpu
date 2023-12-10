@@ -1,7 +1,6 @@
 import MouseEvent from "../event/MouseEvent";
 import { RendererScene } from "../rscene/RendererScene";
 import { MouseInteraction } from "../ui/MouseInteraction";
-import Vector3 from "../math/Vector3";
 import { BasePBRMaterial, LightShaderDataParam } from "../material/BasePBRMaterial";
 import { SpecularEnvBrnTexture } from "../texture/SpecularEnvBrnTexture";
 import { WGTextureDataDescriptor } from "../texture/WGTextureDataDescriptor";

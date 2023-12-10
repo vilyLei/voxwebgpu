@@ -3,6 +3,7 @@ import { VSMPipeNode } from "./VSMPipeNode";
 import { MtBuilder } from "./MtBuilder";
 import { MtPlNodePool } from "./MtPlNodePool";
 import { IWGMaterial } from "../IWGMaterial";
+import { FogPipeNode } from "./FogPipeNode";
 
 /**
  * material pipeline
@@ -12,6 +13,7 @@ class MtPipeline {
     private mPool = new MtPlNodePool();
     light: LightPipeNode;
     shadow: VSMPipeNode;
+    fog: FogPipeNode;
     readonly builder = new MtBuilder(this.mPool);
     constructor() { }
     initialize(): void {
@@ -23,9 +25,10 @@ class MtPipeline {
 
             let type = 'lighting';
             this.light = pool.getNodeByType(type) as LightPipeNode;
-
             type = 'vsmShadow';
             this.shadow = pool.getNodeByType(type) as VSMPipeNode;
+            type = 'fogging';
+            this.fog = pool.getNodeByType(type) as FogPipeNode;
         }
     }
     testRMaterials(ms: IWGMaterial[]): boolean {

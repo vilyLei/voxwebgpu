@@ -36,6 +36,7 @@ export class MaterialPipelineFog {
 
 		mtpl.light.data = createLightData([0, 300, 0], 600, 5.0);
 		mtpl.shadow.param.intensity = 0.7;
+		mtpl.fog.fogColor.value = [0.3, 0.7, 0.2];
 
 		let position = [-230.0, 100.0, -200.0];
 		let materials = this.createMaterials(true);
@@ -142,17 +143,18 @@ export class MaterialPipelineFog {
 		return list;
 	}
 	private applyMaterialPPt(material: BaseMaterial, shadowReceived = false, shadow = true): void {
-		let property = material.property;
-		property.ambient.value = [0.0, 0.2, 0.2];
-		property.albedo.value = [0.7, 0.7, 0.3];
-		property.arms.roughness = 0.8;
-		property.armsBase.value = [0, 0, 0];
-		property.param.scatterIntensity = 32;
+		let ppt = material.property;
+		ppt.ambient.value = [0.0, 0.2, 0.2];
+		ppt.albedo.value = [0.7, 0.7, 0.3];
+		ppt.arms.roughness = 0.8;
+		ppt.armsBase.value = [0, 0, 0];
+		ppt.param.scatterIntensity = 32;
 
-		property.shadow = shadow;
-		property.lighting = true;
+		ppt.shadow = shadow;
+		ppt.lighting = true;
 
-		property.shadowReceived = shadowReceived;
+		ppt.shadowReceived = shadowReceived;
+		ppt.fogExp2Enabled = true;
 	}
 	private createMaterial(textures: WGTextureDataDescriptor[], faceCullMode = 'back'): BaseMaterial {
 
