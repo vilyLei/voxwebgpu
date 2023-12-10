@@ -238,20 +238,28 @@ class WGShaderPredefine {
 		if (end0 < 0) {
 			end0 = src.length;
 		}
-		let end1 = src.indexOf(`\r`, begin + 1);
+		let end1 = src.indexOf(`\n`, begin + 1);
 		if (end1 < 0) {
 			end1 = src.length;
 		}
-		let end2 = src.indexOf(`\n`, begin + 1);
-		if(end2 > 0 && end2 < end1) {
-			end1 = end2;
-		}
-		end2 = src.lastIndexOf(`//`, end1 - 1,);
+		// let end2 = src.indexOf(`\n`, begin + 1);
+		// if(end2 > 0 && end2 < end1) {
+		// 	end1 = end2;
+		// }
+		// end2 = src.indexOf(`\t`, begin + 1);
+		// if(end2 > 0 && end2 < end1) {
+		// 	end1 = end2;
+		// }
+		let end2 = src.lastIndexOf(`//`, end1 - 1,);
 		if(end2 > 0 && end2 < end1) {
 			end1 = end2;
 		}
 
 		let lineStr = src.slice(index, end1);
+		let regex = new RegExp(`\r`, "g");
+		lineStr = lineStr.replace(regex, ' ');
+		regex = new RegExp(`\t`, "g");
+		lineStr = lineStr.replace(regex, '');
 		// console.log(">>> lineStr: ", lineStr);
 		let list = lineStr.split(' ');
 		// console.log("XXX A list: ", list);
