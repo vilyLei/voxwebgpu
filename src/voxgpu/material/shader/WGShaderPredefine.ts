@@ -44,8 +44,10 @@ class WGShaderPredefine {
 			// console.log('key: ', k);
 			// console.log('value: ', v);
 			if(v.value !== undefined) {
-				let regex = new RegExp(v.name, "g");
-				src = src.replace(regex, v.value + '');
+				if(src.indexOf(v.name) > 0) {
+					let regex = new RegExp(v.name, "g");
+					src = src.replace(regex, v.value + '');
+				}
 			}
 		}
 		return src;
