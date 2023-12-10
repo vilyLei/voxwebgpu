@@ -79,7 +79,7 @@ export class FogTest {
 	}
 	private createMaterials(position: Vector3DataType, textures: WGTextureDataDescriptor[], faceCullMode = 'back', uvParam?: number[]): BasePBRMaterial[] {
 
-		let material0 = this.createMaterial(position, textures, faceCullMode, ["solid"]);
+		let material0 = this.createMaterial(position, textures, faceCullMode);
 		let ppt = material0.property;
 		ppt.fogExp2Enabled = true;
 		ppt.fogColor.value = [0.3, 0.7, 0.2];
@@ -99,10 +99,9 @@ export class FogTest {
 		property.albedo.value = [0.7, 0.7, 0.3];
 		property.arms.roughness = 0.8;
 		property.armsBase.value = [0, 0, 0];
-		// property.uvParam.value = [2, 2];
 		property.param.scatterIntensity = 32;
 	}
-	private createMaterial(position: Vector3DataType, textures: WGTextureDataDescriptor[], faceCullMode = 'back', blendModes?: string[], depthCompare = 'less', lightParam?: LightShaderDataParam): BasePBRMaterial {
+	private createMaterial(position: Vector3DataType, textures: WGTextureDataDescriptor[], faceCullMode = 'back', depthCompare = 'less', lightParam?: LightShaderDataParam): BasePBRMaterial {
 
 		if (!lightParam) {
 			lightParam = createLightData(position);
@@ -110,7 +109,6 @@ export class FogTest {
 		let pipelineDefParam = {
 			depthWriteEnabled: true,
 			faceCullMode,
-			blendModes,
 			depthCompare
 		};
 		let material = new BasePBRMaterial({ pipelineDefParam });

@@ -3,27 +3,20 @@ import { WGMaterialDescripter, WGMaterial } from "./WGMaterial";
 import { WGShaderConstructor } from "./shader/WGShaderConstructor";
 
 import {
-	MaterialUniformMat44Data,
 	MaterialUniformVec4Wrapper,
 	MaterialUniformColor4Wrapper,
 	WGRBufferData
 } from "./mdata/MaterialUniformData";
 
 import {
-	BasePBRArmsData,
-	LightParamData,
 	ArmsDataWrapper,
 	PBRParamsVec4Data,
 	ToneParamDataWrapper,
 	PBRParamDataWrapper,
-	FogDataWrapper,
-	LightShaderDataParam,
-	VSMUniformData,
-	BaseLightData
+	FogDataWrapper
 
 } from "./mdata/PBRParamsData";
 import { MaterialProperty } from "./pipeline/MaterialProperty";
-import { FogUniformData } from "./mdata/FogUniformData";
 
 class BasePBRProperty implements MaterialProperty {
 	// /**
@@ -68,8 +61,6 @@ class BasePBRProperty implements MaterialProperty {
 	toneParam: ToneParamDataWrapper;
 	param: PBRParamDataWrapper;
 	specularFactor: MaterialUniformColor4Wrapper;
-	fogParam: FogDataWrapper;
-	fogColor: MaterialUniformColor4Wrapper;
 	ambient: MaterialUniformColor4Wrapper;
 	uvParam: MaterialUniformVec4Wrapper;
 
