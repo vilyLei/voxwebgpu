@@ -144,14 +144,14 @@ class WGShaderPredefine {
 		// console.log("parseChunk(), src: ");
 		// console.log(src);
 
-		let defNames = this.getChunkDefNames(src);
-		let defFlag = this.hasDefine(defNames[1]);
-		// console.log("parseChunk(), defNames: ", defNames, ', defFlag: ', defFlag);
-		if(defNames[0] === '#ifndef') {
-			defFlag = !defFlag;
-		}
+		// let defNames = this.getChunkDefNames(src);
+		// let defFlag = this.hasDefine(defNames[1]);
+		// // console.log("parseChunk(), defNames: ", defNames, ', defFlag: ', defFlag);
+		// if(defNames[0] === '#ifndef') {
+		// 	defFlag = !defFlag;
+		// }
 
-		// let defFlag = this.checkDefNames( src );
+		let defFlag = this.checkDefNames( src );
 
 		// if(param) {
 		// 	console.log("parseChunk(), param.elseI, param.endI: ", param.elseI);
@@ -226,21 +226,28 @@ class WGShaderPredefine {
 		if (end0 < 0) {
 			end0 = src.length;
 		}
-		let end1 = src.indexOf(`\n`, begin + 1);
+		let end1 = src.indexOf(`\r`, begin + 1);
 		if (end1 < 0) {
 			end1 = src.length;
 		}
-		let end2 = src.indexOf(`//`, begin + 1);
+		let end2 = src.indexOf(`\n`, begin + 1);
+		if(end2 > 0 && end2 < end1) {
+			end1 = end2;
+		}
+		end2 = src.lastIndexOf(`//`, end1 - 1,);
 		if(end2 > 0 && end2 < end1) {
 			end1 = end2;
 		}
 
 		let lineStr = src.slice(index, end1);
-		console.log(">>> lineStr: ", lineStr);
+		// console.log(">>> lineStr: ", lineStr);
+		let list = lineStr.split(' ');
+		// console.log("XXX A list: ", list);
 		// let end = Math.min(end0, end1);
 		// let defineName = src.slice(begin + 1, end).trim();
-		// return [src.slice(index, begin).trim(), defineName];
-		return lineStr.split(' ');
+		// list = [src.slice(index, begin).trim(), defineName];
+		// console.log("XXX B list: ", list);
+		return list;
 	}
 }
 export { WGShaderPredefine };
