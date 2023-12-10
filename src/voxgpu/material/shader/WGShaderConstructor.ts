@@ -86,7 +86,10 @@ AAAAAAAAAA 04
 let testStr4 =
 `
 #if SPOT_LIGHTS_TOTAL > 0//the same like it
-###### use Light
+// ###### use Light
+for(int i = 0; i < SPOT_LIGHTS_TOTAL; ++i) {
+
+}
 #endif
 AAAAAAAAAA 01 begin
 #ifdef VOX_BURLEY
@@ -148,7 +151,7 @@ class WGShaderConstructor extends WGShdCodeCtor {
 		#define VOX_BURLEY
 		#define VOX_WOOL
 		#define VOX_DOLL
-		#define SPOT_LIGHTS_TOTAL 0
+		#define SPOT_LIGHTS_TOTAL 3
 		`;
 		// let isCommentLine = codeLineCommentTest(testStr2);
 		// console.log('isCommentLine: ', isCommentLine);
@@ -163,6 +166,7 @@ class WGShaderConstructor extends WGShdCodeCtor {
 		// console.log(testStr3);
 		let clearnSrc = preDef.applyPredefine(testStr4);
 		// let clearnSrc = preDef.applyPredefine(testStr5);
+		clearnSrc = preDef.defineValueReplace( clearnSrc );
 		console.log("\n###### clearnSrc:");
 		console.log(clearnSrc);
 		// console.log("\n###### clearnSrc:");
@@ -196,15 +200,17 @@ class WGShaderConstructor extends WGShdCodeCtor {
 		
 		vertWGSL = preDef.applyPredefine(vertWGSL);
 		vertWGSL = this.parseInclude(vertWGSL);
+		vertWGSL = preDef.defineValueReplace( vertWGSL );
 		// console.log("\n###### vertWGSL:");
 		// console.log(vertWGSL);
 
 		let fragWGSL = baseFragWGSL;
 		fragWGSL = preDef.applyPredefine(fragWGSL);
-		console.log("\n###### fragWGSL:");
-		console.log(fragWGSL);
+		// console.log("\n###### fragWGSL:");
+		// console.log(fragWGSL);
 		fragWGSL = this.parseInclude(fragWGSL);
 		fragWGSL = preDef.applyPredefine(fragWGSL);
+		fragWGSL = preDef.defineValueReplace( fragWGSL );
 		// console.log("\n###### fragWGSL:");
 		// console.log(fragWGSL);
 		let code = vertWGSL + fragWGSL;
