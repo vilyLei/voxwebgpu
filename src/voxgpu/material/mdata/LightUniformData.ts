@@ -45,6 +45,15 @@ class LightParamData extends MaterialUniformVec4Data {
 		super(data, shdVarName, visibility);
 		this.shdVarFormat = 'vec4<u32>';
 	}
+	get pointLightsNum(): number {
+		return (this.data as Uint32Array)[0];
+	}
+	get directionLightsNum(): number {
+		return (this.data as Uint32Array)[1];
+	}
+	get spotLightsNum(): number {
+		return (this.data as Uint32Array)[2];
+	}
 	set param(param: LightShaderDataParam) {
 		if (param) {
 			if (param.pointLightsTotal !== undefined) {

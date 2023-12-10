@@ -14,6 +14,7 @@ import { VSMPipeNode } from "./VSMPipeNode";
 import { WGTextureDataDescriptor } from "../WGMaterial";
 import { WGTextureWrapper } from "../../texture/WGTextureWrapper";
 import { FogPipeNode } from "./FogPipeNode";
+import { LightPipeNode } from "./LightPipeNode";
 
 const bufValue = new WGRBufferValue({ shdVarName: 'mpl-bufValue' });
 
@@ -23,6 +24,7 @@ const bufValue = new WGRBufferValue({ shdVarName: 'mpl-bufValue' });
 class MtBuilder {
     private mInit = true;
     private mPool: MtPlNodePool;
+    private mPredef = '';
     uvalues: WGRBufferData[];
     utexes: WGRTexLayoutParam[];
 
@@ -31,6 +33,9 @@ class MtBuilder {
     enabled = false;
     constructor(pool: MtPlNodePool) {
         this.mPool = pool;
+    }
+    reset(): void {
+        this.mPredef = '';
     }
     initialize(): void {
         if (this.mInit) {
@@ -46,7 +51,7 @@ class MtBuilder {
                     let pm = (material as IWGMaterial);
                     if (pm.__$build) {
                         let time = Date.now();
-                        pm.__$build();
+                        pm.__$build(this.mPredef);
                         time = Date.now() - time;
                         console.log("building material shader loss time: ", time);
                     }
@@ -90,8 +95,18 @@ class MtBuilder {
 
                 if (ppt.lighting === true) {
                     type = 'lighting';
-                    let light = pool.getNodeByType(type);
+                    let light = pool.getNodeByType(type) as LightPipeNode;
                     light.merge(uvalues);
+                    let param = light.lightParam;
+                    if (param.pointLightsNum > 0) {
+                        this.mPredef += `#define USE_POINT_LIGHTS_TOTAL ${param.pointLightsNum}\n`;
+                    }
+                    if (param.directLightsTotal > 0) {
+                        this.mPredef += `#define USE_DIRECTION_LIGHTS_TOTAL ${param.directLightsTotal}\n`;
+                    }
+                    if (param.spotLightsNum > 0) {
+                        this.mPredef += `#define USE_SPOT_LIGHTS_TOTAL ${param.spotLightsNum}\n`;
+                    }
                 }
                 if (ppt.shadowReceived === true) {
                     type = 'vsmShadow';

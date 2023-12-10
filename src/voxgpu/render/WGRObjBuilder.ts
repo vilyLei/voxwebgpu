@@ -52,6 +52,7 @@ class WGRObjBuilder {
 		
 		let mtpl = this.mtpl;
 		let mtb = mtpl.builder;
+		mtb.reset();
 		mtb.enabled = material.pipeline !== undefined;
 		mtb.builder = builder;
 		mtb.entity = entity;
