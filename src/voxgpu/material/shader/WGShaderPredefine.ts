@@ -41,8 +41,8 @@ class WGShaderPredefine {
 	defineValueReplace(src: string): string {
 		let dict = this.preVarDict;
 		for(var [k,v] of dict) {
-			console.log('key: ', k);
-			console.log('value: ', v);
+			// console.log('key: ', k);
+			// console.log('value: ', v);
 			if(v.value !== undefined) {
 				let regex = new RegExp(v.name, "g");
 				src = src.replace(regex, v.value + '');
