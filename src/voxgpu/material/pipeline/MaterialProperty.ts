@@ -6,4 +6,5 @@ export interface MaterialProperty {
     shadow?: boolean;
     shadowReceived?: boolean;
 	lighting?: boolean;
+	fogging?: boolean;
 }

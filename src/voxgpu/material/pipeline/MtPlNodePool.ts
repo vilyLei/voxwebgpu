@@ -1,11 +1,12 @@
 import { MtPlNodeImpl } from "./MtPlNodeImpl";
 import { LightPipeNode } from "./LightPipeNode";
 import { VSMPipeNode } from "./VSMPipeNode";
+import { FogPipeNode } from "./FogPipeNode";
 
 export class MtPlNodePool {
     pool: Map<string, MtPlNodeImpl> = new Map();
     addNode(node: MtPlNodeImpl): void {
-        if (node) {
+        if (node && !this.pool.has(node.type)) {
             this.pool.set(node.type, node);
         }
     }
@@ -21,5 +22,8 @@ export class MtPlNodePool {
 
         let vsmNode = new VSMPipeNode();
         this.addNode(vsmNode);
+
+        let fogNode = new FogPipeNode();
+        this.addNode(fogNode);
     }
 }

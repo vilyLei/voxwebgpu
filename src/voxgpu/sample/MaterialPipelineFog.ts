@@ -9,6 +9,7 @@ import { createLightData } from "./utils/lightUtil";
 import { BaseMaterial } from "../material/BaseMaterial";
 import { BoxEntity } from "../entity/BoxEntity";
 import { TorusEntity } from "../entity/TorusEntity";
+import { CubeEntity } from "../entity/CubeEntity";
 
 export class MaterialPipelineFog {
 	private mRscene = new RendererScene();
@@ -91,6 +92,18 @@ export class MaterialPipelineFog {
 			transform: { position }
 		});
 		rc.addEntity(plane);
+
+		position = [0, 0, 0];
+		materials = this.createMaterials(false, false, 'front');
+		let envBox = new CubeEntity(
+			{
+				cubeSize: 2050.0,
+				normalScale: -1.0,
+				materials,
+				transform: { position }
+			}
+		);
+		rc.addEntity(envBox);
 	}
 
 
@@ -114,10 +127,10 @@ export class MaterialPipelineFog {
 		return textures;
 	}
 
-	private createMaterials(shadowReceived = false, shadow = true, uvParam?: number[]): BaseMaterial[] {
+	private createMaterials(shadowReceived = false, shadow = true, faceCullMode = 'back', uvParam?: number[]): BaseMaterial[] {
 		let textures0 = this.createBaseTextures();
 
-		let material0 = this.createMaterial(textures0);
+		let material0 = this.createMaterial(textures0, faceCullMode);
 		this.applyMaterialPPt(material0, shadowReceived, shadow);
 
 		let list = [material0];
@@ -141,10 +154,11 @@ export class MaterialPipelineFog {
 
 		property.shadowReceived = shadowReceived;
 	}
-	private createMaterial(textures: WGTextureDataDescriptor[]): BaseMaterial {
+	private createMaterial(textures: WGTextureDataDescriptor[], faceCullMode = 'back'): BaseMaterial {
 
 		let pipelineDefParam = {
-			depthWriteEnabled: true
+			depthWriteEnabled: true,
+			faceCullMode,
 		};
 		let material = new BaseMaterial({ pipelineDefParam });
 		material.addTextures(textures);

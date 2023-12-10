@@ -13,6 +13,7 @@ import { MtPlNodePool } from "./MtPlNodePool";
 import { VSMPipeNode } from "./VSMPipeNode";
 import { WGTextureDataDescriptor } from "../WGMaterial";
 import { WGTextureWrapper } from "../../texture/WGTextureWrapper";
+import { FogPipeNode } from "./FogPipeNode";
 
 const bufValue = new WGRBufferValue({ shdVarName: 'mpl-bufValue' });
 
@@ -97,6 +98,11 @@ class MtBuilder {
                     let vsm = pool.getNodeByType(type) as VSMPipeNode;
                     vsm.merge(uvalues);
                     utexes.push(this.getTexParam(vsm.texture));
+                }
+                if (ppt.fogging === true) {
+                    type = 'fogging';
+                    let fog = pool.getNodeByType(type) as FogPipeNode;
+                    fog.merge(uvalues);
                 }
             }
         }

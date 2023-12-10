@@ -213,7 +213,7 @@ class ShadowPassGraph extends WGRPassNodeGraph {
 class VSMPipeNode extends MtPlNode implements MtPlNodeImpl {
 
     type = 'vsmShadow';
-    macro = 'USE_VSM_SHADOW';
+    macros = ['USE_VSM_SHADOW'];
 
     param = new VSMUniformData(null, "vsmParams", "frag");
     /**
@@ -227,7 +227,6 @@ class VSMPipeNode extends MtPlNode implements MtPlNodeImpl {
         this.passGraph.initialize(rc);
     }
     addEntity(entity: Entity3D): void {
-
         this.passGraph.addEntity(entity);
     }
     addEntities(entities: Entity3D[]): void {

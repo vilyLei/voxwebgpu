@@ -4,7 +4,7 @@ import { WGRBufferData } from "../mdata/MaterialUniformData";
  */
 export interface MtPlNodeImpl {
     type: string;
-    macro: string;
+    macros: string[];
     merge(ls: WGRBufferData[]): void;
     getDataList(): WGRBufferData[];
     isEnabled(): boolean;

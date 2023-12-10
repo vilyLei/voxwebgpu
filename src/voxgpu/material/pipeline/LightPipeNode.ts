@@ -7,7 +7,7 @@ class LightPipeNode extends MtPlNode implements MtPlNodeImpl {
     private param: LightShaderDataParam;
 
     type = 'lighting';
-    macro = 'USE_LIGHT';
+    macros = ['USE_LIGHT'];
     lightParam = new LightParamData(new Uint32Array([1, 0, 0, 0]), "lightParam", "frag");
     lights = new BaseLightData(new Float32Array([0.0, 200.0, 0, 0.0001]), "lights", "frag");
     lightColors = new BaseLightData(new Float32Array([5.0, 5.0, 5.0, 0.0001]), "lightColors", "frag");

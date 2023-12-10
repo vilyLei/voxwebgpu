@@ -37,7 +37,7 @@ export class FogTest {
 		let materials = this.createMaterials(position, textures0, 'front');
 		let box = new CubeEntity(
 			{
-				cubeSize: 1550.0,
+				cubeSize: 1850.0,
 				normalScale: -1.0,
 				materials,
 				transform: { position }
