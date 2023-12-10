@@ -70,7 +70,7 @@ export class MultiLightsTest {
 
 		let mtpl = rc.renderer.mtpl;
 
-		mtpl.light.data = createLightData([0, 300, 0], 600, 5.0);
+		mtpl.light.data = createLightData([0, 300, 0], 600, 2);
 		mtpl.shadow.param.intensity = 0.7;
 		mtpl.fog.fogColor.value = [0.3, 0.7, 0.2];
 
@@ -85,7 +85,7 @@ export class MultiLightsTest {
 		);
 		rc.addEntity(sphere);
 
-		position =  [0, 50, -180];
+		position = [0, 50, -180];
 		materials = this.createMaterials(true, true, 'back', [4, 1]);
 		let torus = new TorusEntity({
 			axisType: 1,
@@ -94,9 +94,9 @@ export class MultiLightsTest {
 		});
 		rc.addEntity(torus);
 
-		
+
 		position = [0, -110, 0];
-		materials = this.createMaterials(true, false, 'back',[3,3]);
+		materials = this.createMaterials(true, false, 'back', [3, 3]);
 		let plane = new PlaneEntity({
 			axisType: 1,
 			materials,
@@ -150,14 +150,14 @@ export class MultiLightsTest {
 		ppt.arms.roughness = 0.8;
 		ppt.armsBase.value = [0, 0, 0];
 		ppt.param.scatterIntensity = 32;
-		
+
 		ppt.shadow = shadow;
 		ppt.lighting = true;
 
 		ppt.shadowReceived = shadowReceived;
 		ppt.exp2Fogging = true;
 	}
-	private createMaterial(textures: WGTextureDataDescriptor[], blendModes: string[], depthCompare = 'less', faceCullMode = 'back' ): BaseMaterial {
+	private createMaterial(textures: WGTextureDataDescriptor[], blendModes: string[], depthCompare = 'less', faceCullMode = 'back'): BaseMaterial {
 
 		let pipelineDefParam = {
 			depthWriteEnabled: true,

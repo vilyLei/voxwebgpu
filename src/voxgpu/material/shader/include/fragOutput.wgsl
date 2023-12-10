@@ -159,7 +159,6 @@ fn calcColor4(calcParam: CalcColor4Param) -> vec4<f32> {
 	#endif
 	specularColor = fresnelSchlick3(specularColor, dotNV, 0.25 * reflectionIntensity) * specularEnvColor3;
 
-	var rL: RadianceLight;
 
 	let frontIntensity = toneParam.z;
     var sideIntensity = toneParam.w;
@@ -169,6 +168,7 @@ fn calcColor4(calcParam: CalcColor4Param) -> vec4<f32> {
 	let sColor0 = specularColor;
 
 	#ifdef USE_LIGHT
+	var rL: RadianceLight;
 	rL.scatterIntensity = param.www;
     rL.F0 = F0;
     rL.specularColor = specularColor;
@@ -181,12 +181,12 @@ fn calcColor4(calcParam: CalcColor4Param) -> vec4<f32> {
 
 	let ptr_rL = &rL;
 
-	let pointsTotal = min(lightParam.x, u32(128));
-	//arrayLength(&lights);
 
 	var light: vec4<f32>;
 	var lightColor: vec4<f32>;
 	var factor: f32 = 1.0;
+	
+	let pointsTotal = min(lightParam.x, u32(128));
 	for(var i: u32  = u32(0); i < pointsTotal; i++) {
 		// calculate per-light radiance
 		light = lights[i];

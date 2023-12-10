@@ -19,6 +19,9 @@ class WGShaderPredefine {
 	reset(): void {
 		this.preVarDict.clear();
 	}
+	getDefItem(ns: string): PreDefItem {
+		return this.preVarDict.get(ns);
+	}
 	hasDefine(ns: string): boolean {
 		return this.preVarDict.has(ns);
 	}
@@ -39,7 +42,6 @@ class WGShaderPredefine {
 		let keyStr = "#define ";
 
 		// 第一步, 去除注释, 然后再接着处理
-
 		let index = src.indexOf(keyStr);
 		for (; index >= 0;) {
 			let begin = src.indexOf(" ", index + 1);
@@ -141,12 +143,16 @@ class WGShaderPredefine {
 		// console.log('parseChunk() ############### XXXXXXXXXXXXX');
 		// console.log("parseChunk(), src: ");
 		// console.log(src);
+
 		let defNames = this.getChunkDefNames(src);
 		let defFlag = this.hasDefine(defNames[1]);
 		// console.log("parseChunk(), defNames: ", defNames, ', defFlag: ', defFlag);
 		if(defNames[0] === '#ifndef') {
 			defFlag = !defFlag;
 		}
+
+		// let defFlag = this.checkDefNames( src );
+
 		// if(param) {
 		// 	console.log("parseChunk(), param.elseI, param.endI: ", param.elseI);
 		// }
@@ -178,8 +184,42 @@ class WGShaderPredefine {
 		// console.log('parseChunk() end, src: ', src);
 		return src;
 	}
+	// private parseOpCode(value: number, operator: string): boolean {
+	// }
+	private checkDefNames(src: string): boolean {
+		let defNames = this.getChunkDefNames(src);
+		let defOp = defNames[0];
+		let ns = defNames[1];
+		let defFlag = this.hasDefine(ns);
+		// console.log("checkDefNames(), defNames: ", defNames, ', defFlag: ', defFlag);
+		if( defFlag ) {
+			switch(defOp) {
+				case '#ifndef':
+					defFlag = !defFlag;
+					break;
+				case '#if':
+					let defItem = this.getDefItem(ns);
+					// let value = Number(defItem.value);
+					var opsFlag = false;
+					// console.log("checkDefNames(), A opsFlag: ", opsFlag);
+					let opsStr = 'opsFlag = ' + defItem.value + ' '+ defNames[2] + ' ' + defNames[3] + ';';
+					eval(opsStr);
+					// console.log("checkDefNames(), opsStr: ", opsStr);
+					// console.log("checkDefNames(), B opsFlag: ", opsFlag);
+					defFlag = opsFlag;
+					break;
+				default:
+					break;
+			}
+		}else {
+			if(defOp === '#ifndef') {
+				defFlag = !defFlag;
+			}
+		}
+		return defFlag;
+	}
 	private getChunkDefNames(src: string): string[] {
-		// let keyDef = "#ifdef";
+		
 		let index = 0;
 		let begin = src.indexOf(" ", index + 1);
 		let end0 = src.indexOf(" ", begin + 1);
@@ -190,9 +230,17 @@ class WGShaderPredefine {
 		if (end1 < 0) {
 			end1 = src.length;
 		}
-		let end = Math.min(end0, end1);
-		let defineName = src.slice(begin + 1, end).trim();
-		return [src.slice(index, begin).trim(), defineName];
+		let end2 = src.indexOf(`//`, begin + 1);
+		if(end2 > 0 && end2 < end1) {
+			end1 = end2;
+		}
+
+		let lineStr = src.slice(index, end1);
+		console.log(">>> lineStr: ", lineStr);
+		// let end = Math.min(end0, end1);
+		// let defineName = src.slice(begin + 1, end).trim();
+		// return [src.slice(index, begin).trim(), defineName];
+		return lineStr.split(' ');
 	}
 }
 export { WGShaderPredefine };

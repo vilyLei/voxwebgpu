@@ -85,6 +85,9 @@ AAAAAAAAAA 04
 
 let testStr4 =
 `
+#if SPOT_LIGHTS_TOTAL > 0//the same like it
+###### use Light
+#endif
 AAAAAAAAAA 01 begin
 #ifdef VOX_BURLEY
 #ifdef VOX_WOOL
@@ -145,6 +148,7 @@ class WGShaderConstructor extends WGShdCodeCtor {
 		#define VOX_BURLEY
 		#define VOX_WOOL
 		#define VOX_DOLL
+		#define SPOT_LIGHTS_TOTAL 0
 		`;
 		// let isCommentLine = codeLineCommentTest(testStr2);
 		// console.log('isCommentLine: ', isCommentLine);
