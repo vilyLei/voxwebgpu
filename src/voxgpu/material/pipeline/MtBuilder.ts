@@ -126,6 +126,22 @@ class MtBuilder {
 		if (ppt.lighting) {
 			preCode += '#define USE_LIGHT\n';
 		}
+        let type = '';
+        let pool = this.mPool;
+        if (ppt.lighting === true) {
+            type = 'lighting';
+            let light = pool.getNodeByType(type) as LightPipeNode;
+            let param = light.lightParam;
+            if (param.pointLightsNum > 0) {
+                preCode += `#define USE_POINT_LIGHTS_TOTAL ${param.pointLightsNum}\n`;
+            }
+            if (param.directLightsTotal > 0) {
+                preCode += `#define USE_DIRECTION_LIGHTS_TOTAL ${param.directLightsTotal}\n`;
+            }
+            if (param.spotLightsNum > 0) {
+                preCode += `#define USE_SPOT_LIGHTS_TOTAL ${param.spotLightsNum}\n`;
+            }
+        }
 		if (ts) {
 			for (let i = 0; i < ts.length; ++i) {
 				// console.log('ts[i].texture.shdVarName: ', ts[i].texture.shdVarName);
@@ -232,16 +248,16 @@ class MtBuilder {
                     type = 'lighting';
                     let light = pool.getNodeByType(type) as LightPipeNode;
                     light.merge(uvalues);
-                    let param = light.lightParam;
-                    if (param.pointLightsNum > 0) {
-                        this.mPreDef += `#define USE_POINT_LIGHTS_TOTAL ${param.pointLightsNum}\n`;
-                    }
-                    if (param.directLightsTotal > 0) {
-                        this.mPreDef += `#define USE_DIRECTION_LIGHTS_TOTAL ${param.directLightsTotal}\n`;
-                    }
-                    if (param.spotLightsNum > 0) {
-                        this.mPreDef += `#define USE_SPOT_LIGHTS_TOTAL ${param.spotLightsNum}\n`;
-                    }
+                    // let param = light.lightParam;
+                    // if (param.pointLightsNum > 0) {
+                    //     this.mPreDef += `#define USE_POINT_LIGHTS_TOTAL ${param.pointLightsNum}\n`;
+                    // }
+                    // if (param.directLightsTotal > 0) {
+                    //     this.mPreDef += `#define USE_DIRECTION_LIGHTS_TOTAL ${param.directLightsTotal}\n`;
+                    // }
+                    // if (param.spotLightsNum > 0) {
+                    //     this.mPreDef += `#define USE_SPOT_LIGHTS_TOTAL ${param.spotLightsNum}\n`;
+                    // }
                 }
                 if (ppt.shadowReceived === true) {
                     type = 'vsmShadow';
