@@ -105,7 +105,7 @@ class BasePBRProperty implements MaterialProperty {
 		let ppt = this;
 		let uk = '';
 		if (ppt.glossiness) {
-			uk += '-GLOSSINESS 1';
+			uk += '-GLOSSINESS';
 		}
 		if (ppt.toneMapping) {
 			uk += '-TONE_MAPPING';
@@ -126,7 +126,7 @@ class BasePBRProperty implements MaterialProperty {
 		let ppt = this;
 		let preCode = '';
 		if (ppt.glossiness) {
-			preCode += '#define USE_GLOSSINESS 1\n';
+			preCode += '#define USE_GLOSSINESS\n';
 		}
 		if (ppt.toneMapping) {
 			preCode += '#define USE_TONE_MAPPING\n';
@@ -151,12 +151,11 @@ class BaseMaterial extends WGMaterial {
 		super(descriptor);
 	}
 	setDescriptor(descriptor: WGMaterialDescripter): void {
-		if(descriptor) {
-			if(descriptor.shadinguuid === undefined) {
-				descriptor.shadinguuid = "base-material";
-			}
-		}else {
-			descriptor = {shadinguuid: "base-material"};
+		if(!descriptor) {
+			descriptor = {};
+		}
+		if(descriptor.shadinguuid === undefined) {
+			descriptor.shadinguuid = "base-material";
 		}
 		super.setDescriptor(descriptor);
 		if (!this.pipeline) {
