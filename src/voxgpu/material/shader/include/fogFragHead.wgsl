@@ -2,7 +2,7 @@
     
     #ifdef USE_FOG_COLOR_MAP
         fn getFogColorFromTexture2D(calcParam: CalcColor4Param) -> vec4<f32> {
-            return textureSample(fogColorTexture, fogColorSampler, (pbrParams[7].xy + calcParam.worldPos.xz) / pbrParams[7].zw);
+            return textureSample(fogColorTexture, fogColorSampler, (fogParams[2].xy + calcParam.worldPos.xz) / fogParams[2].zw);
         }
     #endif
     fn useFog(color: ptr<function, vec4<f32>>, calcParam: CalcColor4Param) {
@@ -11,18 +11,18 @@
             fogEnvColor = getFogColorFromTexture2D();
         #endif
         let fogDepth = -calcParam.viewPos.z;
-        var fogColor = pbrParams[6].xyz;
+        var fogColor = fogParams[1].xyz;
         
         var c4 = *color;
         #ifdef USE_FOG_COLOR_MAP
             fogColor *= fogEnvColor;
         #endif
         #ifdef USE_FOG_EXP2
-            let fogDensity = pbrParams[5].w;
+            let fogDensity = fogParams[0].w;
             let fogFactor = 1.0 - exp( - fogDensity * fogDensity * fogDepth * fogDepth );
         #else
-            let fogNear = pbrParams[5].x;
-            let fogFar = pbrParams[5].y;
+            let fogNear = fogParams[0].x;
+            let fogFar = fogParams[0].y;
             let fogFactor = smoothstep( fogNear, fogFar, fogDepth );
         #endif
         #ifdef USE_BRIGHTNESS_OVERLAY_COLOR

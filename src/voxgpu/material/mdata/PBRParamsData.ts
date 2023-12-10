@@ -87,8 +87,10 @@ class ArmsDataWrapper {
  * toneParam: [1, 0.1, 1, 1],
  * param: [0, 0, 0.07, 1],
  * specularFactor: [1,1,1, 1],
- * fogParam: [600, 3500, 0, 0.0005],
- * fogColor: [1.0, 1.0, 1.0, 1.0],
+ * arms: [1,1,1,1],
+ * armsBase: [0,0,0,0],
+ * ambient: [0.1,0.1,0.1,1],
+ * uvParam: [1,1,0,0],
  */
 class PBRParamsVec4Data implements MaterialUniformDataImpl {
 	version = -1;
@@ -98,8 +100,10 @@ class PBRParamsVec4Data implements MaterialUniformDataImpl {
 	toneParam = new Vector3();
 	param = new Vector3();
 	specularFactor = new Color4();
-	fogParam = new Vector3();
-	fogColor = new Color4();
+	// fogParam = new Vector3();
+	// fogColor = new Color4();
+	arms = new Arms();
+	armsBase = new Arms();
 	ambient = new Color4();
 	uvParam = new Vector3();
 	constructor(data: Float32Array, shdVarName: string, visibility?: string) {
@@ -119,9 +123,9 @@ class PBRParamsVec4Data implements MaterialUniformDataImpl {
 		pos += 4;
 		this.specularFactor.fromArray4(data, pos);
 		pos += 4;
-		this.fogParam.fromArray4(data, pos);
+		this.arms.fromArray4(data, pos);
 		pos += 4;
-		this.fogColor.fromArray4(data, pos);
+		this.armsBase.fromArray4(data, pos);
 		pos += 4;
 		this.ambient.fromArray4(data, pos);
 		pos += 4;
@@ -140,9 +144,9 @@ class PBRParamsVec4Data implements MaterialUniformDataImpl {
 		pos += 4;
 		this.specularFactor.toArray4(data as NumberArrayType, pos);
 		pos += 4;
-		this.fogParam.toArray4(data as NumberArrayType, pos);
+		this.arms.toArray4(data as NumberArrayType, pos);
 		pos += 4;
-		this.fogColor.toArray4(data as NumberArrayType, pos);
+		this.armsBase.toArray4(data as NumberArrayType, pos);
 		pos += 4;
 		this.ambient.toArray4(data as NumberArrayType, pos);
 		pos += 4;

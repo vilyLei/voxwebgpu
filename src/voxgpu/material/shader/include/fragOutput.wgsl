@@ -67,8 +67,8 @@ fn calcColor4(calcParam: CalcColor4Param) -> vec4<f32> {
 	let toneParam = pbrParams[2];
 	let param = pbrParams[3];
 
-	let arms = armsParams[0];
-	let armsBase = armsParams[1];
+	let arms = pbrParams[5];
+	let armsBase = pbrParams[6];
     var param4 = arms;
     var color4: vec4<f32>;
     var metallic = arms.z;

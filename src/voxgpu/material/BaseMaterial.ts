@@ -23,20 +23,23 @@ import {
 
 } from "./mdata/PBRParamsData";
 import { MaterialProperty } from "./pipeline/MaterialProperty";
+import { FogUniformData } from "./mdata/FogUniformData";
 
 class BasePBRProperty implements MaterialProperty {
 	/**
-	 * default values, arms: [1, 1, 1, 0], armsBase: [0, 0, 0, 0]
+	 * default values, fogParam: [600, 3500, 0, 0.0005], fogColor: [1, 1, 1, 1]
 	 */
-	private armsParams = new BasePBRArmsData(new Float32Array([1, 1, 1, 0, 0, 0, 0, 0]), "armsParams", "frag");
+	private fogParams = new FogUniformData(new Float32Array([600, 3500, 0, 0.0005, 1, 1, 1, 1]), "fogParams", "frag");
 	/**
 	 * albedo: [1, 1, 1, 1],
 	 * fresnel: [0, 0, 0, 0],
 	 * toneParam: [1, 0.1, 1, 1],
 	 * param: [0, 0, 0.07, 1],
 	 * specularFactor: [1,1,1, 1],
-	 * fogParam: [100, 1000, 0, 0.0005],
-	 * fogColor: [1.0, 1.0, 1.0, 1.0],
+	 * arms: [1,1,1,1],
+	 * armsBase: [0,0,0,0],
+	 * ambient: [0.1,0.1,0.1,1],
+	 * uvParam: [1,1,0,0],
 	 */
 	private mPBRParams = new PBRParamsVec4Data(new Float32Array([
 		1, 1, 1, 1,
@@ -45,11 +48,14 @@ class BasePBRProperty implements MaterialProperty {
 		0, 0, 0.07, 1,
 		1, 1, 1, 1,
 
-		600, 3500, 0, 0.0005,	// fogParam
-		1.0, 1.0, 1.0, 1.0,	// fogColor
+		// 600, 3500, 0, 0.0005,	// fogParam
+		// 1.0, 1.0, 1.0, 1.0,	// fogColor
+		1, 1, 1, 0,	// arms
+		0, 0, 0, 0, // armsBase
 		0.1, 0.1, 0.1, 1, // ambient
 		1, 1, 0, 0, // uvParam
 	]), "pbrParams", "frag");
+
 	vsmParams = new VSMUniformData(null, "vsmParams", "frag");
 	shadowMatrix = new MaterialUniformMat44Data(null, "shadowMatrix", "vert");
 
@@ -90,9 +96,11 @@ class BasePBRProperty implements MaterialProperty {
 	lighting = true;
 	constructor() {
 
-		let armsSrc = this.armsParams;
-		this.arms = new ArmsDataWrapper(armsSrc.arms, armsSrc);
-		this.armsBase = new ArmsDataWrapper(armsSrc.base, armsSrc);
+		
+		let fogSrc = this.fogParams;
+		this.fogParam = new FogDataWrapper(fogSrc.fogParam, fogSrc);
+		this.fogColor = new MaterialUniformColor4Wrapper(fogSrc.fogColor, fogSrc);
+
 		let params = this.mPBRParams;
 		this.albedo = new MaterialUniformColor4Wrapper(params.albedo, params);
 		this.fresnel = new MaterialUniformColor4Wrapper(params.fresnel, params);
@@ -102,33 +110,35 @@ class BasePBRProperty implements MaterialProperty {
 		this.ambient = new MaterialUniformColor4Wrapper(params.ambient, params);
 		this.uvParam = new MaterialUniformVec4Wrapper(params.uvParam, params);
 
-		this.fogParam = new FogDataWrapper(params.fogParam, params);
-		this.fogColor = new MaterialUniformColor4Wrapper(params.fogColor, params);
+		// this.fogParam = new FogDataWrapper(params.fogParam, params);
+		// this.fogColor = new MaterialUniformColor4Wrapper(params.fogColor, params);
+		this.arms = new ArmsDataWrapper(params.arms, params);
+		this.armsBase = new ArmsDataWrapper(params.armsBase, params);
 	}
 
 	get uniformValues(): WGRBufferData[] {
 
-		let vs = [this.armsParams, this.mPBRParams] as WGRBufferData[];
+		let vs = [this.mPBRParams] as WGRBufferData[];
 		return vs;
 	}
-	setLightParam(param: LightShaderDataParam): void {
-		if (param) {
-			if (param.lights) {
-				this.lights.data = param.lights;
-			}
-			if (param.colors) {
-				this.lightColors.data = param.colors;
-			}
-			this.lightParam.param = param;
-		}
-	}
-	setLightData(lightsData: Float32Array, lightColorsData: Float32Array): void {
-		this.lights.data = lightsData;
-		this.lightColors.data = lightColorsData;
-	}
-	getLightParam(): LightShaderDataParam {
-		return this.lightParam.param;
-	}
+	// setLightParam(param: LightShaderDataParam): void {
+	// 	if (param) {
+	// 		if (param.lights) {
+	// 			this.lights.data = param.lights;
+	// 		}
+	// 		if (param.colors) {
+	// 			this.lightColors.data = param.colors;
+	// 		}
+	// 		this.lightParam.param = param;
+	// 	}
+	// }
+	// setLightData(lightsData: Float32Array, lightColorsData: Float32Array): void {
+	// 	this.lights.data = lightsData;
+	// 	this.lightColors.data = lightColorsData;
+	// }
+	// getLightParam(): LightShaderDataParam {
+	// 	return this.lightParam.param;
+	// }
 }
 class BaseMaterial extends WGMaterial {
 	private mShdBuilder = new WGShaderConstructor();
@@ -136,13 +146,13 @@ class BaseMaterial extends WGMaterial {
 	constructor(descriptor?: WGMaterialDescripter) {
 		super(descriptor);
 	}
-	setLightParam(param: LightShaderDataParam): BaseMaterial {
-		this.property.setLightParam(param);
-		return this;
-	}
-	getLightParam(): LightShaderDataParam {
-		return this.property.getLightParam();
-	}
+	// setLightParam(param: LightShaderDataParam): BaseMaterial {
+	// 	this.property.setLightParam(param);
+	// 	return this;
+	// }
+	// getLightParam(): LightShaderDataParam {
+	// 	return this.property.getLightParam();
+	// }
 	setDescriptor(descriptor: WGMaterialDescripter): void {
 		// if (!descriptor || descriptor.shaderSrc === undefined) {
 		// 	if (!descriptor) descriptor = { shadinguuid: "BaseMaterial" };
