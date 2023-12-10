@@ -26,10 +26,10 @@ import { MaterialProperty } from "./pipeline/MaterialProperty";
 import { FogUniformData } from "./mdata/FogUniformData";
 
 class BasePBRProperty implements MaterialProperty {
-	/**
-	 * default values, fogParam: [600, 3500, 0, 0.0005], fogColor: [1, 1, 1, 1]
-	 */
-	private fogParams = new FogUniformData(new Float32Array([600, 3500, 0, 0.0005, 1, 1, 1, 1]), "fogParams", "frag");
+	// /**
+	//  * default values, fogParam: [600, 3500, 0, 0.0005], fogColor: [1, 1, 1, 1]
+	//  */
+	// private fogParams = new FogUniformData(new Float32Array([600, 3500, 0, 0.0005, 1, 1, 1, 1]), "fogParams", "frag");
 	/**
 	 * albedo: [1, 1, 1, 1],
 	 * fresnel: [0, 0, 0, 0],
@@ -56,12 +56,12 @@ class BasePBRProperty implements MaterialProperty {
 		1, 1, 0, 0, // uvParam
 	]), "pbrParams", "frag");
 
-	vsmParams = new VSMUniformData(null, "vsmParams", "frag");
-	shadowMatrix = new MaterialUniformMat44Data(null, "shadowMatrix", "vert");
+	// vsmParams = new VSMUniformData(null, "vsmParams", "frag");
+	// shadowMatrix = new MaterialUniformMat44Data(null, "shadowMatrix", "vert");
 
-	lightParam = new LightParamData(new Uint32Array([1, 0, 0, 0]), "lightParam", "frag");
-	lights = new BaseLightData(new Float32Array([0.0, 200.0, 0, 0.0001]), "lights", "frag");
-	lightColors = new BaseLightData(new Float32Array([5.0, 5.0, 5.0, 0.0001]), "lightColors", "frag");
+	// lightParam = new LightParamData(new Uint32Array([1, 0, 0, 0]), "lightParam", "frag");
+	// lights = new BaseLightData(new Float32Array([0.0, 200.0, 0, 0.0001]), "lights", "frag");
+	// lightColors = new BaseLightData(new Float32Array([5.0, 5.0, 5.0, 0.0001]), "lightColors", "frag");
 
 	albedo: MaterialUniformColor4Wrapper;
 	fresnel: MaterialUniformColor4Wrapper;
@@ -97,9 +97,9 @@ class BasePBRProperty implements MaterialProperty {
 	constructor() {
 
 		
-		let fogSrc = this.fogParams;
-		this.fogParam = new FogDataWrapper(fogSrc.fogParam, fogSrc);
-		this.fogColor = new MaterialUniformColor4Wrapper(fogSrc.fogColor, fogSrc);
+		// let fogSrc = this.fogParams;
+		// this.fogParam = new FogDataWrapper(fogSrc.fogParam, fogSrc);
+		// this.fogColor = new MaterialUniformColor4Wrapper(fogSrc.fogColor, fogSrc);
 
 		let params = this.mPBRParams;
 		this.albedo = new MaterialUniformColor4Wrapper(params.albedo, params);
@@ -110,8 +110,6 @@ class BasePBRProperty implements MaterialProperty {
 		this.ambient = new MaterialUniformColor4Wrapper(params.ambient, params);
 		this.uvParam = new MaterialUniformVec4Wrapper(params.uvParam, params);
 
-		// this.fogParam = new FogDataWrapper(params.fogParam, params);
-		// this.fogColor = new MaterialUniformColor4Wrapper(params.fogColor, params);
 		this.arms = new ArmsDataWrapper(params.arms, params);
 		this.armsBase = new ArmsDataWrapper(params.armsBase, params);
 	}
@@ -121,24 +119,6 @@ class BasePBRProperty implements MaterialProperty {
 		let vs = [this.mPBRParams] as WGRBufferData[];
 		return vs;
 	}
-	// setLightParam(param: LightShaderDataParam): void {
-	// 	if (param) {
-	// 		if (param.lights) {
-	// 			this.lights.data = param.lights;
-	// 		}
-	// 		if (param.colors) {
-	// 			this.lightColors.data = param.colors;
-	// 		}
-	// 		this.lightParam.param = param;
-	// 	}
-	// }
-	// setLightData(lightsData: Float32Array, lightColorsData: Float32Array): void {
-	// 	this.lights.data = lightsData;
-	// 	this.lightColors.data = lightColorsData;
-	// }
-	// getLightParam(): LightShaderDataParam {
-	// 	return this.lightParam.param;
-	// }
 }
 class BaseMaterial extends WGMaterial {
 	private mShdBuilder = new WGShaderConstructor();
@@ -146,13 +126,6 @@ class BaseMaterial extends WGMaterial {
 	constructor(descriptor?: WGMaterialDescripter) {
 		super(descriptor);
 	}
-	// setLightParam(param: LightShaderDataParam): BaseMaterial {
-	// 	this.property.setLightParam(param);
-	// 	return this;
-	// }
-	// getLightParam(): LightShaderDataParam {
-	// 	return this.property.getLightParam();
-	// }
 	setDescriptor(descriptor: WGMaterialDescripter): void {
 		// if (!descriptor || descriptor.shaderSrc === undefined) {
 		// 	if (!descriptor) descriptor = { shadinguuid: "BaseMaterial" };
