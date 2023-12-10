@@ -154,7 +154,7 @@ export class MaterialPipelineFog {
 		ppt.lighting = true;
 
 		ppt.shadowReceived = shadowReceived;
-		ppt.fogExp2Enabled = true;
+		ppt.exp2Fogging = true;
 	}
 	private createMaterial(textures: WGTextureDataDescriptor[], faceCullMode = 'back'): BaseMaterial {
 

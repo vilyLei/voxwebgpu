@@ -80,7 +80,7 @@ export class FogTest {
 
 		let material0 = this.createMaterial(position, textures, faceCullMode);
 		let ppt = material0.property;
-		ppt.fogExp2Enabled = true;
+		ppt.exp2Fogging = true;
 		ppt.fogColor.value = [0.3, 0.7, 0.2];
 		this.applyMaterialPPt(material0);
 

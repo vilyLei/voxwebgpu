@@ -74,7 +74,7 @@ class BasePBRProperty implements MaterialProperty {
 	inverseMask = false;
 
 	fogging = false;
-	private mFogExp2Enabled = false;
+	private mExp2Fogging = false;
 
 	/**
 	 * make shadow or not
@@ -86,12 +86,12 @@ class BasePBRProperty implements MaterialProperty {
 	 */
 	lighting = true;
 	
-	set fogExp2Enabled(enabled: boolean) {
-		this.mFogExp2Enabled = enabled;
+	set exp2Fogging(enabled: boolean) {
+		this.mExp2Fogging = enabled;
 		if(enabled) this.fogging = enabled;
 	}
-	get fogExp2Enabled(): boolean {
-		return this.mFogExp2Enabled;
+	get exp2Fogging(): boolean {
+		return this.mExp2Fogging;
 	}
 	constructor() {
 
@@ -157,7 +157,7 @@ class BaseMaterial extends WGMaterial {
 		if (ppt.inverseMask) {
 			preCode += '#define USE_INVERSE_MASK\n';
 		}
-		if (ppt.fogExp2Enabled) {
+		if (ppt.exp2Fogging) {
 			ppt.fogging = true;
 			preCode += '#define USE_FOG_EXP2\n';
 		}
