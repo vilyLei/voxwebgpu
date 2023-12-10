@@ -8,6 +8,7 @@ import { SphereEntity } from "../entity/SphereEntity";
 import { TorusEntity } from "../entity/TorusEntity";
 import { createLightData } from "./utils/lightUtil";
 import { CubeEntity } from "../entity/CubeEntity";
+import { PlaneEntity } from "../entity/PlaneEntity";
 
 export class MaterialPipelineMultiPasses {
 	private mRscene = new RendererScene();
@@ -20,8 +21,7 @@ export class MaterialPipelineMultiPasses {
 			mtplEnabled: true,
 			rpassparam:
 			{
-				multisampled: true,
-				clearColor: [0.2,0.3,0.1]
+				multisampled: true
 			}
 		});
 		this.initScene();
@@ -74,7 +74,7 @@ export class MaterialPipelineMultiPasses {
 		mtpl.shadow.param.intensity = 0.7;
 		mtpl.fog.fogColor.value = [0.3, 0.7, 0.2];
 
-		let position = [0, 0, 180];
+		let position = [0, 50, 180];
 		let materials = this.createMaterials(true);
 		let sphere = new SphereEntity(
 			{
@@ -85,7 +85,7 @@ export class MaterialPipelineMultiPasses {
 		);
 		rc.addEntity(sphere);
 
-		position =  [0, 0, -180];
+		position =  [0, 50, -180];
 		materials = this.createMaterials(true, true, 'back', [4, 1]);
 		let torus = new TorusEntity({
 			axisType: 1,
@@ -93,6 +93,18 @@ export class MaterialPipelineMultiPasses {
 			transform: { position }
 		});
 		rc.addEntity(torus);
+
+		
+		position = [0, -110, 0];
+		materials = this.createMaterials(true, false, 'back',[3,3]);
+		let plane = new PlaneEntity({
+			axisType: 1,
+			materials,
+			extent: [-600, -600, 1200, 1200],
+			transform: { position }
+		});
+		rc.addEntity(plane);
+
 		position = [0, 0, 0];
 		materials = this.createMaterials(false, false, 'front', [2, 2]);
 		let envBox = new CubeEntity(
@@ -112,15 +124,15 @@ export class MaterialPipelineMultiPasses {
 		let textures2 = this.createMaskTextures("wall", 'circleWave_disp.png');
 
 		let material0 = this.createMaterial(textures0, ["solid"], 'less', faceCullMode);
-		this.applyMaterialPPt(material0);
+		this.applyMaterialPPt(material0, shadowReceived, shadow);
 
 		let material1 = this.createMaterial(textures1, ["transparent"], 'less-equal', faceCullMode);
 		material1.property.inverseMask = false;
-		this.applyMaterialPPt(material1);
+		this.applyMaterialPPt(material1, shadowReceived, shadow);
 
 		let material2 = this.createMaterial(textures2, ["transparent"], 'less-equal', faceCullMode);
 		material2.property.inverseMask = true;
-		this.applyMaterialPPt(material2);
+		this.applyMaterialPPt(material2, shadowReceived, shadow);
 		let list = [material0, material1, material2];
 
 		// let list = [material0, material1];
