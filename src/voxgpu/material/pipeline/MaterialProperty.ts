@@ -7,4 +7,6 @@ export interface MaterialProperty {
     shadowReceived?: boolean;
 	lighting?: boolean;
 	fogging?: boolean;
+    getUniqueKey?(): string;
+    getPreDef?(): string;
 }

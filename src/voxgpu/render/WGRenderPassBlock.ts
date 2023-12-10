@@ -65,15 +65,15 @@ class WGRenderPassBlock implements IWGRPassNodeBuilder {
 			}
 		}
 	}
-	hasMaterial(material: WGMaterialDescripter): boolean {
+	hasMaterial(material: WGMaterialDescripter, uniqueKey: string): boolean {
 		if (this.unitBlock) {
-			return this.unitBlock.hasMaterial(material);
+			return this.unitBlock.hasMaterial(material, uniqueKey);
 		}
 		return false;
 	}
-	setMaterial(material: WGMaterialDescripter): void {
+	setMaterial(material: WGMaterialDescripter, uniqueKey: string): void {
 		if (this.unitBlock) {
-			this.unitBlock.setMaterial(material);
+			this.unitBlock.setMaterial(material, uniqueKey);
 		}
 	}
 	addEntity(entity: Entity3D, param?: WGREntityParam): void {
@@ -190,7 +190,15 @@ class WGRenderPassBlock implements IWGRPassNodeBuilder {
 	}
 	getPassNodeWithMaterial(material: WGMaterialDescripter): WGRenderPassNode {
 		let node = this.getPassNode(material.rpass ? material.rpass.rpass : null);
-		if (material.shaderSrc.compShaderSrc) {
+
+		let pl = material.pipeline;
+		let compFlag = false;
+		if(pl) {
+			compFlag = pl.shaderType === 'comp';
+		}else {
+			compFlag = material.shaderSrc.compShaderSrc !== undefined;
+		}
+		if (compFlag) {
 			if (this.mCompPassNodes.length < 1) {
 				this.appendRendererPass({ computeEnabled: true });
 			}

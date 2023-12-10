@@ -52,8 +52,8 @@ class WGRObjBuilder {
 		
 		let mtpl = this.mtpl;
 		let mtb = mtpl.builder;
-		mtb.reset();
 		mtb.enabled = material.pipeline !== undefined;
+		mtb.reset(material);
 		mtb.builder = builder;
 		mtb.entity = entity;
 
@@ -108,7 +108,14 @@ class WGRObjBuilder {
 
 		let ru: IWGRUnit;
 
-		const isComputing = material.shaderSrc.compShaderSrc !== undefined;
+		// const isComputing = material.shaderSrc.compShaderSrc !== undefined;
+		let pl = material.pipeline;
+		let isComputing = false;
+		if(pl) {
+			isComputing = pl.shaderType === 'comp';
+		}else {
+			isComputing = material.shaderSrc.compShaderSrc !== undefined;
+		}
 		if (isComputing) {
 			let et = (entity as IRenderableObject);
 			let rcompunit = new WGRCompUnit();

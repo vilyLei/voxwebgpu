@@ -24,7 +24,8 @@ const bufValue = new WGRBufferValue({ shdVarName: 'mpl-bufValue' });
 class MtBuilder {
     private mInit = true;
     private mPool: MtPlNodePool;
-    private mPredef = '';
+    private mPreDef = '';
+    private mUniqueKey = '';
     uvalues: WGRBufferData[];
     utexes: WGRTexLayoutParam[];
 
@@ -34,29 +35,160 @@ class MtBuilder {
     constructor(pool: MtPlNodePool) {
         this.mPool = pool;
     }
-    reset(): void {
-        this.mPredef = '';
+    reset(material: IWGMaterial): void {
+
+        this.mPreDef = '';
+        this.mUniqueKey = material.shadinguuid;
+        const ppt = material.property;
+        if(ppt) {
+            if(ppt.getUniqueKey) {
+                this.mUniqueKey += ppt.getUniqueKey();
+            }
+        }
+        let pdp = material.pipelineDefParam;
+		if (pdp) {
+			this.mUniqueKey += pdp.faceCullMode + pdp.blendModes;
+			// console.log("pdp.faceCullMode: ", pdp.faceCullMode);
+		}
+        if(this.enabled) {
+            this.buildKey( material );
+            this.buildPreDef( material );
+        }
+
     }
     initialize(): void {
         if (this.mInit) {
             this.mInit = false;
-
         }
+    }
+    private buildKey(material: IWGMaterial): void {
+        let ts = material.textures;
+		let ppt = material.property;
+        let uk = this.mUniqueKey;
+        if (ppt.fogging) {
+			uk += '-FOG';
+		}
+		if (ppt.shadowReceived) {
+			uk += '-VSM_SHADOW';
+		}
+		if (ppt.lighting) {
+			uk += '-LIGHT';
+		}
+        if (ts) {
+			for (let i = 0; i < ts.length; ++i) {
+				// console.log('ts[i].texture.shdVarName: ', ts[i].texture.shdVarName);
+				switch (ts[i].texture.shdVarName) {
+					case 'normal':
+						uk += '-NORMAL_MAP';
+						break;
+					case 'albedo':
+						uk += '-ALBEDO';
+						break;
+					case 'ao':
+						uk += '-AO';
+						break;
+					case 'roughness':
+						uk += '-ROUGHNESS';
+						break;
+					case 'metallic':
+						uk += '-METALLIC';
+						break;
+					case 'specularEnv':
+						uk += '-SPECULAR_ENV';
+						break;
+					case 'arm':
+						uk += '-ARM_MAP';
+						break;
+					case 'emissive':
+						uk += '-EMISSIVE_MAP';
+						break;
+					case 'opacity':
+						uk += '-OPACITY_MAP';
+						break;
+					default:
+						break;
+				}
+			}
+		}
+
+        this.mUniqueKey = uk;
+    }
+    
+    private buildPreDef(material: IWGMaterial): void {
+        let ts = material.textures;
+		let ppt = material.property;
+		let preCode = ppt.getPreDef();
+		if (ppt.fogging) {
+			preCode += '#define USE_FOG\n';
+		}
+		if (ppt.shadowReceived) {
+			preCode += '#define USE_VSM_SHADOW\n';
+		}
+		if (ppt.lighting) {
+			preCode += '#define USE_LIGHT\n';
+		}
+		if (ts) {
+			for (let i = 0; i < ts.length; ++i) {
+				// console.log('ts[i].texture.shdVarName: ', ts[i].texture.shdVarName);
+				switch (ts[i].texture.shdVarName) {
+					case 'normal':
+						preCode += '#define USE_NORMAL_MAP\n';
+						break;
+					case 'albedo':
+						preCode += '#define USE_ALBEDO\n';
+						break;
+					case 'ao':
+						preCode += '#define USE_AO\n';
+						break;
+					case 'roughness':
+						preCode += '#define USE_ROUGHNESS\n';
+						break;
+					case 'metallic':
+						preCode += '#define USE_METALLIC\n';
+						break;
+					case 'specularEnv':
+						preCode += '#define USE_SPECULAR_ENV\n';
+						break;
+					case 'arm':
+						preCode += '#define USE_ARM_MAP\n';
+						break;
+					case 'emissive':
+						preCode += '#define USE_EMISSIVE_MAP\n';
+						break;
+					case 'opacity':
+						preCode += '#define USE_OPACITY_MAP\n';
+						break;
+					default:
+						break;
+				}
+			}
+		}
+        this.mPreDef = preCode;
+    }
+    private createShdCode(material: IWGMaterial): void {
+        if (!material.shaderSrc) {
+            let pm = (material as IWGMaterial);
+            if (pm.__$build) {
+                let time = Date.now();
+                pm.__$build(this.mPreDef, this.mUniqueKey);
+                time = Date.now() - time;
+                console.log("building material shader loss time: ", time);
+            }
+        }
+        this.checkShaderSrc(material.shaderSrc);
     }
     checkShader(material: IWGMaterial): void {
         const builder = this.builder;
-        if (!builder.hasMaterial(material)) {
+        if (!builder.hasMaterial(material, this.mUniqueKey)) {
             if (!material.getRCtx()) {
-                if (!material.shaderSrc) {
-                    let pm = (material as IWGMaterial);
-                    if (pm.__$build) {
-                        let time = Date.now();
-                        pm.__$build(this.mPredef);
-                        time = Date.now() - time;
-                        console.log("building material shader loss time: ", time);
+                if(this.enabled) {
+                    const node = builder.getPassNodeWithMaterial(material);
+                    if(!node.hasRenderPipelineCtxWithUniqueKey(this.mUniqueKey)) {
+                        this.createShdCode(material);
                     }
+                }else {
+                    this.createShdCode(material);
                 }
-                this.checkShaderSrc(material.shaderSrc);
             }
         }
     }
@@ -99,13 +231,13 @@ class MtBuilder {
                     light.merge(uvalues);
                     let param = light.lightParam;
                     if (param.pointLightsNum > 0) {
-                        this.mPredef += `#define USE_POINT_LIGHTS_TOTAL ${param.pointLightsNum}\n`;
+                        this.mPreDef += `#define USE_POINT_LIGHTS_TOTAL ${param.pointLightsNum}\n`;
                     }
                     if (param.directLightsTotal > 0) {
-                        this.mPredef += `#define USE_DIRECTION_LIGHTS_TOTAL ${param.directLightsTotal}\n`;
+                        this.mPreDef += `#define USE_DIRECTION_LIGHTS_TOTAL ${param.directLightsTotal}\n`;
                     }
                     if (param.spotLightsNum > 0) {
-                        this.mPredef += `#define USE_SPOT_LIGHTS_TOTAL ${param.spotLightsNum}\n`;
+                        this.mPreDef += `#define USE_SPOT_LIGHTS_TOTAL ${param.spotLightsNum}\n`;
                     }
                 }
                 if (ppt.shadowReceived === true) {
@@ -149,51 +281,27 @@ class MtBuilder {
             multisampled: tex.data.multisampled
         }
     }
-    // private getTexParamA(texWrapper: WGTextureWrapper): WGRTexLayoutParam {
-    //     const tex = texWrapper.texture;
-    //     let dimension = tex.viewDimension;
-    //     if (!tex.view) {
-    //         tex.view = tex.texture.createView({ dimension });
-    //         tex.view.dimension = dimension;
-    //     }
-    //     return {
-    //         texView: tex.view,
-    //         viewDimension: tex.viewDimension,
-    //         shdVarName: tex.shdVarName,
-    //         multisampled: tex.data.multisampled
-    //     }
-    // }
     private checkTextures(material: IWGMaterial, utexes: WGRTexLayoutParam[]): void {
         let texList = material.textures;
         if (texList && texList.length > 0) {
             for (let i = 0; i < texList.length; i++) {
                 utexes.push(this.getTexParam(texList[i]));
-                // const tex = texList[i].texture;
-                // let dimension = tex.viewDimension;
-                // if (!tex.view) {
-                //     tex.view = tex.texture.createView({ dimension });
-                //     tex.view.dimension = dimension;
-                // }
-                // utexes.push(
-                //     {
-                //         texView: tex.view,
-                //         viewDimension: tex.viewDimension,
-                //         shdVarName: tex.shdVarName,
-                //         multisampled: tex.data.multisampled
-                //     }
-                // );
             }
         }
     }
     buildMaterial(material: IWGMaterial, primitive: WGRPrimitiveImpl): void {
         const builder = this.builder;
-        if (!builder.hasMaterial(material)) {
+        let uk = this.enabled ? this.mUniqueKey : material.shadinguuid;
+        if (!builder.hasMaterial(material, uk)) {
             const uvalues = this.uvalues;
             const utexes = this.utexes;
-            builder.setMaterial(material);
+            builder.setMaterial(material, uk);
+            const node = builder.getPassNodeWithMaterial(material);
             if (!material.getRCtx()) {
-                material.shaderSrc = this.shaderBuild(material.shaderSrc, uvalues, utexes);
-
+                console.log("XXXXXXXXXXXXXX this.mUniqueKey: ", uk);
+                if(!node.hasRenderPipelineCtxWithUniqueKey( uk )) {
+                    material.shaderSrc = this.shaderBuild(material.shaderSrc, uvalues, utexes);
+                }
                 if (!material.pipelineVtxParam) {
                     if (primitive) {
                         material.pipelineVtxParam = { vertex: { attributeIndicesArray: [] } };
@@ -206,14 +314,21 @@ class MtBuilder {
                 }
             }
             this.checkMaterialParam(material, primitive);
-            const node = builder.getPassNodeWithMaterial(material);
             // console.log('WGRObjBuilder::createRPass(), node.uid: ', node.uid, ", node: ", node);
-            let pctx = node.createRenderPipelineCtxWithMaterial(material);
+            let pctx = node.createRenderPipelineCtxWithMaterial(material, uk);
             material.initialize(pctx);
         }
     }
     checkMaterialParam(material: IWGMaterial, primitive: WGRPrimitiveImpl): void {
-        if (!material.shaderSrc.compShaderSrc) {
+        let pl = material.pipeline;
+		let compFlag = false;
+		if(pl) {
+			compFlag = pl.shaderType === 'comp';
+		}else {
+			compFlag = material.shaderSrc.compShaderSrc !== undefined;
+		}
+        // if (!material.shaderSrc.compShaderSrc) {
+        if (!compFlag) {
             const vtxParam = material.pipelineVtxParam;
             if (primitive && vtxParam) {
                 const vert = vtxParam.vertex;

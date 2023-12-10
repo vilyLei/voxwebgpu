@@ -102,15 +102,15 @@ class WGRenderPassNode implements IWGRenderPassNode {
 		}
 	}
 
-	hasMaterial(material: WGMaterialDescripter): boolean {
+	hasMaterial(material: WGMaterialDescripter, uniqueKey: string): boolean {
 		if (this.unitBlock) {
-			return this.unitBlock.hasMaterial(material);
+			return this.unitBlock.hasMaterial(material, uniqueKey);
 		}
 		return false;
 	}
-	setMaterial(material: WGMaterialDescripter): void {
+	setMaterial(material: WGMaterialDescripter, uniqueKey: string): void {
 		if (this.unitBlock) {
-			this.unitBlock.setMaterial(material);
+			this.unitBlock.setMaterial(material, uniqueKey);
 		}
 	}
 	addEntity(entity: Entity3D, param?: WGREntityParam): void {
@@ -137,9 +137,29 @@ class WGRenderPassNode implements IWGRenderPassNode {
 			param.depthFormat = "depth24plus";
 		}
 	}
-
-	createRenderPipelineCtxWithMaterial(material: WGMaterialDescripter): WGRPipelineContext {
-		const flag = material.shadinguuid && material.shadinguuid !== "";
+	
+	hasRenderPipelineCtxWithUniqueKey(uniqueKey: string): boolean {
+		return this.pctxMap.has(uniqueKey);
+	}
+	createRenderPipelineCtxWithMaterial(material: WGMaterialDescripter, uniqueKey: string): WGRPipelineContext {
+		
+		const flag = uniqueKey !== "";
+		const map = this.pctxMap;
+		if (flag) {
+			if (map.has(uniqueKey)) {
+				console.log("WGRenderPassBlock::createRenderPipelineCtxWithMaterial(), apply old ctx.");
+				return map.get(uniqueKey);
+			}
+		}
+		const ctx = this.createRenderPipelineCtx(material.shaderSrc, material.pipelineVtxParam, material.pipelineDefParam);
+		if (flag) {
+			ctx.shadinguuid = uniqueKey;
+			map.set(uniqueKey, ctx);
+		}
+		console.log("WGRenderPassBlock::createRenderPipelineCtxWithMaterial(), apply new ctx.");
+		return ctx;
+		/*
+		const flag = material.shadinguuid !== "";
 		const map = this.pctxMap;
 		if (flag) {
 			if (map.has(material.shadinguuid)) {
@@ -154,6 +174,7 @@ class WGRenderPassNode implements IWGRenderPassNode {
 		}
 		console.log("WGRenderPassBlock::createRenderPipelineCtxWithMaterial(), apply new ctx.");
 		return ctx;
+		//*/
 	}
 	// pipelineParam value likes {blendMode: "transparent", depthWriteEnabled: false, faceCullMode: "back"}
 	createRenderPipelineCtx(

@@ -35,7 +35,7 @@ class WGRenderUnitBlock {
 	private mENodeMap: Map<number, WGREntityNode> = new Map();
 	private mMaterialMap: Map<number, WGMaterialDescripter> = new Map();
 
-	hasMaterial(material: WGMaterialDescripter): boolean {
+	hasMaterial(material: WGMaterialDescripter, uniqueKey: string): boolean {
 		if(material.uid !== undefined) {
 			const map = this.mMaterialMap;
 			if(map.has(material.uid)) {
@@ -45,7 +45,8 @@ class WGRenderUnitBlock {
 		}
 		return false;
 	}
-	setMaterial(material: WGMaterialDescripter): void {
+	setMaterial(material: WGMaterialDescripter, uniqueKey: string): void {
+		console.log("xxxxxxxxxxx setMaterial(), vvvvvvvvvvvvvvvvv");
 		if(material.uid !== undefined) {
 			const map = this.mMaterialMap;
 			if(!map.has(material.uid)) {

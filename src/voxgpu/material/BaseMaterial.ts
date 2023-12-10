@@ -100,30 +100,31 @@ class BasePBRProperty implements MaterialProperty {
 		let vs = [this.mPBRParams] as WGRBufferData[];
 		return vs;
 	}
-}
-class BaseMaterial extends WGMaterial {
-	private mShdBuilder = new WGShaderConstructor();
-	property = new BasePBRProperty();
-	constructor(descriptor?: WGMaterialDescripter) {
-		super(descriptor);
-	}
-	setDescriptor(descriptor: WGMaterialDescripter): void {
-		super.setDescriptor(descriptor);
-		if (!this.pipeline) {
-			this.pipeline = { uid: 0 };
+	
+    getUniqueKey(): string {
+		let ppt = this;
+		let uk = '';
+		if (ppt.glossiness) {
+			uk += '-GLOSSINESS 1';
 		}
-	}
-	get uniformValues(): WGRBufferData[] {
-		if (!this.mUniformValues) {
-			this.mUniformValues = this.property.uniformValues;
+		if (ppt.toneMapping) {
+			uk += '-TONE_MAPPING';
 		}
-		return this.mUniformValues;
+		if (ppt.metallicCorrection) {
+			uk += '-METALLIC_CORRECTION';
+		}
+		if (ppt.inverseMask) {
+			uk += '-INVERSE_MASK';
+		}
+		if (ppt.exp2Fogging) {
+			ppt.fogging = true;
+			uk += '-FOG_EXP2';
+		}
+		return uk;
 	}
-
-	__$build(info?: string): void {
+	getPreDef(): string {
+		let ppt = this;
 		let preCode = '';
-		let ts = this.textures;
-		let ppt = this.property;
 		if (ppt.glossiness) {
 			preCode += '#define USE_GLOSSINESS 1\n';
 		}
@@ -140,6 +141,56 @@ class BaseMaterial extends WGMaterial {
 			ppt.fogging = true;
 			preCode += '#define USE_FOG_EXP2\n';
 		}
+		return preCode;
+	}
+}
+class BaseMaterial extends WGMaterial {
+	private mShdBuilder = new WGShaderConstructor();
+	property = new BasePBRProperty();
+	constructor(descriptor?: WGMaterialDescripter) {
+		super(descriptor);
+	}
+	setDescriptor(descriptor: WGMaterialDescripter): void {
+		if(descriptor) {
+			if(descriptor.shadinguuid === undefined) {
+				descriptor.shadinguuid = "base-material";
+			}
+		}else {
+			descriptor = {shadinguuid: "base-material"};
+		}
+		super.setDescriptor(descriptor);
+		if (!this.pipeline) {
+			this.pipeline = { uid: 0 };
+		}
+	}
+	get uniformValues(): WGRBufferData[] {
+		if (!this.mUniformValues) {
+			this.mUniformValues = this.property.uniformValues;
+		}
+		return this.mUniformValues;
+	}
+
+	__$build(preCode?: string, uniqueKey?: string): void {
+		// let ts = this.textures;
+		// let ppt = this.property;
+		// let preCode = ppt.getPreDef();
+		// if (ppt.glossiness) {
+		// 	preCode += '#define USE_GLOSSINESS 1\n';
+		// }
+		// if (ppt.toneMapping) {
+		// 	preCode += '#define USE_TONE_MAPPING\n';
+		// }
+		// if (ppt.metallicCorrection) {
+		// 	preCode += '#define USE_METALLIC_CORRECTION\n';
+		// }
+		// if (ppt.inverseMask) {
+		// 	preCode += '#define USE_INVERSE_MASK\n';
+		// }
+		// if (ppt.exp2Fogging) {
+		// 	ppt.fogging = true;
+		// 	preCode += '#define USE_FOG_EXP2\n';
+		// }
+		/*
 		if (ppt.fogging) {
 			preCode += '#define USE_FOG\n';
 		}
@@ -185,20 +236,20 @@ class BaseMaterial extends WGMaterial {
 				}
 			}
 		}
-
+		//*/
 		console.log('BaseMaterial::__$build() preCode: \n', preCode);
 		// console.log('BaseMaterial::__$build() ...');
-		let uuid = preCode + "-ins01";
-		let pdp = this.pipelineDefParam;
-		if (pdp) {
-			uuid += pdp.faceCullMode + pdp.blendModes;
-			// console.log("pdp.faceCullMode: ", pdp.faceCullMode);
-		}
+		let uuid = uniqueKey + "-base-material-shd-ins";
+		// let pdp = this.pipelineDefParam;
+		// if (pdp) {
+		// 	uuid += pdp.faceCullMode + pdp.blendModes;
+		// 	// console.log("pdp.faceCullMode: ", pdp.faceCullMode);
+		// }
 		let shaderCode = this.mShdBuilder.build(preCode);
 		let shaderSrc = {
 			shaderSrc: { code: shaderCode, uuid }
 		}
-		this.shadinguuid = uuid + '-base-material';
+		// this.shadinguuid = uuid + '-base-material';
 		this.shaderSrc = shaderSrc;
 	}
 }

@@ -181,8 +181,8 @@ class BasePBRMaterial extends WGMaterial {
 		return this.mUniformValues;
 	}
 
-	__$build(info?: string): void {
-		let preCode = '';
+	__$build(preCode?: string, uniqueKey?: string): void {
+		// let preCode = '';
 		let ts = this.textures;
 		let ppt = this.property;
 		if (ppt.glossiness) {

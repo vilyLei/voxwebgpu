@@ -6,9 +6,9 @@ import Camera from "../view/Camera";
 interface IWGRPassNodeBuilder {
 	readonly camera: Camera;
 	getWGCtx(): WebGPUContext;
-	hasMaterial(material: WGMaterialDescripter): boolean;
-	setMaterial(material: WGMaterialDescripter): void;
+	hasMaterial(material: WGMaterialDescripter, uniqueKey: string): boolean;
+	setMaterial(material: WGMaterialDescripter, uniqueKey: string): void;
 	getPassNodeWithMaterial(material: WGMaterialDescripter): WGRenderPassNode;
-	createRenderPipelineCtxWithMaterial(material: WGMaterialDescripter): WGRPipelineContext;
+	createRenderPipelineCtxWithMaterial(material: WGMaterialDescripter, uniqueKey: string): WGRPipelineContext;
 }
 export { IWGRPassNodeBuilder };
