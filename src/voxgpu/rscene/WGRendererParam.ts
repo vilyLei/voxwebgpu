@@ -27,6 +27,10 @@ interface WGRendererConfig {
 	rpassparam?: WGRPassParam;
 	camera?: WGCameraParam;
 	mtplEnabled?: boolean;
+	/**
+	 * Possible values are: "#000000", "#335533" 
+	 */
+	webBodyBackground?: string;
 	callback?: (type?: string) => void;
 }
 class RPassInfoParam {
@@ -39,7 +43,6 @@ function checkConfig(config?: WGRendererConfig): WGRendererConfig {
 	let canvasCFG: GPUCanvasConfiguration = { alphaMode: "premultiplied" };
 	let canvas: HTMLCanvasElement;
 	let div: HTMLDivElement;
-
 	if (config) {
 		canvas = config.canvas;
 		div = config.div;
@@ -48,6 +51,11 @@ function checkConfig(config?: WGRendererConfig): WGRendererConfig {
 		}
 	} else {
 		config = { canvas: null };
+	}
+	
+	if(config.webBodyBackground !== undefined) {
+		const body = document.body;
+		body.style.background = config.webBodyBackground;
 	}
 	let width = config.canvasWith !== undefined ? config.canvasWith : 512;
 	let height = config.canvasHeight !== undefined ? config.canvasHeight : 512;

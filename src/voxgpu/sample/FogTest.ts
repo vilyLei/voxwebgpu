@@ -2,7 +2,6 @@ import MouseEvent from "../event/MouseEvent";
 import { RendererScene } from "../rscene/RendererScene";
 import { MouseInteraction } from "../ui/MouseInteraction";
 import Vector3 from "../math/Vector3";
-import Color4 from "../material/Color4";
 import { BasePBRMaterial, LightShaderDataParam } from "../material/BasePBRMaterial";
 import { SpecularEnvBrnTexture } from "../texture/SpecularEnvBrnTexture";
 import { WGTextureDataDescriptor } from "../texture/WGTextureDataDescriptor";
@@ -16,10 +15,14 @@ export class FogTest {
 	initialize(): void {
 		console.log("FogTest::initialize() ...");
 
-		const body = document.body;
-		// body.style.background = '#000000';
-
-		this.mRscene.initialize({ canvasWith: 512, canvasHeight: 512, rpassparam: { multisampled: true } });
+		this.mRscene.initialize(
+			{
+				webBodyBackground: '#000000',
+				canvasWith: 512,
+				canvasHeight: 512,
+				rpassparam: { multisampled: true }
+			}
+		);
 		this.initScene();
 		this.initEvent();
 	}
@@ -30,8 +33,7 @@ export class FogTest {
 		let textures0 = this.createBaseTextures();
 		let textures1 = this.createTextures("plastic");
 
-
-		let position = new Vector3(0, 0, 0);
+		let position = [0, 0, 0];
 		let materials = this.createMaterials(position, textures0, 'front');
 		let box = new CubeEntity(
 			{
@@ -42,8 +44,8 @@ export class FogTest {
 			}
 		);
 		rc.addEntity(box);
-		
-		position = new Vector3(-580, 280, -580);
+
+		position = [-580, 280, -580];
 		materials = this.createMaterials(position, textures1);
 		let sphere = new SphereEntity(
 			{
@@ -54,7 +56,7 @@ export class FogTest {
 		);
 		rc.addEntity(sphere);
 
-		position = new Vector3(0, 0, 280);
+		position = [0, 0, 280];
 		materials = this.createMaterials(position, textures1);
 		sphere = new SphereEntity(
 			{
@@ -65,7 +67,7 @@ export class FogTest {
 		);
 		rc.addEntity(sphere);
 
-		position = new Vector3(0, 0, -380);
+		position = [0, 0, -380];
 		materials = this.createMaterials(position, textures1, 'back', [8, 1]);
 		let torus = new TorusEntity({
 			axisType: 2,
@@ -75,7 +77,7 @@ export class FogTest {
 		rc.addEntity(torus);
 
 	}
-	private createMaterials(position: Vector3, textures: WGTextureDataDescriptor[], faceCullMode = 'back', uvParam?: number[]): BasePBRMaterial[] {
+	private createMaterials(position: Vector3DataType, textures: WGTextureDataDescriptor[], faceCullMode = 'back', uvParam?: number[]): BasePBRMaterial[] {
 
 		let material0 = this.createMaterial(position, textures, faceCullMode, ["solid"]);
 		let ppt = material0.property;
@@ -100,7 +102,6 @@ export class FogTest {
 		// property.uvParam.value = [2, 2];
 		property.param.scatterIntensity = 32;
 	}
-	private mLightParams: LightShaderDataParam[] = [];
 	private createMaterial(position: Vector3DataType, textures: WGTextureDataDescriptor[], faceCullMode = 'back', blendModes?: string[], depthCompare = 'less', lightParam?: LightShaderDataParam): BasePBRMaterial {
 
 		if (!lightParam) {
