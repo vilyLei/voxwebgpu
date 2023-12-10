@@ -237,7 +237,7 @@ class BaseMaterial extends WGMaterial {
 			}
 		}
 		//*/
-		console.log('BaseMaterial::__$build() preCode: \n', preCode);
+		// console.log('BaseMaterial::__$build() preCode: \n', preCode);
 		// console.log('BaseMaterial::__$build() ...');
 		let uuid = uniqueKey + "-base-material-shd-ins";
 		// let pdp = this.pipelineDefParam;

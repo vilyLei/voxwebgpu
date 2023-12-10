@@ -11,7 +11,6 @@ import { IRenderableEntity } from "../../render/IRenderableEntity";
 import { IWGRPassNodeBuilder } from "../../render/IWGRPassNodeBuilder";
 import { MtPlNodePool } from "./MtPlNodePool";
 import { VSMPipeNode } from "./VSMPipeNode";
-import { WGTextureDataDescriptor } from "../WGMaterial";
 import { WGTextureWrapper } from "../../texture/WGTextureWrapper";
 import { FogPipeNode } from "./FogPipeNode";
 import { LightPipeNode } from "./LightPipeNode";
@@ -173,6 +172,8 @@ class MtBuilder {
                 pm.__$build(this.mPreDef, this.mUniqueKey);
                 time = Date.now() - time;
                 console.log("building material shader loss time: ", time);
+                console.log("this.mUniqueKey: ");
+                console.log(this.mUniqueKey);
             }
         }
         this.checkShaderSrc(material.shaderSrc);
@@ -185,6 +186,8 @@ class MtBuilder {
                     const node = builder.getPassNodeWithMaterial(material);
                     if(!node.hasRenderPipelineCtxWithUniqueKey(this.mUniqueKey)) {
                         this.createShdCode(material);
+                    }else {
+                        console.log(`don't need build the shader code, this.mUniqueKey: `, this.mUniqueKey);
                     }
                 }else {
                     this.createShdCode(material);
