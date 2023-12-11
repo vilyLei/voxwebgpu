@@ -29,12 +29,11 @@ class LightPipeNode extends MtPlNode implements MtPlNodeImpl {
 	}
     merge(ls: WGRBufferData[]): void {
         let end = ls.length - 1;
-        this.addTo(ls, this.lightParam, 0, end);
         this.addTo(ls, this.lights, 0, end);
         this.addTo(ls, this.lightColors, 0, end);
     }
     getDataList(): WGRBufferData[] {
-        return [this.lightParam, this.lights, this.lightColors];
+        return [this.lights, this.lightColors];
     }
 }
 export { LightPipeNode }

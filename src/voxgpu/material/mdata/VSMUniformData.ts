@@ -4,7 +4,8 @@ import {
 } from "./MaterialUniformData";
 
 class VSMUniformData extends MaterialUniformVec4ArrayData {
-	constructor(shdVarName: string, visibility?: string, data?: Float32Array) {
+	
+	constructor(shdVarName = 'vsmParams', visibility = 'frag', data?: Float32Array) {
 		super(data, shdVarName, visibility);
 		if(!data) {
 			this.data = new Float32Array([

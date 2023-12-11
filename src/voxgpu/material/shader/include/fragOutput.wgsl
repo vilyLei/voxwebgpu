@@ -186,7 +186,7 @@ fn calcColor4(calcParam: CalcColor4Param) -> vec4<f32> {
 	var lightColor: vec4<f32>;
 	var factor: f32 = 1.0;
 	#if USE_POINT_LIGHTS_TOTAL > 0
-	let pointsTotal = min(lightParam.x, u32(USE_POINT_LIGHTS_TOTAL));
+	let pointsTotal = min(u32(USE_POINT_LIGHTS_TOTAL), u32(128));
 	for(var i: u32  = u32(0); i < pointsTotal; i++) {
 		// calculate per-light radiance
 		light = lights[i];

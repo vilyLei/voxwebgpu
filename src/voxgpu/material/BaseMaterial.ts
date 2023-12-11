@@ -19,7 +19,7 @@ import { MaterialProperty } from "./pipeline/MaterialProperty";
 
 class BasePBRProperty implements MaterialProperty {
 
-	private mPBRParams = new PBRParamsVec4Data("pbrParams", "frag");
+	private mPBRParams = new PBRParamsVec4Data();
 
 	albedo: MaterialUniformColor4Wrapper;
 	fresnel: MaterialUniformColor4Wrapper;

@@ -215,7 +215,7 @@ class VSMPipeNode extends MtPlNode implements MtPlNodeImpl {
     type = 'vsmShadow';
     macros = ['USE_VSM_SHADOW'];
 
-    param = new VSMUniformData("vsmParams", "frag");
+    param = new VSMUniformData();
     /**
      * shadow material
      */

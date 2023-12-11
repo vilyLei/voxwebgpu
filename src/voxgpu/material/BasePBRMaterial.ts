@@ -29,32 +29,8 @@ class BasePBRProperty implements MaterialProperty {
 	 * default values, fogParam: [600, 3500, 0, 0.0005], fogColor: [1, 1, 1, 1]
 	 */
 	private fogParams = new FogUniformData(new Float32Array([600, 3500, 0, 0.0005, 1, 1, 1, 1]), "fogParams", "frag");
-	/**
-	 * albedo: [1, 1, 1, 1],
-	 * fresnel: [0, 0, 0, 0],
-	 * toneParam: [1, 0.1, 1, 1],
-	 * param: [0, 0, 0.07, 1],
-	 * specularFactor: [1,1,1, 1],
-	 * arms: [1,1,1,1],
-	 * armsBase: [0,0,0,0],
-	 * ambient: [0.1,0.1,0.1,1],
-	 * uvParam: [1,1,0,0],
-	 */
-	private mPBRParams = new PBRParamsVec4Data("pbrParams", "frag", new Float32Array([
-		1, 1, 1, 1,
-		0, 0, 0, 0,
-		1, 0.1, 1, 1,
-		0, 0, 0.07, 1,
-		1, 1, 1, 1,
-
-		// 600, 3500, 0, 0.0005,	// fogParam
-		// 1.0, 1.0, 1.0, 1.0,	// fogColor
-		1, 1, 1, 0,	// arms
-		0, 0, 0, 0, // armsBase
-		0.1, 0.1, 0.1, 1, // ambient
-		1, 1, 0, 0, // uvParam
-	]));
-	vsmParams = new VSMUniformData("vsmParams", "frag");
+	private mPBRParams = new PBRParamsVec4Data();
+	vsmParams = new VSMUniformData();
 	shadowMatrix = new MaterialUniformMat44Data(null, "shadowMatrix", "vert");
 
 	lightParam = new LightParamData(new Uint32Array([1, 0, 0, 0]), "lightParam", "frag");
@@ -132,7 +108,7 @@ class BasePBRProperty implements MaterialProperty {
 			vs.push(this.vsmParams, this.shadowMatrix);
 		}
 		if (this.lighting) {
-			vs.push(this.lightParam, this.lights, this.lightColors);
+			vs.push(this.lights, this.lightColors);
 		}
 		if (this.fogging || this.exp2Fogging) {
 			vs.push(this.fogParams);
@@ -158,6 +134,9 @@ class BasePBRProperty implements MaterialProperty {
 		return this.lightParam.param;
 	}
 }
+/**
+ * for some material examples
+ */
 class BasePBRMaterial extends WGMaterial {
 	private mShdBuilder = new WGShaderConstructor();
 	property = new BasePBRProperty();
@@ -209,6 +188,16 @@ class BasePBRMaterial extends WGMaterial {
 		}
 		if (ppt.lighting) {
 			preCode += '#define USE_LIGHT\n';
+			let param = ppt.lightParam;
+			if (param.pointLightsNum > 0) {
+                preCode += `#define USE_POINT_LIGHTS_TOTAL ${param.pointLightsNum}\n`;
+            }
+            if (param.directLightsTotal > 0) {
+                preCode += `#define USE_DIRECTION_LIGHTS_TOTAL ${param.directLightsTotal}\n`;
+            }
+            if (param.spotLightsNum > 0) {
+                preCode += `#define USE_SPOT_LIGHTS_TOTAL ${param.spotLightsNum}\n`;
+            }
 		}
 		if (ts) {
 			for (let i = 0; i < ts.length; ++i) {
@@ -247,9 +236,9 @@ class BasePBRMaterial extends WGMaterial {
 			}
 		}
 
-		console.log('BasePBRMaterial::__$build() preCode: \n', preCode);
+		// console.log('BasePBRMaterial::__$build() preCode: \n', preCode);
 		// console.log('BasePBRMaterial::__$build() ...');
-		let uuid = preCode + "-ins01";
+		let uuid = preCode + "-pbr-ins";
 		let pdp = this.pipelineDefParam;
 		if (pdp) {
 			uuid += pdp.faceCullMode + pdp.blendModes;
@@ -259,7 +248,7 @@ class BasePBRMaterial extends WGMaterial {
 		let shaderSrc = {
 			shaderSrc: { code: shaderCode, uuid }
 		}
-		this.shadinguuid = uuid + '-material';
+		this.shadinguuid = uuid + '-pbr-material';
 		this.shaderSrc = shaderSrc;
 		// this.shaderSrc = basePBRShaderSrc;
 	}

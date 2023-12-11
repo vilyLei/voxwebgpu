@@ -96,7 +96,8 @@ class PBRParamsVec4Data implements MaterialUniformDataImpl {
 	ambient = new Color4();
 	uvParam = new Vector3();
 	private mls: NumberArrayDataImpl[];
-	constructor(shdVarName: string, visibility?: string, data?: Float32Array) {
+	
+	constructor(shdVarName = 'pbrParams', visibility = 'frag', data?: Float32Array) {
 		if (!data) {
 			
 			/**
