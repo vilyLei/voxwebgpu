@@ -48,12 +48,21 @@ class LightParamData extends MaterialUniformVec4Data {
 	get pointLightsNum(): number {
 		return (this.data as Uint32Array)[0];
 	}
+	// set pointLightsNum(num: number) {
+	// 	(this.data as Uint32Array)[0] = num;
+	// }
 	get directionLightsNum(): number {
 		return (this.data as Uint32Array)[1];
 	}
+	// set directionLightsNum(num: number) {
+	// 	(this.data as Uint32Array)[1] = num;
+	// }
 	get spotLightsNum(): number {
 		return (this.data as Uint32Array)[2];
 	}
+	// set spotLightsNum(num: number) {
+	// 	(this.data as Uint32Array)[2] = num;
+	// }
 	set param(param: LightShaderDataParam) {
 		if (param) {
 			if (param.pointLightsTotal !== undefined) {
@@ -68,15 +77,15 @@ class LightParamData extends MaterialUniformVec4Data {
 			this.update();
 		}
 	}
-	set pointLightsTotal(n: number) {
+	set pointLightsNum(n: number) {
 		this.property.x = n;
 		this.update();
 	}
-	set directLightsTotal(n: number) {
+	set directionLightsNum(n: number) {
 		this.property.y = n;
 		this.update();
 	}
-	set spotLightsTotal(n: number) {
+	set spotLightsNum(n: number) {
 		this.property.z = n;
 		this.update();
 	}

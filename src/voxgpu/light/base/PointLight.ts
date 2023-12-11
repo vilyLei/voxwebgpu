@@ -37,5 +37,11 @@ export class PointLight implements PointLightImpl {
             if (param.factor2) this.factor1 = param.factor2;
         }
     }
+    applyTo(pfs: Float32Array, cfs: Float32Array, offset = 0): void {
+        this.position.w = this.factor1;
+        this.color.a = this.factor2;
+        this.position.toArray4(pfs, offset);
+        this.color.toArray4(cfs, offset);
+    }
 
 }

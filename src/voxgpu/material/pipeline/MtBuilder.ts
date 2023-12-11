@@ -135,8 +135,8 @@ class MtBuilder {
             if (param.pointLightsNum > 0) {
                 preCode += `#define USE_POINT_LIGHTS_TOTAL ${param.pointLightsNum}\n`;
             }
-            if (param.directLightsTotal > 0) {
-                preCode += `#define USE_DIRECTION_LIGHTS_TOTAL ${param.directLightsTotal}\n`;
+            if (param.directionLightsNum > 0) {
+                preCode += `#define USE_DIRECTION_LIGHTS_TOTAL ${param.directionLightsNum}\n`;
             }
             if (param.spotLightsNum > 0) {
                 preCode += `#define USE_SPOT_LIGHTS_TOTAL ${param.spotLightsNum}\n`;
