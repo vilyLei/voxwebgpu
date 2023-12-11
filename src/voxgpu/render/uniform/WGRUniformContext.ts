@@ -16,7 +16,7 @@ class WGRUniformContext implements IWGRUniformContext {
 	private mLayoutAuto = true;
 	constructor(layoutAuto: boolean) {
 		this.mLayoutAuto = layoutAuto;
-		console.log("WGRUniformContext::constructor() ...");
+		// console.log("WGRUniformContext::constructor() ...");
 	}
 	isLayoutAuto(): boolean {
 		return this.mLayoutAuto;

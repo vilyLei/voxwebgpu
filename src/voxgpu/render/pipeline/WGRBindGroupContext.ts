@@ -239,12 +239,12 @@ class WGRBindGroupContext {
 						binding: bindIndex + bindI++,
 						resource: t.texView
 					};
-					console.log('es, et: ', es, et);
+					// console.log('es, et: ', es, et);
 					desc.entries.push(es, et);
 				}
 			}
 		}
-		console.log("createUniformBindGroup(), desc: ", desc);
+		// console.log("createUniformBindGroup(), desc: ", desc);
 		if (desc.entries.length < 1) {
 			throw Error("Illegal operation !!!");
 		}

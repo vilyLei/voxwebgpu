@@ -12,10 +12,10 @@ class ShadowOccBlurShdCtor extends WGShdCodeCtor {
 		let shdWGSL = shaderSrcCode;
 		
 		shdWGSL = preDef.applyPredefine(shdWGSL);
-		console.log("\n###### predefine:");
-		console.log(predefine);
-		console.log("\n###### shdWGSL:");
-		console.log(shdWGSL);
+		// console.log("\n###### predefine:");
+		// console.log(predefine);
+		// console.log("\n###### shdWGSL:");
+		// console.log(shdWGSL);
 		return shdWGSL;
 	}
 }

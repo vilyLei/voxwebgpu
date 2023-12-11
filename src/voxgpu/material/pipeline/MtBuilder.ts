@@ -317,7 +317,7 @@ class MtBuilder {
             builder.setMaterial(material, uk);
             const node = builder.getPassNodeWithMaterial(material);
             if (!material.getRCtx()) {
-                console.log("XXXXXXXXXXXXXX this.mUniqueKey: ", uk);
+                // console.log("XXXXXXXXXXXXXX this.mUniqueKey: ", uk);
                 if(!node.hasRenderPipelineCtxWithUniqueKey( uk )) {
                     material.shaderSrc = this.shaderBuild(material.shaderSrc, uvalues, utexes);
                 }

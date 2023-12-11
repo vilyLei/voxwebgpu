@@ -46,7 +46,7 @@ class WGRenderUnitBlock {
 		return false;
 	}
 	setMaterial(material: WGMaterialDescripter, uniqueKey: string): void {
-		console.log("xxxxxxxxxxx setMaterial(), vvvvvvvvvvvvvvvvv");
+		// console.log("xxxxxxxxxxx setMaterial(), vvvvvvvvvvvvvvvvv");
 		if(material.uid !== undefined) {
 			const map = this.mMaterialMap;
 			if(!map.has(material.uid)) {

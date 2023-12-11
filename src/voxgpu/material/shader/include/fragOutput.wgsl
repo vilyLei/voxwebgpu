@@ -185,8 +185,9 @@ fn calcColor4(calcParam: CalcColor4Param) -> vec4<f32> {
 	var light: vec4<f32>;
 	var lightColor: vec4<f32>;
 	var factor: f32 = 1.0;
-	
-	let pointsTotal = min(lightParam.x, u32(128));
+	#if USE_POINT_LIGHTS_TOTAL > 0
+	// let pointsTotal = min(lightParam.x, u32(128));
+	let pointsTotal = u32(USE_POINT_LIGHTS_TOTAL);
 	for(var i: u32  = u32(0); i < pointsTotal; i++) {
 		// calculate per-light radiance
 		light = lights[i];
@@ -197,6 +198,7 @@ fn calcColor4(calcParam: CalcColor4Param) -> vec4<f32> {
 		rL.L = normalize(rL.L);
 		calcPBRLight(roughness, rm, lightColor.xyz * factor,&rL);
 	}
+	#endif
 
 	specularColor = (rL.specular + specularColor);
 	diffuse = rL.diffuse * diffuse;

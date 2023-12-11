@@ -102,9 +102,9 @@ class WGRendererPass implements WGRendererPassImpl {
 							colorAtt.textureFormat = rtt.format;
 							colorAtt.view = tview;
 							colorAtt.view.label = td.uuid;
-							console.log("动态创建一个 color rtt gpu texture instance, \ncolorAtt.textureFormat: ", colorAtt.textureFormat, ", sampleCount: ", sampleCount);
+							// console.log("动态创建一个 color rtt gpu texture instance, \ncolorAtt.textureFormat: ", colorAtt.textureFormat, ", sampleCount: ", sampleCount);
 							// console.log("动态创建一个 color rtt gpu texture instance, view: ", colorAtt.view);
-							console.log("动态创建一个 color rtt gpu texture instance, td: ", td);
+							// console.log("动态创建一个 color rtt gpu texture instance, td: ", td);
 						} else {
 							colorAtt.view = rttData.textureView;
 						}

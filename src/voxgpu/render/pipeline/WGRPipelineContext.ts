@@ -37,7 +37,7 @@ class WGRPipelineContext implements WGRPipelineContextImpl {
 	readonly uniformCtx = new WGRUniformContext(false);
 
 	constructor(wgCtx?: WebGPUContext) {
-		console.log("WGRPipelineContext::constructor() ...");
+		// console.log("WGRPipelineContext::constructor() ...");
 		if (wgCtx) {
 			this.initialize(wgCtx);
 		}
