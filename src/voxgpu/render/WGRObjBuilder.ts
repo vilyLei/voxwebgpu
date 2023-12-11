@@ -100,8 +100,6 @@ class WGRObjBuilder {
 		let uvalues = mtb.uvalues;
 		let utexes = mtb.utexes;
 
-		let uniformFlag = uvalues.length > 0 || utexes.length > 0;
-
 		mtb.buildMaterial(material, primitive);
 		pctx = material.getRCtx();
 		
@@ -132,9 +130,10 @@ class WGRObjBuilder {
 		}
 
 		ru.pipelinectx = pctx;
-		const uniformCtx = pctx.uniformCtx;
 
+		let uniformFlag = uvalues.length > 0 || utexes.length > 0;
 		if (uniformFlag) {
+			const uniformCtx = pctx.uniformCtx;
 			ru.uniforms = uniformCtx.createUniformsWithValues([
 				{
 					layoutName: material.shadinguuid,

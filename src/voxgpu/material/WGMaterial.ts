@@ -170,14 +170,15 @@ class WGMaterial implements IWGMaterial {
 	}
 	get computing(): boolean {
 		
-		let pl = this.pipeline;
-		let isComputing = false;
-		if(pl) {
-			isComputing = pl.shaderType === 'comp';
-		}else {
-			isComputing = this.shaderSrc.compShaderSrc !== undefined;
-		}
-		return isComputing;
+		// let pl = this.pipeline;
+		// let isComputing = false;
+		// if(pl) {
+		// 	isComputing = pl.shaderType === 'comp';
+		// }else {
+		// 	isComputing = this.shaderSrc.compShaderSrc !== undefined;
+		// }
+		// return isComputing;
+		return false;
 	}
 }
 export { WGMaterialDescripter, WGRShderSrcType, checkMaterialRPasses, WGTextureDataDescriptor, WGMaterial };

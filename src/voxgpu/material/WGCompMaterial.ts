@@ -14,6 +14,9 @@ class WGCompMaterial extends WGMaterial implements IWGCompMaterial {
 
 	exclueukeys = ['objMat', 'viewMat', 'projMat'];
 
+	get computing(): boolean {
+		return true;
+	}
 	constructor(descriptor?: WGCompMaterialDescripter) {
 		super(descriptor);
 		if (descriptor) {
