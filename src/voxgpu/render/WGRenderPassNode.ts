@@ -121,7 +121,7 @@ class WGRenderPassNode implements IWGRenderPassNode {
 			const ub = this.unitBlock;
 			ub.rbParam = this.mRBParam;
 			ub.builder = this;
-			console.log("WGRenderPassNode::addEntity(), ub.builder: ", ub.builder);
+			// console.log("WGRenderPassNode::addEntity(), ub.builder: ", ub.builder);
 			this.unitBlock.addEntity(entity, param);
 		}
 	}

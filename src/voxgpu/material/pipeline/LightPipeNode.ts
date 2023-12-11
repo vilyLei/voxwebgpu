@@ -2,28 +2,26 @@ import { BaseLightData, LightParamData, LightShaderDataParam } from "../mdata/Li
 import { WGRBufferData } from "../mdata/MaterialUniformData";
 import { MtPlNodeImpl } from "./MtPlNodeImpl";
 import { MtPlNode } from "./MtPlNode";
-import { PointLight } from "../../light/base/PointLight";
-import { DirectionLight } from "../../light/base/DirectionLight";
+
+import { MtLightDataDescriptor } from "../mdata/MtLightDataDescriptor";
 
 let lightData0 = new Float32Array([0.0, 200.0, 0, 0.0001]);
 let lightData1 = new Float32Array([5.0, 5.0, 5.0, 0.0001]);
 
-type LightDataDescriptor = {pointLights: PointLight[], directionLights: DirectionLight[]};
-
 class LightPipeNode extends MtPlNode implements MtPlNodeImpl {
     private param: LightShaderDataParam;
-	private mLightData: LightDataDescriptor;
+	private mLightData: MtLightDataDescriptor;
 
     type = 'lighting';
     macros = ['USE_LIGHT'];
     lightParam = new LightParamData(new Uint32Array([1, 0, 0, 0]), "lightParam", "frag");
     lights = new BaseLightData(lightData0, "lights", "frag");
     lightColors = new BaseLightData(lightData1, "lightColors", "frag");
-	constructor(lightData?: LightDataDescriptor) {
+	constructor(lightData?: MtLightDataDescriptor) {
 		super();
 		this.lightData = lightData;
 	}
-	set lightData(data: LightDataDescriptor) {
+	set lightData(data: MtLightDataDescriptor) {
 		if(data) {
 			let dataLen = 0;
 			let points = data.pointLights;
@@ -37,22 +35,28 @@ class LightPipeNode extends MtPlNode implements MtPlNodeImpl {
 				dataLen += direcs.length;
 				param.directionLightsNum = direcs.length;
 			}
-			let lightsData = new Float32Array(dataLen * 4);
-			let colorsData = new Float32Array(dataLen * 4);
-			let offset = 0;
-			if( points ) {
-				for(let i = 0; i < points.length; ++i) {
-					points[i].applyTo(lightsData, colorsData, offset);
-					offset += 4;
+			if(dataLen > 0) {
+				let lightsData = new Float32Array(dataLen * 4);
+				let colorsData = new Float32Array(dataLen * 4);
+				let offset = 0;
+				if( points ) {
+					for(let i = 0; i < points.length; ++i) {
+						points[i].applyTo(lightsData, colorsData, offset);
+						offset += 4;
+					}
 				}
-			}
-			if( points ) {
-				for(let i = 0; i < points.length; ++i) {
-					points[i].applyTo(lightsData, colorsData, offset);
-					offset += 4;
+				if( direcs ) {
+					for(let i = 0; i < direcs.length; ++i) {
+						direcs[i].applyTo(lightsData, colorsData, offset);
+						offset += 4;
+					}
 				}
+				console.log(">>>MMM lightsData: ", lightsData);
+				console.log(">>>MMM colorsData: ", colorsData);
+				this.lights.data = lightsData;
+				this.lightColors.data = colorsData;
+				this.mLightData = data;
 			}
-			this.mLightData = data;
 		}
 	}
 	set data(param: LightShaderDataParam) {
