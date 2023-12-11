@@ -314,8 +314,7 @@ class WGTextureWrapper {
 
 const __$texDataMap: Map<string, WGTextureData> = new Map();
 function createDataWithDescriptor(descriptor: WGTextureDataDescriptor): WGTextureData {
-	// let dimension = descriptor.dimension ? descriptor.dimension : "2d";
-
+	
 	if(descriptor && descriptor.update !== undefined) {
 		descriptor.update();
 	}
@@ -342,7 +341,7 @@ function createDataWithDescriptor(descriptor: WGTextureDataDescriptor): WGTextur
 
 	switch (viewDimension) {
 		case "2d":
-			console.log("create a 2d texture instance ...");
+			// console.log("create a 2d texture instance ...");
 			if (dpt.rttTexture) {
 				td = new WGRTTTextureData().setDescripter(dpt);
 			} else if (dpt.dataTexture) {
@@ -352,7 +351,7 @@ function createDataWithDescriptor(descriptor: WGTextureDataDescriptor): WGTextur
 			}
 			break;
 		case "cube":
-			console.log("create a cube texture instance ...");
+			// console.log("create a cube texture instance ...");
 			if (dpt.dataTexture) {
 				td = new WGDataTextureData().setDescripter(dpt);
 			} else {

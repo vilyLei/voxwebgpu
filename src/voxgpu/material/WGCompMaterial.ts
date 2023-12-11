@@ -13,6 +13,7 @@ class WGCompMaterial extends WGMaterial implements IWGCompMaterial {
 	workcounts?: Uint16Array;
 
 	exclueukeys = ['objMat', 'viewMat', 'projMat'];
+
 	constructor(descriptor?: WGCompMaterialDescripter) {
 		super(descriptor);
 		if (descriptor) {

@@ -24,5 +24,9 @@ interface WGMaterialDescripter {
 	uniformAppend?: boolean;
 	instanceCount?: number;
 	uniformValues?: WGRBufferData[];
+	/**
+	 * compute shader yes or no
+	 */
+	computing?: boolean;
 }
 export { WGRShderSrcType, VtxPipelinDescParam, WGRPipelineContextDefParam, WGMaterialDescripter };

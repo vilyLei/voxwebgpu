@@ -191,14 +191,15 @@ class WGRenderPassBlock implements IWGRPassNodeBuilder {
 	getPassNodeWithMaterial(material: WGMaterialDescripter): WGRenderPassNode {
 		let node = this.getPassNode(material.rpass ? material.rpass.rpass : null);
 
-		let pl = material.pipeline;
-		let compFlag = false;
-		if(pl) {
-			compFlag = pl.shaderType === 'comp';
-		}else {
-			compFlag = material.shaderSrc.compShaderSrc !== undefined;
-		}
-		if (compFlag) {
+		// let pl = material.pipeline;
+		// let compFlag = false;
+		// if(pl) {
+		// 	compFlag = pl.shaderType === 'comp';
+		// }else {
+		// 	compFlag = material.shaderSrc.compShaderSrc !== undefined;
+		// }
+		let isComputing = material.computing === true;
+		if (isComputing) {
 			if (this.mCompPassNodes.length < 1) {
 				this.appendRendererPass({ computeEnabled: true });
 			}

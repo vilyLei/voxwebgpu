@@ -339,15 +339,8 @@ class MtBuilder {
         }
     }
     checkMaterialParam(material: IWGMaterial, primitive: WGRPrimitiveImpl): void {
-        let pl = material.pipeline;
-		let compFlag = false;
-		if(pl) {
-			compFlag = pl.shaderType === 'comp';
-		}else {
-			compFlag = material.shaderSrc.compShaderSrc !== undefined;
-		}
-        // if (!material.shaderSrc.compShaderSrc) {
-        if (!compFlag) {
+		let isComputing = material.computing === true;
+        if (!isComputing) {
             const vtxParam = material.pipelineVtxParam;
             if (primitive && vtxParam) {
                 const vert = vtxParam.vertex;

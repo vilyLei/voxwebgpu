@@ -108,14 +108,7 @@ class WGRObjBuilder {
 
 		let ru: IWGRUnit;
 
-		// const isComputing = material.shaderSrc.compShaderSrc !== undefined;
-		let pl = material.pipeline;
-		let isComputing = false;
-		if(pl) {
-			isComputing = pl.shaderType === 'comp';
-		}else {
-			isComputing = material.shaderSrc.compShaderSrc !== undefined;
-		}
+		let isComputing = material.computing === true;
 		if (isComputing) {
 			let et = (entity as IRenderableObject);
 			let rcompunit = new WGRCompUnit();

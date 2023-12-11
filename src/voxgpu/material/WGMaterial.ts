@@ -168,5 +168,16 @@ class WGMaterial implements IWGMaterial {
 			this.mRCtx = null;
 		}
 	}
+	get computing(): boolean {
+		
+		let pl = this.pipeline;
+		let isComputing = false;
+		if(pl) {
+			isComputing = pl.shaderType === 'comp';
+		}else {
+			isComputing = this.shaderSrc.compShaderSrc !== undefined;
+		}
+		return isComputing;
+	}
 }
 export { WGMaterialDescripter, WGRShderSrcType, checkMaterialRPasses, WGTextureDataDescriptor, WGMaterial };

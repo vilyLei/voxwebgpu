@@ -49,6 +49,11 @@ interface IWGMaterial extends WGMaterialDescripter {
 	initialize(pipelineCtx: WGRPipelineContextImpl): void;
 	destroy(): void;
 	__$build?(info?: string, uniqueKey?: string): void;
+	/**
+	 * compute shader yes or no
+	 */
+	computing?: boolean;
+
 	exclueukeys?: string[];
 }
 function checkMaterialRPasses(ms: IWGMaterial[], rpasses: WGRMaterialPassViewImpl[]): void {

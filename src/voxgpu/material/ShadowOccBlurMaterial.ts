@@ -62,14 +62,14 @@ class ShadowOccBlurMaterial extends WGMaterial {
 
 	__$build(): void {
 		let preCode = '';
-		let ts = this.textures;
+		// let ts = this.textures;
 		let ppt = this.property;
 		if (ppt.isHorizonalBlur()) {
 			preCode += '#define USE_HORIZONAL_PASS\n';
 		}
 
 		// console.log('ShadowOccBlurMaterial::__$build() preCode: \n', preCode);
-		let uuid = preCode + "-shadowOccBlurIns01";
+		let uuid = preCode + "-shadowOccBlurIns";
 		let shaderCode = this.mShdBuilder.build(preCode);
 		let shaderSrc = {
 			shaderSrc: { code: shaderCode, uuid }
