@@ -40,7 +40,7 @@ class BasePBRProperty implements MaterialProperty {
 	 * ambient: [0.1,0.1,0.1,1],
 	 * uvParam: [1,1,0,0],
 	 */
-	private mPBRParams = new PBRParamsVec4Data(new Float32Array([
+	private mPBRParams = new PBRParamsVec4Data("pbrParams", "frag", new Float32Array([
 		1, 1, 1, 1,
 		0, 0, 0, 0,
 		1, 0.1, 1, 1,
@@ -53,8 +53,8 @@ class BasePBRProperty implements MaterialProperty {
 		0, 0, 0, 0, // armsBase
 		0.1, 0.1, 0.1, 1, // ambient
 		1, 1, 0, 0, // uvParam
-	]), "pbrParams", "frag");
-	vsmParams = new VSMUniformData(null, "vsmParams", "frag");
+	]));
+	vsmParams = new VSMUniformData("vsmParams", "frag");
 	shadowMatrix = new MaterialUniformMat44Data(null, "shadowMatrix", "vert");
 
 	lightParam = new LightParamData(new Uint32Array([1, 0, 0, 0]), "lightParam", "frag");

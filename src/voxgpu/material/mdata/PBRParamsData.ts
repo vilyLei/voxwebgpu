@@ -82,17 +82,7 @@ class ArmsDataWrapper {
 	}
 }
 
-/**
- * albedo: [1, 1, 1, 1],
- * fresnel: [0, 0, 0, 0],
- * toneParam: [1, 0.1, 1, 1],
- * param: [0, 0, 0.07, 1],
- * specularFactor: [1,1,1, 1],
- * arms: [1,1,1,1],
- * armsBase: [0,0,0,0],
- * ambient: [0.1,0.1,0.1,1],
- * uvParam: [1,1,0,0],
- */
+
 class PBRParamsVec4Data implements MaterialUniformDataImpl {
 	version = -1;
 	storage: MaterialUniformData;
@@ -106,8 +96,33 @@ class PBRParamsVec4Data implements MaterialUniformDataImpl {
 	ambient = new Color4();
 	uvParam = new Vector3();
 	private mls: NumberArrayDataImpl[];
-	constructor(data: Float32Array, shdVarName: string, visibility?: string) {
-
+	constructor(shdVarName: string, visibility?: string, data?: Float32Array) {
+		if (!data) {
+			
+			/**
+			 * albedo: [1, 1, 1, 1],
+			 * fresnel: [0, 0, 0, 0],
+			 * toneParam: [1, 0.1, 1, 1],
+			 * param: [0, 0, 0.07, 1],
+			 * specularFactor: [1,1,1, 1],
+			 * arms: [1,1,1,1],
+			 * armsBase: [0,0,0,0],
+			 * ambient: [0.1,0.1,0.1,1],
+			 * uvParam: [1,1,0,0],
+			 */
+			data = new Float32Array([
+				1, 1, 1, 1,
+				0, 0, 0, 0,
+				1, 0.1, 1, 1,
+				0, 0, 0.07, 1,
+				1, 1, 1, 1,
+		
+				1, 1, 1, 0,	// arms
+				0, 0, 0, 0, // armsBase
+				0.1, 0.1, 0.1, 1, // ambient
+				1, 1, 0, 0, // uvParam
+			]);
+		};
 		this.storage = new MaterialUniformData(data, shdVarName, visibility);
 		this.storage.arraying = true;
 		this.storage.shdVarFormat = 'array<vec4<f32>>';

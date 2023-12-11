@@ -19,29 +19,7 @@ import { MaterialProperty } from "./pipeline/MaterialProperty";
 
 class BasePBRProperty implements MaterialProperty {
 
-	/**
-	 * albedo: [1, 1, 1, 1],
-	 * fresnel: [0, 0, 0, 0],
-	 * toneParam: [1, 0.1, 1, 1],
-	 * param: [0, 0, 0.07, 1],
-	 * specularFactor: [1,1,1, 1],
-	 * arms: [1,1,1,1],
-	 * armsBase: [0,0,0,0],
-	 * ambient: [0.1,0.1,0.1,1],
-	 * uvParam: [1,1,0,0],
-	 */
-	private mPBRParams = new PBRParamsVec4Data(new Float32Array([
-		1, 1, 1, 1,
-		0, 0, 0, 0,
-		1, 0.1, 1, 1,
-		0, 0, 0.07, 1,
-		1, 1, 1, 1,
-
-		1, 1, 1, 0,	// arms
-		0, 0, 0, 0, // armsBase
-		0.1, 0.1, 0.1, 1, // ambient
-		1, 1, 0, 0, // uvParam
-	]), "pbrParams", "frag");
+	private mPBRParams = new PBRParamsVec4Data("pbrParams", "frag");
 
 	albedo: MaterialUniformColor4Wrapper;
 	fresnel: MaterialUniformColor4Wrapper;
@@ -96,7 +74,6 @@ class BasePBRProperty implements MaterialProperty {
 	}
 
 	get uniformValues(): WGRBufferData[] {
-
 		let vs = [this.mPBRParams] as WGRBufferData[];
 		return vs;
 	}
@@ -117,7 +94,6 @@ class BasePBRProperty implements MaterialProperty {
 			uk += '-INVERSE_MASK';
 		}
 		if (ppt.exp2Fogging) {
-			ppt.fogging = true;
 			uk += '-FOG_EXP2';
 		}
 		return uk;
@@ -138,7 +114,6 @@ class BasePBRProperty implements MaterialProperty {
 			preCode += '#define USE_INVERSE_MASK\n';
 		}
 		if (ppt.exp2Fogging) {
-			ppt.fogging = true;
 			preCode += '#define USE_FOG_EXP2\n';
 		}
 		return preCode;
