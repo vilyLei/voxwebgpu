@@ -7,35 +7,45 @@
 
 import Color4 from "../../material/Color4";
 import Vector3 from "../../math/Vector3";
-import { SpotLightImpl } from "./SpotLightImpl";
+import { SpotLightParam, SpotLightImpl } from "./SpotLightImpl";
 
 export class SpotLight implements SpotLightImpl {
 
-    readonly position = new Vector3(0.0, 100.0, 0.0);
-    readonly direction = new Vector3(0.0, -1.0, 0.0, 0.0);
-    readonly color = new Color4(1.0, 1.0, 1.0, 1.0);
+    position = new Vector3(0, 100, 0);
+    direction = new Vector3(0, -1, 0, 0);
+    color = new Color4(1, 1, 1, 1);
     /**
      * spot light 椎体夹角角度值
      */
-    angleDegree = 30.0;
+    degree = 30;
     /**
      * 顶点与点光源之间距离的一次方因子, default value is 0.0001
      */
-    attenuationFactor1 = 0.0001;
+    factor1 = 0.0001;
     /**
      * 顶点与点光源之间距离的二次方因子, default value is 0.0005
      */
-    attenuationFactor2 = 0.0005;
+    factor2 = 0.0005;
 
-    constructor() { }
+    constructor(param?: SpotLightParam) {
+        this.setParam(param)
+    }
 
-    setParams(pos: Vector3DataType, direc: Vector3DataType, color: ColorDataType, degree: number, f1: number, f2: number): void {
-
-        this.position.setVector3(pos);
-        this.direction.setVector3(direc);
-        this.color.setColor(color);
-        this.angleDegree = degree;
-        this.attenuationFactor1 = f1;
-        this.attenuationFactor2 = f2;
+    setParam(param: SpotLightParam): void {
+        if (param) {
+            if (param.color) this.color.setColor(param.color);
+            if (param.direction) this.direction.setVector3(param.direction);
+            if (param.position) this.position.setVector3(param.position);
+            if (param.factor1) this.factor1 = param.factor1;
+            if (param.factor2) this.factor1 = param.factor2;
+        }
+    }
+    applyTo(pfs: Float32Array, cfs: Float32Array, offset = 0): void {
+        this.position.w = this.factor1;
+        this.direction.w = Math.PI * this.degree / 180.0;
+        this.color.a = this.factor2;
+        this.position.toArray4(pfs, offset);
+        this.direction.toArray4(pfs, offset + 4);
+        this.color.toArray4(cfs, offset);
     }
 }

@@ -16,7 +16,7 @@ export class DirectionLight implements DirectionLightImpl {
         this.setParam(param);
     }
 
-    setParam(param: DirectionLightParam): void {
+    setParam(param?: DirectionLightParam): void {
         if (param) {
             if (param.color) this.color.setColor(param.color);
             if (param.direction) this.direction.setVector3(param.direction);

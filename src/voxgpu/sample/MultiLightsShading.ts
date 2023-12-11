@@ -6,13 +6,11 @@ import { SpecularEnvBrnTexture } from "../texture/SpecularEnvBrnTexture";
 import { WGTextureDataDescriptor } from "../texture/WGTextureDataDescriptor";
 import { SphereEntity } from "../entity/SphereEntity";
 import { TorusEntity } from "../entity/TorusEntity";
-import { createLocalLightsData } from "./utils/lightUtil";
 import { CubeEntity } from "../entity/CubeEntity";
 import { PlaneEntity } from "../entity/PlaneEntity";
 import { MtLightDataDescriptor } from "../material/mdata/MtLightDataDescriptor";
 import { PointLight } from "../light/base/PointLight";
 import { DirectionLight } from "../light/base/DirectionLight";
-import { AxisEntity } from "../entity/AxisEntity";
 
 export class MultiLightsShading {
 	private mRscene = new RendererScene();
@@ -68,10 +66,12 @@ export class MultiLightsShading {
 		return textures;
 	}
 	private createLightData(): MtLightDataDescriptor {
-		let ld = {pointLights:[], directionLights: []} as MtLightDataDescriptor;
-		let pLight = new PointLight({color:[50,0,0], position:[0, 200, 0]});
+		let ld = { pointLights: [], directionLights: [] } as MtLightDataDescriptor;
+		let pLight = new PointLight({ color: [20, 0, 0], position: [0, 200, 0] });
 		ld.pointLights.push(pLight);
-		let dLight = new DirectionLight({color:[2, 0, 2], direction:[-1, -1, 0]});
+		pLight = new PointLight({ color: [10, 10, 0], position: [-150, 200, 150] });
+		ld.pointLights.push(pLight);
+		let dLight = new DirectionLight({ color: [2, 0, 2], direction: [-1, -1, 0] });
 		ld.directionLights.push(dLight);
 		return ld;
 	}
@@ -82,13 +82,10 @@ export class MultiLightsShading {
 		let mtpl = rc.renderer.mtpl;
 
 		mtpl.light.lightData = this.createLightData();
-		mtpl.shadow.param.direction = [1,1,0];
+		mtpl.shadow.param.direction = [1, 1, 0];
 		mtpl.shadow.param.intensity = 0.5;
 		mtpl.shadow.param.radius = 6;
 		mtpl.fog.fogColor.value = [0.3, 0.7, 0.2];
-
-		// let axis = new AxisEntity({axisLength: 350});
-		// rc.addEntity(axis);
 
 		let position = [0, 50, 180];
 		let materials = this.createMaterials(true);
@@ -100,7 +97,7 @@ export class MultiLightsShading {
 			}
 		);
 		rc.addEntity(sphere);
-		// /*
+		
 		position = [0, 50, -180];
 		materials = this.createMaterials(true, true, 'back', [4, 1]);
 		let torus = new TorusEntity({
@@ -132,26 +129,24 @@ export class MultiLightsShading {
 			}
 		);
 		rc.addEntity(envBox);
-		//*/
-
 	}
 	private createMaterials(shadowReceived = false, shadow = true, faceCullMode = 'back', uvParam?: number[]): BaseMaterial[] {
 		let textures0 = this.createBaseTextures();
-		// let textures1 = this.createMaskTextures("plastic");
-		// let textures2 = this.createMaskTextures("wall", 'circleWave_disp.png');
+		let textures1 = this.createMaskTextures("plastic");
+		let textures2 = this.createMaskTextures("wall", 'circleWave_disp.png');
 
 		let material0 = this.createMaterial(textures0, ["solid"], 'less', faceCullMode);
 		this.applyMaterialPPt(material0, shadowReceived, shadow);
 
-		// let material1 = this.createMaterial(textures1, ["transparent"], 'less-equal', faceCullMode);
-		// material1.property.inverseMask = false;
-		// this.applyMaterialPPt(material1, shadowReceived, shadow);
+		let material1 = this.createMaterial(textures1, ["transparent"], 'less-equal', faceCullMode);
+		material1.property.inverseMask = false;
+		this.applyMaterialPPt(material1, shadowReceived, shadow);
 
-		// let material2 = this.createMaterial(textures2, ["transparent"], 'less-equal', faceCullMode);
-		// material2.property.inverseMask = true;
-		// this.applyMaterialPPt(material2, shadowReceived, shadow);
-		// let list = [material0, material1, material2];
-		let list = [material0];
+		let material2 = this.createMaterial(textures2, ["transparent"], 'less-equal', faceCullMode);
+		material2.property.inverseMask = true;
+		this.applyMaterialPPt(material2, shadowReceived, shadow);
+		let list = [material0, material1, material2];
+		// let list = [material0];
 
 		// let list = [material0, material1];
 		if (uvParam) {
