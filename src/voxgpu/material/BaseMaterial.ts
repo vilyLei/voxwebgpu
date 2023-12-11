@@ -170,85 +170,14 @@ class BaseMaterial extends WGMaterial {
 	}
 
 	__$build(preCode?: string, uniqueKey?: string): void {
-		// let ts = this.textures;
-		// let ppt = this.property;
-		// let preCode = ppt.getPreDef();
-		// if (ppt.glossiness) {
-		// 	preCode += '#define USE_GLOSSINESS 1\n';
-		// }
-		// if (ppt.toneMapping) {
-		// 	preCode += '#define USE_TONE_MAPPING\n';
-		// }
-		// if (ppt.metallicCorrection) {
-		// 	preCode += '#define USE_METALLIC_CORRECTION\n';
-		// }
-		// if (ppt.inverseMask) {
-		// 	preCode += '#define USE_INVERSE_MASK\n';
-		// }
-		// if (ppt.exp2Fogging) {
-		// 	ppt.fogging = true;
-		// 	preCode += '#define USE_FOG_EXP2\n';
-		// }
-		/*
-		if (ppt.fogging) {
-			preCode += '#define USE_FOG\n';
-		}
-		if (ppt.shadowReceived) {
-			preCode += '#define USE_VSM_SHADOW\n';
-		}
-		if (ppt.lighting) {
-			preCode += '#define USE_LIGHT\n';
-		}
-		if (ts) {
-			for (let i = 0; i < ts.length; ++i) {
-				console.log('ts[i].texture.shdVarName: ', ts[i].texture.shdVarName);
-				switch (ts[i].texture.shdVarName) {
-					case 'normal':
-						preCode += '#define USE_NORMAL_MAP\n';
-						break;
-					case 'albedo':
-						preCode += '#define USE_ALBEDO\n';
-						break;
-					case 'ao':
-						preCode += '#define USE_AO\n';
-						break;
-					case 'roughness':
-						preCode += '#define USE_ROUGHNESS\n';
-						break;
-					case 'metallic':
-						preCode += '#define USE_METALLIC\n';
-						break;
-					case 'specularEnv':
-						preCode += '#define USE_SPECULAR_ENV\n';
-						break;
-					case 'arm':
-						preCode += '#define USE_ARM_MAP\n';
-						break;
-					case 'emissive':
-						preCode += '#define USE_EMISSIVE_MAP\n';
-						break;
-					case 'opacity':
-						preCode += '#define USE_OPACITY_MAP\n';
-						break;
-					default:
-						break;
-				}
-			}
-		}
-		//*/
+
 		// console.log('BaseMaterial::__$build() preCode: \n', preCode);
 		// console.log('BaseMaterial::__$build() ...');
-		let uuid = uniqueKey + "-base-material-shd-ins";
-		// let pdp = this.pipelineDefParam;
-		// if (pdp) {
-		// 	uuid += pdp.faceCullMode + pdp.blendModes;
-		// 	// console.log("pdp.faceCullMode: ", pdp.faceCullMode);
-		// }
+		let uuid = uniqueKey + "-base-material";
 		let shaderCode = this.mShdBuilder.build(preCode);
 		let shaderSrc = {
 			shaderSrc: { code: shaderCode, uuid }
 		}
-		// this.shadinguuid = uuid + '-base-material';
 		this.shaderSrc = shaderSrc;
 	}
 }
