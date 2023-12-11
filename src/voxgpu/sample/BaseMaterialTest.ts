@@ -61,7 +61,7 @@ export class BaseMaterialTest {
 			frag: { code: baseFragWGSL, uuid: "baseFrag" }
 		};
 
-		let lightData = this.createLightData();
+		let lightData = this.createLocalLightsData();
 
 		// let textures = this.createTextures("wall");
 		let textures = this.createTextures("gold");
@@ -101,7 +101,7 @@ export class BaseMaterialTest {
 		});
 		rc.addEntity(monkey);
 	}
-	private createLightData(): { lights: WGRBufferData; lightColors: WGRBufferData } {
+	private createLocalLightsData(): { lights: WGRBufferData; lightColors: WGRBufferData } {
 		let lights = { storage: { data: new Float32Array([0.0, 200.0, 0, 0.0001]), shdVarName: "lights" } };
 		let lightColors = { storage: { data: new Float32Array([5.0, 5.0, 5.0, 0.0001]), shdVarName: "lightColors" } };
 

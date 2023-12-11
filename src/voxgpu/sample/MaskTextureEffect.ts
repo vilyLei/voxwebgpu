@@ -6,7 +6,7 @@ import { SpecularEnvBrnTexture } from "../texture/SpecularEnvBrnTexture";
 import { WGTextureDataDescriptor } from "../texture/WGTextureDataDescriptor";
 import { SphereEntity } from "../entity/SphereEntity";
 import { TorusEntity } from "../entity/TorusEntity";
-import { createLightData } from "./utils/lightUtil";
+import { createLocalLightsData } from "./utils/lightUtil";
 
 export class MaskTextureEffect {
 	private mRscene = new RendererScene();
@@ -123,7 +123,7 @@ export class MaskTextureEffect {
 	private createMaterial(position: Vector3DataType, textures: WGTextureDataDescriptor[], blendModes: string[], depthCompare = 'less', lightParam?: LightShaderDataParam): BasePBRMaterial {
 
 		if (!lightParam) {
-			lightParam = createLightData(position);
+			lightParam = createLocalLightsData(position);
 		}
 		let pipelineDefParam = {
 			depthWriteEnabled: true,

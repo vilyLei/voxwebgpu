@@ -68,7 +68,7 @@ export class BasePbrMaterialMultiLights {
 	private createModelEntity(srcEntity: ModelEntity, texName: string, position: Vector3DataType): BasePBRMaterial {
 		let rc = this.mRscene;
 
-		let lightParam = this.createLightData(position);
+		let lightParam = this.createLocalLightsData(position);
 
 		let material = new BasePBRMaterial();
 
@@ -98,7 +98,7 @@ export class BasePbrMaterialMultiLights {
 		rc.addEntity(box);
 		return material;
 	}
-	private createLightData(position: Vector3DataType): LightShaderDataParam {
+	private createLocalLightsData(position: Vector3DataType): LightShaderDataParam {
 
 		let pos = new Vector3().setVector4(position);
 		let pv0 = pos.clone().addBy(new Vector3(0, 200, 0));

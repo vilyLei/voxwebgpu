@@ -5,7 +5,7 @@ import { WGTextureDataDescriptor } from "../material/WGMaterial";
 import { SphereEntity } from "../entity/SphereEntity";
 import { PlaneEntity } from "../entity/PlaneEntity";
 import { SpecularEnvBrnTexture } from "../texture/SpecularEnvBrnTexture";
-import { createLightData } from "./utils/lightUtil";
+import { createLocalLightsData } from "./utils/lightUtil";
 import { BaseMaterial } from "../material/BaseMaterial";
 import { BoxEntity } from "../entity/BoxEntity";
 import { TorusEntity } from "../entity/TorusEntity";
@@ -33,7 +33,7 @@ export class MaterialPipelineTest {
 
 		let mtpl = rc.renderer.mtpl;
 
-		mtpl.light.data = createLightData([0, 300, 0], 600, 5.0);
+		mtpl.light.data = createLocalLightsData([0, 300, 0], 600, 5.0);
 		mtpl.shadow.param.intensity = 0.7;
 
 		let position = [-230.0, 100.0, -200.0];

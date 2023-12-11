@@ -7,7 +7,7 @@ import { WGTextureDataDescriptor } from "../texture/WGTextureDataDescriptor";
 import { SphereEntity } from "../entity/SphereEntity";
 import { TorusEntity } from "../entity/TorusEntity";
 import { CubeEntity } from "../entity/CubeEntity";
-import { createLightData } from "./utils/lightUtil";
+import { createLocalLightsData } from "./utils/lightUtil";
 
 export class FogTest {
 	private mRscene = new RendererScene();
@@ -103,7 +103,7 @@ export class FogTest {
 	private createMaterial(position: Vector3DataType, textures: WGTextureDataDescriptor[], faceCullMode = 'back', depthCompare = 'less', lightParam?: LightShaderDataParam): BasePBRMaterial {
 
 		if (!lightParam) {
-			lightParam = createLightData(position);
+			lightParam = createLocalLightsData(position);
 		}
 		let pipelineDefParam = {
 			depthWriteEnabled: true,

@@ -45,7 +45,7 @@ export class BasePbrMaterialTest {
 			rings: 30
 		});
 
-		let lightData = this.createLightData();
+		let lightData = this.createLocalLightsData();
 
 		let startV = new Vector3(-500, 0, -500);
 		for (let i = 0; i < 3; ++i) {
@@ -93,7 +93,7 @@ export class BasePbrMaterialTest {
 		}
 	}
 
-	private createLightData(): { lightsData: Float32Array; lightColorsData: Float32Array } {
+	private createLocalLightsData(): { lightsData: Float32Array; lightColorsData: Float32Array } {
 		let lightsData = new Float32Array([0.0, 300.0, 0, 0.000001]);
 		let lightColorsData = new Float32Array([5.0, 5.0, 5.0, 0.000005]);
 		return { lightsData, lightColorsData };

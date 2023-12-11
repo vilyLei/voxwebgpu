@@ -2,7 +2,7 @@ import { LightShaderDataParam } from "../../material/BasePBRMaterial";
 import Color4 from "../../material/Color4";
 import Vector3 from "../../math/Vector3";
 
-export function createLightData(position: Vector3DataType, dis = 200, strength = 1.0): LightShaderDataParam {
+export function createLocalLightsData(position: Vector3DataType, dis = 200, strength = 1.0): LightShaderDataParam {
     let pos = new Vector3().setVector4(position);
     let pv0 = pos.clone().addBy(new Vector3(0, dis, 0));
     let pv1 = pos.clone().addBy(new Vector3(dis, 0, 0));

@@ -70,7 +70,7 @@ export class BasePbrMaterialTest2 {
 
 		let rc = this.mRscene;
 
-		let lightData = this.createLightData();
+		let lightData = this.createLocalLightsData();
 
 		let material = new BasePBRMaterial();
 		let property = material.property;
@@ -84,7 +84,7 @@ export class BasePbrMaterialTest2 {
 		rc.addEntity(monkey);
 		return material;
 	}
-	private createLightData(): { lightsData: Float32Array; lightColorsData: Float32Array } {
+	private createLocalLightsData(): { lightsData: Float32Array; lightColorsData: Float32Array } {
 		let lightsData = new Float32Array([0.0, 300.0, 0, 0.000001]);
 		let lightColorsData = new Float32Array([5.0, 5.0, 5.0, 0.000005]);
 		return { lightsData, lightColorsData };

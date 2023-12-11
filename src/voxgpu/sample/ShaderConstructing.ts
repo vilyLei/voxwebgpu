@@ -93,7 +93,7 @@ export class ShaderConstructing {
 	private createModelEntity(srcEntity: ModelEntity, texName: string, position: Vector3DataType, scale?: Vector3DataType): BasePBRMaterial {
 		let rc = this.mRscene;
 
-		let lightParam = this.createLightData(position);
+		let lightParam = this.createLocalLightsData(position);
 
 		// let shaderSrc = {
 		// 	shaderSrc: { code: this.basePBRShaderSrc.shaderSrc.code, uuid: "wholeBasePBRShdCode" }
@@ -113,7 +113,7 @@ export class ShaderConstructing {
 		return material;
 	}
 
-	private createLightData(position: Vector3DataType): LightShaderDataParam {
+	private createLocalLightsData(position: Vector3DataType): LightShaderDataParam {
 		let pos = new Vector3().setVector4(position);
 		let pv0 = pos.clone().addBy(new Vector3(0, 200, 0));
 		let pv1 = pos.clone().addBy(new Vector3(200, 0, 0));

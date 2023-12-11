@@ -100,7 +100,7 @@ export class DynamicShaderBuilding {
 	private createModelEntity(srcEntity: ModelEntity, position: Vector3DataType, textures: WGTextureDataDescriptor[]): BasePBRMaterial {
 		let rc = this.mRscene;
 
-		let lightParam = this.createLightData(position);
+		let lightParam = this.createLocalLightsData(position);
 
 		let material = new BasePBRMaterial();
 
@@ -116,7 +116,7 @@ export class DynamicShaderBuilding {
 		return material;
 	}
 
-	private createLightData(position: Vector3DataType): LightShaderDataParam {
+	private createLocalLightsData(position: Vector3DataType): LightShaderDataParam {
 		let pos = new Vector3().setVector4(position);
 		let pv0 = pos.clone().addBy(new Vector3(0, 200, 0));
 		let pv1 = pos.clone().addBy(new Vector3(200, 0, 0));

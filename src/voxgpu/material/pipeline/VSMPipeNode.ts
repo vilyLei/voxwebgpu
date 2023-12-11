@@ -7,7 +7,7 @@ import Camera from "../../view/Camera";
 import { MaterialUniformMat44Data, WGRBufferData } from "../mdata/MaterialUniformData";
 import { VSMUniformData } from "../mdata/VSMUniformData";
 import { ShadowOccBlurMaterial } from "../ShadowOccBlurMaterial";
-import { WGRShderSrcType, WGMaterial, WGTextureDataDescriptor } from "../WGMaterial";
+import { WGRShderSrcType, WGMaterial } from "../WGMaterial";
 import { MtPlNodeImpl } from "./MtPlNodeImpl";
 import { MtPlNode } from "./MtPlNode";
 

@@ -19,7 +19,7 @@ import { WGRPassColorAttachment } from "../render/pipeline/WGRPassColorAttachmen
 import { WGRPassNodeGraph } from "../render/pass/WGRPassNodeGraph";
 import { SpecularEnvBrnTexture } from "../texture/SpecularEnvBrnTexture";
 import Vector3 from "../math/Vector3";
-import {createLightData} from "./utils/lightUtil";
+import {createLocalLightsData} from "./utils/lightUtil";
 import { BasePBRMaterial, LightShaderDataParam } from "../material/BasePBRMaterial";
 class ShadowPassGraph extends WGRPassNodeGraph {
 
@@ -360,7 +360,7 @@ export class PBRShadowTest {
 	private createMaterial(position: Vector3DataType, textures: WGTextureDataDescriptor[], blendModes: string[], depthCompare = 'less', lightParam?: LightShaderDataParam): BasePBRMaterial {
 
 		if (!lightParam) {
-			lightParam = createLightData(position);
+			lightParam = createLocalLightsData(position);
 			this.mLightParams.push(lightParam);
 		}
 		let pipelineDefParam = {

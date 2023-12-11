@@ -443,7 +443,7 @@ let position = new Vector3(0, -1, 0);
 	private createMaterial(position: Vector3DataType, textures: WGTextureDataDescriptor[], blendModes: string[], depthCompare = 'less', lightParam?: LightShaderDataParam): BasePBRMaterial {
 
 		if (!lightParam) {
-			lightParam = this.createLightData(position);
+			lightParam = this.createLocalLightsData(position);
 		}
 		let pipelineDefParam = {
 			depthWriteEnabled: true,
@@ -457,7 +457,7 @@ let position = new Vector3(0, -1, 0);
 		return material;
 	}
 
-	private createLightData(position: Vector3DataType): LightShaderDataParam {
+	private createLocalLightsData(position: Vector3DataType): LightShaderDataParam {
 		let pos = new Vector3().setVector4(position);
 		let pv0 = pos.clone().addBy(new Vector3(0, 200, 0));
 		let pv1 = pos.clone().addBy(new Vector3(200, 0, 0));
