@@ -50,7 +50,6 @@ fn calcPBRLight(roughness: f32, rm: vec3<f32>, inColor: vec3<f32>, ptr_rL: ptr<f
 }
 
 
-// fn calcColor4(worldPos: vec4<f32>, viewPos: vec4<f32>, uv: vec2<f32>, worldNormal: vec3<f32>, worldCamPos: vec3<f32>) -> vec4<f32> {
 fn calcColor4(calcParam: CalcColor4Param) -> vec4<f32> {
 
 	let worldPos = calcParam.worldPos;
@@ -75,7 +74,6 @@ fn calcColor4(calcParam: CalcColor4Param) -> vec4<f32> {
     var roughness = arms.y;
     var ao = arms.x;
 
-	// var texUV = uv.xy * uvParam.xy;
 	var texUV = uv.xy * pbrParams[8].xy;
 	let worldPosition = worldPos.xyz;
 
@@ -121,7 +119,7 @@ fn calcColor4(calcParam: CalcColor4Param) -> vec4<f32> {
 	#endif
 
 
-    let reflectionIntensity = 1.0;
+    let reflectionIntensity = param.x;
     var glossinessSquare = colorGlossiness * colorGlossiness;
     let specularPower = exp2(8.0 * glossinessSquare + 1.0);
 
@@ -145,7 +143,6 @@ fn calcColor4(calcParam: CalcColor4Param) -> vec4<f32> {
 
 	var specularEnvColor3 = vec3One;
 	#ifdef USE_SPECULAR_ENV
-	// let mipLvFactor = 0.07;
 	let mipLvFactor = param.z;
 	var mipLv = floor(100.0 * fract(mipLvFactor));
 	mipLv -= glossinessSquare * mipLv;
@@ -206,8 +203,6 @@ fn calcColor4(calcParam: CalcColor4Param) -> vec4<f32> {
 		// calculate per-light radiance
 		light = lights[i];
 		lightColor = lightColors[i];
-		// return vec4<f32>(vec3(1.0,1.0,1.0), 1.0);
-		// return vec4<f32>(light.xyz, 1.0);
 		rL.L = normalize(-light.xyz);
 		calcPBRLight(roughness, rm, lightColor.xyz, &rL);
 	}

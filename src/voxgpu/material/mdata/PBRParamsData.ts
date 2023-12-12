@@ -82,7 +82,6 @@ class ArmsDataWrapper {
 	}
 }
 
-
 class PBRParamsVec4Data implements MaterialUniformDataImpl {
 	version = -1;
 	storage: MaterialUniformData;
@@ -96,10 +95,10 @@ class PBRParamsVec4Data implements MaterialUniformDataImpl {
 	ambient = new Color4();
 	uvParam = new Vector3();
 	private mls: NumberArrayDataImpl[];
-	
+
 	constructor(shdVarName = 'pbrParams', visibility = 'frag', data?: Float32Array) {
 		if (!data) {
-			
+
 			/**
 			 * albedo: [1, 1, 1, 1],
 			 * fresnel: [0, 0, 0, 0],
@@ -112,12 +111,12 @@ class PBRParamsVec4Data implements MaterialUniformDataImpl {
 			 * uvParam: [1,1,0,0],
 			 */
 			data = new Float32Array([
-				1, 1, 1, 1,
-				0, 0, 0, 0,
-				1, 0.1, 1, 1,
-				0, 0, 0.07, 1,
-				1, 1, 1, 1,
-		
+				1, 1, 1, 1,	// albedo
+				0, 0, 0, 0, // fresnel
+				1, 0.1, 1, 1, // toneParam
+				1.0, 0, 0.07, 1, // param
+				1, 1, 1, 1, // specularFactor
+
 				1, 1, 1, 0,	// arms
 				0, 0, 0, 0, // armsBase
 				0.1, 0.1, 0.1, 1, // ambient
@@ -141,7 +140,7 @@ class PBRParamsVec4Data implements MaterialUniformDataImpl {
 		];
 
 		let pos = 0;
-		for(let i = 0; i < this.mls.length; ++i) {
+		for (let i = 0; i < this.mls.length; ++i) {
 			this.mls[i].fromArray4(data, pos);
 			pos += 4;
 		}
@@ -149,7 +148,7 @@ class PBRParamsVec4Data implements MaterialUniformDataImpl {
 	update(): void {
 		const data = this.storage.data;
 		let pos = 0;
-		for(let i = 0; i < this.mls.length; ++i) {
+		for (let i = 0; i < this.mls.length; ++i) {
 			this.mls[i].toArray4(data as NumberArrayType, pos);
 			pos += 4;
 		}
@@ -182,6 +181,13 @@ class ToneParamDataWrapper extends MaterialUniformVec4Wrapper {
 	}
 }
 class PBRParamDataWrapper extends MaterialUniformVec4Wrapper {
+	set reflectionIntensity(v: number) {
+		this.property.x = v;
+		this.update();
+	}
+	get reflectionIntensity(): number {
+		return this.property.x;
+	}
 	set scatterIntensity(v: number) {
 		this.property.w = v;
 		this.update();
