@@ -165,9 +165,9 @@ export class MultiLightsShading {
 		ppt.albedo.value = [0.7, 0.7, 0.3];
 		ppt.arms.roughness = 0.7;
 		ppt.armsBase.value = [0, 0, 0];
-		ppt.specularFactor.value = [0.001,0.001,0.001];
+		ppt.specularFactor.value = [0.1,0.1,0.1];
 		ppt.param.scatterIntensity = 4;
-		ppt.param.reflectionIntensity = 0.5;
+		ppt.param.reflectionIntensity = 0.8;
 
 		ppt.shadow = shadow;
 		ppt.lighting = true;
