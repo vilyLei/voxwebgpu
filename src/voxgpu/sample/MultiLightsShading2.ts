@@ -57,7 +57,7 @@ export class MultiLightsShading2 {
 
 		for (let i = 0; i < 6; ++i) {
 			for (let j = 0; j < 6; ++j) {
-				position = [-350 + 150 * j, 10, -350 + 150 * i];
+				position = [-350 + 150 * j, -10, -350 + 150 * i];
 				if (sphere) {
 					let sph = new SphereEntity(
 						{
@@ -70,7 +70,7 @@ export class MultiLightsShading2 {
 				} else {
 					sphere = new SphereEntity(
 						{
-							radius: 50.0,
+							radius: 30.0,
 							materials,
 							transform: { position }
 						}
@@ -133,18 +133,18 @@ export class MultiLightsShading2 {
 		// ld.pointLights.push(pLight);
 		for (let i = 0; i < 5; ++i) {
 			for (let j = 0; j < 5; ++j) {
-				let position = [-250 + 150 * j, 50 + Math.random() * 100, -250 + 150 * i];
+				let position = [-250 + 150 * j, 50 + Math.random() * 50, -250 + 150 * i];
 				position[0] += Math.random() * 100 - 50;
 				position[2] += Math.random() * 100 - 50;
-				let color = [Math.random() * 10, Math.random() * 10, Math.random() * 10];
+				let color = [Math.random() * 5 * i, Math.random() * 5, Math.random() * 5 * j];
 				let pLight = new PointLight({ color, position });
 				ld.pointLights.push(pLight);
 
 				if(Math.random() > 0.5) {
-					position = [-250 + 150 * j, 100 + Math.random() * 50, -250 + 150 * i];
+					position = [-250 + 150 * j, 50 + Math.random() * 50, -250 + 150 * i];
 					position[0] += Math.random() * 100 - 50;
 					position[2] += Math.random() * 100 - 50;
-					color = [Math.random() * 5, Math.random() * 5, Math.random() * 5];
+					color = [Math.random() * 5, Math.random() * 5 * j, Math.random() * 5 * i];
 					let spLight = new SpotLight({ position, color, direction: [Math.random() - 0.5, -1, Math.random() - 0.5], degree: 10 });
 					ld.spotLights.push(spLight);
 				}
@@ -153,8 +153,8 @@ export class MultiLightsShading2 {
 
 		let dLight = new DirectionLight({ color: [0.5, 0.5, 0.5], direction: [-1, -1, 0] });
 		ld.directionLights.push(dLight);
-		dLight = new DirectionLight({ color: [0.5, 0.5, 0.5], direction: [1, -1, 0] });
-		ld.directionLights.push(dLight);
+		// dLight = new DirectionLight({ color: [0.1, 0.1, 0.1], direction: [1, -1, 0] });
+		// ld.directionLights.push(dLight);
 		// let spLight = new SpotLight({ position: [200, 50, -100], color: [50, 0, 50], direction: [-1, -1, 0], degree: 10 });
 		// ld.spotLights.push(spLight);
 		return ld;
