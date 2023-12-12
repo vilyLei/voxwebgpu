@@ -91,7 +91,8 @@
 // import { MaterialPipelineMultiPasses as Demo } from "./voxgpu/sample/MaterialPipelineMultiPasses";
 
 // import { MultiLightsTest as Demo } from "./voxgpu/sample/MultiLightsTest";
-import { MultiLightsShading as Demo } from "./voxgpu/sample/MultiLightsShading";
+// import { MultiLightsShading as Demo } from "./voxgpu/sample/MultiLightsShading";
+import { MultiLightsShading2 as Demo } from "./voxgpu/sample/MultiLightsShading2";
 
 
 
