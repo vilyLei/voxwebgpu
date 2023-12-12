@@ -150,7 +150,6 @@ export class MultiLightsShading {
 		this.applyMaterialPPt(material2, shadowReceived, shadow);
 		let list = [material0, material1, material2];
 		// let list = [material0];
-
 		// let list = [material0, material1];
 		if (uvParam) {
 			for (let i = 0; i < list.length; ++i) {
