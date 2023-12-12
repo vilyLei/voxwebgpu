@@ -7,7 +7,7 @@
 
 import IColor4 from "../../material/IColor4";
 import IVector3 from "../../math/IVector3";
-type SpotLightParam = { color?: ColorDataType, position?: Vector3DataType, direction?: Vector3DataType, factor1?: number, factor2?: number };
+type SpotLightParam = { color?: ColorDataType, position?: Vector3DataType, direction?: Vector3DataType, factor1?: number, factor2?: number, degree?: number };
 interface SpotLightImpl {
 
     position: IVector3;

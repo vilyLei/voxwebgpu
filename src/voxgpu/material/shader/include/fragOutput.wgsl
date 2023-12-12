@@ -211,22 +211,23 @@ fn calcColor4(calcParam: CalcColor4Param) -> vec4<f32> {
 		rL.L = normalize(-light.xyz);
 		calcPBRLight(roughness, rm, lightColor.xyz, &rL);
 	}
-	lightsTotal += dlTotal;
+	lightsTotal = dlTotal;
 	#endif
 
 	#if USE_SPOT_LIGHTS_TOTAL > 0
 	let splTotal = min(u32(USE_SPOT_LIGHTS_TOTAL), u32(128));
 	for(var i: u32  = 0; i < splTotal; i++) {
-		let k = i * u32(2);
+		var k = i * u32(2);
 		light = lights[k + lightsTotal];
 		lightColor = lightColors[i + lightsTotal];
 		rL.L = (light.xyz - worldPosition.xyz);
-		let factor = length(rL.L);
+		var factor = length(rL.L);
 		let attenuation = 1.0 / (1.0 + light.w * factor + lightColor.w * factor * factor);
 
 		rL.L = normalize(rL.L);
-
-		light = lights[k + u32(1) + lightsTotal];
+		k++;
+		light = lights[k + lightsTotal];
+		
 		let direc = normalize( light.xyz );
 		factor = max(1.0 - (clamp((1.0 - max(dot(-direc, rL.L), 0.0)), 0.0, light.w) / light.w), 0.0001);
 

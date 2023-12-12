@@ -36,8 +36,9 @@ export class SpotLight implements SpotLightImpl {
             if (param.color) this.color.setColor(param.color);
             if (param.direction) this.direction.setVector3(param.direction);
             if (param.position) this.position.setVector3(param.position);
-            if (param.factor1) this.factor1 = param.factor1;
-            if (param.factor2) this.factor1 = param.factor2;
+            if (param.factor1 !== undefined) this.factor1 = param.factor1;
+            if (param.factor2 !== undefined) this.factor1 = param.factor2;
+            if (param.degree !== undefined) this.degree = param.degree;
         }
     }
     applyTo(pfs: Float32Array, cfs: Float32Array, offset0 = 0, offset1 = 0): void {

@@ -11,6 +11,7 @@ import { PlaneEntity } from "../entity/PlaneEntity";
 import { MtLightDataDescriptor } from "../material/mdata/MtLightDataDescriptor";
 import { PointLight } from "../light/base/PointLight";
 import { DirectionLight } from "../light/base/DirectionLight";
+import { SpotLight } from "../light/base/SpotLight";
 
 export class MultiLightsShading {
 	private mRscene = new RendererScene();
@@ -66,13 +67,15 @@ export class MultiLightsShading {
 		return textures;
 	}
 	private createLightData(): MtLightDataDescriptor {
-		let ld = { pointLights: [], directionLights: [] } as MtLightDataDescriptor;
-		let pLight = new PointLight({ color: [20, 0, 0], position: [0, 200, 0] });
+		let ld = { pointLights: [], directionLights: [], spotLights: [] } as MtLightDataDescriptor;
+		let pLight = new PointLight({ color: [0, 10, 0], position: [0, 50, 0] });
 		ld.pointLights.push(pLight);
-		pLight = new PointLight({ color: [10, 10, 0], position: [-150, 200, 150] });
-		ld.pointLights.push(pLight);
-		let dLight = new DirectionLight({ color: [2, 0, 2], direction: [-1, -1, 0] });
+		// pLight = new PointLight({ color: [10, 10, 0], position: [-150, 200, 150] });
+		// ld.pointLights.push(pLight);
+		let dLight = new DirectionLight({ color: [0.5, 0.5, 0.5], direction: [-1, -1, 0] });
 		ld.directionLights.push(dLight);
+		let spLight = new SpotLight({ position: [0, 50, 0], color: [50, 0, 50], direction: [-1, -1, 0], degree: 10 });
+		ld.spotLights.push(spLight);
 		return ld;
 	}
 	private initScene(): void {
@@ -89,23 +92,23 @@ export class MultiLightsShading {
 
 		let position = [0, 50, 180];
 		let materials = this.createMaterials(true);
-		let sphere = new SphereEntity(
-			{
-				radius: 150.0,
-				materials,
-				transform: { position }
-			}
-		);
-		rc.addEntity(sphere);
+		// let sphere = new SphereEntity(
+		// 	{
+		// 		radius: 150.0,
+		// 		materials,
+		// 		transform: { position }
+		// 	}
+		// );
+		// rc.addEntity(sphere);
 		
-		position = [0, 50, -180];
-		materials = this.createMaterials(true, true, 'back', [4, 1]);
-		let torus = new TorusEntity({
-			axisType: 1,
-			materials,
-			transform: { position }
-		});
-		rc.addEntity(torus);
+		// position = [0, 50, -180];
+		// materials = this.createMaterials(true, true, 'back', [4, 1]);
+		// let torus = new TorusEntity({
+		// 	axisType: 1,
+		// 	materials,
+		// 	transform: { position }
+		// });
+		// rc.addEntity(torus);
 
 
 		position = [0, -110, 0];
@@ -160,7 +163,7 @@ export class MultiLightsShading {
 		let ppt = material.property;
 		ppt.ambient.value = [0.0, 0.2, 0.2];
 		ppt.albedo.value = [0.7, 0.7, 0.3];
-		ppt.arms.roughness = 0.8;
+		ppt.arms.roughness = 0.7;
 		ppt.armsBase.value = [0, 0, 0];
 		ppt.param.scatterIntensity = 4;
 
