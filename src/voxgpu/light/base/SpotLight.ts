@@ -40,12 +40,12 @@ export class SpotLight implements SpotLightImpl {
             if (param.factor2) this.factor1 = param.factor2;
         }
     }
-    applyTo(pfs: Float32Array, cfs: Float32Array, offset = 0): void {
+    applyTo(pfs: Float32Array, cfs: Float32Array, offset0 = 0, offset1 = 0): void {
         this.position.w = this.factor1;
         this.direction.w = Math.PI * this.degree / 180.0;
         this.color.a = this.factor2;
-        this.position.toArray4(pfs, offset);
-        this.direction.toArray4(pfs, offset + 4);
-        this.color.toArray4(cfs, offset);
+        this.position.toArray4(pfs, offset0);
+        this.direction.toArray4(pfs, offset0 + 4);
+        this.color.toArray4(cfs, offset1);
     }
 }

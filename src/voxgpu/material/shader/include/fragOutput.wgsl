@@ -69,7 +69,7 @@ fn calcColor4(calcParam: CalcColor4Param) -> vec4<f32> {
 
 	let arms = pbrParams[5];
 	let armsBase = pbrParams[6];
-    var param4 = arms;
+    // var param4 = arms;
     var color4: vec4<f32>;
     var metallic = arms.z;
     var roughness = arms.y;
@@ -200,7 +200,7 @@ fn calcColor4(calcParam: CalcColor4Param) -> vec4<f32> {
 	}
 	#endif
 	
-	#if USE_DIRECTION_LIGHTS_TOTAL > 0	
+	#if USE_DIRECTION_LIGHTS_TOTAL > 0
 	let dlTotal = min(u32(USE_DIRECTION_LIGHTS_TOTAL), u32(128)) + lightsTotal;
 	for(var i: u32  = lightsTotal; i < dlTotal; i++) {
 		// calculate per-light radiance
@@ -214,10 +214,30 @@ fn calcColor4(calcParam: CalcColor4Param) -> vec4<f32> {
 	lightsTotal += dlTotal;
 	#endif
 
+	#if USE_SPOT_LIGHTS_TOTAL > 0
+	let splTotal = min(u32(USE_SPOT_LIGHTS_TOTAL), u32(128));
+	for(var i: u32  = 0; i < splTotal; i++) {
+		let k = i * u32(2);
+		light = lights[k + lightsTotal];
+		lightColor = lightColors[i + lightsTotal];
+		rL.L = (light.xyz - worldPosition.xyz);
+		let factor = length(rL.L);
+		let attenuation = 1.0 / (1.0 + light.w * factor + lightColor.w * factor * factor);
+
+		rL.L = normalize(rL.L);
+
+		light = lights[k + u32(1) + lightsTotal];
+		let direc = normalize( light.xyz );
+		factor = max(1.0 - (clamp((1.0 - max(dot(-direc, rL.L), 0.0)), 0.0, light.w) / light.w), 0.0001);
+
+		calcPBRLight(roughness, rm, lightColor.xyz * attenuation * factor, &rL);
+	}
+	// lightsTotal = splTotal;
+	#endif
+
 	specularColor = (rL.specular + specularColor);
 	diffuse = rL.diffuse * diffuse;
 	#endif
-	// var Lo = (rL.diffuse * diffuse + specularColor) * ao;
 	var Lo = (diffuse + specularColor) * ao;
 
 	// ambient lighting (note that the next IBL tutorial will replace

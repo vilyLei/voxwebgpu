@@ -35,8 +35,16 @@ class LightPipeNode extends MtPlNode implements MtPlNodeImpl {
 				dataLen += direcs.length;
 				param.directionLightsNum = direcs.length;
 			}
+			let spots = data.spotLights;
+			let spotsTotal = 0;
+			
+			if( spots ) {
+				dataLen += spots.length;
+				spotsTotal = spots.length;
+				param.spotLightsNum = spots.length;
+			}
 			if(dataLen > 0) {
-				let lightsData = new Float32Array(dataLen * 4);
+				let lightsData = new Float32Array(dataLen * 4 + spotsTotal * 2 * 4);
 				let colorsData = new Float32Array(dataLen * 4);
 				let offset = 0;
 				if( points ) {
@@ -48,6 +56,14 @@ class LightPipeNode extends MtPlNode implements MtPlNodeImpl {
 				if( direcs ) {
 					for(let i = 0; i < direcs.length; ++i) {
 						direcs[i].applyTo(lightsData, colorsData, offset);
+						offset += 4;
+					}
+				}
+				let offsetA = offset;
+				if( spots ) {
+					for(let i = 0; i < spots.length; ++i) {
+						spots[i].applyTo(lightsData, colorsData, offsetA, offset);
+						offsetA += 8;
 						offset += 4;
 					}
 				}
