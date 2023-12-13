@@ -85,7 +85,6 @@ export class MultiLightsShading {
 		let mtpl = rc.renderer.mtpl;
 
 		mtpl.light.lightData = this.createLightData();
-		mtpl.shadow.param.direction = [1, 1, 0];
 		mtpl.shadow.param.intensity = 0.5;
 		mtpl.shadow.param.radius = 6;
 		mtpl.fog.fogColor.value = [0.3, 0.7, 0.2];

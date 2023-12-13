@@ -12,7 +12,7 @@ class VSMUniformData extends MaterialUniformVec4ArrayData {
 				-0.0005             // shadowBias
 				, 0.0               // shadowNormalBias
 				, 4                 // shadowRadius
-				, 0.4               // shadow intensity
+				, 0.7               // shadow intensity
 		
 				, 512, 512           // shadowMapSize(width, height)
 				, 0.0, 0.0           // undefined
@@ -70,9 +70,7 @@ class VSMUniformData extends MaterialUniformVec4ArrayData {
     set direction(v3d: Vector3DataType) {
 		let v3 = new Vector3().setVector3(v3d);
 		let vs = this.data as Float32Array;
-        vs[8] = v3.x;
-        vs[9] = v3.y;
-        vs[10] = v3.z;
+		v3.toArray3(vs, 8);
 		this.update();
     }
 	get direction(): Vector3DataType {

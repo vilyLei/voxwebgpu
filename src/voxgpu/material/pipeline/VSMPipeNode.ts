@@ -95,7 +95,7 @@ class ShadowPassGraph extends WGRPassNodeGraph {
         shadowMat.copyFrom(cam.viewProjMatrix);
         shadowMat.append(transMatrix);
         this.mMatrixData.shadowMatrix = shadowMat;
-        this.mVSMParam.direction = cam.nv;
+        this.mVSMParam.direction = cam.nv.clone().scaleBy(-1);
     }
     addEntity(entity: Entity3D): ShadowPassGraph {
         if (this.passes && this.passes.length > 0) {

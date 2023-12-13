@@ -71,7 +71,7 @@ export class MaterialPipelineMultiPasses {
 		let mtpl = rc.renderer.mtpl;
 
 		mtpl.light.data = createLocalLightsData([0, 300, 0], 600, 5.0);
-		mtpl.shadow.param.intensity = 0.7;
+		mtpl.shadow.param.intensity = 0.6;
 		mtpl.fog.fogColor.value = [0.3, 0.7, 0.2];
 
 		let position = [0, 50, 180];
