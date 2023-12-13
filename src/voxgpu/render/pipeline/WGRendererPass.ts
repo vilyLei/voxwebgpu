@@ -273,6 +273,9 @@ class WGRendererPass implements WGRendererPassImpl {
 				let colorAttachments = this.passColors;
 				// for test
 				// if (this.separate) {
+				// 	console.log(this.viewport);
+				// }
+				// if (this.separate) {
 				// 	// const ca = colorAttachments[0];
 				// 	let ca = colorAttachments[0];
 				// 	console.log("xxx xxx ca0: ", ca);

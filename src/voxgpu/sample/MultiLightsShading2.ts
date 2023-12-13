@@ -45,8 +45,9 @@ export class MultiLightsShading2 {
 		let mtpl = rc.renderer.mtpl;
 
 		mtpl.light.lightData = this.createLightData();
-		mtpl.shadow.param.intensity = 0.6;
-		mtpl.shadow.param.radius = 1;
+		mtpl.shadow.param.intensity = 0.4;
+		mtpl.shadow.param.radius = 4;
+		// mtpl.shadow.passGraph.shadowRadius = 1;
 
 		let position = [-30, 220, -50];
 		let materials = this.createMaterials(true);
@@ -61,7 +62,7 @@ export class MultiLightsShading2 {
 		// rc.addEntity(sphA);
 
 		let sphere: SphereEntity;
-		let total = 5;
+		let total = 6;
 		for (let i = 0; i < total; ++i) {
 			for (let j = 0; j < total; ++j) {
 				if (total > 1) {
@@ -120,21 +121,32 @@ export class MultiLightsShading2 {
 	private createLightData(): MtLightDataDescriptor {
 		let ld = { pointLights: [], directionLights: [], spotLights: [] } as MtLightDataDescriptor;
 
-		for (let i = 0; i < 5; ++i) {
-			for (let j = 0; j < 5; ++j) {
+		let total = 5;
+		let scale = 3.0;
+		for (let i = 0; i < total; ++i) {
+			let fi = i/(total - 1);
+			for (let j = 0; j < total; ++j) {
+				let fj = j/(total - 1);
+
+				fi = 1;
+				fj = 1;
 				let position = [-250 + 150 * j, 50 + Math.random() * 50, -250 + 150 * i];
 				position[0] += Math.random() * 100 - 50;
 				position[2] += Math.random() * 100 - 50;
-				let color = [Math.random() * 5 * i, Math.random() * 5, Math.random() * 5 * j];
-				let pLight = new PointLight({ color, position });
+				let color = [Math.random() * 5 * fi * scale, Math.random() * 5 * scale, Math.random() * 5 * fj * scale];
+				let factor1 = 0.001;
+				let factor2 = 0.0002;
+				let pLight = new PointLight({ color, position, factor1, factor2 });
 				ld.pointLights.push(pLight);
 
 				if (Math.random() > 0.5) {
 					position = [-250 + 150 * j, 50 + Math.random() * 50, -250 + 150 * i];
 					position[0] += Math.random() * 100 - 50;
 					position[2] += Math.random() * 100 - 50;
-					color = [Math.random() * 5, Math.random() * 5 * j, Math.random() * 5 * i];
-					let spLight = new SpotLight({ position, color, direction: [Math.random() - 0.5, -1, Math.random() - 0.5], degree: 10 });
+					color = [Math.random() * 5 * scale, Math.random() * 5 * fj * scale, Math.random() * 5 * fi * scale];
+					let direction = [Math.random() - 0.5, -1, Math.random() - 0.5];
+					let degree = Math.random() * 10 + 5;
+					let spLight = new SpotLight({ position, color, direction, degree, factor1, factor2 });
 					ld.spotLights.push(spLight);
 				}
 			}
@@ -147,7 +159,7 @@ export class MultiLightsShading2 {
 	private applyMaterialPPt(material: BaseMaterial, shadowReceived = false, shadow = true): void {
 		let ppt = material.property;
 		ppt.ambient.value = [0.1, 0.1, 0.1];
-		ppt.albedo.value = [0.7, 0.7, 0.7];
+		ppt.albedo.value = [0.8, 0.8, 0.8];
 		ppt.arms.roughness = 0.25;
 		ppt.arms.metallic = 0.2;
 		ppt.armsBase.value = [0, 0, 0];

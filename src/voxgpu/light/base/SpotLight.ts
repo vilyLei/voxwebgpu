@@ -33,11 +33,11 @@ export class SpotLight implements SpotLightImpl {
 
     setParam(param: SpotLightParam): void {
         if (param) {
-            if (param.color) this.color.setColor(param.color);
-            if (param.direction) this.direction.setVector3(param.direction);
             if (param.position) this.position.setVector3(param.position);
+            if (param.direction) this.direction.setVector3(param.direction);
+            if (param.color) this.color.setColor(param.color);
             if (param.factor1 !== undefined) this.factor1 = param.factor1;
-            if (param.factor2 !== undefined) this.factor1 = param.factor2;
+            if (param.factor2 !== undefined) this.factor2 = param.factor2;
             if (param.degree !== undefined) this.degree = param.degree;
         }
     }

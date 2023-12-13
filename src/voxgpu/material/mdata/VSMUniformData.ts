@@ -9,8 +9,8 @@ class VSMUniformData extends MaterialUniformVec4ArrayData {
 		super(data, shdVarName, visibility);
 		if(!data) {
 			this.data = new Float32Array([
-				-0.0005             // shadowBias
-				, 0.0               // shadowNormalBias
+				-0.0001             // shadowBias
+				, 0               // shadowNormalBias
 				, 4                 // shadowRadius
 				, 0.7               // shadow intensity
 		

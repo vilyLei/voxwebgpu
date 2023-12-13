@@ -42,7 +42,7 @@ fn unpackRGBATo2Half( v: vec4<f32> ) -> vec2<f32> {
 }
 
 const SAMPLE_RATE = 0.25;
-const HALF_SAMPLE_RATE = 0.125;
+const HALF_SAMPLE_RATE = SAMPLE_RATE * 0.5;
 @fragment
 fn fragMain(
     @location(0) uv: vec2<f32>,
@@ -55,6 +55,7 @@ fn fragMain(
     let fragCoord = resolution * uv;
     
     let radius = param[3];
+    
     let c4 = textureSample(shadowDataTexture, shadowDataSampler, uv);   
     // This seems totally useless but it's a crazy work around for a Adreno compiler bug
     var depth = unpackRGBAToDepth( c4 );

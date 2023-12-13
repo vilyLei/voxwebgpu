@@ -35,7 +35,7 @@ class ShadowPassGraph extends WGRPassNodeGraph {
     occHEntity: FixScreenPlaneEntity;
 
     shadowBias = -0.0005;
-    shadowRadius = 4.0;
+    shadowRadius = 4;
     shadowMapW = 512;
     shadowMapH = 512;
     shadowViewW = 1300;
@@ -136,7 +136,11 @@ class ShadowPassGraph extends WGRPassNodeGraph {
         ];
         // create a separate rtt rendering pass
         let multisampled = false;
-        let pass = rc.createRTTPass({ colorAttachments, multisampled });
+        let pass = rc.createRTTPass({
+            viewport: [0,0, this.shadowMapW, this.shadowMapH],
+            colorAttachments,
+            multisampled
+        });
         this.passes = [pass];
         rc.setPassNodeGraph(this);
 

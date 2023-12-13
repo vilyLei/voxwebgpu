@@ -67,8 +67,8 @@ class LightPipeNode extends MtPlNode implements MtPlNodeImpl {
 						offset += 4;
 					}
 				}
-				console.log(">>>MMM lightsData: ", lightsData);
-				console.log(">>>MMM colorsData: ", colorsData);
+				// console.log(">>>MMM lightsData: ", lightsData);
+				// console.log(">>>MMM colorsData: ", colorsData);
 				this.lights.data = lightsData;
 				this.lightColors.data = colorsData;
 				this.mLightData = data;

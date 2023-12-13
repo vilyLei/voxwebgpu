@@ -42,22 +42,6 @@ fn getVSMShadow(shadowMapSize: vec2<f32>, shadowBias: f32, shadowRadius: f32, sh
     }
     return shadow;
 }
-// fn getVSMShadowFactor2(worldNormal: vec3<f32>, svPos: vec4<f32>) -> f32 {
-    
-//     var shadow = getVSMShadow( vsmParams[1].xy, vsmParams[0].x, vsmParams[0].z, svPos );
-//     // let sh = shadow;
-//     let shadowIntensity = 0.0;
-//     shadow = mix(clamp(shadow, 0.0, 1.0), 1.0, shadowIntensity);
-//     var nv = normalize(vsmParams[2].xyz);
-//     var f = clamp(dot(worldNormal, nv),0.0001,1.0);
-//     if(f > 0.00001) {
-//         shadow = min(shadow,clamp(f, shadowIntensity, 1.0));
-//     }else {
-//         shadow = shadowIntensity;
-//     }
-//     f = vsmParams[1].z;
-//     return shadow * (1.0 - f) + f;
-// }
 
 fn getVSMShadowFactor(worldNormal: vec3<f32>, svPos: vec4<f32>) -> f32 {
 
@@ -66,12 +50,12 @@ fn getVSMShadowFactor(worldNormal: vec3<f32>, svPos: vec4<f32>) -> f32 {
     if f > 0.0001 {
         shadow = min(shadow, clamp(f, 0.0, 1.0));
     }
-    return mix(shadow, 1.0, vsmParams[1].z);
+    f = mix(shadow, 1.0, vsmParams[1].z);
+    return min((1.0 - f) * (1.0 - vsmParams[0].w) + f, 1.0);  
 }
 fn useVSMShadow(worldNormal: vec3<f32>, svPos: vec4<f32>, color: ptr<function, vec4<f32>>) {
 
-    var factor = getVSMShadowFactor(worldNormal, svPos);
-    factor = min((1.0 - factor) * (1.0 - vsmParams[0].w) + factor, 1.0);    
+    let factor = getVSMShadowFactor(worldNormal, svPos);  
 
     var c = *color;
     // c = vec4<f32>(vec3<f32>(1.0), 1.0);

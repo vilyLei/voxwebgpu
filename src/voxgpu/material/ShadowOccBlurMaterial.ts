@@ -26,6 +26,7 @@ class BasePBRProperty implements MaterialProperty {
 	setShadowRadius(r: number): BasePBRProperty {
 		let vs = this.param.data as Float32Array;
 		vs[3] = r;
+		this.param.update();
 		return this;
 	}
 	setViewSize(pw: number, ph: number): BasePBRProperty {
