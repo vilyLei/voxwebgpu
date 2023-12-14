@@ -12,11 +12,17 @@ import { MtLightDataDescriptor } from "../material/mdata/MtLightDataDescriptor";
 import { PointLight } from "../light/base/PointLight";
 import { DirectionLight } from "../light/base/DirectionLight";
 import { SpotLight } from "../light/base/SpotLight";
+import { FixScreenPlaneEntity } from "../entity/FixScreenPlaneEntity";
+import { BillboardEntity } from "../entity/BillboardEntity";
+import Color4 from "../material/Color4";
 
 export class MultiLightsShading2 {
 	private mRscene = new RendererScene();
 	initialize(): void {
 		console.log("MultiLightsShading2::initialize() ...");
+		this.loadImg();
+	}
+	initSys(): void {
 
 		this.mRscene.initialize({
 			canvasWith: 512,
@@ -30,7 +36,49 @@ export class MultiLightsShading2 {
 		this.initScene();
 		this.initEvent();
 	}
+	private mPixels: Uint8ClampedArray;
+	private mPixelsW = 128;
+	private mPixelsH = 128;
+	getRandomColor(s?: number): ColorDataType {
+		if (s === undefined) {
+			s = 1.0;
+		}
+		let i = 5;
+		let j = Math.floor(Math.random() * this.mPixelsW);
+		let k = i * this.mPixelsW + j;
+		let vs = this.mPixels;
+		// console.log('xxxx cs j: ', j);
 
+		k *= 4;
+		let cs = [s * vs[k] / 255.0, s * vs[k + 1] / 255.0, s * vs[k + 2] / 255.0];
+		// console.log('xxxx cs: ', cs);
+		return cs;
+	}
+	private testColors(): void {
+		let rc = this.mRscene;
+		let extent = [-0.9, -0.9, 0.05, 0.05];
+		let cb = new FixScreenPlaneEntity({ extent });
+		// cb.color = [0.1,0.8,0.2];//this.getRandomColor();
+		cb.color = this.getRandomColor();
+		rc.addEntity(cb);
+	}
+	private loadImg(): void {
+		let img = new Image();
+		img.onload = evt => {
+			this.mPixelsW = img.width;
+			this.mPixelsH = img.height;
+			let canvas = document.createElement("canvas");
+			canvas.width = img.width;
+			canvas.height = img.height;
+			let ctx = canvas.getContext('2d');
+			ctx.drawImage(img, 0, 0);
+			this.mPixels = ctx.getImageData(0, 0, img.width, img.height).data;
+			this.initSys();
+			// this.testColors();
+			document.body.append(canvas);
+		}
+		img.src = 'static/assets/colorPalette.jpg';
+	}
 	private hdrEnvtex = new SpecularEnvBrnTexture();
 	private createBaseTextures(): WGTextureDataDescriptor[] {
 		let textures = [
@@ -38,13 +86,107 @@ export class MultiLightsShading2 {
 		] as WGTextureDataDescriptor[];
 		return textures;
 	}
+	private mLightData: MtLightDataDescriptor;
+	private createLightData(): MtLightDataDescriptor {
+		let ld = { pointLights: [], directionLights: [], spotLights: [] } as MtLightDataDescriptor;
+
+		let total = 5;
+		let scale = 5.0;
+		for (let i = 0; i < total; ++i) {
+			let fi = i / (total - 1);
+			for (let j = 0; j < total; ++j) {
+				let fj = j / (total - 1);
+				fi = 1;
+				fj = 1;
+				let position = [-500 + 250 * j, 50 + Math.random() * 30, -500 + 250 * i];
+				position[0] += Math.random() * 60 - 30;
+				position[2] += Math.random() * 60 - 30;
+				let color = this.getRandomColor(scale);
+				let factor1 = 0.0001;
+				let factor2 = 0.0002;
+				let pLight = new PointLight({ color, position, factor1, factor2 });
+				ld.pointLights.push(pLight);
+				// this.createBillboard( position, color );
+				if (Math.random() > 0.5) {
+					// position = [-250 + 150 * j, 50 + Math.random() * 50, -250 + 150 * i];
+					position[0] += Math.random() * 60 - 30;
+					position[2] += Math.random() * 60 - 30;
+					color = this.getRandomColor(scale);
+					let direction = [Math.random() - 0.5, -1, Math.random() - 0.5];
+					let degree = Math.random() * 10 + 5;
+					let spLight = new SpotLight({ position, color, direction, degree, factor1, factor2 });
+					ld.spotLights.push(spLight);
+				}
+			}
+		}
+		/*
+		scale = 3;
+		let position = [0, 50, 0];
+		let color = [5, 0, 0];//this.getRandomColor(scale);
+		let factor1 = 0.0001;
+		let factor2 = 0.0002;
+		let pLight = new PointLight({ color, position, factor1, factor2 });
+		ld.pointLights.push(pLight);
+
+		position = [-50, 50, 0];
+		color = [3, 3, 0];//this.getRandomColor(scale);
+		pLight = new PointLight({ color, position, factor1, factor2 });
+		ld.pointLights.push(pLight);
+
+		position = [0, 50, -50];
+		color = [0, 5, 0];//this.getRandomColor(scale);
+		let direction = [0, -1, 1];
+		let degree = 20;
+		let spLight = new SpotLight({ position, color, direction, degree, factor1, factor2 });
+		ld.spotLights.push(spLight);
+
+		position = [50, 50, 0];
+		color = [0, 1, 6];//this.getRandomColor(scale);
+		direction = [-1, -1, 0];
+		spLight = new SpotLight({ position, color, direction, degree, factor1, factor2 });
+		ld.spotLights.push(spLight);
+		//*/
+
+		let dLight = new DirectionLight({ color: [0.5, 0.5, 0.5], direction: [-1, -1, 0] });
+		ld.directionLights.push(dLight);
+		return ld;
+	}
+	private createBillboard(pv: Vector3DataType, c: ColorDataType, type: number): void {
+		let rc = this.mRscene;
+		let diffuseTex0 = { diffuse: { url: "static/assets/flare_core_03.jpg" } };
+		if (type > 1) {
+			diffuseTex0 = { diffuse: { url: "static/assets/flare_core_01.jpg" } };
+		}
+		let billboard = new BillboardEntity({ size: 10, textures: [diffuseTex0] });
+		let pc = new Color4().setColor(c);
+		pc.a = 1.0;
+		billboard.color = pc;
+		billboard.scale = 1.0;
+		billboard.transform.setPosition(pv);
+		rc.addEntity(billboard);
+	}
+	private createBillboards(): void {
+		let lightData = this.mLightData;
+		let pls = lightData.pointLights;
+		for (let i = 0; i < pls.length; i++) {
+			let lp = pls[i];
+			this.createBillboard(lp.position, lp.color, 1);
+		}
+		let spls = lightData.spotLights;
+		for (let i = 0; i < spls.length; i++) {
+			let lp = spls[i];
+			this.createBillboard(lp.position, lp.color, 2);
+		}
+	}
 	private initScene(): void {
 
 		let rc = this.mRscene;
 
 		let mtpl = rc.renderer.mtpl;
 
-		mtpl.light.lightData = this.createLightData();
+		this.mLightData = this.createLightData();
+
+		mtpl.light.lightData = this.mLightData;
 		mtpl.shadow.param.intensity = 0.4;
 		mtpl.shadow.param.radius = 4;
 
@@ -53,13 +195,27 @@ export class MultiLightsShading2 {
 
 		let sphere: SphereEntity;
 		let total = 6;
+		// total = 1;
+		let py = -10;
+		let pvlist = [
+			// [0, py, 0],
+			[-30, py, -30]
+		];
+		let k = 0;
 		for (let i = 0; i < total; ++i) {
 			for (let j = 0; j < total; ++j) {
-				if (total > 1) {
-					position = [-350 + 150 * j, -10, -350 + 150 * i];
+				if (total > 2) {
+					position = [-350 + 150 * j, py, -350 + 150 * i];
 				} else {
-					position = [0, 50, 0];
+					// position = [0, py, 0];
+					position = pvlist[k];
+					k++;
+					if(k > 2) {
+						continue;
+					}
 				}
+				let materials = this.createMaterials(true);
+				materials[0].shadinguuid += i + '-'+j;
 				if (sphere) {
 					let sph = new SphereEntity(
 						{
@@ -93,6 +249,8 @@ export class MultiLightsShading2 {
 		});
 		rc.addEntity(plane);
 
+		this.createBillboards();
+
 	}
 	private createMaterials(shadowReceived = false, shadow = true, faceCullMode = 'back', uvParam?: number[]): BaseMaterial[] {
 		let textures0 = this.createBaseTextures();
@@ -108,44 +266,6 @@ export class MultiLightsShading2 {
 		return list;
 	}
 
-	private createLightData(): MtLightDataDescriptor {
-		let ld = { pointLights: [], directionLights: [], spotLights: [] } as MtLightDataDescriptor;
-
-		let total = 5;
-		let scale = 0.5;
-		for (let i = 0; i < total; ++i) {
-			let fi = i/(total - 1);
-			for (let j = 0; j < total; ++j) {
-				let fj = j/(total - 1);
-
-				fi = 1;
-				fj = 1;
-				let position = [-250 + 150 * j, 230 + Math.random() * 50, -250 + 150 * i];
-				position[0] += Math.random() * 100 - 50;
-				position[2] += Math.random() * 100 - 50;
-				let color = [Math.random() * 5 * fi * scale, Math.random() * 5 * scale, Math.random() * 5 * fj * scale];
-				let factor1 = 0.00001;
-				let factor2 = 0.00002;
-				let pLight = new PointLight({ color, position, factor1, factor2 });
-				ld.pointLights.push(pLight);
-
-				if (Math.random() > 0.5) {
-					// position = [-250 + 150 * j, 50 + Math.random() * 50, -250 + 150 * i];
-					position[0] += Math.random() * 100 - 50;
-					position[2] += Math.random() * 100 - 50;
-					color = [Math.random() * 5 * scale, Math.random() * 5 * fj * scale, Math.random() * 5 * fi * scale];
-					let direction = [Math.random() - 0.5, -1, Math.random() - 0.5];
-					let degree = Math.random() * 10 + 5;
-					let spLight = new SpotLight({ position, color, direction, degree, factor1, factor2 });
-					ld.spotLights.push(spLight);
-				}
-			}
-		}
-
-		let dLight = new DirectionLight({ color: [0.5, 0.5, 0.5], direction: [-1, -1, 0] });
-		ld.directionLights.push(dLight);
-		return ld;
-	}
 	private applyMaterialPPt(material: BaseMaterial, shadowReceived = false, shadow = true): void {
 		let ppt = material.property;
 		ppt.ambient.value = [0.1, 0.1, 0.1];

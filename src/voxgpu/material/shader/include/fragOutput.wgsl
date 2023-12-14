@@ -55,7 +55,7 @@ fn calcColor4(calcParam: CalcColor4Param) -> vec4<f32> {
 	let worldPos = calcParam.worldPos;
 	let viewPos = calcParam.viewPos;
 	let uv = calcParam.uv;
-	let worldNormal = calcParam.worldNormal;
+	let worldNormal = normalize(calcParam.worldNormal);
 	let worldCamPos = calcParam.worldCamPos;
 
 	var color = vec3f(0.0);

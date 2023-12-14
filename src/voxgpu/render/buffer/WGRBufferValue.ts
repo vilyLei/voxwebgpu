@@ -7,7 +7,7 @@ class WGRBufferValue extends WGRBufferView {
 
 	name?: string;
 	constructor(param: WGRBufferValueParam) {
-		console.log("WGRBufferValue::constructor() ...");
+		// console.log("WGRBufferValue::constructor() ...");
 		super();
 		applyParamToBufferData(this, param);
 		this.upate();
