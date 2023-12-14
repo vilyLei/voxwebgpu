@@ -92,6 +92,9 @@ class BasePBRProperty implements MaterialProperty {
 		// this.fogColor = new MaterialUniformColor4Wrapper(params.fogColor, params);
 		this.arms = new ArmsDataWrapper(params.arms, params);
 		this.armsBase = new ArmsDataWrapper(params.armsBase, params);
+
+		this.lights.shared = false;
+		this.lightColors.shared = false;
 	}
 
 	set exp2Fogging(enabled: boolean) {
