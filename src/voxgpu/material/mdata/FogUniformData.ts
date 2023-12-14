@@ -17,6 +17,7 @@ class FogUniformData extends MaterialUniformVec4ArrayData {
 		this.fogParam.fromArray4(data, pos);
 		pos += 4;
 		this.fogColor.fromArray4(data, pos);
+		this.shared = true;
 	}
 	update(): void {
 		const data = this.storage.data;

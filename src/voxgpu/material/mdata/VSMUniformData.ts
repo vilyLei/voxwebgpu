@@ -22,6 +22,7 @@ class VSMUniformData extends MaterialUniformVec4ArrayData {
 				, 0.0                // undefined
 			]);
 		}
+		this.shared = true;
 	}
     setParam(shadowBias: number, shadowNormalBias: number, shadowRadius: number): void {
 		let vs = this.data as Float32Array;

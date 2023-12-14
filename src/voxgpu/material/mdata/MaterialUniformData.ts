@@ -69,6 +69,7 @@ class MaterialUniformMat44Data extends MaterialUniformData {
 		super(data, shdVarName, visibility);
 		this.shdVarFormat = 'mat4x4<f32>';
 		this.stride = 16;
+		this.shared = true;
 	}
 	set value(v: Float32Array) {
 		this.data = v;
@@ -95,6 +96,12 @@ class MaterialUniformVec4ArrayData implements MaterialUniformDataImpl {
 		this.storage = new MaterialUniformData(data, shdVarName, visibility);
 		this.storage.arraying = true;
 		this.storage.shdVarFormat = 'array<vec4<f32>>';
+	}
+	set shared(b: boolean) {
+		this.storage.shared = b;
+	}
+	get shared(): boolean {
+		return this.storage.shared === true;
 	}
 	set data(ds: NumberArrayDataType) {
 		this.storage.data = ds;
