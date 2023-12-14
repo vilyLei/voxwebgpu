@@ -12,6 +12,7 @@ class BaseLightData implements WGRBufferData {
 		this.storage = new MaterialUniformData(data, shdVarName, visibility);
 		this.storage.arraying = true;
 		this.storage.shdVarFormat = 'array<vec4<f32>>';
+		this.shared = true;
 	}
 	set shared(b: boolean) {
 		this.storage.shared = b;
@@ -44,6 +45,7 @@ class LightParamData extends MaterialUniformVec4Data {
 	constructor(data: NumberArrayType, shdVarName: string, visibility?: string) {
 		super(data, shdVarName, visibility);
 		this.shdVarFormat = 'vec4<u32>';
+		this.shared = true;
 	}
 	get pointLightsNum(): number {
 		return (this.data as Uint32Array)[0];

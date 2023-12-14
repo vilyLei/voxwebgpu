@@ -47,20 +47,9 @@ export class MultiLightsShading2 {
 		let j = Math.floor(Math.random() * this.mPixelsW);
 		let k = i * this.mPixelsW + j;
 		let vs = this.mPixels;
-		// console.log('xxxx cs j: ', j);
-
 		k *= 4;
 		let cs = [s * vs[k] / 255.0, s * vs[k + 1] / 255.0, s * vs[k + 2] / 255.0];
-		// console.log('xxxx cs: ', cs);
 		return cs;
-	}
-	private testColors(): void {
-		let rc = this.mRscene;
-		let extent = [-0.9, -0.9, 0.05, 0.05];
-		let cb = new FixScreenPlaneEntity({ extent });
-		// cb.color = [0.1,0.8,0.2];//this.getRandomColor();
-		cb.color = this.getRandomColor();
-		rc.addEntity(cb);
 	}
 	private loadImg(): void {
 		let img = new Image();
@@ -74,7 +63,6 @@ export class MultiLightsShading2 {
 			ctx.drawImage(img, 0, 0);
 			this.mPixels = ctx.getImageData(0, 0, img.width, img.height).data;
 			this.initSys();
-			// this.testColors();
 			document.body.append(canvas);
 		}
 		img.src = 'static/assets/colorPalette.jpg';
@@ -91,7 +79,7 @@ export class MultiLightsShading2 {
 		let ld = { pointLights: [], directionLights: [], spotLights: [] } as MtLightDataDescriptor;
 
 		let total = 5;
-		let scale = 5.0;
+		let scale = 3.0;
 		for (let i = 0; i < total; ++i) {
 			let fi = i / (total - 1);
 			for (let j = 0; j < total; ++j) {
@@ -102,14 +90,14 @@ export class MultiLightsShading2 {
 				position[0] += Math.random() * 60 - 30;
 				position[2] += Math.random() * 60 - 30;
 				let color = this.getRandomColor(scale);
-				let factor1 = 0.0001;
-				let factor2 = 0.0002;
+				let factor1 = 0.00001;
+				let factor2 = 0.00002;
 				let pLight = new PointLight({ color, position, factor1, factor2 });
 				ld.pointLights.push(pLight);
-				// this.createBillboard( position, color );
 				if (Math.random() > 0.5) {
 					// position = [-250 + 150 * j, 50 + Math.random() * 50, -250 + 150 * i];
 					position[0] += Math.random() * 60 - 30;
+					position[1] += Math.random() * 30 - 15;
 					position[2] += Math.random() * 60 - 30;
 					color = this.getRandomColor(scale);
 					let direction = [Math.random() - 0.5, -1, Math.random() - 0.5];
@@ -119,34 +107,6 @@ export class MultiLightsShading2 {
 				}
 			}
 		}
-		/*
-		scale = 3;
-		let position = [0, 50, 0];
-		let color = [5, 0, 0];//this.getRandomColor(scale);
-		let factor1 = 0.0001;
-		let factor2 = 0.0002;
-		let pLight = new PointLight({ color, position, factor1, factor2 });
-		ld.pointLights.push(pLight);
-
-		position = [-50, 50, 0];
-		color = [3, 3, 0];//this.getRandomColor(scale);
-		pLight = new PointLight({ color, position, factor1, factor2 });
-		ld.pointLights.push(pLight);
-
-		position = [0, 50, -50];
-		color = [0, 5, 0];//this.getRandomColor(scale);
-		let direction = [0, -1, 1];
-		let degree = 20;
-		let spLight = new SpotLight({ position, color, direction, degree, factor1, factor2 });
-		ld.spotLights.push(spLight);
-
-		position = [50, 50, 0];
-		color = [0, 1, 6];//this.getRandomColor(scale);
-		direction = [-1, -1, 0];
-		spLight = new SpotLight({ position, color, direction, degree, factor1, factor2 });
-		ld.spotLights.push(spLight);
-		//*/
-
 		let dLight = new DirectionLight({ color: [0.5, 0.5, 0.5], direction: [-1, -1, 0] });
 		ld.directionLights.push(dLight);
 		return ld;
@@ -155,7 +115,7 @@ export class MultiLightsShading2 {
 		let rc = this.mRscene;
 		let diffuseTex0 = { diffuse: { url: "static/assets/flare_core_03.jpg" } };
 		if (type > 1) {
-			diffuseTex0 = { diffuse: { url: "static/assets/flare_core_01.jpg" } };
+			diffuseTex0 = { diffuse: { url: "static/assets/circleWave_disp.png" } };
 		}
 		let billboard = new BillboardEntity({ size: 10, textures: [diffuseTex0] });
 		let pc = new Color4().setColor(c);
@@ -195,27 +155,15 @@ export class MultiLightsShading2 {
 
 		let sphere: SphereEntity;
 		let total = 6;
-		// total = 1;
 		let py = -10;
-		let pvlist = [
-			// [0, py, 0],
-			[-30, py, -30]
-		];
 		let k = 0;
 		for (let i = 0; i < total; ++i) {
 			for (let j = 0; j < total; ++j) {
 				if (total > 2) {
 					position = [-350 + 150 * j, py, -350 + 150 * i];
 				} else {
-					// position = [0, py, 0];
-					position = pvlist[k];
-					k++;
-					if(k > 2) {
-						continue;
-					}
+					position = [0, py, 0];
 				}
-				let materials = this.createMaterials(true);
-				materials[0].shadinguuid += i + '-'+j;
 				if (sphere) {
 					let sph = new SphereEntity(
 						{
