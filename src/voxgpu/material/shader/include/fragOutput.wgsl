@@ -68,7 +68,6 @@ fn calcColor4(calcParam: CalcColor4Param) -> vec4<f32> {
 
 	let arms = pbrParams[5];
 	let armsBase = pbrParams[6];
-    // var param4 = arms;
     var color4: vec4<f32>;
     var metallic = arms.z;
     var roughness = arms.y;
@@ -81,6 +80,11 @@ fn calcColor4(calcParam: CalcColor4Param) -> vec4<f32> {
 	var N = worldNormal;
 
 	#ifdef USE_NORMAL_MAP
+	#ifdef USE_PARALLAX_MAP
+	let btnMat3 = getBTNMat3(texUV, worldPosition.xyz, worldNormal.xyz);
+	let tbnViewDir = btnMat3 * V;
+	texUV = parallaxOccRayMarchDepth(VOX_PARALLAX_MAP, texUV, -tbnViewDir, pbrParams[ 9 ]);
+	#endif
 	N = getNormalFromMap( texUV, worldPosition.xyz, worldNormal);
 	let normalFactor = 1.0;
     N = normalize(mix(worldNormal, N, normalFactor));

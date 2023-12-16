@@ -5,12 +5,12 @@ fn gammaToLinear(color: vec3<f32>) -> vec3<f32> {
 fn getBTNMat3(texUV: vec2<f32>, pos: vec3<f32>, nv: vec3<f32>) -> mat3x3<f32>
 {
     let Q1  = dpdx(pos);
-    let Q2  = dFdy(pos);
+    let Q2  = dpdy(pos);
     let st1 = dpdx(texUV);
-    let st2 = dFdy(texUV);
+    let st2 = dpdy(texUV);
 
     let N  = normalize(nv);
-    let T  = normalize(Q1*st2.t - Q2*st1.t);
+    let T  = normalize(Q1*st2.y - Q2*st1.y);
     let B  = -normalize(cross(N, T));
     return mat3x3<f32>(T, B, N);
 }
