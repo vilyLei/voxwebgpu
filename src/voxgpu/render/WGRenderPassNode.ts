@@ -158,25 +158,7 @@ class WGRenderPassNode implements IWGRenderPassNode {
 		}
 		console.log("WGRenderPassBlock::createRenderPipelineCtxWithMaterial(), apply new ctx.");
 		return ctx;
-		/*
-		const flag = material.shadinguuid !== "";
-		const map = this.pctxMap;
-		if (flag) {
-			if (map.has(material.shadinguuid)) {
-				console.log("WGRenderPassBlock::createRenderPipelineCtxWithMaterial(), apply old ctx.");
-				return map.get(material.shadinguuid);
-			}
-		}
-		const ctx = this.createRenderPipelineCtx(material.shaderSrc, material.pipelineVtxParam, material.pipelineDefParam);
-		if (flag) {
-			ctx.shadinguuid = material.shadinguuid;
-			map.set(material.shadinguuid, ctx);
-		}
-		console.log("WGRenderPassBlock::createRenderPipelineCtxWithMaterial(), apply new ctx.");
-		return ctx;
-		//*/
 	}
-	// pipelineParam value likes {blendMode: "transparent", depthWriteEnabled: false, faceCullMode: "back"}
 	createRenderPipelineCtx(
 		shdSrc: WGRShderSrcType,
 		pipelineVtxParam: VtxPipelinDescParam,

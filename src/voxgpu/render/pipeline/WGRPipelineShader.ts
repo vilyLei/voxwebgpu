@@ -45,7 +45,8 @@ class WGRPipelineShader {
 	}
 
 	build(params: WGRPipelineCtxParams, rpass: WGRendererPassImpl): void {
-
+		console.log("vvv params: ", params);
+		// console.log("vvv params.shaderSrc: ", params.shaderSrc);
 		let shdModule = params.shaderSrc ? this.createShaderModule("Shader", params.shaderSrc) : null;
 		let vertShdModule = params.vertShaderSrc ? this.createShaderModule("VertShader", params.vertShaderSrc) : shdModule;
 		let fragShdModule = params.fragShaderSrc ? this.createShaderModule("FragShader", params.fragShaderSrc) : shdModule;
