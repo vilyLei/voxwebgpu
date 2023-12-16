@@ -62,16 +62,13 @@ export class MultiLightsShading3 {
 			ctx.drawImage(img, 0, 0);
 			this.mPixels = ctx.getImageData(0, 0, img.width, img.height).data;
 			this.initSys();
-			document.body.append(canvas);
 		}
 		img.src = 'static/assets/colorPalette.jpg';
 	}
-	private hdrEnvtex = new SpecularEnvBrnTexture();
 	private createBaseTextures(): WGTextureDataDescriptor[] {
 		let envTex = { specularEnv: {} };
 		let textures = [
-			// hdrEnvtex,
-			this.hdrEnvtex,
+			envTex,
 		] as WGTextureDataDescriptor[];
 		return textures;
 	}

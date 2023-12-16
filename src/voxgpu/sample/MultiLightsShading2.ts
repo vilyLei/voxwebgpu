@@ -63,7 +63,7 @@ export class MultiLightsShading2 {
 			ctx.drawImage(img, 0, 0);
 			this.mPixels = ctx.getImageData(0, 0, img.width, img.height).data;
 			this.initSys();
-			document.body.append(canvas);
+			// document.body.append(canvas);
 		}
 		img.src = 'static/assets/colorPalette.jpg';
 	}

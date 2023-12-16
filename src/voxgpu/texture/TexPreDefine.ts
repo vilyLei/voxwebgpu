@@ -1,11 +1,11 @@
 
-import { GPUExtent3DDict, GPUTextureDescriptor } from "../gpu/GPUTextureDescriptor";
+import { SpecularEnvBrnTexture } from "./SpecularEnvBrnTexture";
 import { TextureDataDescriptor } from "./WGTextureDataDescriptor";
 import { WGRTTTextureData, WGImage2DTextureData, WGDataTextureData, WGImageCubeTextureData, WGTextureData, WGTextureDataDescriptor } from "./WGTextureWrapper";
 
 const __$texDataMap: Map<string, WGTextureData> = new Map();
+const __$hdrEnvtex = new SpecularEnvBrnTexture();
 
-// function texDescriptorFilter(d: WGTextureDataDescriptor): TextureDataDescriptor {
 function texDescriptorFilter(d: WGTextureDataDescriptor): TextureDataDescriptor {
     
 	if (!d) {
@@ -64,6 +64,10 @@ function texDescriptorFilter(d: WGTextureDataDescriptor): TextureDataDescriptor 
 	}
 	if (d.specularEnv) {
 		rd = d.specularEnv;
+        if(rd.dataTexture === undefined) {
+            __$hdrEnvtex.update();
+            rd = __$hdrEnvtex.specularEnv;
+        }
 		if (!rd.shdVarName) {
 			rd.shdVarName = "specularEnv";
 		}
