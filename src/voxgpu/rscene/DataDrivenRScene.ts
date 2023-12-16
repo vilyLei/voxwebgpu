@@ -4,10 +4,8 @@ import { RendererScene } from "./RendererScene";
 import { WGRendererConfig } from "./WGRendererParam";
 import { DataDrivenEntityBuilder } from "./dataDriven/DataDrivenEntityBuilder";
 import { DataDrivenEntityParamType, DataDrivenEntityParam } from "./dataDriven/DataDrivenEntityParam";
-interface DataDrivenSceneParam {
-	renderer?: WGRendererConfig;
-	entities?: DataDrivenEntityParamType[];
-}
+import { parseLightData, SceneDataImpl, DataDrivenSceneParam } from "./dataDriven/DataSceneDefine";
+
 class DataDrivenRScene {
 	private mBuilder = new DataDrivenEntityBuilder();
 	private mScene: RendererScene;
@@ -19,12 +17,41 @@ class DataDrivenRScene {
 
 	initialize(param?: DataDrivenSceneParam): void {
 		if (!param) param = {};
-		const r = param.renderer;
-		this.mScene.initialize(r ? r : {});
+		let r = param.renderer;
+		let scene = param.scene;
+		if (scene && r === undefined) {
+			r = scene.renderer;
+		}
+		r = r ? r : {};
+		if (r.rpassparam === undefined) {
+			r.rpassparam = { multisampled: true };
+		}
+		let mtplEnabled = r.mtplEnabled === true;
+		this.mScene.initialize(r);
+
+		this.initSceneComponents(scene, mtplEnabled);
+
 		const entities = param.entities;
 		if (entities && entities.length !== undefined) {
 			for (let i = 0; i < entities.length; ++i) {
 				this.addObject(entities[i]);
+			}
+		}
+	}
+	private initSceneComponents(sceneData: SceneDataImpl, mtplEnabled?: boolean): void {
+		let rc = this.mScene;
+		if(sceneData) {
+			console.log("initSceneComponents(), mtplEnabled: ", mtplEnabled);
+			if(mtplEnabled === true) {
+		
+				let mtpl = rc.renderer.mtpl;
+				mtpl.light.lightData = parseLightData(sceneData.light);
+				mtpl.shadow.param.intensity = 0.4;
+				mtpl.shadow.param.radius = 4;
+				if(sceneData.fog) {
+					let fogData = sceneData.fog;
+					mtpl.fog.fogColor.value = fogData.color;
+				}
 			}
 		}
 	}
