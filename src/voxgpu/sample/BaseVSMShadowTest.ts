@@ -165,7 +165,7 @@ export class BaseVSMShadowTest {
 		let ppt = material.property;
 		ppt.setShadowRadius(this.mShadowRadius);
 		ppt.setViewSize(this.mShadowMapW, this.mShadowMapH);
-		material.property.toHorizonalBlur();
+		material.property.toHorizonal();
 		material.addTextures([this.mOccVRTT]);
 		let extent = [-1, -1, 2, 2];
 		let rttEntity = new FixScreenPlaneEntity({ extent, materials: [material] });

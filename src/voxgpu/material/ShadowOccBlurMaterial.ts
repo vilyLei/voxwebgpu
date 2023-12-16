@@ -38,12 +38,7 @@ class BasePBRProperty implements MaterialProperty {
 	}
 	
     getUniqueKey(): string {
-		let ppt = this;
-		let uk = '';
-		if (ppt.horizonal) {
-			uk += 'H_PASS';
-		}
-		return uk;
+		return this.horizonal ? 'H_PASS' : 'V_PASS';
 	}
 	constructor() {
 	}
@@ -73,9 +68,6 @@ class ShadowOccBlurMaterial extends WGMaterial {
 		let uuid = "ShadowOccBlur";
 		if (ppt.horizonal) {
 			preCode += '#define USE_HORIZONAL_PASS\n';
-			uuid += '-H_PASS';
-		}else {
-			uuid += '-V_PASS';
 		}
 
 		// console.log('ShadowOccBlurMaterial::__$build() preCode: \n', preCode);;
@@ -83,7 +75,7 @@ class ShadowOccBlurMaterial extends WGMaterial {
 		let shaderSrc = {
 			shaderSrc: { code: shaderCode, uuid }
 		}
-		this.shadinguuid = uuid;
+		this.shadinguuid = uuid + '-' + ppt.getUniqueKey();
 		this.shaderSrc = shaderSrc;
 	}
 }

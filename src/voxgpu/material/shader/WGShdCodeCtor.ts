@@ -1,8 +1,10 @@
 
 import { WGShaderPredefine } from "./WGShaderPredefine";
 import { getCodeLine, codeLineCommentTest } from "./utils";
+import { WGShdCodeCtorImpl } from "./WGShdCodeCtorImpl";
 
-class WGShdCodeCtor {
+class WGShdCodeCtor implements WGShdCodeCtorImpl {
+	
 	readonly predefine = new WGShaderPredefine();
 	protected moduleNames: string[] = [];
 	codeModules: Map<string, string>;
