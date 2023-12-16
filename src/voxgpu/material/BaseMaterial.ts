@@ -129,9 +129,9 @@ class BaseMaterial extends WGMaterial {
 		if(!descriptor) {
 			descriptor = {};
 		}
-		if(descriptor.shadinguuid === undefined) {
-			descriptor.shadinguuid = "base-material";
-		}
+		// if(descriptor.shadinguuid === undefined) {
+		// 	descriptor.shadinguuid = "base-material";
+		// }
 		super.setDescriptor(descriptor);
 		if (!this.pipeline) {
 			this.pipeline = { uid: 0 };
@@ -146,7 +146,7 @@ class BaseMaterial extends WGMaterial {
 
 	__$build(preCode?: string, uniqueKey?: string): void {
 
-		// console.log('BaseMaterial::__$build() preCode: \n', preCode);
+		console.log('BaseMaterial::__$build() preCode: \n', preCode);
 		// console.log('BaseMaterial::__$build() ...');
 		let uuid = "BaseMaterial";
 		// let shaderCode = this.mShdBuilder.build(preCode);

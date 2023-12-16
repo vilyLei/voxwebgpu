@@ -11,9 +11,8 @@ import { PlaneEntity } from "../../entity/PlaneEntity";
 import { RectLineGridEntity } from "../../entity/RectLineGridEntity";
 import { SphereEntity } from "../../entity/SphereEntity";
 import { TorusEntity } from "../../entity/TorusEntity";
-import { WGMaterial } from "../../material/WGMaterial";
+import { createMaterials } from "./DataMaterialParser";
 import { 
-	Entity3DParamType,
 	DataDrivenEntityParamType,
 	PrimitiveDDEParam,
 	DataDrivenEntityParam } from "./DataDrivenEntityParam";
@@ -31,7 +30,6 @@ function ddeParamFilter(d: PrimitiveDDEParam): DataDrivenEntityParam {
 	let rd = d;
     for(let i = 0; i < ettyes.length; ++i) {
         rd = (d as any)[ettyes[i]];
-        // console.log('rd: ', rd, ', key: ', ettyes[i]);
         if(rd) {
             rd.entityType = ettyes[i];
             console.log("rd.entityType: ", rd.entityType);
@@ -41,22 +39,12 @@ function ddeParamFilter(d: PrimitiveDDEParam): DataDrivenEntityParam {
     if(!rd) rd = d;
     return rd;
 }
-function createMaterials(entityParam: Entity3DParamType): WGMaterial[] {
-	let pedata = entityParam as any;
-	let pdataMaterials = pedata.materials;
-	pedata.materials = undefined;
-	if(pdataMaterials) {
-		console.log("find some materials.");
-	}
-	return null;
-}
 function createEntity(param: DataDrivenEntityParam): Entity3D {
 	let entity: Entity3D;
 	if(param) {
 		let et = param.entity as DataDrivenEntityParamType;
-		// let pdata: any = param;
-		// let pdmaterials = pdata.materials;
-		// pdata.materials = undefined;
+		let entityParam = param.entity;
+		let materials = createMaterials(entityParam);
 		switch(param.entityType) {
 			case 'axis':
 
@@ -64,46 +52,50 @@ function createEntity(param: DataDrivenEntityParam): Entity3D {
 					et.axisLength = et.size;
 				}
 				et.size = undefined;
-				entity = new AxisEntity(param.entity);
+				entity = new AxisEntity(entityParam);
 				break;
 			case 'line':
-				entity = new Line3DEntity(param.entity);
+				entity = new Line3DEntity(entityParam);
 				break;
 			case 'rectLineGrid':
-				entity = new RectLineGridEntity(param.entity);
+				entity = new RectLineGridEntity(entityParam);
 				break;
 			case 'boundsFrame':
-				entity = new BoundsFrameEntity(param.entity);
+				entity = new BoundsFrameEntity(entityParam);
 				break;
 
 			case 'plane':
-				entity = new PlaneEntity(param.entity);
+				entity = new PlaneEntity(entityParam);
 				break;
 			case 'box':
 				et = param.entity as DataDrivenEntityParamType;
 				if(et.size !== undefined) {
 					et.cubeSize = et.size;
 				}
-				et.size = undefined;
-				entity = new BoxEntity(param.entity);
+				et.size = undefined;				
+				entity = new BoxEntity(entityParam);
 				break;
 			case 'cube':
 				// let materials = createMaterials(pdmaterials);
-				let materials = createMaterials(param.entity);
-				entity = new CubeEntity(param.entity);
+				et = param.entity as DataDrivenEntityParamType;
+				if(et.size !== undefined) {
+					et.cubeSize = et.size;
+				}
+				et.size = undefined;
+				entity = new CubeEntity(entityParam);
 				break;
 
 			case 'sphere':
-				entity = new SphereEntity(param.entity);
+				entity = new SphereEntity(entityParam);
 				break;
 			case 'cylinder':
-				entity = new CylinderEntity(param.entity);
+				entity = new CylinderEntity(entityParam);
 				break;
 			case 'cone':
-				entity = new ConeEntity(param.entity);
+				entity = new ConeEntity(entityParam);
 				break;
 			case 'torus':
-				entity = new TorusEntity(param.entity);
+				entity = new TorusEntity(entityParam);
 				break;
 
 			case 'model':
@@ -112,10 +104,10 @@ function createEntity(param: DataDrivenEntityParam): Entity3D {
 					et.modelUrl = et.url;
 				}
 				et.url = undefined;
-				entity = new ModelEntity(param.entity);
+				entity = new ModelEntity(entityParam);
 				break;
 			case 'container':
-				// entity = new AxisEntity(param.entity);
+				// entity = new AxisEntity(entityParam);
 				break;
 			default:
 				break;

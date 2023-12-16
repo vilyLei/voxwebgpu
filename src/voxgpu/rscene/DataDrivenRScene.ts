@@ -45,7 +45,9 @@ class DataDrivenRScene {
 			if(mtplEnabled === true) {
 		
 				let mtpl = rc.renderer.mtpl;
-				mtpl.light.lightData = parseLightData(sceneData.light);
+				let lightData = parseLightData(sceneData.light);
+				console.log("lightData: ", lightData);
+				mtpl.light.lightData = lightData;
 				mtpl.shadow.param.intensity = 0.4;
 				mtpl.shadow.param.radius = 4;
 				if(sceneData.fog) {

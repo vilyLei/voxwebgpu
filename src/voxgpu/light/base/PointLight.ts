@@ -34,7 +34,7 @@ export class PointLight implements PointLightImpl {
             if (param.color) this.color.setColor(param.color);
             if (param.position) this.position.setVector3(param.position);
             if (param.factor1 !== undefined) this.factor1 = param.factor1;
-            if (param.factor2 !== undefined) this.factor1 = param.factor2;
+            if (param.factor2 !== undefined) this.factor2 = param.factor2;
         }
     }
     applyTo(pfs: Float32Array, cfs: Float32Array, offset = 0): void {

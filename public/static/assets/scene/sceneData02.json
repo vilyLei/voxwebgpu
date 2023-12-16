@@ -20,7 +20,7 @@
 				{
 					"position": [
 						0,
-						50,
+						190,
 						0
 					],
 					"color": [
@@ -32,22 +32,63 @@
 					"factor2": 0.00002
 				}
 			],
-			"directionLights": [],
+			"directionLights": [
+				{
+					"direction": [-1, -1, 0],
+					"color": [0.5, 0.5, 0.5]
+				}
+			],
 			"spotLights": []
 		},
 		"shadow": {
 			"intensity": 0.4,
 			"radius": 4
 		},
-		"for":{
-			"color": [0.3, 0.7, 0.2]
+		"fog": {
+			"color": [
+				0.3,
+				0.7,
+				0.2
+			]
 		}
 	},
 	"entities": [
 		{
-			"axis": {
+			"plane": {
 				"entity": {
-					"size": 500
+					"axisType": 1,
+					"extent": [
+						-600,
+						-600,
+						1200,
+						1200
+					],
+					"transform": {
+						"position": [
+							0,
+							0,
+							0
+						]
+					},
+					"materials": [
+						{
+							"type": "default",
+							"lighting": true,
+							"shadow": false,
+							"shadowReceived": true,
+							"fogging": true,
+							"arms": [
+								1,
+								0.3,
+								0.2
+							],
+							"albedo": [
+								0.6,
+								0.6,
+								0.5
+							]
+						}
+					]
 				}
 			}
 		},
@@ -58,20 +99,29 @@
 					"transform": {
 						"position": [
 							0,
-							0,
+							100,
 							200
 						]
 					},
-					"albedo": [
-						0.9,
-						0.1,
-						0.02
-					],
-					"arm": {
-						"a": 1.0,
-						"r": 0.2,
-						"m": 0
-					}
+					"materials": [
+						{
+							"type": "default",
+							"lighting": true,
+							"shadow": true,
+							"shadowReceived": true,
+							"fogging": true,
+							"arms": [
+								1,
+								0.3,
+								0.2
+							],
+							"albedo": [
+								0.7,
+								0.6,
+								0.5
+							]
+						}
+					]
 				}
 			}
 		},
@@ -81,9 +131,9 @@
 					"size": 80,
 					"transform": {
 						"position": [
-							200,
-							0,
-							0
+							220,
+							130,
+							-10
 						],
 						"scale": [
 							2,
@@ -96,43 +146,60 @@
 							200
 						]
 					},
-					"albedo": [
-						0.1,
-						0.9,
-						0.02
-					],
-					"arm": {
-						"a": 1.0,
-						"r": 0.2,
-						"m": 0
-					},
-					"animate": {}
+					"materials": [
+						{
+							"type": "default",
+							"lighting": true,
+							"shadow": true,
+							"shadowReceived": true,
+							"fogging": true,
+							"arms": [
+								1,
+								0.4,
+								0.2
+							],
+							"albedo": [
+								0.3,
+								0.7,
+								0.8
+							]
+						}
+					]
 				}
 			}
 		},
 		{
 			"torus": {
 				"entity": {
-					"radius": 90,
+					"radius": 150,
 					"axisType": 1,
 					"rings": 50,
 					"segments": 30,
 					"transform": {
 						"position": [
 							0,
-							150,
+							230,
 							0
 						]
 					},
-					"albedo": [
-						0.9,
-						0.1,
-						0.7
-					],
-					"arm": [
-						1.0,
-						0.3,
-						0
+					"materials": [
+						{
+							"type": "default",
+							"lighting": true,
+							"shadow": true,
+							"shadowReceived": true,
+							"fogging": true,
+							"arms": [
+								1,
+								0.2,
+								0.2
+							],
+							"albedo": [
+								0.2,
+								0.5,
+								0.8
+							]
+						}
 					]
 				}
 			}
@@ -144,7 +211,7 @@
 					"transform": {
 						"position": [
 							0,
-							320,
+							380,
 							0
 						],
 						"scale": [
@@ -158,36 +225,50 @@
 							0
 						]
 					},
-					"albedo": [
-						0.1,
-						0.7,
-						0.9
-					],
-					"arm": [
-						1,
-						0.3,
-						0.1
+					"materials": [
+						{
+							"type": "default",
+							"lighting": true,
+							"shadow": true,
+							"shadowReceived": true,
+							"fogging": true,
+							"arms": [
+								1,
+								0.5,
+								0.2
+							],
+							"albedo": [
+								0.6,
+								0.3,
+								0.8
+							]
+						}
 					]
 				}
 			}
 		},
 		{
-			"boundsFrame": {
+			"cube": {
 				"entity": {
-					"minPos": [
-						-300,
-						-300,
-						-300
-					],
-					"maxPos": [
-						300,
-						300,
-						300
-					],
-					"frameColor": [
-						0.9,
-						1.0,
-						0.1
+					"size": 2050,
+					"normalScale": -1,
+					"materials": [
+						{
+							"type": "default",
+							"lighting": true,
+							"fogging": true,
+							"arms": [
+								1,
+								0.3,
+								0.2
+							],
+							"albedo": [
+								0.3,
+								0.3,
+								0.7
+							],
+							"faceCullMode": "front"
+						}
 					]
 				}
 			}
