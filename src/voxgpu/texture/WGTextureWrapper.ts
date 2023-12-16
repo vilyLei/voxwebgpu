@@ -3,13 +3,11 @@ import { GPUSampler } from "../gpu/GPUSampler";
 import { GPUTexture } from "../gpu/GPUTexture";
 import { GPUTextureView } from "../gpu/GPUTextureView";
 import {
-	texDescriptorFilter,
 	RTTTextureDataDescriptor,
 	DataTextureDataDescriptor,
 	TextureDataDescriptor,
 	WGTextureDataDescriptor
 } from "./WGTextureDataDescriptor";
-import { GPUExtent3DDict, GPUTextureDescriptor } from "../gpu/GPUTextureDescriptor";
 
 interface WGTextureDataType {
 	uid?: number;
@@ -312,70 +310,12 @@ class WGTextureWrapper {
 	destroy(): void {}
 }
 
-const __$texDataMap: Map<string, WGTextureData> = new Map();
-function createDataWithDescriptor(descriptor: WGTextureDataDescriptor): WGTextureData {
-	
-	if(descriptor && descriptor.update !== undefined) {
-		descriptor.update();
-	}
-	let td: WGTextureData;
-	const dpt = texDescriptorFilter(descriptor);
-	let viewDimension = dpt.viewDimension ? dpt.viewDimension : "2d";
-	const map = __$texDataMap;
-	let key = "";
-	if (dpt.url !== undefined) {
-		key = dpt.url;
-	} else if (dpt.urls !== undefined) {
-		key = dpt.urls[0];
-	}
-	if (key === "") {
-		if (dpt.uuid !== undefined) {
-			key = dpt.uuid;
-		}
-	}
-	if (key !== "") {
-		if (map.has(key)) {
-			return map.get(key);
-		}
-	}
-
-	switch (viewDimension) {
-		case "2d":
-			// console.log("create a 2d texture instance ...");
-			if (dpt.rttTexture) {
-				td = new WGRTTTextureData().setDescripter(dpt);
-			} else if (dpt.dataTexture) {
-				td = new WGDataTextureData().setDescripter(dpt);
-			} else {
-				td = new WGImage2DTextureData().setDescripter(dpt);
-			}
-			break;
-		case "cube":
-			// console.log("create a cube texture instance ...");
-			if (dpt.dataTexture) {
-				td = new WGDataTextureData().setDescripter(dpt);
-			} else {
-				td = new WGImageCubeTextureData().setDescripter(dpt);
-			}
-			break;
-		default:
-			throw Error("Illegal Operation !!!");
-			break;
-	}
-	if (td) {
-		if (key !== "") {
-			map.set(key, td);
-		}
-	}
-	return td;
-}
 export {
-	texDescriptorFilter,
-	createDataWithDescriptor,
 	WGTextureData,
 	WGTextureDataDescriptor,
 	WGImageTextureData,
 	WGRTTTextureData,
+	WGDataTextureData,
 	WGImage2DTextureData,
 	WGImageCubeTextureData,
 	WGTextureDataType,

@@ -68,7 +68,9 @@ export class MultiLightsShading3 {
 	}
 	private hdrEnvtex = new SpecularEnvBrnTexture();
 	private createBaseTextures(): WGTextureDataDescriptor[] {
+		let envTex = { specularEnv: {} };
 		let textures = [
+			// hdrEnvtex,
 			this.hdrEnvtex,
 		] as WGTextureDataDescriptor[];
 		return textures;

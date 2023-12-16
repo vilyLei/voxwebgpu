@@ -1,10 +1,10 @@
 import {
 	WGTextureDataDescriptor,
-	createDataWithDescriptor,
 	WGTextureData,
 	WGTextureWrapperParam,
 	WGTextureWrapper
 } from "../texture/WGTextureWrapper";
+import { createDataWithDescriptor } from "../texture/TexPreDefine";
 
 import { WGRPipelineContextDefParam, WGRShderSrcType } from "../render/pipeline/WGRPipelineCtxParams";
 import { VtxPipelinDescParam, WGRPipelineContextImpl } from "../render/pipeline/WGRPipelineContextImpl";

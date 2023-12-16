@@ -11,7 +11,7 @@ import { WebGPUContext } from "../../gpu/WebGPUContext";
 import { WGRPassParam, WGRendererPassImpl } from "./WGRendererPassImpl";
 import { WGRPColorAttachment } from "./WGRPColorAttachment";
 import { WGRPDepthStencilAttachment } from "./WGRPDepthStencilAttachment";
-import { texDescriptorFilter } from "../../texture/WGTextureDataDescriptor";
+import { texDescriptorFilter } from "../../texture/TexPreDefine";
 import { WGRPassColorAttachment } from "./WGRPassColorAttachment";
 import { WGRPassViewport } from "./WGRPassViewport";
 
