@@ -369,7 +369,9 @@ class MtBuilder {
     private shaderCodeCorrect(shdSrc: WGRShderSrcType, uvalues: WGRBufferData[], utexes: WGRTexLayoutParam[]): WGRShderSrcType {
         let shd = shdSrc.shaderSrc;
         if (shd) {
-
+            shd.uvalues = uvalues;
+            shd.utexes = utexes;
+            /*
             let code = shd.code;
             let bi = code.indexOf('@binding(');
             for (let i = 0; i < 30; ++i) {
@@ -434,6 +436,7 @@ class MtBuilder {
                     return shaderSrc;
                 }
             }
+            //*/
         }
         return shdSrc;
     }
