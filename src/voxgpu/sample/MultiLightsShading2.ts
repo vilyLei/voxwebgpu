@@ -100,7 +100,7 @@ export class MultiLightsShading2 {
 					position[1] += Math.random() * 30 - 15;
 					position[2] += Math.random() * 60 - 30;
 					color = this.getRandomColor(scale);
-					let direction = [Math.random() - 0.5, -1, Math.random() - 0.5];
+					let direction = [(Math.random() - 0.5) * 8, -1, (Math.random() - 0.5) * 8];
 					let degree = Math.random() * 10 + 5;
 					let spLight = new SpotLight({ position, color, direction, degree, factor1, factor2 });
 					ld.spotLights.push(spLight);
@@ -181,7 +181,6 @@ export class MultiLightsShading2 {
 							transform: { position }
 						}
 					);
-
 					rc.addEntity(sphere);
 				}
 			}

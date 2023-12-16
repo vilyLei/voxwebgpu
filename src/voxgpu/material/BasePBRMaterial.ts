@@ -71,10 +71,6 @@ class BasePBRProperty implements MaterialProperty {
 	lighting = true;
 	constructor() {
 		
-		// let armsSrc = this.armsParams;
-		// this.arms = new ArmsDataWrapper(armsSrc.arms, armsSrc);
-		// this.armsBase = new ArmsDataWrapper(armsSrc.base, armsSrc);
-
 		let fogSrc = this.fogParams;
 		this.fogParam = new FogDataWrapper(fogSrc.fogParam, fogSrc);
 		this.fogColor = new MaterialUniformColor4Wrapper(fogSrc.fogColor, fogSrc);
@@ -88,8 +84,6 @@ class BasePBRProperty implements MaterialProperty {
 		this.ambient = new MaterialUniformColor4Wrapper(params.ambient, params);
 		this.uvParam = new MaterialUniformVec4Wrapper(params.uvParam, params);
 
-		// this.fogParam = new FogDataWrapper(params.fogParam, params);
-		// this.fogColor = new MaterialUniformColor4Wrapper(params.fogColor, params);
 		this.arms = new ArmsDataWrapper(params.arms, params);
 		this.armsBase = new ArmsDataWrapper(params.armsBase, params);
 

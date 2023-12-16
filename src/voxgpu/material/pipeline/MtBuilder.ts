@@ -309,7 +309,7 @@ class MtBuilder {
             if (!material.getRCtx()) {
                 // console.log("XXXXXXXXXXXXXX this.mUniqueKey: ", uk);
                 if(!node.hasRenderPipelineCtxWithUniqueKey( uk )) {
-                    material.shaderSrc = this.shaderBuild(material.shaderSrc, uvalues, utexes);
+                    material.shaderSrc = this.shaderCodeCorrect(material.shaderSrc, uvalues, utexes);
                 }
                 if (!material.pipelineVtxParam) {
                     if (primitive) {
@@ -366,7 +366,7 @@ class MtBuilder {
             }
         }
     }
-    shaderBuild(shdSrc: WGRShderSrcType, uvalues: WGRBufferData[], utexes: WGRTexLayoutParam[]): WGRShderSrcType {
+    private shaderCodeCorrect(shdSrc: WGRShderSrcType, uvalues: WGRBufferData[], utexes: WGRTexLayoutParam[]): WGRShderSrcType {
         let shd = shdSrc.shaderSrc;
         if (shd) {
 
@@ -420,7 +420,7 @@ class MtBuilder {
                         codeStr += str;
                     }
                 }
-                // console.log("shaderBuild(), codeStr:");
+                // console.log("shaderCodeCorrect(), codeStr:");
                 // console.log(codeStr);
                 if (codeStr !== '') {
                     codeStr = codeStr + code;
@@ -429,7 +429,7 @@ class MtBuilder {
                         shaderSrc: { code: codeStr, uuid: shd.uuid },
                         // shaderSrc: { code: basePBRWholeInitWGSL, uuid: "wholeBasePBRShdCode" },
                     };
-                    // console.log("shaderBuild() VVVVVVVVVVVVVVVVVVVVVVVV, codeStr: ");
+                    // console.log("shaderCodeCorrect() VVVVVVVVVVVVVVVVVVVVVVVV, codeStr: ");
                     // console.log( codeStr );
                     return shaderSrc;
                 }

@@ -78,7 +78,7 @@
 // import { ShaderConstructing as Demo } from "./voxgpu/sample/ShaderConstructing";
 // import { DynamicShaderBuilding as Demo } from "./voxgpu/sample/DynamicShaderBuilding";
 // import { DynamicShaderBuilding2 as Demo } from "./voxgpu/sample/DynamicShaderBuilding2";
-import { MaskTextureEffect as Demo } from "./voxgpu/sample/MaskTextureEffect";
+// import { MaskTextureEffect as Demo } from "./voxgpu/sample/MaskTextureEffect";
 // import { FogTest as Demo } from "./voxgpu/sample/FogTest";
 
 // import { OrthoCamraTest as Demo } from "./voxgpu/sample/OrthoCamraTest";
@@ -92,7 +92,7 @@ import { MaskTextureEffect as Demo } from "./voxgpu/sample/MaskTextureEffect";
 
 // import { MultiLightsTest as Demo } from "./voxgpu/sample/MultiLightsTest";
 // import { MultiLightsShading as Demo } from "./voxgpu/sample/MultiLightsShading";
-// import { MultiLightsShading2 as Demo } from "./voxgpu/sample/MultiLightsShading2";
+import { MultiLightsShading2 as Demo } from "./voxgpu/sample/MultiLightsShading2";
 
 
 
