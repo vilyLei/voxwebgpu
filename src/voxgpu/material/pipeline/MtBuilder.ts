@@ -1,8 +1,6 @@
-import { WGRBufferValue } from "../../render/buffer/WGRBufferValue";
 import { WGRTexLayoutParam } from "../../render/uniform/IWGRUniformContext";
 import { findShaderEntryPoint, WGRShderSrcType } from "../../render/pipeline/WGRPipelineCtxParams";
 import { WGRBufferData } from "../mdata/MaterialUniformData";
-import { getCodeLine, codeLineCommentTest } from "../shader/utils";
 import { IWGMaterial } from "../IWGMaterial";
 import { WGRPrimitiveImpl } from "../../render/WGRPrimitiveImpl";
 import { checkBufferData } from "../../render/buffer/WGRBufferValue";
@@ -14,8 +12,6 @@ import { VSMPipeNode } from "./VSMPipeNode";
 import { WGTextureWrapper } from "../../texture/WGTextureWrapper";
 import { FogPipeNode } from "./FogPipeNode";
 import { LightPipeNode } from "./LightPipeNode";
-
-// const bufValue = new WGRBufferValue({ shdVarName: 'mpl-bufValue' });
 
 /**
  * material pipeline
@@ -107,6 +103,9 @@ class MtBuilder {
 					case 'opacity':
 						uk += '-OPACITY_MAP';
 						break;
+					case 'parallax':
+						uk += '-PARALLAX_MAP';
+						break;
 					default:
 						break;
 				}
@@ -175,6 +174,9 @@ class MtBuilder {
 						break;
 					case 'opacity':
 						preCode += '#define USE_OPACITY_MAP\n';
+						break;
+					case 'parallax':
+						preCode += '#define USE_PARALLAX_MAP\n';
 						break;
 					default:
 						break;

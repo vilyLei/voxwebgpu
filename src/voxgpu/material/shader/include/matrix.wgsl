@@ -13,7 +13,7 @@ fn inverseM33(m: mat3x3<f32>) -> mat3x3<f32> {
     );
 }
 fn m44ToM33(m: mat4x4<f32>) -> mat3x3<f32> {
-    return mat3x3(m[0].xyz, m[1].xyz, m[2].xyz);
+    return mat3x3<f32>(m[0].xyz, m[1].xyz, m[2].xyz);
 }
 
 fn inverseM44(m: mat4x4<f32>) -> mat4x4<f32> {

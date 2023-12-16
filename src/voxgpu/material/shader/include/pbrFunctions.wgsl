@@ -2,7 +2,21 @@
 fn gammaToLinear(color: vec3<f32>) -> vec3<f32> {
     return pow(color.rgb, vec3Gamma);
 }
+fn getBTNMat3(texUV: vec2<f32>, pos: vec3<f32>, nv: vec3<f32>) -> mat3x3<f32>
+{
+    let Q1  = dpdx(pos);
+    let Q2  = dFdy(pos);
+    let st1 = dpdx(texUV);
+    let st2 = dFdy(texUV);
 
+    let N  = normalize(nv);
+    let T  = normalize(Q1*st2.t - Q2*st1.t);
+    let B  = -normalize(cross(N, T));
+    return mat3x3<f32>(T, B, N);
+}
+#ifdef USE_PARALLAX_MAP
+
+#endif
 #ifdef USE_NORMAL_MAP
 fn getNormalFromMap(texUV: vec2<f32>, wpos: vec3<f32>, nv: vec3<f32>) -> vec3<f32> {
     let tangentNormal = textureSample(normalTexture, normalSampler, texUV).xyz * 2.0 - 1.0;
