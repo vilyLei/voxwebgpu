@@ -37,14 +37,11 @@ export class VertColorTriangle {
 
 		const renderer = this.renderer;
 		renderer.initialize({camera:{enabled: false}});
-		const shdSrc = {
+		const shaderSrc = {
 			vert: { code: vertWGSL },
 			frag: { code: fragWGSL }
 		};
-		const materials = [new WGMaterial({
-			shadinguuid: "shapeMaterial",
-			shaderSrc: shdSrc
-		})];
+		const materials = [new WGMaterial({shaderSrc})];
 		const geometry = new WGGeometry().addAttributes([
 			{ position},
 			{ color }

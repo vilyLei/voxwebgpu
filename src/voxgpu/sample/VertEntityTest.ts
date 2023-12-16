@@ -29,26 +29,15 @@ export class VertEntityTest {
 		this.mEntity = this.createEntity( [material] );
 	}
 
-	private createMaterial(shaderSrc: WGRShderSrcType, texDatas?: WGImage2DTextureData[], blendModes: string[] = [], faceCullMode = "back"): WGMaterial {
+	private createMaterial(shaderSrc: WGRShderSrcType): WGMaterial {
 
 		let pipelineDefParam = {
-			depthWriteEnabled: true,
-			faceCullMode,
-			blendModes: [] as string[]
+			depthWriteEnabled: true
 		};
-
-		pipelineDefParam.blendModes = blendModes;
-
-		const texTotal = texDatas ? texDatas.length : 0;
-
 		const material = new WGMaterial({
-			shadinguuid: "base-material-tex" + texTotal,
 			shaderSrc,
 			pipelineDefParam
 		});
-
-		material.addTextureWithDatas( texDatas );
-
 		return material;
 	}
 

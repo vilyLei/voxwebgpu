@@ -92,7 +92,8 @@
 
 // import { MultiLightsTest as Demo } from "./voxgpu/sample/MultiLightsTest";
 // import { MultiLightsShading as Demo } from "./voxgpu/sample/MultiLightsShading";
-import { MultiLightsShading2 as Demo } from "./voxgpu/sample/MultiLightsShading2";
+// import { MultiLightsShading2 as Demo } from "./voxgpu/sample/MultiLightsShading2";
+import { MultiLightsShading3 as Demo } from "./voxgpu/sample/MultiLightsShading3";
 
 
 

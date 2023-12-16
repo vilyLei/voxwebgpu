@@ -1,3 +1,4 @@
+import { WGShdCodeCtorImpl } from "../../material/shader/WGShdCodeCtorImpl";
 import { WGRBufferData } from "../buffer/WGRBufferData";
 import { WGRTexLayoutParam } from "../uniform/IWGRUniformContext";
 
@@ -8,7 +9,8 @@ interface WGRShadeSrcParam {
 	vertEntryPoint?: string;
 	fragEntryPoint?: string;
 	compEntryPoint?: string
-
+	coder?: WGShdCodeCtorImpl;
+	predefine?: string;
 	uvalues?: WGRBufferData[];
 	utexes?: WGRTexLayoutParam[];
 }

@@ -141,10 +141,16 @@ class WGRPipelineShader {
 			let uuid = shd.moduleKey !== undefined ? shd.uuid + "$" + shd.moduleKey : shd.uuid;
 			const ns = uuid + "-" + type;
 			if (map.has(ns)) {
+				console.log("WGRPipelineShader::build(), use old shader module ...");
+				console.log("				ns: ", ns);
 				shdModule = map.get(ns);
 			} else {
+				console.log("WGRPipelineShader::build(), create new shader module ...");
 				console.log("vvv shd ns: ", ns);
-				console.log("vvv shd: ", shd);
+				// console.log("vvv shd: ", shd);
+				if(shd.code === '' && shd.coder !== undefined) {
+					shd.code = shd.coder.build(shd.predefine !== undefined ? shd.predefine : "");
+				}
 				this.shaderCodeCorrect(params, shd.uvalues, shd.utexes);
 				shdModule = this.createShaderModule(type, shd);
 			}
