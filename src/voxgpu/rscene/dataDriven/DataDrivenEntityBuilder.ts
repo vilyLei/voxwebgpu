@@ -11,7 +11,12 @@ import { PlaneEntity } from "../../entity/PlaneEntity";
 import { RectLineGridEntity } from "../../entity/RectLineGridEntity";
 import { SphereEntity } from "../../entity/SphereEntity";
 import { TorusEntity } from "../../entity/TorusEntity";
-import { DataDrivenEntityParamType, PrimitiveDDEParam, DataDrivenEntityParam } from "./DataDrivenEntityParam";
+import { WGMaterial } from "../../material/WGMaterial";
+import { 
+	Entity3DParamType,
+	DataDrivenEntityParamType,
+	PrimitiveDDEParam,
+	DataDrivenEntityParam } from "./DataDrivenEntityParam";
 
 const ettyes = [
     'axis', 'line', 'rectLineGrid', 'boundsFrame',
@@ -36,10 +41,22 @@ function ddeParamFilter(d: PrimitiveDDEParam): DataDrivenEntityParam {
     if(!rd) rd = d;
     return rd;
 }
+function createMaterials(entityParam: Entity3DParamType): WGMaterial[] {
+	let pedata = entityParam as any;
+	let pdataMaterials = pedata.materials;
+	pedata.materials = undefined;
+	if(pdataMaterials) {
+		console.log("find some materials.");
+	}
+	return null;
+}
 function createEntity(param: DataDrivenEntityParam): Entity3D {
 	let entity: Entity3D;
 	if(param) {
 		let et = param.entity as DataDrivenEntityParamType;
+		// let pdata: any = param;
+		// let pdmaterials = pdata.materials;
+		// pdata.materials = undefined;
 		switch(param.entityType) {
 			case 'axis':
 
@@ -71,6 +88,8 @@ function createEntity(param: DataDrivenEntityParam): Entity3D {
 				entity = new BoxEntity(param.entity);
 				break;
 			case 'cube':
+				// let materials = createMaterials(pdmaterials);
+				let materials = createMaterials(param.entity);
 				entity = new CubeEntity(param.entity);
 				break;
 

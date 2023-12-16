@@ -44,7 +44,7 @@ class MtPipeline {
                         }
                     }
                 }
-                if (!ms[i].isREnabled()) {
+                if (!m.isREnabled()) {
                     return false;
                 }
             }

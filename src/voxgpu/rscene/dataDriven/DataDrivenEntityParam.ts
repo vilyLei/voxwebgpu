@@ -31,4 +31,4 @@ interface PrimitiveDDEParam extends DataDrivenEntityParam {
     model?: DataDrivenEntityParam;
     container?: DataDrivenEntityParam;
 }
-export { DataDrivenEntityParamType, PrimitiveDDEParam, DataDrivenEntityParam }
+export { Entity3DParamType, DataDrivenEntityParamType, PrimitiveDDEParam, DataDrivenEntityParam }
