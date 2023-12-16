@@ -4,6 +4,7 @@ import { WGRTexLayoutParam } from "../uniform/IWGRUniformContext";
 interface WGRShadeSrcParam {
 	code?: string;
 	uuid?: string;
+	moduleKey?: string;
 	vertEntryPoint?: string;
 	fragEntryPoint?: string;
 	compEntryPoint?: string

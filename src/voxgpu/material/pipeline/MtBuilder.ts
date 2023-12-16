@@ -15,7 +15,7 @@ import { WGTextureWrapper } from "../../texture/WGTextureWrapper";
 import { FogPipeNode } from "./FogPipeNode";
 import { LightPipeNode } from "./LightPipeNode";
 
-const bufValue = new WGRBufferValue({ shdVarName: 'mpl-bufValue' });
+// const bufValue = new WGRBufferValue({ shdVarName: 'mpl-bufValue' });
 
 /**
  * material pipeline
@@ -25,6 +25,7 @@ class MtBuilder {
     private mPool: MtPlNodePool;
     private mPreDef = '';
     private mUniqueKey = '';
+    private mShdUniqueKey = '';
     uvalues: WGRBufferData[];
     utexes: WGRTexLayoutParam[];
 
@@ -37,10 +38,12 @@ class MtBuilder {
     reset(material: IWGMaterial): void {
 
         this.mPreDef = '';
+        this.mShdUniqueKey = '';
         this.mUniqueKey = material.shadinguuid;
         const ppt = material.property;
         if(ppt) {
             if(ppt.getUniqueKey) {
+                this.mShdUniqueKey += ppt.getUniqueKey();
                 this.mUniqueKey += ppt.getUniqueKey();
             }
         }
@@ -109,8 +112,8 @@ class MtBuilder {
 				}
 			}
 		}
-
-        this.mUniqueKey = uk;
+        this.mShdUniqueKey += uk;
+        this.mUniqueKey += uk;
     }
     
     private buildPreDef(material: IWGMaterial): void {
@@ -371,6 +374,7 @@ class MtBuilder {
         if (shd) {
             shd.uvalues = uvalues;
             shd.utexes = utexes;
+            shd.moduleKey = this.mShdUniqueKey;
             /*
             let code = shd.code;
             let bi = code.indexOf('@binding(');
