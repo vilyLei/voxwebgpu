@@ -94,6 +94,7 @@ class PBRParamsVec4Data implements MaterialUniformDataImpl {
 	armsBase = new Arms();
 	ambient = new Color4();
 	uvParam = new Vector3();
+	parallaxParams = new Vector3();
 	private mls: NumberArrayDataImpl[];
 
 	constructor(shdVarName = 'pbrParams', visibility = 'frag', data?: Float32Array) {
@@ -109,6 +110,7 @@ class PBRParamsVec4Data implements MaterialUniformDataImpl {
 			 * armsBase: [0,0,0,0],
 			 * ambient: [0.1,0.1,0.1,1],
 			 * uvParam: [1,1,0,0],
+			 * parallaxParams: [1, 10, 2, 0.1]
 			 */
 			data = new Float32Array([
 				1, 1, 1, 1,	// albedo
@@ -121,6 +123,7 @@ class PBRParamsVec4Data implements MaterialUniformDataImpl {
 				0, 0, 0, 0, // armsBase
 				0.1, 0.1, 0.1, 1, // ambient
 				1, 1, 0, 0, // uvParam
+				1, 10, 2, 0.1, // parallax params
 			]);
 		};
 		this.storage = new MaterialUniformData(data, shdVarName, visibility);
@@ -136,7 +139,8 @@ class PBRParamsVec4Data implements MaterialUniformDataImpl {
 			this.arms,
 			this.armsBase,
 			this.ambient,
-			this.uvParam
+			this.uvParam,
+			this.parallaxParams
 		];
 
 		let pos = 0;
@@ -144,6 +148,15 @@ class PBRParamsVec4Data implements MaterialUniformDataImpl {
 			this.mls[i].fromArray4(data, pos);
 			pos += 4;
 		}
+	}
+	/**
+     * 设置顶点置换贴图参数
+     * @param numLayersMin ray march 最小层数, default value is 1.0
+     * @param numLayersMax ray march 最大层数, default value is 10.0
+     * @param height ray march 总高度, default value is 2.0
+     * @param stepFactor ray march 单步增量大小, default value is 0.1
+     */
+    setParallaxParams(numLayersMin = 1.0, numLayersMax = 10.0, height = 2.0, stepFactor = 0.1): void {
 	}
 	update(): void {
 		const data = this.storage.data;

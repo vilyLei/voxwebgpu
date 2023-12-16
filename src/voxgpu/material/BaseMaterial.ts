@@ -35,6 +35,7 @@ class BasePBRProperty implements MaterialProperty {
 	glossiness = true;
 	toneMapping = true;
 	metallicCorrection = true;
+	// parallaxTexEnabled = true;
 
 	inverseMask = false;
 

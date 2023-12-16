@@ -13,10 +13,10 @@ import { DirectionLight } from "../light/base/DirectionLight";
 import { SpotLight } from "../light/base/SpotLight";
 import { BillboardEntity } from "../entity/BillboardEntity";
 
-export class MultiLightsShading3 {
+export class ParallaxTexTest {
 	private mRscene = new RendererScene();
 	initialize(): void {
-		console.log("MultiLightsShading3::initialize() ...");
+		console.log("ParallaxTexTest::initialize() ...");
 		this.loadImg();
 	}
 	initSys(): void {
@@ -136,7 +136,7 @@ export class MultiLightsShading3 {
 		let materials = this.createMaterials(true);
 
 		let sphere: SphereEntity;
-		let total = 6;
+		let total = 1;
 		let py = 40;
 		for (let i = 0; i < total; ++i) {
 			for (let j = 0; j < total; ++j) {

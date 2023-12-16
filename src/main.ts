@@ -95,7 +95,8 @@
 // import { MultiLightsShading2 as Demo } from "./voxgpu/sample/MultiLightsShading2";
 // import { MultiLightsShading3 as Demo } from "./voxgpu/sample/MultiLightsShading3";
 
-import { DataDrivenScene2 as Demo } from "./voxgpu/sample/DataDrivenScene2";
+// import { DataDrivenScene2 as Demo } from "./voxgpu/sample/DataDrivenScene2";
+import { ParallaxTexTest as Demo } from "./voxgpu/sample/ParallaxTexTest";
 
 
 
