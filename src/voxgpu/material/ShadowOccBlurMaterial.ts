@@ -12,15 +12,15 @@ class BasePBRProperty implements MaterialProperty {
 
 	uuid = "property";
 	private mType = 1;
-	toVerticalBlur(): BasePBRProperty {
+	toVertical(): BasePBRProperty {
 		this.mType = 1;
 		return this;
 	}
-	toHorizonalBlur(): BasePBRProperty {
+	toHorizonal(): BasePBRProperty {
 		this.mType = 0;
 		return this;
 	}
-	isHorizonalBlur(): boolean {
+	get horizonal(): boolean {
 		return this.mType == 0;
 	}
 	setShadowRadius(r: number): BasePBRProperty {
@@ -36,6 +36,15 @@ class BasePBRProperty implements MaterialProperty {
 		this.viewParam.update();
 		return this;
 	}
+	
+    getUniqueKey(): string {
+		let ppt = this;
+		let uk = '';
+		if (ppt.horizonal) {
+			uk += 'H_PASS';
+		}
+		return uk;
+	}
 	constructor() {
 	}
 	get uniformValues(): WGRBufferData[] {
@@ -49,9 +58,6 @@ class ShadowOccBlurMaterial extends WGMaterial {
 		super(descriptor);
 	}
 	setDescriptor(descriptor: WGMaterialDescripter): void {
-		// if (!descriptor || descriptor.shaderSrc === undefined) {
-		// 	if (!descriptor) descriptor = { shadinguuid: "ShadowOccBlurMaterial" };
-		// }
 		super.setDescriptor(descriptor);
 	}
 	get uniformValues(): WGRBufferData[] {
@@ -63,12 +69,13 @@ class ShadowOccBlurMaterial extends WGMaterial {
 
 	__$build(): void {
 		let preCode = '';
-		// let ts = this.textures;
 		let ppt = this.property;
 		let uuid = "ShadowOccBlur";
-		if (ppt.isHorizonalBlur()) {
+		if (ppt.horizonal) {
 			preCode += '#define USE_HORIZONAL_PASS\n';
 			uuid += '-H_PASS';
+		}else {
+			uuid += '-V_PASS';
 		}
 
 		// console.log('ShadowOccBlurMaterial::__$build() preCode: \n', preCode);;
@@ -76,7 +83,7 @@ class ShadowOccBlurMaterial extends WGMaterial {
 		let shaderSrc = {
 			shaderSrc: { code: shaderCode, uuid }
 		}
-		this.shadinguuid = uuid + '-material';
+		this.shadinguuid = uuid;
 		this.shaderSrc = shaderSrc;
 	}
 }

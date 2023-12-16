@@ -148,11 +148,12 @@ class BaseMaterial extends WGMaterial {
 
 		// console.log('BaseMaterial::__$build() preCode: \n', preCode);
 		// console.log('BaseMaterial::__$build() ...');
-		let uuid = "base-material";
+		let uuid = "BaseMaterial";
 		let shaderCode = this.mShdBuilder.build(preCode);
 		let shaderSrc = {
 			shaderSrc: { code: shaderCode, uuid }
 		}
+		this.shadinguuid = uuid;
 		this.shaderSrc = shaderSrc;
 	}
 }

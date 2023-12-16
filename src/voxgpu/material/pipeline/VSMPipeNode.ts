@@ -174,7 +174,7 @@ class ShadowPassGraph extends WGRPassNodeGraph {
         ppt = material.property;
         ppt.setShadowRadius(this.shadowRadius);
         ppt.setViewSize(this.shadowMapW, this.shadowMapH);
-        ppt.toHorizonalBlur();
+        ppt.toHorizonal();
         material.addTextures([this.occVRTT]);
         this.occHEntity = new FixScreenPlaneEntity({ extent, materials: [material] });
         this.occHEntity.visible = false;
