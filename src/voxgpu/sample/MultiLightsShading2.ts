@@ -2,19 +2,13 @@ import MouseEvent from "../event/MouseEvent";
 import { RendererScene } from "../rscene/RendererScene";
 import { MouseInteraction } from "../ui/MouseInteraction";
 import { BaseMaterial } from "../material/BaseMaterial";
-import { SpecularEnvBrnTexture } from "../texture/SpecularEnvBrnTexture";
-import { WGTextureDataDescriptor } from "../texture/WGTextureDataDescriptor";
 import { SphereEntity } from "../entity/SphereEntity";
-import { TorusEntity } from "../entity/TorusEntity";
-import { CubeEntity } from "../entity/CubeEntity";
 import { PlaneEntity } from "../entity/PlaneEntity";
 import { MtLightDataDescriptor } from "../material/mdata/MtLightDataDescriptor";
 import { PointLight } from "../light/base/PointLight";
 import { DirectionLight } from "../light/base/DirectionLight";
 import { SpotLight } from "../light/base/SpotLight";
-import { FixScreenPlaneEntity } from "../entity/FixScreenPlaneEntity";
 import { BillboardEntity } from "../entity/BillboardEntity";
-import Color4 from "../material/Color4";
 
 export class MultiLightsShading2 {
 	private mRscene = new RendererScene();
@@ -63,23 +57,15 @@ export class MultiLightsShading2 {
 			ctx.drawImage(img, 0, 0);
 			this.mPixels = ctx.getImageData(0, 0, img.width, img.height).data;
 			this.initSys();
-			// document.body.append(canvas);
 		}
 		img.src = 'static/assets/colorPalette.jpg';
-	}
-	private hdrEnvtex = new SpecularEnvBrnTexture();
-	private createBaseTextures(): WGTextureDataDescriptor[] {
-		let textures = [
-			this.hdrEnvtex,
-		] as WGTextureDataDescriptor[];
-		return textures;
 	}
 	private mLightData: MtLightDataDescriptor;
 	private createLightData(): MtLightDataDescriptor {
 		let ld = { pointLights: [], directionLights: [], spotLights: [] } as MtLightDataDescriptor;
 
 		let total = 5;
-		let scale = 3.0;
+		let scale = 3;
 		for (let i = 0; i < total; ++i) {
 			let fi = i / (total - 1);
 			for (let j = 0; j < total; ++j) {
@@ -95,10 +81,9 @@ export class MultiLightsShading2 {
 				let pLight = new PointLight({ color, position, factor1, factor2 });
 				ld.pointLights.push(pLight);
 				if (Math.random() > 0.5) {
-					// position = [-250 + 150 * j, 50 + Math.random() * 50, -250 + 150 * i];
-					position[0] += Math.random() * 60 - 30;
-					position[1] += Math.random() * 30 - 15;
-					position[2] += Math.random() * 60 - 30;
+					position = [-500 + 250 * j, 50 + Math.random() * 30, -500 + 250 * i];
+					position[0] += Math.random() * 70 - 35;
+					position[2] += Math.random() * 70 - 35;
 					color = this.getRandomColor(scale);
 					let direction = [(Math.random() - 0.5) * 8, -1, (Math.random() - 0.5) * 8];
 					let degree = Math.random() * 10 + 5;
@@ -118,10 +103,8 @@ export class MultiLightsShading2 {
 			diffuseTex0 = { diffuse: { url: "static/assets/circleWave_disp.png" } };
 		}
 		let billboard = new BillboardEntity({ size: 10, textures: [diffuseTex0] });
-		let pc = new Color4().setColor(c);
-		pc.a = 1.0;
-		billboard.color = pc;
-		billboard.scale = 1.0;
+		billboard.color = c;
+		billboard.alpha = 1.0;
 		billboard.transform.setPosition(pv);
 		rc.addEntity(billboard);
 	}
@@ -200,9 +183,8 @@ export class MultiLightsShading2 {
 
 	}
 	private createMaterials(shadowReceived = false, shadow = true, faceCullMode = 'back', uvParam?: number[]): BaseMaterial[] {
-		let textures0 = this.createBaseTextures();
 
-		let material0 = this.createMaterial(textures0, ["solid"], 'less', faceCullMode);
+		let material0 = this.createMaterial( ["solid"], 'less', faceCullMode);
 		this.applyMaterialPPt(material0, shadowReceived, shadow);
 		let list = [material0];
 		if (uvParam) {
@@ -227,7 +209,7 @@ export class MultiLightsShading2 {
 
 		ppt.shadowReceived = shadowReceived;
 	}
-	private createMaterial(textures: WGTextureDataDescriptor[], blendModes: string[], depthCompare = 'less', faceCullMode = 'back'): BaseMaterial {
+	private createMaterial(blendModes: string[], depthCompare = 'less', faceCullMode = 'back'): BaseMaterial {
 
 		let pipelineDefParam = {
 			depthWriteEnabled: true,
@@ -236,7 +218,7 @@ export class MultiLightsShading2 {
 			depthCompare
 		};
 		let material = new BaseMaterial({ pipelineDefParam });
-		material.addTextures(textures);
+		material.addTextures([{ specularEnv: {} }]);
 		return material;
 	}
 	private initEvent(): void {

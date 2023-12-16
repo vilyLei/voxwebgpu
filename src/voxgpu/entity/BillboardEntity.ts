@@ -79,6 +79,13 @@ class BillboardEntity extends Entity3D {
 	get color(): ColorDataType {
 		return this.mColor;
 	}
+	set alpha(a: number) {
+		this.mColor.a = a;
+		this.setColor(this.mColor);
+	}
+	get alpha(): number {
+		return this.mColor.a;
+	}
 	setScaleXY(sx: number, sy: number): BillboardEntity {
 		this.scaleXY = [sx, sy];
 		return this;

@@ -2,7 +2,6 @@ import MouseEvent from "../event/MouseEvent";
 import { RendererScene } from "../rscene/RendererScene";
 import { MouseInteraction } from "../ui/MouseInteraction";
 import { BaseMaterial } from "../material/BaseMaterial";
-import { SpecularEnvBrnTexture } from "../texture/SpecularEnvBrnTexture";
 import { WGTextureDataDescriptor } from "../texture/WGTextureDataDescriptor";
 import { SphereEntity } from "../entity/SphereEntity";
 import { TorusEntity } from "../entity/TorusEntity";
@@ -13,7 +12,6 @@ import { PointLight } from "../light/base/PointLight";
 import { DirectionLight } from "../light/base/DirectionLight";
 import { SpotLight } from "../light/base/SpotLight";
 import { BillboardEntity } from "../entity/BillboardEntity";
-import Color4 from "../material/Color4";
 
 export class MultiLightsShading3 {
 	private mRscene = new RendererScene();
@@ -65,13 +63,6 @@ export class MultiLightsShading3 {
 		}
 		img.src = 'static/assets/colorPalette.jpg';
 	}
-	private createBaseTextures(): WGTextureDataDescriptor[] {
-		let envTex = { specularEnv: {} };
-		let textures = [
-			envTex,
-		] as WGTextureDataDescriptor[];
-		return textures;
-	}
 	private mLightData: MtLightDataDescriptor;
 	private createLightData(): MtLightDataDescriptor {
 		let ld = { pointLights: [], directionLights: [], spotLights: [] } as MtLightDataDescriptor;
@@ -79,12 +70,8 @@ export class MultiLightsShading3 {
 		let total = 5;
 		let scale = 3.0;
 		for (let i = 0; i < total; ++i) {
-			let fi = i / (total - 1);
 			for (let j = 0; j < total; ++j) {
-				let fj = j / (total - 1);
-				fi = 1;
-				fj = 1;
-				let position = [-500 + 250 * j, 50 + Math.random() * 30, -500 + 250 * i];
+				let position = [-500 + 250 * j, 100 + Math.random() * 30, -500 + 250 * i];
 				position[0] += Math.random() * 60 - 30;
 				position[2] += Math.random() * 60 - 30;
 				let color = this.getRandomColor(scale);
@@ -93,10 +80,9 @@ export class MultiLightsShading3 {
 				let pLight = new PointLight({ color, position, factor1, factor2 });
 				ld.pointLights.push(pLight);
 				if (Math.random() > 0.5) {
-					// position = [-250 + 150 * j, 50 + Math.random() * 50, -250 + 150 * i];
-					position[0] += Math.random() * 60 - 30;
-					position[1] += Math.random() * 30 - 15;
-					position[2] += Math.random() * 60 - 30;
+					position = [-500 + 150 * j, 100 + Math.random() * 50, -500 + 150 * i];
+					position[0] += Math.random() * 160 - 80;
+					position[2] += Math.random() * 160 - 80;
 					color = this.getRandomColor(scale);
 					let direction = [(Math.random() - 0.5) * 8, -1, (Math.random() - 0.5) * 8];
 					let degree = Math.random() * 10 + 5;
@@ -116,10 +102,8 @@ export class MultiLightsShading3 {
 			diffuseTex0 = { diffuse: { url: "static/assets/circleWave_disp.png" } };
 		}
 		let billboard = new BillboardEntity({ size: 10, textures: [diffuseTex0] });
-		let pc = new Color4().setColor(c);
-		pc.a = 1.0;
-		billboard.color = pc;
-		billboard.scale = 1.0;
+		billboard.color = c;
+		billboard.alpha = 1;
 		billboard.transform.setPosition(pv);
 		rc.addEntity(billboard);
 	}
@@ -153,7 +137,7 @@ export class MultiLightsShading3 {
 
 		let sphere: SphereEntity;
 		let total = 6;
-		let py = -10;
+		let py = 40;
 		let k = 0;
 		for (let i = 0; i < total; ++i) {
 			for (let j = 0; j < total; ++j) {
@@ -185,8 +169,8 @@ export class MultiLightsShading3 {
 			}
 		}
 
-		position = [0, -50, 0];
-		materials = this.createMaterials(true, false, 'back', [3, 3]);
+		position = [0, 0, 0];
+		materials = this.createMaterials(true, false, 'back');
 		let plane = new PlaneEntity({
 			axisType: 1,
 			materials,
@@ -198,8 +182,27 @@ export class MultiLightsShading3 {
 		this.createBillboards();
 
 	}
+	private createTextures(ns: string): WGTextureDataDescriptor[] {
+		const albedoTex = { albedo: { url: `static/assets/pbr/${ns}/albedo.jpg` } };
+		const normalTex = { normal: { url: `static/assets/pbr/${ns}/normal.jpg` } };
+		const aoTex = { ao: { url: `static/assets/pbr/${ns}/ao.jpg` } };
+		const roughnessTex = { roughness: { url: `static/assets/pbr/${ns}/roughness.jpg` } };
+		const metallicTex = { metallic: { url: `static/assets/pbr/${ns}/metallic.jpg` } };
+		let envTex = { specularEnv: {} };
+		let textures = [
+			envTex,
+			albedoTex,
+			normalTex,
+			aoTex,
+			roughnessTex,
+			metallicTex
+		] as WGTextureDataDescriptor[];
+		return textures;
+	}
+	private mTexPool = [this.createTextures("plastic"), this.createTextures("rusted_iron")];
 	private createMaterials(shadowReceived = false, shadow = true, faceCullMode = 'back', uvParam?: number[]): BaseMaterial[] {
-		let textures0 = this.createBaseTextures();
+		let textures0 = this.mTexPool[Math.round(Math.random() * 999)%2];//this.createTextures("plastic");
+		// let textures0 = this.createTextures("rusted_iron");
 
 		let material0 = this.createMaterial(textures0, ["solid"], 'less', faceCullMode);
 		this.applyMaterialPPt(material0, shadowReceived, shadow);
@@ -215,10 +218,10 @@ export class MultiLightsShading3 {
 	private applyMaterialPPt(material: BaseMaterial, shadowReceived = false, shadow = true): void {
 		let ppt = material.property;
 		ppt.ambient.value = [0.1, 0.1, 0.1];
-		ppt.albedo.value = [0.8, 0.8, 0.8];
-		ppt.arms.roughness = 0.25;
+		ppt.albedo.value = this.getRandomColor(1.0);
+		ppt.arms.roughness = Math.random() * 0.95 + 0.05;
 		ppt.arms.metallic = 0.2;
-		ppt.armsBase.value = [0, 0, 0];
+		ppt.armsBase.value = [0, 0.0, 0];
 		ppt.specularFactor.value = [0.1, 0.1, 0.1];
 
 		ppt.shadow = shadow;

@@ -89,7 +89,8 @@ fn calcColor4(calcParam: CalcColor4Param) -> vec4<f32> {
     let dotNV = clamp(dot(N, V), 0.0, 1.0);
 
 	#ifdef USE_ALBEDO
-	albedo = albedo.xyz * textureSample(albedoTexture, albedoSampler, texUV).xyz;
+	let albedoP = textureSample(albedoTexture, albedoSampler, texUV).xyz;
+	albedo = albedo.xyz * albedoP.xyz;
 	#endif
 	
 	#ifdef USE_ARM_MAP

@@ -78,7 +78,7 @@ class WGEntityNodeMana {
 					}
 					// console.log('B entity.isREnabled(): ', entity.isREnabled());
 					if (mflag) {
-						console.log("WGEntityNodeMana::update(), a entity is rendering enabled.");
+						// console.log("WGEntityNodeMana::update(), a entity is rendering enabled.");
 						ls.splice(i, 1);
 						--i;
 						this.receiveNode( node );
@@ -86,23 +86,11 @@ class WGEntityNodeMana {
 				} else {
 					ls.splice(i, 1);
 					--i;
-					console.log("WGEntityNodeMana::update(), remove a waiting entity.");
+					// console.log("WGEntityNodeMana::update(), remove a waiting entity.");
 				}
 			}
 		}
 	}
-	// private updateMaterial(m: WGMaterial): void {
-	// 	if (!m.isREnabled()) {
-	// 		const ctx = this.wgctx;
-	// 		const texs = m.textures;
-	// 		for (let i = 0; i < texs.length; ++i) {
-	// 			const tex = texs[i];
-	// 			if (tex.texture && tex.texture.data && !tex.texture.texture) {
-	// 				tex.texture.texture = tex.texture.data.build(ctx);
-	// 			}
-	// 		}
-	// 	}
-	// }
 	updateToTarget(): void {
 		this.mEnabled = true;
 	}
