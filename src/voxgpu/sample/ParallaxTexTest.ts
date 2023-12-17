@@ -91,6 +91,8 @@ export class ParallaxTexTest {
 				}
 			}
 		}
+		let dLight = new DirectionLight({ color: [0.5, 0.5, 0.5], direction: [-1, -1, 0] });
+		ld.directionLights.push(dLight);
 		return ld;
 	}
 	private createBillboard(pv: Vector3DataType, c: ColorDataType, type: number): void {
