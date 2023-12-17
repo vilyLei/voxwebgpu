@@ -16,24 +16,35 @@ fn getBTNMat3(texUV: vec2<f32>, pos: vec3<f32>, nv: vec3<f32>) -> mat3x3<f32>
 }
 #ifdef USE_PARALLAX_MAP
 // example: const occParam = vec4<f32>(1.0,10.0,2.0,0.1);
-fn parallaxOccRayMarchDepth(vec2 uvs, vec3 viewDir,vec4 occParam) -> vec2<f32>
+fn parallaxOccRayMarchDepth(uvs: vec2<f32>, viewDir: vec3<f32>, occParam: vec4<f32>) -> vec2<f32>
 {
 	var puvs = uvs;
     var depthValue = 1.0 - textureSample(parallaxTexture, parallaxSampler, puvs).r;
     let numLayers = mix(occParam.x, occParam.y, max(dot(vec3<f32>(0.0, 0.0, 1.0), viewDir),0.0));
-    let layerHeight = occParam.z / numLayers;
-    var tuv = (viewDir.xy * occParam.ww) / vec2<f32>(numLayers);
+    var layerHeight = occParam.z / numLayers;
+    var tuv = (viewDir.xy * occParam.w) / vec2<f32>(numLayers);
     var ph = 0.0;
-	//for ( var i = -1.0; i < 1.0 ; i += SAMPLE_RATE) {
-	for(; ph < depthValue; )
+    var f = 1.0;
+    var tdepth = depthValue;
+    var opuv = puvs;
+	for(var i = 0; i < 10; i++)
 	{
-		puvs -= tuv;
-		depthValue = 1.0 - VOX_Texture2D(texSampler, puvs).r;
-		ph += layerHeight;
+        
+		let dp = 1.0 - textureSample(parallaxTexture, parallaxSampler, opuv).r;
+        let tf = f;
+        opuv -= tuv;
+        if(ph < (tdepth * f)) {
+            puvs -= tuv;
+            ph += layerHeight;
+            depthValue = dp;
+        }else {
+            f = -1.0;
+        }
+		tdepth = dp;
 	}
     tuv += puvs;
     depthValue -= ph;
-    ph = 1.0 - VOX_Texture2D(texSampler, tuv).r - ph + layerHeight;
+    ph = 1.0 - textureSample(parallaxTexture, parallaxSampler, tuv).r - ph + layerHeight;
     let weight = depthValue / (depthValue - ph);
     return mix(puvs, tuv, weight);
 }

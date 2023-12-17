@@ -123,7 +123,7 @@ class PBRParamsVec4Data implements MaterialUniformDataImpl {
 				0, 0, 0, 0, 		// armsBase
 				0.1, 0.1, 0.1, 1, 	// ambient
 				1, 1, 0, 0, 		// uvParam
-				1, 10, 2, 0.1, 		// parallax params
+				1, 10, 5, 0.1, 		// parallax params
 			]);
 		};
 		this.storage = new MaterialUniformData(data, shdVarName, visibility);
