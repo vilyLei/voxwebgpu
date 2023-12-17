@@ -67,7 +67,7 @@ export class ParallaxTexTest {
 	private createLightData(): MtLightDataDescriptor {
 		let ld = { pointLights: [], directionLights: [], spotLights: [] } as MtLightDataDescriptor;
 
-		let total = 5;
+		let total = 0;
 		let scale = 3.0;
 		for (let i = 0; i < total; ++i) {
 			for (let j = 0; j < total; ++j) {
@@ -91,8 +91,14 @@ export class ParallaxTexTest {
 				}
 			}
 		}
-		let dLight = new DirectionLight({ color: [0.5, 0.5, 0.5], direction: [-1, -1, 0] });
-		ld.directionLights.push(dLight);
+		let position = [0, 130, 0];
+		let color = [5,0,0];//this.getRandomColor(scale);
+		let factor1 = 0.00001;
+		let factor2 = 0.00002;
+		let pLight = new PointLight({ color, position, factor1, factor2 });
+		ld.pointLights.push(pLight);
+		// let dLight = new DirectionLight({ color: [0.5, 0.5, 0.5], direction: [-1, -1, 0] });
+		// ld.directionLights.push(dLight);
 		return ld;
 	}
 	private createBillboard(pv: Vector3DataType, c: ColorDataType, type: number): void {
@@ -198,9 +204,26 @@ export class ParallaxTexTest {
 		] as WGTextureDataDescriptor[];
 		return textures;
 	}
+	
+	private createArmTextures(): WGTextureDataDescriptor[] {
+		const albedoTex = { albedo: { url: `static/assets/pbrtex/rough_plaster_broken_diff_1k.jpg` } };
+		const normalTex = { normal: { url: `static/assets/pbrtex/rough_plaster_broken_nor_1k.jpg` } };
+		const armTex = { arm: { url: `static/assets/pbrtex/rough_plaster_broken_arm_1k.jpg` } };
+		// const emissiveTex = { emissive: { url: `static/assets/color_07.jpg` } };
+		let envTex = { specularEnv: {} };
+		let textures = [
+			envTex,
+			albedoTex,
+			normalTex,
+			armTex
+		] as WGTextureDataDescriptor[];
+		return textures;
+	}
 	private mTexPool = [this.createTextures("plastic"), this.createTextures("rusted_iron")];
 	private createMaterials(shadowReceived = false, shadow = true, faceCullMode = 'back', uvParam?: number[]): BaseMaterial[] {
-		let textures0 = this.mTexPool[Math.round(Math.random() * 999)%2];//this.createTextures("plastic");
+		// let textures0 = this.mTexPool[Math.round(Math.random() * 999)%2];//this.createTextures("plastic");
+		// let textures0 = this.mTexPool[0];//this.createTextures("plastic");
+		let textures0 = this.createArmTextures();//this.createTextures("plastic");
 		// let textures0 = this.createTextures("rusted_iron");
 
 		let material0 = this.createMaterial(textures0, ["solid"], 'less', faceCullMode);
@@ -216,11 +239,11 @@ export class ParallaxTexTest {
 
 	private applyMaterialPPt(material: BaseMaterial, shadowReceived = false, shadow = true): void {
 		let ppt = material.property;
-		ppt.ambient.value = [0.1, 0.1, 0.1];
-		ppt.albedo.value = this.getRandomColor(1.0);
-		ppt.arms.roughness = Math.random() * 0.95 + 0.05;
-		ppt.arms.metallic = 0.2;
-		ppt.armsBase.value = [0, 0.0, 0];
+		ppt.ambient.value = [0.5, 0.5, 0.5];
+		ppt.albedo.value = [0.8, 0.8, 0.8];//this.getRandomColor(1.0);
+		ppt.arms.roughness = 0.9;//Math.random() * 0.95 + 0.05;
+		ppt.arms.metallic = 0.0;
+		ppt.armsBase.value = [0, 0.2, 0];
 		ppt.specularFactor.value = [0.1, 0.1, 0.1];
 
 		ppt.shadow = shadow;
