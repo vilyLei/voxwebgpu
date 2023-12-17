@@ -10,7 +10,7 @@ class DataDrivenRScene {
 	private mBuilder = new DataDrivenEntityBuilder();
 	private mScene: RendererScene;
 	constructor(uidBase = 0) { this.mScene = new RendererScene(uidBase); }
-
+	private mResource: any;
 	get rscene(): RendererScene {
 		return this.mScene;
 	}
@@ -29,6 +29,7 @@ class DataDrivenRScene {
 		let mtplEnabled = r.mtplEnabled === true;
 		this.mScene.initialize(r);
 
+		this.mResource = param.resource;
 		this.initSceneComponents(scene, mtplEnabled);
 
 		const entities = param.entities;
@@ -61,7 +62,7 @@ class DataDrivenRScene {
 	 * 加入的可能是 entity 也能是 light对象 以及某种场景对象描述 等等
 	 */
 	addObject(entityParam: DataDrivenEntityParamType): void {
-		let entity = this.mBuilder.createEntity(entityParam);
+		let entity = this.mBuilder.createEntity(entityParam, this.mResource);
 		this.mScene.addEntity(entity);
 	}
 	addEntity(entity: IRenderableObject): DataDrivenRScene {

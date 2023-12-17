@@ -39,12 +39,12 @@ function ddeParamFilter(d: PrimitiveDDEParam): DataDrivenEntityParam {
     if(!rd) rd = d;
     return rd;
 }
-function createEntity(param: DataDrivenEntityParam): Entity3D {
+function createEntity(param: DataDrivenEntityParam, resource?: any): Entity3D {
 	let entity: Entity3D;
 	if(param) {
 		let et = param.entity as DataDrivenEntityParamType;
 		let entityParam = param.entity;
-		let materials = createMaterials(entityParam);
+		let materials = createMaterials(entityParam, resource);
 		switch(param.entityType) {
 			case 'axis':
 
@@ -76,7 +76,6 @@ function createEntity(param: DataDrivenEntityParam): Entity3D {
 				entity = new BoxEntity(entityParam);
 				break;
 			case 'cube':
-				// let materials = createMaterials(pdmaterials);
 				et = param.entity as DataDrivenEntityParamType;
 				if(et.size !== undefined) {
 					et.cubeSize = et.size;
@@ -121,12 +120,12 @@ function createEntity(param: DataDrivenEntityParam): Entity3D {
 }
 class DataDrivenEntityBuilder {
     constructor() { }
-    createEntity(param: PrimitiveDDEParam): Entity3D {
+    createEntity(param: PrimitiveDDEParam, resource?: any): Entity3D {
 		let et: Entity3D;
         if(param) {
             let p = param as PrimitiveDDEParam;
             let ep = ddeParamFilter(p);
-			et = createEntity(ep);
+			et = createEntity(ep, resource);
         }else {
             throw Error('Illegal Operation !!!');
         }

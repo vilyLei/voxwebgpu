@@ -28,6 +28,7 @@ interface SceneDataImpl {
     fog?: SceneFogDataImpl;
 }
 interface DataDrivenSceneParam {
+	resource?: any;
 	renderer?: WGRendererConfig;
 	scene?: SceneDataImpl;
 	entities?: DataDrivenEntityParamType[];

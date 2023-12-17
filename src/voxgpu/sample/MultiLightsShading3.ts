@@ -179,7 +179,6 @@ export class MultiLightsShading3 {
 		rc.addEntity(plane);
 
 		this.createBillboards();
-
 	}
 	private createTextures(ns: string): WGTextureDataDescriptor[] {
 		const albedoTex = { albedo: { url: `static/assets/pbr/${ns}/albedo.jpg` } };
