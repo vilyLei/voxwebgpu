@@ -99,20 +99,21 @@ fn calcColor4(calcParam: CalcColor4Param) -> vec4<f32> {
 	
 	#ifdef USE_ARM_MAP
 	let armv3 = textureSample(armTexture, armSampler, texUV).xyz;
-	ao = mix(0.0, max(armv3.x, armsBase.x), ao);
-	roughness = mix(0.0, max(armv3.y, armsBase.y), roughness);
-	metallic = mix(0.0, max(armv3.z, armsBase.z), metallic);
+	ao = mix(armsBase.x, armv3.x, ao);
+	roughness = mix(armsBase.y, armv3.y, roughness);
+	metallic = mix(armsBase.z, armv3.z, metallic);
 	#else
 
 	#ifdef USE_AO
-	ao = mix(0.0, max(textureSample(aoTexture, aoSampler, texUV).x, armsBase.x), ao);
+	// ao = mix(0.0, max(textureSample(aoTexture, aoSampler, texUV).x, armsBase.x), ao);
+	ao = mix(armsBase.x, textureSample(aoTexture, aoSampler, texUV).x, ao);
 	#endif
 	#ifdef USE_ROUGHNESS
-	roughness = mix(0.0, max(textureSample(roughnessTexture, roughnessSampler, texUV).y, armsBase.y), roughness);
+	roughness = mix(armsBase.y, textureSample(roughnessTexture, roughnessSampler, texUV).y, roughness);
 	#endif
 	#ifdef USE_METALLIC
 	let texMetallic = textureSample(metallicTexture, metallicSampler, texUV).z;
-	metallic = mix(0.0, max(texMetallic, armsBase.z), metallic);
+	metallic = mix(armsBase.z,texMetallic, metallic);
 	#endif
 	#endif
 	// return vec4<f32>(vec3(metallic), 1.0);

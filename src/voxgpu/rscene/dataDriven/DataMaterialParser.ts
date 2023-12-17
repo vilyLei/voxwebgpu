@@ -21,7 +21,7 @@ function parseBaseMaterialPpt(mdata: any, resource?: any): WGMaterial {
 		ppt.shadow = mdata.shadow === true;
 		ppt.shadowReceived = mdata.shadowReceived === true;
 		ppt.fogging = mdata.fogging === true;
-		// ppt.armsBase.value = [1.0,0.3, 0.0, 0.0];
+		ppt.armsBase.value = [1.0, 0.2, 0.0, 0.0];
 		if (mdata.arms) {
 			ppt.arms.value = mdata.arms;
 		}
@@ -30,6 +30,9 @@ function parseBaseMaterialPpt(mdata: any, resource?: any): WGMaterial {
 		}
 		if(mdata.uvParam) {
 			ppt.uvParam.value = mdata.uvParam;
+		}
+		if(mdata.emissive) {
+			ppt.ambient.value = mdata.emissive;
 		}
 		if(mdata.textures !== undefined) {
 			if(resource && resource.textures) {
