@@ -29,10 +29,8 @@ fn parallaxOccRayMarchDepth(uvs: vec2<f32>, viewDir: vec3<f32>, occParam: vec4<f
     var opuv = puvs;
 	for(var i = 0; i < 10; i++)
 	{
-        
-		let dp = 1.0 - textureSample(parallaxTexture, parallaxSampler, opuv).r;
-        let tf = f;
         opuv -= tuv;
+		let dp = 1.0 - textureSample(parallaxTexture, parallaxSampler, opuv).r;
         if(ph < (tdepth * f)) {
             puvs -= tuv;
             ph += layerHeight;
