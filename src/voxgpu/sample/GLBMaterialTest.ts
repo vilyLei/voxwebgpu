@@ -12,6 +12,7 @@ import { PointLight } from "../light/base/PointLight";
 import { DirectionLight } from "../light/base/DirectionLight";
 import { SpotLight } from "../light/base/SpotLight";
 import { BillboardEntity } from "../entity/BillboardEntity";
+import { ModelEntity } from "../entity/ModelEntity";
 
 export class GLBMaterialTest {
 	private mRscene = new RendererScene();
@@ -136,42 +137,14 @@ export class GLBMaterialTest {
 
 		let position = [-30, 220, -50];
 		let materials = this.createMaterials(true);
-
-		/*
-		let sphere: SphereEntity;
-		let total = 3;
-		let py = 150;
-		for (let i = 0; i < total; ++i) {
-			for (let j = 0; j < total; ++j) {
-				if (total > 2) {
-					position = [-350 + 350 * j, py, -350 + 350 * i];
-				} else {
-					position = [0, py, 0];
-				}
-				let rotation = [0, Math.random() * 360, 0];
-				let materials = this.createMaterials(true);
-				if (sphere) {
-					let sph = new SphereEntity(
-						{
-							geometry: sphere.geometry,
-							materials,
-							transform: { position, rotation }
-						}
-					);
-					rc.addEntity(sph);
-				} else {
-					sphere = new SphereEntity(
-						{
-							radius: 110.0,
-							materials,
-							transform: { position, rotation }
-						}
-					);
-					rc.addEntity(sphere);
-				}
-			}
-		}
-		//*/
+		let modelEntity = new ModelEntity({
+			transform: { position },
+			materials,
+			modelUrl: "static/assets/draco/portal.drc"
+			// modelUrl: "static/assets/draco/monkey.drc"
+		});
+		rc.addEntity(modelEntity);
+		
 		position = [0, 0, 0];
 		materials = this.createMaterials(true, false, 'back');
 		let plane = new PlaneEntity({

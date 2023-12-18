@@ -27,6 +27,11 @@ class BasePBRProperty implements MaterialProperty {
 	param: PBRParamDataWrapper;
 	specularFactor: MaterialUniformColor4Wrapper;
 	ambient: MaterialUniformColor4Wrapper;
+	
+	/**
+	 * uv => st
+	 * value is : [scaleU, scaleV, offsetU, offsetV]
+	 */
 	uvParam: MaterialUniformVec4Wrapper;
 
 	arms: ArmsDataWrapper;

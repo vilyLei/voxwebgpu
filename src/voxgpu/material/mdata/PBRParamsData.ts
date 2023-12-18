@@ -93,6 +93,10 @@ class PBRParamsVec4Data implements MaterialUniformDataImpl {
 	arms = new Arms();
 	armsBase = new Arms();
 	ambient = new Color4();
+	/**
+	 * uv => st
+	 * value is : [scaleU, scaleV, offsetU, offsetV]
+	 */
 	uvParam = new Vector3();
 	parallaxParams = new Vector3();
 	private mls: NumberArrayDataImpl[];
