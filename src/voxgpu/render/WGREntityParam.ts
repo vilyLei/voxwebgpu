@@ -18,6 +18,7 @@ interface WGREntityParam {
 	geometry?: WGGeometry;
 	textures?: WGTextureDataDescriptor[];
 	phase?: string;
+	layerIndex?: number;
 }
 
 export { WGREntityParam };

@@ -14,11 +14,11 @@ import { IWGRPassNodeBuilder } from "./IWGRPassNodeBuilder";
 import { WGREntityParam } from "./WGREntityParam";
 import { Entity3D } from "../entity/Entity3D";
 import { WGRPassNodeGraph } from "./pass/WGRPassNodeGraph";
-import { MtPipeline } from "../material/pipeline/MtPipeline";
 
 class WGRenderPassBlock implements IWGRPassNodeBuilder {
-	private mWGCtx: WebGPUContext;
+
 	private mRendererUid = 0;
+	private mWGCtx: WebGPUContext;
 	private mrPassParam: WGRPassParam;
 
 	private mCompPassNodes: WGRenderPassNode[] = [];
@@ -48,18 +48,19 @@ class WGRenderPassBlock implements IWGRPassNodeBuilder {
 	initialize(wgCtx: WebGPUContext, param?: WGRPassParam): void {
 		this.mrPassParam = param ? param : this.mrPassParam;
 		if (wgCtx) {
+			let ps = this.mPassNodes;
 			param = this.mrPassParam;
 			if (!this.mWGCtx && wgCtx && wgCtx.enabled) {
 				this.mWGCtx = wgCtx;
-				for (let i = 0; i < this.mPassNodes.length; ++i) {
-					this.mPassNodes[i].initialize(wgCtx);
+				for (let i = 0; i < ps.length; ++i) {
+					ps[i].initialize(wgCtx);
 				}
 			}
-			if (this.mPassNodes.length == 0 && param) {
+			if (ps.length == 0 && param) {
 				const passNode = new WGRenderPassNode(this.mRBParam);
 				passNode.builder = this;
 				passNode.initialize(wgCtx, param);
-				this.mPassNodes.push(passNode);
+				ps.push(passNode);
 				this.mPNodeFlags.push(1);
 				this.mRPassNodes.push(passNode);
 			}
@@ -290,8 +291,9 @@ class WGRenderPassBlock implements IWGRPassNodeBuilder {
 					nodes[i].run();
 				}
 			}
-			if (this.unitBlock) {
-				this.unitBlock.run();
+			let ubk = this.unitBlock;
+			if (ubk) {
+				ubk.run();
 			}
 		}
 	}

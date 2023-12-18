@@ -12,9 +12,13 @@ import { WGMaterialDescripter } from "../material/WGMaterialDescripter";
 type BlockParam = { entityMana: WGEntityNodeMana, roBuilder: WGRObjBuilder, camera: Camera };
 
 const __$RUB = { uid: 0, blocks: [] as WGRenderUnitBlock[] };
+class UnitLayer {
+	units: IWGRUnit[] = [];
+}
 class WGRenderUnitBlock {
 	private mUid = __$RUB.uid++;
-	private mUnits: IWGRUnit[] = [];
+	// private mUnits: IWGRUnit[] = [];
+	private mLayers: UnitLayer[] = [new UnitLayer()];
 
 	rbParam: BlockParam;
 	builder: IWGRPassNodeBuilder;
@@ -36,9 +40,9 @@ class WGRenderUnitBlock {
 	private mMaterialMap: Map<number, WGMaterialDescripter> = new Map();
 
 	hasMaterial(material: WGMaterialDescripter, uniqueKey: string): boolean {
-		if(material.uid !== undefined) {
+		if (material.uid !== undefined) {
 			const map = this.mMaterialMap;
-			if(map.has(material.uid)) {
+			if (map.has(material.uid)) {
 				return true;
 			}
 			// map.set(material.uid, material);
@@ -47,9 +51,9 @@ class WGRenderUnitBlock {
 	}
 	setMaterial(material: WGMaterialDescripter, uniqueKey: string): void {
 		// console.log("xxxxxxxxxxx setMaterial(), vvvvvvvvvvvvvvvvv");
-		if(material.uid !== undefined) {
+		if (material.uid !== undefined) {
 			const map = this.mMaterialMap;
-			if(!map.has(material.uid)) {
+			if (!map.has(material.uid)) {
 				map.set(material.uid, material);
 			}
 		}
@@ -60,16 +64,16 @@ class WGRenderUnitBlock {
 		entity.update();
 		node.rstate.__$rever++;
 		const runit = rob.createRUnit(entity, this.builder, node, this.uid, param);
-		runit.etuuid = entity.uuid + '-[block(' + this.uid+')]';
-		this.addRUnit(runit);
+		runit.etuuid = entity.uuid + '-[block(' + this.uid + ')]';
+		this.addRUnit(runit, param ? param.layerIndex : 0);
 		let flag = true;
-		if(param) {
+		if (param) {
 			// console.log('addEntityToBlock(), param.phase: ', param.phase);
-			if(param.phase === 'finish') {
+			if (param.phase === 'finish') {
 				flag = false;
 			}
 		}
-		if(flag) {
+		if (flag) {
 			// console.log('addEntityToBlock(), phase useful ...');
 			rob.mtpl.shadow.addEntity(entity);
 		}
@@ -86,7 +90,7 @@ class WGRenderUnitBlock {
 				node.entityid = euid;
 				node.blockid = this.uid;
 
-				entity.__$bids.push( node.blockid );
+				entity.__$bids.push(node.blockid);
 
 				map.set(euid, node);
 				entity.rstate.__$inRenderer = true;
@@ -110,7 +114,7 @@ class WGRenderUnitBlock {
 					let entityParam = param;
 					this.rbParam.entityMana.addEntity({ entity, rever, builder, node, block, entityParam });
 				}
-			}else {
+			} else {
 				console.log("has exist the entity in the unit bolck...");
 			}
 		}
@@ -120,17 +124,17 @@ class WGRenderUnitBlock {
 		if (entity) {
 			const map = this.mENodeMap;
 			const euid = entity.uid;
-			console.log("WGRenderUnitBlock::removeEntity(), map.has(euid): ", map.has(euid),", euid: ", euid);
+			console.log("WGRenderUnitBlock::removeEntity(), map.has(euid): ", map.has(euid), ", euid: ", euid);
 			if (map.has(euid)) {
 				const node = map.get(euid);
 				node.rstate.__$rever++;
 				map.delete(euid);
 				const et = node.entity;
 				const ls = et.__$bids;
-				if(ls) {
+				if (ls) {
 					const bid = this.uid;
-					for(let i = 0; i < ls.length; ++i) {
-						if(ls[i] == bid) {
+					for (let i = 0; i < ls.length; ++i) {
+						if (ls[i] == bid) {
 							ls.splice(i, 1);
 							break;
 						}
@@ -140,50 +144,78 @@ class WGRenderUnitBlock {
 			}
 		}
 	}
-	addRUnit(unit: IWGRUnit): void {
+	addRUnit(unit: IWGRUnit, layerIndex?: number): void {
 		/**
 		 * 正式加入渲染器之前，对shader等的分析已经做好了
 		 */
 		if (unit) {
-			this.mUnits.push(unit);
+			if (layerIndex === undefined) {
+				layerIndex = 0;
+			}
+			if (layerIndex < 0) {
+				layerIndex = 0;
+			} else if (layerIndex > 127) {
+				layerIndex = 127;
+			}
+			let layers = this.mLayers;
+			if (layerIndex >= layers.length) {
+				for (let i = layers.length; i <= layerIndex; ++i) {
+					layers.push(new UnitLayer());
+				}
+			}
+			let layer = layers[layerIndex];
+			// this.mUnits.push(unit);
+			layer.units.push(unit);
 		}
 	}
 	run(): void {
-		const uts = this.mUnits;
-		let utsLen = uts.length;
-		for (let i = 0; i < utsLen;) {
-			const ru = uts[i];
-			if (ru.__$rever == ru.pst.__$rever) {
-				if (ru.getRF()) {
-					if (ru.passes) {
-						const ls = ru.passes;
-						// console.log("apply multi passes total", ls.length);
-						for (let i = 0, ln = ls.length; i < ln; ++i) {
-							ls[i].runBegin();
-							ls[i].run();
+		let layers = this.mLayers;
+		// console.log("layers.length: ", layers.length);
+		for (let k = 0; k < layers.length; ++k) {
+			// const uts = this.mUnits;
+			const uts = layers[k].units;
+			let utsLen = uts.length;
+			for (let i = 0; i < utsLen;) {
+				const ru = uts[i];
+				if (ru.__$rever == ru.pst.__$rever) {
+					if (ru.getRF()) {
+						if (ru.passes) {
+							const ls = ru.passes;
+							// console.log("apply multi passes total", ls.length);
+							for (let i = 0, ln = ls.length; i < ln; ++i) {
+								ls[i].runBegin();
+								ls[i].run();
+							}
+						} else {
+							// console.log("apply single passes ...");
+							ru.runBegin();
+							ru.run();
 						}
-					} else {
-						// console.log("apply single passes ...");
-						ru.runBegin();
-						ru.run();
 					}
+					i++;
+				} else {
+					ru.destroy();
+					uts.splice(i, 1);
+					utsLen--;
+					console.log("WGRenderUnitBlock::run(), remove a rendering runit.");
 				}
-				i++;
-			} else {
-				ru.destroy();
-				uts.splice(i, 1);
-				utsLen--;
-				console.log("WGRenderUnitBlock::run(), remove a rendering runit.");
 			}
 		}
 	}
 	destroy(): void {
-		const uts = this.mUnits;
-		if (uts) {
-			let utsLen = uts.length;
-			for (let i = 0; i < utsLen; ++i) {
-				const ru = uts[i];
-				ru.destroy();
+
+		let layers = this.mLayers;
+		for (let k = 0; k < layers.length; ++k) {
+			// const uts = this.mUnits;
+			const uts = layers[k].units;
+			// const uts = this.mUnits;
+			if (uts) {
+				let utsLen = uts.length;
+				for (let i = 0; i < utsLen; ++i) {
+					const ru = uts[i];
+					ru.destroy();
+				}
+				uts = [];
 			}
 		}
 	}
