@@ -186,242 +186,234 @@
 	},
 	"entities": [
 		{
-			"plane": {
-				"entity": {
-					"axisType": 1,
-					"extent": [
-						-600,
-						-600,
-						1200,
-						1200
+			"entityType": "plane",
+			"axisType": 1,
+			"extent": [
+				-600,
+				-600,
+				1200,
+				1200
+			],
+			"transform": {
+				"position": [
+					0,
+					0,
+					0
+				]
+			},
+			"materials": [
+				{
+					"type": "default",
+					"lighting": true,
+					"shadow": false,
+					"shadowReceived": true,
+					"fogging": true,
+					"arms": [
+						1,
+						0.8,
+						0.2
 					],
-					"transform": {
-						"position": [
-							0,
-							0,
-							0
-						]
-					},
-					"materials": [
-						{
-							"type": "default",
-							"lighting": true,
-							"shadow": false,
-							"shadowReceived": true,
-							"fogging": true,
-							"arms": [
-								1,
-								0.8,
-								0.2
-							],
-							"albedo": [
-								0.7,
-								0.6,
-								0.5
-							],
-							"uvParam": [
-								3,
-								3,
-								0,
-								0
-							],
-							"textures": 2
-						}
-					]
+					"albedo": [
+						0.7,
+						0.6,
+						0.5
+					],
+					"uvParam": [
+						3,
+						3,
+						0,
+						0
+					],
+					"textures": 2
 				}
-			}
+			]
 		},
 		{
-			"sphere": {
-				"entity": {
-					"radius": 80,
-					"transform": {
-						"position": [
-							0,
-							100,
-							200
-						]
-					},
-					"materials": [
-						{
-							"type": "default",
-							"lighting": true,
-							"shadow": true,
-							"shadowReceived": true,
-							"fogging": true,
-							"arms": [
-								1,
-								0.9,
-								0.2
-							],
-							"albedo": [
-								0.7,
-								0.8,
-								0.5
-							],
-							"emissive": [
-								0.5,
-								0.5,
-								0.5
-							],
-							"textures": 0
-						}
-					]
+			"entityType": "sphere",
+			"radius": 80,
+			"transform": {
+				"position": [
+					0,
+					100,
+					200
+				]
+			},
+			"materials": [
+				{
+					"type": "default",
+					"lighting": true,
+					"shadow": true,
+					"shadowReceived": true,
+					"fogging": true,
+					"arms": [
+						1,
+						0.9,
+						0.2
+					],
+					"albedo": [
+						0.7,
+						0.8,
+						0.5
+					],
+					"emissive": [
+						0.5,
+						0.5,
+						0.5
+					],
+					"textures": 0
 				}
-			}
+			]
 		},
 		{
-			"cube": {
-				"entity": {
-					"size": 80,
-					"transform": {
-						"position": [
-							220,
-							130,
-							-10
-						],
-						"scale": [
-							2,
-							1.5,
-							3
-						],
-						"rotation": [
-							-190,
-							0,
-							200
-						]
-					},
-					"materials": [
-						{
-							"type": "default",
-							"lighting": true,
-							"shadow": true,
-							"shadowReceived": true,
-							"fogging": true,
-							"arms": [
-								1,
-								0.4,
-								0.2
-							],
-							"albedo": [
-								0.3,
-								0.7,
-								0.8
-							],
-							"uvParam": [2,2,0,0],
-							"textures": 1
-						}
-					]
+			"entityType": "cube",
+			"size": 80,
+			"transform": {
+				"position": [
+					220,
+					130,
+					-10
+				],
+				"scale": [
+					2,
+					1.5,
+					3
+				],
+				"rotation": [
+					-190,
+					0,
+					200
+				]
+			},
+			"materials": [
+				{
+					"type": "default",
+					"lighting": true,
+					"shadow": true,
+					"shadowReceived": true,
+					"fogging": true,
+					"arms": [
+						1,
+						0.4,
+						0.2
+					],
+					"albedo": [
+						0.3,
+						0.7,
+						0.8
+					],
+					"uvParam": [
+						2,
+						2,
+						0,
+						0
+					],
+					"textures": 1
 				}
-			}
+			]
 		},
 		{
-			"torus": {
-				"entity": {
-					"radius": 150,
-					"axisType": 1,
-					"rings": 50,
-					"segments": 30,
-					"transform": {
-						"position": [
-							0,
-							230,
-							0
-						]
-					},
-					"materials": [
-						{
-							"type": "default",
-							"lighting": true,
-							"shadow": true,
-							"shadowReceived": true,
-							"fogging": true,
-							"arms": [
-								1,
-								0.6,
-								0.2
-							],
-							"albedo": [
-								1.3,
-								0.9,
-								1.3
-							],
-							"uvParam": [8,2,0,0],
-							"textures": 2
-						}
-					]
+			"entityType": "torus",
+			"radius": 150,
+			"axisType": 1,
+			"rings": 50,
+			"segments": 30,
+			"transform": {
+				"position": [
+					0,
+					230,
+					0
+				]
+			},
+			"materials": [
+				{
+					"type": "default",
+					"lighting": true,
+					"shadow": true,
+					"shadowReceived": true,
+					"fogging": true,
+					"arms": [
+						1,
+						0.6,
+						0.2
+					],
+					"albedo": [
+						1.3,
+						0.9,
+						1.3
+					],
+					"uvParam": [
+						8,
+						2,
+						0,
+						0
+					],
+					"textures": 2
 				}
-			}
+			]
 		},
 		{
-			"model": {
-				"entity": {
-					"url": "static/assets/draco/monkey.drc",
-					"transform": {
-						"position": [
-							0,
-							380,
-							0
-						],
-						"scale": [
-							100,
-							100,
-							100
-						],
-						"rotation": [
-							0,
-							90,
-							0
-						]
-					},
-					"materials": [
-						{
-							"type": "default",
-							"lighting": true,
-							"shadow": true,
-							"shadowReceived": true,
-							"fogging": true,
-							"arms": [
-								1,
-								0.5,
-								0.2
-							],
-							"albedo": [
-								1.6,
-								0.9,
-								1.8
-							],
-							"textures": 1
-						}
-					]
+			"entityType": "model",
+			"url": "static/assets/draco/monkey.drc",
+			"transform": {
+				"position": [
+					0,
+					380,
+					0
+				],
+				"scale": [
+					100,
+					100,
+					100
+				],
+				"rotation": [
+					0,
+					90,
+					0
+				]
+			},
+			"materials": [
+				{
+					"type": "default",
+					"lighting": true,
+					"shadow": true,
+					"shadowReceived": true,
+					"fogging": true,
+					"arms": [
+						1,
+						0.5,
+						0.2
+					],
+					"albedo": [
+						1.6,
+						0.9,
+						1.8
+					],
+					"textures": 1
 				}
-			}
+			]
 		},
 		{
-			"cube": {
-				"entity": {
-					"size": 2050,
-					"normalScale": -1,
-					"materials": [
-						{
-							"type": "default",
-							"lighting": true,
-							"fogging": true,
-							"arms": [
-								1,
-								0.3,
-								0.2
-							],
-							"albedo": [
-								0.3,
-								0.3,
-								0.7
-							],
-							"faceCullMode": "front"
-						}
-					]
+			"entityType": "cube",
+			"size": 2050,
+			"normalScale": -1,
+			"materials": [
+				{
+					"type": "default",
+					"lighting": true,
+					"fogging": true,
+					"arms": [
+						1,
+						0.3,
+						0.2
+					],
+					"albedo": [
+						0.3,
+						0.3,
+						0.7
+					],
+					"faceCullMode": "front"
 				}
-			}
+			]
 		},
 		{
 			"gltf": {

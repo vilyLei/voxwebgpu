@@ -27,6 +27,10 @@ function ddeParamFilter(d: PrimitiveDDEParam): DataDrivenEntityParam {
 	if(!d) {
 		return d;
 	}
+	if(d.entityType !== undefined) {
+		console.log("d.entityType: ", d.entityType);
+		return d;
+	}
 	let rd = d;
     for(let i = 0; i < ettyes.length; ++i) {
         rd = (d as any)[ettyes[i]];
@@ -42,12 +46,11 @@ function ddeParamFilter(d: PrimitiveDDEParam): DataDrivenEntityParam {
 function createEntity(param: DataDrivenEntityParam, resource?: any): Entity3D {
 	let entity: Entity3D;
 	if(param) {
-		let et = param.entity as DataDrivenEntityParamType;
-		let entityParam = param.entity;
+		let et = (param.entity === undefined ? param : param.entity) as DataDrivenEntityParamType;
+		let entityParam = et;
 		let materials = createMaterials(entityParam, resource);
 		switch(param.entityType) {
 			case 'axis':
-
 				if(et.size !== undefined) {
 					et.axisLength = et.size;
 				}
@@ -68,7 +71,6 @@ function createEntity(param: DataDrivenEntityParam, resource?: any): Entity3D {
 				entity = new PlaneEntity(entityParam);
 				break;
 			case 'box':
-				et = param.entity as DataDrivenEntityParamType;
 				if(et.size !== undefined) {
 					et.cubeSize = et.size;
 				}
@@ -76,7 +78,6 @@ function createEntity(param: DataDrivenEntityParam, resource?: any): Entity3D {
 				entity = new BoxEntity(entityParam);
 				break;
 			case 'cube':
-				et = param.entity as DataDrivenEntityParamType;
 				if(et.size !== undefined) {
 					et.cubeSize = et.size;
 				}
@@ -98,11 +99,9 @@ function createEntity(param: DataDrivenEntityParam, resource?: any): Entity3D {
 				break;
 
 			case 'model':
-				et = param.entity as DataDrivenEntityParamType;
 				if(et.url !== undefined) {
 					et.modelUrl = et.url;
 				}
-				et.url = undefined;
 				entity = new ModelEntity(entityParam);
 				break;
 			case 'container':
