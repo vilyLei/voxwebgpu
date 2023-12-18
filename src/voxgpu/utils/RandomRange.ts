@@ -8,6 +8,7 @@
 import MathConst from "../math/MathConst";
 import Vector3 from "../math/Vector3";
 import Matrix4 from "../math/Matrix4";
+import AABB from "../cgeom/AABB";
 class RandomRange {
     constructor() {
 
@@ -15,7 +16,7 @@ class RandomRange {
     min = 0.0;
     max = 1.0;
     value = 0.5;
-    private mRange: number = 1.0;
+    private mRange = 1.0;
     initialize(): void {
         this.mRange = this.max - this.min;
     }
@@ -26,7 +27,87 @@ class RandomRange {
         return Math.random() * (max - min) + min;
     }
 }
+// face order: -y,+y,+x,-z,-x,+z
+class CubeOuterRandomRange {
+    
+    value = new Vector3();
+    aabb = new AABB();
+    private mSpaceMat = new Matrix4();
+    private mSpaceRotBoo = false;
+    private mRange = new Vector3();
+    private mPos = new Vector3();
 
+    // private mFaces: Vector3[] = [
+    //     new Vector3(0,-1,0),
+    //     new Vector3(0,1,0),
+    //     new Vector3(1, 0,0),
+    //     new Vector3(0,0,-1),
+    //     new Vector3(-1, 0,0),
+    //     new Vector3(0, 0, 1)
+    // ];
+
+    set min(v3: Vector3) {
+        this.aabb.min.copyFrom(v3);
+    }
+    get min(): Vector3 {
+        return this.aabb.min;
+    }
+    set max(v3: Vector3) {
+        this.aabb.max.copyFrom(v3);
+    }
+    get max(): Vector3 {
+        return this.aabb.max;
+    }
+
+    initialize(): void {
+        this.mRange.x = this.max.x - this.min.x;
+        this.mRange.y = this.max.y - this.min.y;
+        this.mRange.z = this.max.z - this.min.z;
+        this.aabb.update();
+    }
+    setSpaceRotation(degree_rx: number, degree_ry: number, degree_rz: number): void {
+        if (!this.mSpaceRotBoo) {
+            this.mSpaceMat.identity();
+        }
+        this.mSpaceRotBoo = true;
+        
+        this.mSpaceMat.appendRotationEulerAngle(degree_rx * MathConst.MATH_PI_OVER_180, degree_ry * MathConst.MATH_PI_OVER_180, degree_rz * MathConst.MATH_PI_OVER_180);
+    }
+    setSpaceScale(sx: number, sy: number, sz: number): void {
+        if (!this.mSpaceRotBoo) {
+            this.mSpaceMat.identity();
+        }
+        this.mSpaceRotBoo = true;
+        
+        this.mSpaceMat.appendScaleXYZ(sx, sy, sz);
+    }
+
+    calc(): void {
+        // error function
+
+        let v = this.value;
+        let minV = this.min;
+        let r = this.mRange;
+        v.x = Math.random() * r.x + minV.x;
+        v.y = Math.random() * r.y + minV.y;
+        v.z = Math.random() * r.z + minV.z;
+        
+        let pv = this.mPos;
+        this.aabb.getClosePosition(v, pv);
+
+        if (this.mSpaceRotBoo) {
+            this.mSpaceMat.transformVector3Self(v);
+        }
+    }
+    calcRange(minV3: Vector3, maxV3: Vector3, outV3: Vector3): void {
+        outV3.x = Math.random() * (maxV3.x - minV3.x) + minV3.x;
+        outV3.y = Math.random() * (maxV3.y - minV3.y) + minV3.y;
+        outV3.z = Math.random() * (maxV3.z - minV3.z) + minV3.z;
+        if (this.mSpaceRotBoo) {
+            this.mSpaceMat.transformVectorSelf(outV3);
+        }
+    }
+}
 class CubeRandomRange {
     min = new Vector3();
     max = new Vector3(100, 100, 100);
@@ -87,7 +168,7 @@ class CylinderRandomRange {
     minHeight = -100;
     maxHeight = 100;
     value = new Vector3();
-    yToZEnabled: boolean = true;
+    yToZEnabled = true;
 
     private mSpaceMat = new Matrix4();
     private mSpaceRotBoo = false;
@@ -218,4 +299,4 @@ class CurveRandomRange {
     constructor() {
     }
 }
-export { RandomRange, CubeRandomRange, CylinderRandomRange, SphereRandomRange, CurveRandomRange };
+export { CubeOuterRandomRange, RandomRange, CubeRandomRange, CylinderRandomRange, SphereRandomRange, CurveRandomRange };
