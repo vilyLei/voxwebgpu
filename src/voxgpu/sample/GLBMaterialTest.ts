@@ -141,7 +141,6 @@ export class GLBMaterialTest {
 			transform: { position },
 			materials,
 			modelUrl: "static/assets/draco/portal.drc"
-			// modelUrl: "static/assets/draco/monkey.drc"
 		});
 		rc.addEntity(modelEntity);
 		

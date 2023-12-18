@@ -15,12 +15,12 @@ class RandomRange {
     min = 0.0;
     max = 1.0;
     value = 0.5;
-    private m_range: number = 1.0;
+    private mRange: number = 1.0;
     initialize(): void {
-        this.m_range = this.max - this.min;
+        this.mRange = this.max - this.min;
     }
     calc(): void {
-        this.value = Math.random() * this.m_range + this.min;
+        this.value = Math.random() * this.mRange + this.min;
     }
     calcRange(min: number, max: number): number {
         return Math.random() * (max - min) + min;
@@ -32,50 +32,49 @@ class CubeRandomRange {
     max = new Vector3(100, 100, 100);
     value = new Vector3();
 
-    private m_spaceMat = new Matrix4();
-    private m_spaceRotBoo = false;
-    private m_range = new Vector3();
+    private mSpaceMat = new Matrix4();
+    private mSpaceRotBoo = false;
+    private mRange = new Vector3();
     initialize(): void {
-        this.m_range.x = this.max.x - this.min.x;
-        this.m_range.y = this.max.y - this.min.y;
-        this.m_range.z = this.max.z - this.min.z;
+        this.mRange.x = this.max.x - this.min.x;
+        this.mRange.y = this.max.y - this.min.y;
+        this.mRange.z = this.max.z - this.min.z;
     }
     setSpaceRotation(degree_rx: number, degree_ry: number, degree_rz: number): void {
-        if (!this.m_spaceRotBoo) {
-            this.m_spaceMat.identity();
+        if (!this.mSpaceRotBoo) {
+            this.mSpaceMat.identity();
         }
-        this.m_spaceRotBoo = true;
+        this.mSpaceRotBoo = true;
         
-        this.m_spaceMat.appendRotationEulerAngle(degree_rx * MathConst.MATH_PI_OVER_180, degree_ry * MathConst.MATH_PI_OVER_180, degree_rz * MathConst.MATH_PI_OVER_180);
+        this.mSpaceMat.appendRotationEulerAngle(degree_rx * MathConst.MATH_PI_OVER_180, degree_ry * MathConst.MATH_PI_OVER_180, degree_rz * MathConst.MATH_PI_OVER_180);
     }
     setSpaceScale(sx: number, sy: number, sz: number): void {
-        if (!this.m_spaceRotBoo) {
-            this.m_spaceMat.identity();
+        if (!this.mSpaceRotBoo) {
+            this.mSpaceMat.identity();
         }
-        this.m_spaceRotBoo = true;
+        this.mSpaceRotBoo = true;
         
-        this.m_spaceMat.appendScaleXYZ(sx, sy, sz);
+        this.mSpaceMat.appendScaleXYZ(sx, sy, sz);
     }
 
     calc(): void {
 
-        this.value.x = Math.random() * this.m_range.x + this.min.x;
-        this.value.y = Math.random() * this.m_range.y + this.min.y;
-        this.value.z = Math.random() * this.m_range.z + this.min.z;
+        this.value.x = Math.random() * this.mRange.x + this.min.x;
+        this.value.y = Math.random() * this.mRange.y + this.min.y;
+        this.value.z = Math.random() * this.mRange.z + this.min.z;
         
-        if (this.m_spaceRotBoo) {
-            this.m_spaceMat.transformVector3Self(this.value);
+        if (this.mSpaceRotBoo) {
+            this.mSpaceMat.transformVector3Self(this.value);
         }
     }
     calcRange(minV3: Vector3, maxV3: Vector3, outV3: Vector3): void {
         outV3.x = Math.random() * (maxV3.x - minV3.x) + minV3.x;
         outV3.y = Math.random() * (maxV3.y - minV3.y) + minV3.y;
-        outV3.z = Math.random() * (maxV3.z - minV3.z) + minV3.z;//
-        if (this.m_spaceRotBoo) {
-            this.m_spaceMat.transformVectorSelf(outV3);
+        outV3.z = Math.random() * (maxV3.z - minV3.z) + minV3.z;
+        if (this.mSpaceRotBoo) {
+            this.mSpaceMat.transformVectorSelf(outV3);
         }
     }
-    // need uneven distribution
 }
 
 class CylinderRandomRange {
@@ -90,67 +89,66 @@ class CylinderRandomRange {
     value = new Vector3();
     yToZEnabled: boolean = true;
 
-    private m_spaceMat = new Matrix4();
-    private m_spaceRotBoo = false;
-    private m_pr = 0.0;
-    private m_rad = 0.0;
-    private m_minAzimuthalRad = 0.0;
-    private m_range = new Vector3();
+    private mSpaceMat = new Matrix4();
+    private mSpaceRotBoo = false;
+    private mPR = 0;
+    private mRad = 0;
+    private mMinAzimuthalRad = 0;
+    private mRange = new Vector3();
     
     initialize() {
-        this.m_range.x = this.maxRadius - this.minRadius;
-        this.m_minAzimuthalRad = this.minAzimuthalAngle * MathConst.MATH_PI_OVER_180;
-        this.m_range.y = this.maxAzimuthalAngle * MathConst.MATH_PI_OVER_180 - this.m_minAzimuthalRad;
-        this.m_range.z = this.maxHeight - this.minHeight;
-        //m_range.z = this.max.z - this.min.z;
+        this.mRange.x = this.maxRadius - this.minRadius;
+        this.mMinAzimuthalRad = this.minAzimuthalAngle * MathConst.MATH_PI_OVER_180;
+        this.mRange.y = this.maxAzimuthalAngle * MathConst.MATH_PI_OVER_180 - this.mMinAzimuthalRad;
+        this.mRange.z = this.maxHeight - this.minHeight;
     }
     setSpaceRotation(degree_rx: number, degree_ry: number, degree_rz: number): void {
-        if (!this.m_spaceRotBoo) {
-            this.m_spaceMat.identity();
+        if (!this.mSpaceRotBoo) {
+            this.mSpaceMat.identity();
         }
-        this.m_spaceRotBoo = true;
+        this.mSpaceRotBoo = true;
         
-        this.m_spaceMat.appendRotationEulerAngle(degree_rx * MathConst.MATH_PI_OVER_180, degree_ry * MathConst.MATH_PI_OVER_180, degree_rz * MathConst.MATH_PI_OVER_180);
+        this.mSpaceMat.appendRotationEulerAngle(degree_rx * MathConst.MATH_PI_OVER_180, degree_ry * MathConst.MATH_PI_OVER_180, degree_rz * MathConst.MATH_PI_OVER_180);
     }
     setSpaceScale(sx: number, sy: number, sz: number): void {
-        if (!this.m_spaceRotBoo) {
-            this.m_spaceMat.identity();
+        if (!this.mSpaceRotBoo) {
+            this.mSpaceMat.identity();
         }
-        this.m_spaceRotBoo = true;
-        this.m_spaceMat.appendScaleXYZ(sx, sy, sz);
+        this.mSpaceRotBoo = true;
+        this.mSpaceMat.appendScaleXYZ(sx, sy, sz);
     }
     calc(): void {
         // (ρ, φ, z)
         // x=ρ*cosφ
         // y=ρ*sinφ
         // z=z
-        this.m_pr = Math.random() * this.m_range.x + this.minRadius;
-        this.m_rad = Math.random() * this.m_range.y + this.m_minAzimuthalRad;
+        this.mPR = Math.random() * this.mRange.x + this.minRadius;
+        this.mRad = Math.random() * this.mRange.y + this.mMinAzimuthalRad;
         
-        this.value.x = this.m_pr * Math.cos(this.m_rad);
+        this.value.x = this.mPR * Math.cos(this.mRad);
         if (this.yToZEnabled) {
-            this.value.y = Math.random() * this.m_range.z + this.minHeight;
-            this.value.z = this.m_pr * Math.sin(this.m_rad);
+            this.value.y = Math.random() * this.mRange.z + this.minHeight;
+            this.value.z = this.mPR * Math.sin(this.mRad);
         } else {
-            this.value.z = Math.random() * this.m_range.z + this.minHeight;
-            this.value.y = this.m_pr * Math.sin(this.m_rad);
+            this.value.z = Math.random() * this.mRange.z + this.minHeight;
+            this.value.y = this.mPR * Math.sin(this.mRad);
         }
-        if (this.m_spaceRotBoo) {
-            this.m_spaceMat.transformVectorSelf(this.value);
+        if (this.mSpaceRotBoo) {
+            this.mSpaceMat.transformVectorSelf(this.value);
         }
     }
 }
 
 
 class SphereRandomRange {
-    private m_spaceMat = new Matrix4();
-    private m_spaceRotBoo = false;
-    private m_pr = 0.0;
+    private mSpaceMat = new Matrix4();
+    private mSpaceRotBoo = false;
+    private mPR = 0.0;
     private m_arad = 0.0;
     private m_prad = 0.0;
-    private m_minAzimuthalRad = 0.0
+    private mMinAzimuthalRad = 0.0
     private m_minPolarRad = 0.0;    
-    private m_range = new Vector3();
+    private mRange = new Vector3();
     
     minRadius = 0;
     maxRadius = 50;
@@ -165,29 +163,29 @@ class SphereRandomRange {
     constructor() {
     }
     initialize(): void {
-        this.m_range.x = this.maxRadius - this.minRadius;
+        this.mRange.x = this.maxRadius - this.minRadius;
 
-        this.m_minAzimuthalRad = this.minAzimuthalAngle * MathConst.MATH_PI_OVER_180;
+        this.mMinAzimuthalRad = this.minAzimuthalAngle * MathConst.MATH_PI_OVER_180;
         this.m_minPolarRad = this.minPolarAngle * MathConst.MATH_PI_OVER_180;
 
-        this.m_range.y = this.maxAzimuthalAngle * MathConst.MATH_PI_OVER_180 - this.m_minAzimuthalRad;
+        this.mRange.y = this.maxAzimuthalAngle * MathConst.MATH_PI_OVER_180 - this.mMinAzimuthalRad;
 
-        this.m_range.z = this.maxPolarAngle * MathConst.MATH_PI_OVER_180 - this.m_minPolarRad;
+        this.mRange.z = this.maxPolarAngle * MathConst.MATH_PI_OVER_180 - this.m_minPolarRad;
 
     }
     setSpaceRotation(degree_rx: number, degree_ry: number, degree_rz: number): void {
-        if (!this.m_spaceRotBoo) {
-            this.m_spaceMat.identity();
+        if (!this.mSpaceRotBoo) {
+            this.mSpaceMat.identity();
         }
-        this.m_spaceRotBoo = true;
-        this.m_spaceMat.appendRotationEulerAngle(degree_rx * MathConst.MATH_PI_OVER_180, degree_ry * MathConst.MATH_PI_OVER_180, degree_rz * MathConst.MATH_PI_OVER_180);
+        this.mSpaceRotBoo = true;
+        this.mSpaceMat.appendRotationEulerAngle(degree_rx * MathConst.MATH_PI_OVER_180, degree_ry * MathConst.MATH_PI_OVER_180, degree_rz * MathConst.MATH_PI_OVER_180);
     }
     setSpaceScale(sx: number, sy: number, sz: number): void {
-        if (!this.m_spaceRotBoo) {
-            this.m_spaceMat.identity();
+        if (!this.mSpaceRotBoo) {
+            this.mSpaceMat.identity();
         }
-        this.m_spaceRotBoo = true;
-        this.m_spaceMat.appendScaleXYZ(sx, sy, sz);
+        this.mSpaceRotBoo = true;
+        this.mSpaceMat.appendScaleXYZ(sx, sy, sz);
     }
     calc(): void {
 
@@ -196,23 +194,23 @@ class SphereRandomRange {
         // y=rsinθsinφ
         // z=rcosθ
 
-        this.m_pr = Math.random() * this.m_range.x + this.minRadius;
-        this.m_arad = Math.random() * this.m_range.y + this.m_minAzimuthalRad;
-        this.m_prad = Math.random() * this.m_range.z + this.m_minPolarRad;
+        this.mPR = Math.random() * this.mRange.x + this.minRadius;
+        this.m_arad = Math.random() * this.mRange.y + this.mMinAzimuthalRad;
+        this.m_prad = Math.random() * this.mRange.z + this.m_minPolarRad;
 
-        let sinv = this.m_pr * Math.sin(this.m_prad);
+        let sinv = this.mPR * Math.sin(this.m_prad);
 
         this.value.x = sinv * Math.cos(this.m_arad);
         if (this.yToZEnabled) {
             this.value.z = sinv * Math.sin(this.m_arad);
-            this.value.y = this.m_pr * Math.cos(this.m_prad);
+            this.value.y = this.mPR * Math.cos(this.m_prad);
         } else {
             this.value.y = sinv * Math.sin(this.m_arad);
-            this.value.z = this.m_pr * Math.cos(this.m_prad);
+            this.value.z = this.mPR * Math.cos(this.m_prad);
         }
 
-        if (this.m_spaceRotBoo) {
-            this.m_spaceMat.transformVectorSelf(this.value);
+        if (this.mSpaceRotBoo) {
+            this.mSpaceMat.transformVectorSelf(this.value);
         }
     }
 }
