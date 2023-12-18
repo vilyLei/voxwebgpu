@@ -67,11 +67,12 @@ export class GLBMaterialTest {
 	private createLightData(): MtLightDataDescriptor {
 		let ld = { pointLights: [], directionLights: [], spotLights: [] } as MtLightDataDescriptor;
 
+		let py = 10;
 		let total = 5;
-		let scale = 3.0;
+		let scale = 7.0;
 		for (let i = 0; i < total; ++i) {
 			for (let j = 0; j < total; ++j) {
-				let position = [-500 + 250 * j, 290 + Math.random() * 30, -500 + 250 * i];
+				let position = [-500 + 250 * j, py + Math.random() * 30, -500 + 250 * i];
 				position[0] += Math.random() * 60 - 30;
 				position[2] += Math.random() * 60 - 30;
 				let color = this.getRandomColor(scale);
@@ -80,7 +81,7 @@ export class GLBMaterialTest {
 				let pLight = new PointLight({ color, position, factor1, factor2 });
 				ld.pointLights.push(pLight);
 				if (Math.random() > 0.5) {
-					position = [-500 + 150 * j, 290 + Math.random() * 50, -500 + 150 * i];
+					position = [-500 + 150 * j, py + Math.random() * 30, -500 + 150 * i];
 					position[0] += Math.random() * 160 - 80;
 					position[2] += Math.random() * 160 - 80;
 					color = this.getRandomColor(scale);
@@ -136,6 +137,7 @@ export class GLBMaterialTest {
 		let position = [-30, 220, -50];
 		let materials = this.createMaterials(true);
 
+		/*
 		let sphere: SphereEntity;
 		let total = 3;
 		let py = 150;
@@ -169,7 +171,7 @@ export class GLBMaterialTest {
 				}
 			}
 		}
-
+		//*/
 		position = [0, 0, 0];
 		materials = this.createMaterials(true, false, 'back');
 		let plane = new PlaneEntity({
@@ -216,10 +218,14 @@ export class GLBMaterialTest {
 	private applyMaterialPPt(material: BaseMaterial, shadowReceived = false, shadow = true): void {
 		let ppt = material.property;
 		ppt.ambient.value = [0.2, 0.2, 0.2];
-		ppt.albedo.value = this.getRandomColor(1.0);
+		let cvs = this.getRandomColor(1.0) as number[];// * 0.7;
+		cvs[0] = cvs[0] * 0.3 + 0.4;
+		cvs[1] = cvs[1] * 0.3 + 0.4;
+		cvs[2] = cvs[2] * 0.3 + 0.4;
+		ppt.albedo.value = cvs;
 		ppt.arms.roughness = Math.random() * 0.95 + 0.05;
 		ppt.arms.metallic = 0.2;
-		ppt.armsBase.value = [0, 1.0, 0];
+		ppt.armsBase.value = [0, 0.3, 0];
 		ppt.specularFactor.value = [0.1, 0.1, 0.1];
 
 		ppt.shadow = shadow;
