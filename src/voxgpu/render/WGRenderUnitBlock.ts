@@ -18,6 +18,7 @@ class UnitLayer {
 class WGRenderUnitBlock {
 	private mUid = __$RUB.uid++;
 	// private mUnits: IWGRUnit[] = [];
+	private mFlags = new Uint8Array(128);
 	private mLayers: UnitLayer[] = [new UnitLayer()];
 
 	rbParam: BlockParam;
@@ -144,14 +145,11 @@ class WGRenderUnitBlock {
 			}
 		}
 	}
-	addRUnit(unit: IWGRUnit, layerIndex?: number): void {
+	addRUnit(unit: IWGRUnit, layerIndex = 0): void {
 		/**
 		 * 正式加入渲染器之前，对shader等的分析已经做好了
 		 */
 		if (unit) {
-			if (layerIndex === undefined) {
-				layerIndex = 0;
-			}
 			if (layerIndex < 0) {
 				layerIndex = 0;
 			} else if (layerIndex > 127) {
@@ -164,7 +162,6 @@ class WGRenderUnitBlock {
 				}
 			}
 			let layer = layers[layerIndex];
-			// this.mUnits.push(unit);
 			layer.units.push(unit);
 		}
 	}
@@ -206,7 +203,6 @@ class WGRenderUnitBlock {
 
 		let layers = this.mLayers;
 		for (let k = 0; k < layers.length; ++k) {
-			// const uts = this.mUnits;
 			const uts = layers[k].units;
 			// const uts = this.mUnits;
 			if (uts) {

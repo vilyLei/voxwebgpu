@@ -105,7 +105,7 @@ export class GLBMaterialTest {
 		billboard.color = c;
 		billboard.alpha = 1;
 		billboard.transform.setPosition(pv);
-		rc.addEntity(billboard);
+		rc.addEntity(billboard, {layerIndex:1});
 	}
 	private createBillboards(): void {
 		let lightData = this.mLightData;
@@ -128,6 +128,7 @@ export class GLBMaterialTest {
 
 		this.mLightData = this.createLightData();
 
+		this.createBillboards();
 		mtpl.light.lightData = this.mLightData;
 		mtpl.shadow.param.intensity = 0.4;
 		mtpl.shadow.param.radius = 4;
@@ -179,7 +180,6 @@ export class GLBMaterialTest {
 		});
 		rc.addEntity(plane);
 
-		this.createBillboards();
 
 	}
 	
