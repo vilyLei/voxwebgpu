@@ -159,16 +159,6 @@ class CubeRandomRange {
 }
 
 class CylinderRandomRange {
-    constructor() {
-    }
-    minRadius = 0;
-    maxRadius = 50;
-    minAzimuthalAngle = 0;
-    maxAzimuthalAngle = 360;
-    minHeight = -100;
-    maxHeight = 100;
-    value = new Vector3();
-    yToZEnabled = true;
 
     private mSpaceMat = new Matrix4();
     private mSpaceRotBoo = false;
@@ -177,6 +167,17 @@ class CylinderRandomRange {
     private mMinAzimuthalRad = 0;
     private mRange = new Vector3();
     
+    minRadius = 0;
+    maxRadius = 50;
+    minAzimuthalAngle = 0;
+    maxAzimuthalAngle = 360;
+    minHeight = -100;
+    maxHeight = 100;
+    value = new Vector3();
+    yToZEnabled = true;
+    
+    constructor() {
+    }
     initialize() {
         this.mRange.x = this.maxRadius - this.minRadius;
         this.mMinAzimuthalRad = this.minAzimuthalAngle * MathConst.MATH_PI_OVER_180;

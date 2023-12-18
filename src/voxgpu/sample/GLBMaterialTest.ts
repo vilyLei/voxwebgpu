@@ -13,6 +13,7 @@ import { DirectionLight } from "../light/base/DirectionLight";
 import { SpotLight } from "../light/base/SpotLight";
 import { BillboardEntity } from "../entity/BillboardEntity";
 import { ModelEntity } from "../entity/ModelEntity";
+import { CylinderRandomRange } from "../utils/RandomRange";
 
 export class GLBMaterialTest {
 	private mRscene = new RendererScene();
@@ -68,23 +69,28 @@ export class GLBMaterialTest {
 	private createLightData(): MtLightDataDescriptor {
 		let ld = { pointLights: [], directionLights: [], spotLights: [] } as MtLightDataDescriptor;
 
-		let py = 10;
+		let space = new CylinderRandomRange();
+		space.minRadius = 200;
+		space.maxRadius = 350;
+		space.minHeight = 10;
+		space.maxHeight = 300;
+		space.initialize();
+		space.setSpaceScale(1.0, 1.0, 0.5);
+
 		let total = 5;
-		let scale = 7.0;
+		let scale = 5.0;
 		for (let i = 0; i < total; ++i) {
 			for (let j = 0; j < total; ++j) {
-				let position = [-500 + 250 * j, py + Math.random() * 30, -500 + 250 * i];
-				position[0] += Math.random() * 60 - 30;
-				position[2] += Math.random() * 60 - 30;
+				space.calc();
+				let position = space.value;
 				let color = this.getRandomColor(scale);
-				let factor1 = 0.00001;
-				let factor2 = 0.00002;
+				let factor1 = 0.0001;
+				let factor2 = 0.0002;
 				let pLight = new PointLight({ color, position, factor1, factor2 });
 				ld.pointLights.push(pLight);
 				if (Math.random() > 0.5) {
-					position = [-500 + 150 * j, py + Math.random() * 30, -500 + 150 * i];
-					position[0] += Math.random() * 160 - 80;
-					position[2] += Math.random() * 160 - 80;
+					space.calc();
+					position = space.value;
 					color = this.getRandomColor(scale);
 					let direction = [(Math.random() - 0.5) * 8, -1, (Math.random() - 0.5) * 8];
 					let degree = Math.random() * 10 + 5;
@@ -135,7 +141,8 @@ export class GLBMaterialTest {
 		mtpl.shadow.param.intensity = 0.4;
 		mtpl.shadow.param.radius = 4;
 
-		let position = [-30, 220, -50];
+		this.mTexType = 1;
+		let position = [0, 0, 0];
 		let materials = this.createMaterials(true);
 		let modelEntity = new ModelEntity({
 			transform: { position },
@@ -144,6 +151,7 @@ export class GLBMaterialTest {
 		});
 		rc.addEntity(modelEntity);
 		
+		this.mTexType = 0;
 		position = [0, 0, 0];
 		materials = this.createMaterials(true, false, 'back');
 		let plane = new PlaneEntity({
@@ -157,11 +165,29 @@ export class GLBMaterialTest {
 
 	}
 	
+	private createArmTextures2(): WGTextureDataDescriptor[] {
+		
+		let flipY = true;
+		const albedoTex = { albedo: { url: `static/assets/glb/portal/portal_img2.jpg`, flipY } };
+		const normalTex = { normal: { url: `static/assets/glb/portal/portal_img3.jpg`, flipY } };
+		const armTex = { arm: { url: `static/assets/glb/portal/portal_img1.jpg`, flipY } };
+		const emissive = { emissive: { url: `static/assets/glb/portal/portal_img0.jpg`, flipY } };
+		let envTex = { specularEnv: {} };
+		let textures = [
+			envTex,
+			albedoTex,
+			normalTex,
+			armTex,
+			emissive
+		] as WGTextureDataDescriptor[];
+		return textures;
+	}
 	private createArmTextures(): WGTextureDataDescriptor[] {
-		const albedoTex = { albedo: { url: `static/assets/pbrtex/rough_plaster_broken_diff_1k.jpg` } };
-		const normalTex = { normal: { url: `static/assets/pbrtex/rough_plaster_broken_nor_1k.jpg` } };
-		const armTex = { arm: { url: `static/assets/pbrtex/rough_plaster_broken_arm_1k.jpg` } };
-		const parallaxTex = { parallax: { url: `static/assets/pbrtex/rough_plaster_broken_disp_1k.jpg` } };
+		let flipY = false;
+		const albedoTex = { albedo: { url: `static/assets/pbrtex/rough_plaster_broken_diff_1k.jpg`, flipY } } as WGTextureDataDescriptor;
+		const normalTex = { normal: { url: `static/assets/pbrtex/rough_plaster_broken_nor_1k.jpg`, flipY } };
+		const armTex = { arm: { url: `static/assets/pbrtex/rough_plaster_broken_arm_1k.jpg`, flipY } };
+		const parallaxTex = { parallax: { url: `static/assets/pbrtex/rough_plaster_broken_disp_1k.jpg`, flipY } };
 		let envTex = { specularEnv: {} };
 		let textures = [
 			envTex,
@@ -172,9 +198,10 @@ export class GLBMaterialTest {
 		] as WGTextureDataDescriptor[];
 		return textures;
 	}
+	private mTexType = 0;
 	private createMaterials(shadowReceived = false, shadow = true, faceCullMode = 'back', uvParam?: number[]): BaseMaterial[] {
 
-		let textures0 = this.createArmTextures();
+		let textures0 = this.mTexType < 1 ? this.createArmTextures() : this.createArmTextures2();
 
 		let material0 = this.createMaterial(textures0, ["solid"], 'less', faceCullMode);
 		this.applyMaterialPPt(material0, shadowReceived, shadow);
@@ -191,9 +218,9 @@ export class GLBMaterialTest {
 		let ppt = material.property;
 		ppt.ambient.value = [0.2, 0.2, 0.2];
 		let cvs = this.getRandomColor(1.0) as number[];// * 0.7;
-		cvs[0] = cvs[0] * 0.3 + 0.4;
-		cvs[1] = cvs[1] * 0.3 + 0.4;
-		cvs[2] = cvs[2] * 0.3 + 0.4;
+		cvs[0] = cvs[0] * 0.1 + 0.7;
+		cvs[1] = cvs[1] * 0.1 + 0.7;
+		cvs[2] = cvs[2] * 0.1 + 0.7;
 		ppt.albedo.value = cvs;
 		ppt.arms.roughness = Math.random() * 0.95 + 0.05;
 		ppt.arms.metallic = 0.2;
