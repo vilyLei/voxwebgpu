@@ -215,7 +215,7 @@ class WGRenderUnitBlock {
 					const ru = uts[i];
 					ru.destroy();
 				}
-				uts = [];
+				layers[k].units = [];
 			}
 		}
 	}
