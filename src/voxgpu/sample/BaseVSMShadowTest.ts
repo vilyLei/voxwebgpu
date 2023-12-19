@@ -67,6 +67,16 @@ export class BaseVSMShadowTest {
 		});
 		this.mEntities.push(torus);
 		rc.addEntity(torus);
+
+		let plane = new PlaneEntity({
+			axisType: 1,
+			extent: [-600, -600, 1200, 1200],
+			transform: {
+				position: [0, -1, 0]
+			}
+		});
+		this.mEntities.push( plane );
+
 		if (!this.mDebug) {
 			this.applyShadow();
 		}
@@ -110,6 +120,12 @@ export class BaseVSMShadowTest {
 		let entity = new FixScreenPlaneEntity({ extent, flipY: true, textures: [{ diffuse: rttTex }] });
 		rc.addEntity(entity, {layerIndex: 1});
 	}
+	private mShadowBias = -0.0005;
+	private mShadowRadius = 4.0;
+	private mShadowMapW = 128;
+	private mShadowMapH = 128;
+	private mShadowViewW = 1300;
+	private mShadowViewH = 1300;
 	private applyBuildDepthOccVRTT(): void {
 		let rc = this.mRscene;
 
@@ -122,7 +138,8 @@ export class BaseVSMShadowTest {
 				// green clear background color
 				clearValue: { r: 1, g: 1, b: 1, a: 1.0 },
 				loadOp: "clear",
-				storeOp: "store"
+				storeOp: "store",
+				viewport: [0,0, this.mShadowMapW, this.mShadowMapH]
 			}
 		];
 		// create a separate rtt rendering pass
@@ -211,12 +228,6 @@ export class BaseVSMShadowTest {
 		}
 		return entities;
 	}
-	private mShadowBias = -0.0005;
-	private mShadowRadius = 2.0;
-	private mShadowMapW = 512;
-	private mShadowMapH = 512;
-	private mShadowViewW = 1300;
-	private mShadowViewH = 1300;
 	private buildShadowCam(): void {
 
 		const cam = new Camera({

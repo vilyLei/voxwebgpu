@@ -78,7 +78,7 @@ class MaterialUniformMat44Data extends MaterialUniformData {
 	get value(): Float32Array {
 		return this.data as Float32Array;
 	}
-	
+
 	set shadowMatrix(mat4: IMatrix4) {
 		this.data = mat4.getLocalFS32();
 		this.update();
