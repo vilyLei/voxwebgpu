@@ -112,7 +112,11 @@ class ShadowPassGraph extends WGRPassNodeGraph {
 		];
 		// create a separate rtt rendering pass
 		let multisampled = false;
-		let pass = rc.createRTTPass({ colorAttachments, multisampled });
+		let pass = rc.createRTTPass({
+			colorAttachments,
+			multisampled,
+			viewport: [0,0, this.shadowMapW, this.shadowMapH]
+		 });
 		this.passes = [pass];
 		rc.setPassNodeGraph(this);
 
@@ -238,6 +242,13 @@ export class PBRShadowTest {
 		this.mEntities.push(torus);
 		rc.addEntity(torus);
 
+		let plane = new PlaneEntity({
+			axisType: 1,
+			extent:[-600,-600,1200,1200],
+			transform: { position: [0, -1, 0] }
+		});
+		this.mEntities.push(plane);
+
 		this.buildShadow();
 	}
 
@@ -346,6 +357,7 @@ export class PBRShadowTest {
 		const graph = this.mGraph;
 		let cam = graph.shadowCamera;
 		property.shadowReceived = shadowReceived;
+		console.log("xxxxx shadowReceived: ", shadowReceived);
 		if(shadowReceived) {
 			property.shadowMatrix.shadowMatrix = this.mShadowTransMat;
 			let vsmParams = property.vsmParams;

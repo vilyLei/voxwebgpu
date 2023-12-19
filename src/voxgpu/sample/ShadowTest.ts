@@ -43,8 +43,8 @@ class ShadowPassGraph extends WGRPassNodeGraph {
 
 	shadowBias = -0.0005;
 	shadowRadius = 2.0;
-	shadowMapW = 512;
-	shadowMapH = 512;
+	shadowMapW = 128;
+	shadowMapH = 128;
 	shadowViewW = 1300;
 	shadowViewH = 1300;
 
@@ -113,7 +113,11 @@ class ShadowPassGraph extends WGRPassNodeGraph {
 		];
 		// create a separate rtt rendering pass
 		let multisampled = false;
-		let pass = rc.createRTTPass({ colorAttachments, multisampled });
+		let pass = rc.createRTTPass({
+			colorAttachments,
+			multisampled,
+			viewport: [0,0, this.shadowMapW, this.shadowMapH]
+		});
 		this.passes = [pass];
 		rc.setPassNodeGraph(this);
 
@@ -248,6 +252,15 @@ let position = new Vector3(0, -1, 0);
 		});
 		this.mEntities.push(torus);
 		rc.addEntity(torus);
+		
+		let plane = new PlaneEntity({
+			axisType: 1,
+			extent:[-600,-600,1200,1200],
+			transform: { position: [0, -1, 0] }
+			// ,materials
+		});
+		// rc.addEntity(plane);
+		this.mEntities.push(plane);
 
 		this.buildShadow();
 		this.buildShadowCamFrame();
@@ -275,16 +288,16 @@ let position = new Vector3(0, -1, 0);
 		this.mShadowTransMat = shadowMat;
 
 		let extent = [-0.95, -0.95, 0.4, 0.4];
-		let entity = new FixScreenPlaneEntity({ extent, flipY: true, textures: [{ diffuse: graph.shadowDepthRTT }] });
-		rc.addEntity(entity);
+		let entity = new FixScreenPlaneEntity({ extent, flipY: false, textures: [{ diffuse: graph.shadowDepthRTT }] });
+		rc.addEntity(entity, {layerIndex: 1});
 
 		extent = [-0.5, -0.95, 0.4, 0.4];
-		entity = new FixScreenPlaneEntity({ extent, flipY: true, textures: [{ diffuse: graph.occVRTT }] });
-		rc.addEntity(entity);
+		entity = new FixScreenPlaneEntity({ extent, flipY: false, textures: [{ diffuse: graph.occVRTT }] });
+		rc.addEntity(entity, {layerIndex: 1});
 
 		extent = [-0.05, -0.95, 0.4, 0.4];
-		entity = new FixScreenPlaneEntity({ extent, flipY: true, textures: [{ diffuse: graph.occHRTT }] });
-		rc.addEntity(entity);
+		entity = new FixScreenPlaneEntity({ extent, flipY: false, textures: [{ diffuse: graph.occHRTT }] });
+		rc.addEntity(entity, {layerIndex: 1});
 	}
 
 	private buildShadowCamFrame(): void {

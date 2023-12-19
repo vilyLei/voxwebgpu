@@ -25,8 +25,8 @@ class ShadowPassGraph extends WGRPassNodeGraph {
 
 	shadowBias = -0.0005;
 	shadowRadius = 4;
-	shadowMapW = 512;
-	shadowMapH = 512;
+	shadowMapW = 128;
+	shadowMapH = 128;
 	shadowViewW = 1300;
 	shadowViewH = 1300;
 	shadowDepthRTT = { uuid: "rtt-shadow-depth", rttTexture: {}, shdVarName: 'shadowData' };
@@ -36,7 +36,6 @@ class ShadowPassGraph extends WGRPassNodeGraph {
 		clearValue: { r: 1, g: 1, b: 1, a: 1.0 },
 		loadOp: "clear",
 		// storeOp: "store",
-		// viewport: [0,0, this.mShadowMapW, this.mShadowMapH]
 	};
 
 	occVRTT = { uuid: "rtt-shadow-occV", rttTexture: {}, shdVarName: 'shadowData' };
