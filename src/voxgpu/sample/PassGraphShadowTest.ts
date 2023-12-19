@@ -23,13 +23,20 @@ class ShadowPassGraph extends WGRPassNodeGraph {
 	private entities: Entity3D[] = [];
 	private mDepthMaterials: WGMaterial[];
 
+	shadowBias = -0.0005;
+	shadowRadius = 4;
+	shadowMapW = 512;
+	shadowMapH = 512;
+	shadowViewW = 1300;
+	shadowViewH = 1300;
 	shadowDepthRTT = { uuid: "rtt-shadow-depth", rttTexture: {}, shdVarName: 'shadowData' };
 	depAttachment: WGRPassColorAttachment = {
 		texture: this.shadowDepthRTT,
 		// green clear background color
 		clearValue: { r: 1, g: 1, b: 1, a: 1.0 },
 		loadOp: "clear",
-		storeOp: "store"
+		// storeOp: "store",
+		// viewport: [0,0, this.mShadowMapW, this.mShadowMapH]
 	};
 
 	occVRTT = { uuid: "rtt-shadow-occV", rttTexture: {}, shdVarName: 'shadowData' };
@@ -37,12 +44,6 @@ class ShadowPassGraph extends WGRPassNodeGraph {
 	occVEntity: FixScreenPlaneEntity;
 	occHEntity: FixScreenPlaneEntity;
 
-	shadowBias = -0.0005;
-	shadowRadius = 2.0;
-	shadowMapW = 512;
-	shadowMapH = 512;
-	shadowViewW = 1300;
-	shadowViewH = 1300;
 
 	shadowCamera: Camera;
 	constructor() {
@@ -109,7 +110,11 @@ class ShadowPassGraph extends WGRPassNodeGraph {
 		];
 		// create a separate rtt rendering pass
 		let multisampled = false;
-		let pass = rc.createRTTPass({ colorAttachments, multisampled });
+		let pass = rc.createRTTPass({
+			colorAttachments,
+			multisampled,
+			viewport: [0,0, this.shadowMapW, this.shadowMapH]
+		});
 		this.passes = [pass];
 		rc.setPassNodeGraph(this);
 
@@ -222,6 +227,14 @@ export class PassGraphShadowTest {
 		});
 		this.mEntities.push(torus);
 		rc.addEntity(torus);
+		let plane = new PlaneEntity({
+			axisType: 1,
+			extent: [-600, -600, 1200, 1200],
+			transform: {
+				position: [0, -1, 0]
+			}
+		});
+		this.mEntities.push(plane);
 
 		this.buildShadow();
 		this.buildShadowCamFrame();
@@ -240,15 +253,15 @@ export class PassGraphShadowTest {
 
 		let extent = [-0.95, -0.95, 0.4, 0.4];
 		let entity = new FixScreenPlaneEntity({ extent, flipY: true, textures: [{ diffuse: graph.shadowDepthRTT }] });
-		rc.addEntity(entity);
+		rc.addEntity(entity, {layerIndex:1});
 
 		extent = [-0.5, -0.95, 0.4, 0.4];
 		entity = new FixScreenPlaneEntity({ extent, flipY: true, textures: [{ diffuse: graph.occVRTT }] });
-		rc.addEntity(entity);
+		rc.addEntity(entity, {layerIndex:1});
 
 		extent = [-0.05, -0.95, 0.4, 0.4];
 		entity = new FixScreenPlaneEntity({ extent, flipY: true, textures: [{ diffuse: graph.occHRTT }] });
-		rc.addEntity(entity);
+		rc.addEntity(entity, {layerIndex:1});
 	}
 
 	private buildShadowCamFrame(): void {

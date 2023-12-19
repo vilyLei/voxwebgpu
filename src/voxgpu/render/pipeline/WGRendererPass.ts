@@ -93,7 +93,9 @@ class WGRendererPass implements WGRendererPassImpl {
 							let sampleCount = 1;
 							sampleCount = this.mParam.sampleCount;
 							td.multisampled = sampleCount > 1;
-							const rtt = ctx.texture.createColorRTTTexture({ format: td.format, sampleCount });
+							let vext = this.viewport.extent;
+							let size = [vext.width, vext.height];
+							const rtt = ctx.texture.createColorRTTTexture({ format: td.format, sampleCount, size });
 							// const rtt = ctx.texture.createColorRTTTexture({format: td.format});
 							rttData.texture = rtt;
 							let tview = rtt.createView();
@@ -126,8 +128,9 @@ class WGRendererPass implements WGRendererPassImpl {
 			sampleCount = param.sampleCount;
 		}
 		param.sampleCount = sampleCount;
-
-		let size = [ctx.canvasWidth, ctx.canvasHeight];
+		let vext = this.viewport.extent;
+		// let size = [ctx.canvasWidth, ctx.canvasHeight];
+		let size = [vext.width, vext.height];
 
 		let pcs = this.passColors;
 		let colorAtt = pcs[0];
@@ -178,7 +181,7 @@ class WGRendererPass implements WGRendererPassImpl {
 			this.passDepthStencil = dsAtt;
 
 			if (!dsAtt.view) {
-				size = [ctx.canvasWidth, ctx.canvasHeight];
+				// size = [ctx.canvasWidth, ctx.canvasHeight];
 				let format = "depth24plus";
 				if (param.depthFormat !== undefined) format = param.depthFormat;
 				// console.log('pass depth tex sampleCount: ', sampleCount);
@@ -302,6 +305,9 @@ class WGRendererPass implements WGRendererPassImpl {
 
 				const vport = this.viewport;
 				const ext = vport.extent;
+				// if (this.separate) {
+				// 	console.log("### ext: ", ext);
+				// }
 				this.passEncoder.setViewport(ext.x, ext.y, ext.width, ext.height, vport.minDepth, vport.maxDepth);
 			} else {
 				this.compPassEncoder = cmdEncoder.beginComputePass();

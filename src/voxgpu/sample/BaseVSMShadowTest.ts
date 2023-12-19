@@ -97,11 +97,14 @@ export class BaseVSMShadowTest {
 				// green clear background color
 				clearValue: { r: 1, g: 1, b: 1, a: 1.0 },
 				loadOp: "clear",
-				storeOp: "store"
+				storeOp: "store"		
 			}
 		];
 		// create a separate rtt rendering pass
-		let rPass = rc.createRTTPass({ colorAttachments });
+		let rPass = rc.createRTTPass({
+			colorAttachments,
+			viewport: [0,0, this.mShadowMapW, this.mShadowMapH]
+		 });
 		rPass.node.camera = this.mShadowCamera;
 
 		let extent = [-0.5, -0.5, 0.8, 0.8];
@@ -117,7 +120,7 @@ export class BaseVSMShadowTest {
 
 		// 显示渲染结果
 		extent = [-0.95, -0.95, 0.4, 0.4];
-		let entity = new FixScreenPlaneEntity({ extent, flipY: true, textures: [{ diffuse: rttTex }] });
+		let entity = new FixScreenPlaneEntity({ extent, flipY: false, textures: [{ diffuse: rttTex }] });
 		rc.addEntity(entity, {layerIndex: 1});
 	}
 	private mShadowBias = -0.0005;
@@ -138,12 +141,15 @@ export class BaseVSMShadowTest {
 				// green clear background color
 				clearValue: { r: 1, g: 1, b: 1, a: 1.0 },
 				loadOp: "clear",
-				storeOp: "store",
-				viewport: [0,0, this.mShadowMapW, this.mShadowMapH]
+				storeOp: "store"
 			}
 		];
+		// viewport: [0,0, this.mShadowMapW, this.mShadowMapH]
 		// create a separate rtt rendering pass
-		let rPass = rc.createRTTPass({ colorAttachments });
+		let rPass = rc.createRTTPass({
+			colorAttachments,
+			viewport: [0,0, this.mShadowMapW, this.mShadowMapH]
+		});
 		let material = new ShadowOccBlurMaterial();
 
 		let ppt = material.property;
@@ -157,7 +163,7 @@ export class BaseVSMShadowTest {
 
 		// 显示渲染结果
 		extent = [-0.5, -0.95, 0.4, 0.4];
-		let entity = new FixScreenPlaneEntity({ extent, flipY: true, textures: [{ diffuse: rttTex }] });
+		let entity = new FixScreenPlaneEntity({ extent, flipY: false, textures: [{ diffuse: rttTex }] });
 		rc.addEntity(entity, {layerIndex: 1});
 	}
 
@@ -177,7 +183,10 @@ export class BaseVSMShadowTest {
 			}
 		];
 		// create a separate rtt rendering pass
-		let rPass = rc.createRTTPass({ colorAttachments });
+		let rPass = rc.createRTTPass({
+			colorAttachments,
+			viewport: [0,0, this.mShadowMapW, this.mShadowMapH]
+		});
 		let material = new ShadowOccBlurMaterial();
 		let ppt = material.property;
 		ppt.setShadowRadius(this.mShadowRadius);
@@ -190,7 +199,7 @@ export class BaseVSMShadowTest {
 
 		// 显示渲染结果
 		extent = [-0.05, -0.95, 0.4, 0.4];
-		let entity = new FixScreenPlaneEntity({ extent, flipY: true, textures: [{ diffuse: rttTex }] });
+		let entity = new FixScreenPlaneEntity({ extent, flipY: false, textures: [{ diffuse: rttTex }] });
 		rc.addEntity(entity, {layerIndex: 1});
 	}
 	private createDepthMaterial(shaderSrc: WGRShderSrcType, faceCullMode = "none"): WGMaterial {
