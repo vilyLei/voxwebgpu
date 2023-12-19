@@ -26,7 +26,7 @@ const ShiftRight8 = 1. / 256.;
 fn packDepthToRGBA(v: f32) -> vec4<f32> {
     var r = vec4<f32>(fract(v * PackFactors), v);
     let v3 = r.yzw - (r.xyz * ShiftRight8);
-    r = vec4<f32>(v3.x, v3);
+    r = vec4<f32>(r.x, v3);
     return r * PackUpscale;
 }
 
@@ -34,7 +34,8 @@ fn packDepthToRGBA(v: f32) -> vec4<f32> {
 fn fragMain(
     @location(0) projPos: vec4<f32>
 ) -> @location(0) vec4<f32> {
-    let fragCoordZ = 0.5 * projPos[2] / projPos[3] + 0.5;
+    // let fragCoordZ = 0.5 * projPos[2] / projPos[3] + 0.5;
+    let fragCoordZ = 0.5 * projPos.z / projPos.w + 0.5;
     var color4 = packDepthToRGBA( fragCoordZ );
     return color4;
 }

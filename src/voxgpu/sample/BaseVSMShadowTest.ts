@@ -108,7 +108,7 @@ export class BaseVSMShadowTest {
 		// 显示渲染结果
 		extent = [-0.95, -0.95, 0.4, 0.4];
 		let entity = new FixScreenPlaneEntity({ extent, flipY: true, textures: [{ diffuse: rttTex }] });
-		rc.addEntity(entity);
+		rc.addEntity(entity, {layerIndex: 1});
 	}
 	private applyBuildDepthOccVRTT(): void {
 		let rc = this.mRscene;
@@ -141,7 +141,7 @@ export class BaseVSMShadowTest {
 		// 显示渲染结果
 		extent = [-0.5, -0.95, 0.4, 0.4];
 		let entity = new FixScreenPlaneEntity({ extent, flipY: true, textures: [{ diffuse: rttTex }] });
-		rc.addEntity(entity);
+		rc.addEntity(entity, {layerIndex: 1});
 	}
 
 	private applyBuildDepthOccHRTT(): void {
@@ -174,7 +174,7 @@ export class BaseVSMShadowTest {
 		// 显示渲染结果
 		extent = [-0.05, -0.95, 0.4, 0.4];
 		let entity = new FixScreenPlaneEntity({ extent, flipY: true, textures: [{ diffuse: rttTex }] });
-		rc.addEntity(entity);
+		rc.addEntity(entity, {layerIndex: 1});
 	}
 	private createDepthMaterial(shaderSrc: WGRShderSrcType, faceCullMode = "none"): WGMaterial {
 
