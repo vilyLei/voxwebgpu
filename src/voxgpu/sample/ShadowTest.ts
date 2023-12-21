@@ -315,39 +315,7 @@ let position = new Vector3(0, -1, 0);
 	}
 	private buildShadowReceiveEntity(): void {
 
-		this.initShadowReceiveDisp(true);
-		return;
-		const graph = this.mGraph;
-		let cam = graph.shadowCamera;
-		// let transMatrix = new Matrix4();
-		// transMatrix.setScaleXYZ(0.5, -0.5, 0.5);
-		// transMatrix.setTranslationXYZ(0.5, 0.5, 0.5);
-		// let shadowMat = new Matrix4();
-		// shadowMat.copyFrom(cam.viewProjMatrix);
-		// shadowMat.append(transMatrix);
-
-		let material = new ShadowReceiveMaterial();
-		let ppt = material.property;
-
-		ppt.setShadowRadius(graph.shadowRadius);
-		ppt.setShadowBias(graph.shadowBias);
-		ppt.setShadowSize(graph.shadowMapW, graph.shadowMapH);
-		// ppt.setShadowMatrix(shadowMat);
-		ppt.setShadowMatrix(this.mShadowTransMat);
-		ppt.setDirec(cam.nv);
-
-		material.addTextures([this.mGraph.occHRTT]);
-
-		const rc = this.mRscene;
-		let plane = new PlaneEntity({
-			axisType: 1,
-			extent: [-600, -600, 1200, 1200],
-			transform: {
-				position: [0, -1, 0]
-			},
-			materials: [material]
-		});
-		rc.addEntity(plane);
+		this.initShadowReceiveDisp(true);		
 	}
 	
 	
@@ -446,7 +414,6 @@ let position = new Vector3(0, -1, 0);
 			property.shadowMatrix.shadowMatrix = this.mShadowTransMat;
 			let vsmParams = property.vsmParams;
 			vsmParams.bias = graph.shadowBias;
-			// vsmParams.setSize(graph.shadowMapW, graph.shadowMapH);
 			vsmParams.direction = cam.nv.clone().scaleBy(-1);
 			vsmParams.intensity = 0.5;
 		}
