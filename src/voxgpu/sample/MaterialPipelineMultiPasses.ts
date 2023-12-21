@@ -72,6 +72,7 @@ export class MaterialPipelineMultiPasses {
 
 		mtpl.light.data = createLocalLightsData([0, 300, 0], 600, 5.0);
 		mtpl.shadow.intensity = 0.6;
+		mtpl.shadow.radius = 4;
 		mtpl.fog.fogColor.value = [0.3, 0.7, 0.2];
 
 		let position = [0, 50, 180];
@@ -96,7 +97,7 @@ export class MaterialPipelineMultiPasses {
 
 		
 		position = [0, -110, 0];
-		materials = this.createMaterials(true, false, 'back',[3,3]);
+		materials = this.createMaterials(true, true, 'back',[3,3]);
 		let plane = new PlaneEntity({
 			axisType: 1,
 			materials,

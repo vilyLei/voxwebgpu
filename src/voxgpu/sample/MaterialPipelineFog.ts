@@ -36,6 +36,7 @@ export class MaterialPipelineFog {
 
 		mtpl.light.data = createLocalLightsData([0, 300, 0], 600, 5.0);
 		mtpl.shadow.intensity = 0.7;
+		mtpl.shadow.radius = 4;
 		mtpl.fog.fogColor.value = [0.3, 0.7, 0.2];
 
 		let position = [-230.0, 100.0, -200.0];
@@ -85,7 +86,7 @@ export class MaterialPipelineFog {
 		rc.addEntity(torus);
 
 		position = [0, -1, 0];
-		materials = this.createMaterials(true, false);
+		materials = this.createMaterials(true);
 		let plane = new PlaneEntity({
 			axisType: 1,
 			materials,
