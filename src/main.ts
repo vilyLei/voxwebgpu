@@ -87,7 +87,7 @@
 // import { ShadowTest as Demo } from "./voxgpu/sample/ShadowTest";
 // import { PBRShadowTest as Demo } from "./voxgpu/sample/PBRShadowTest";
 // import { MaterialPipelineTest as Demo } from "./voxgpu/sample/MaterialPipelineTest";
-// import { MaterialPipelineFog as Demo } from "./voxgpu/sample/MaterialPipelineFog";
+import { MaterialPipelineFog as Demo } from "./voxgpu/sample/MaterialPipelineFog";
 // import { MaterialPipelineMultiPasses as Demo } from "./voxgpu/sample/MaterialPipelineMultiPasses";
 
 // import { MultiLightsShading as Demo } from "./voxgpu/sample/MultiLightsShading";
@@ -100,7 +100,7 @@
 
 // import { MultiLightsTest as Demo } from "./voxgpu/sample/MultiLightsTest";
 
-import { GLBMaterialTest as Demo } from "./voxgpu/sample/GLBMaterialTest";
+// import { GLBMaterialTest as Demo } from "./voxgpu/sample/GLBMaterialTest";
 
 
 

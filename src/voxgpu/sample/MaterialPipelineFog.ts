@@ -20,7 +20,9 @@ export class MaterialPipelineFog {
 		this.mRscene.initialize({
 			canvasWith: 512,
 			canvasHeight: 512,
-			mtplEnabled: true,
+			mtpl: {
+				vsm: {mapSize: 128}
+			},
 			rpassparam: { multisampled: true }
 		});
 
@@ -36,7 +38,7 @@ export class MaterialPipelineFog {
 
 		mtpl.light.data = createLocalLightsData([0, 300, 0], 600, 5.0);
 		mtpl.shadow.intensity = 0.7;
-		mtpl.shadow.radius = 4;
+		mtpl.shadow.radius = 2;
 		mtpl.fog.fogColor.value = [0.3, 0.7, 0.2];
 
 		let position = [-230.0, 100.0, -200.0];

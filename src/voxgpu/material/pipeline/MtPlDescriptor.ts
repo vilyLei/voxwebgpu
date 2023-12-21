@@ -11,6 +11,7 @@ export interface MtPlVSMDescriptor {
     radius?: number;
     mapWidth?: number;
     mapHeight?: number;
+    mapSize?: number;
 }
 /**
  * material pipeline MtPlDescriptor

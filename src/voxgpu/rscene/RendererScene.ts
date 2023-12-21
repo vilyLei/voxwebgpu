@@ -55,18 +55,26 @@ class RendererScene implements IRendererScene {
 			let mtplDesc = config.mtpl;
 			let mtplEnabled = config.mtplEnabled === true;
 			if (mtplDesc) {
-				mtplEnabled = mtplEnabled || mtplDesc.enabled === true;
+				mtplEnabled = mtplEnabled || mtplDesc.enabled !== false;
 			}
 			if (mtplEnabled) {
+
 				let mtpl = renderer.mtpl;
 				let shadow = mtpl.shadow;
+
 				if (mtplDesc && mtplDesc.vsm) {
 
 					let vsmDesc = mtplDesc.vsm;
+
 					let mapW = 512;
 					let mapH = 512;
 					if (vsmDesc.radius !== undefined) {
 						shadow.radius = vsmDesc.radius;
+					}
+
+					if (vsmDesc.mapSize !== undefined) {
+						mapW = vsmDesc.mapSize;
+						mapH = mapW;
 					}
 					if (vsmDesc.mapWidth !== undefined) {
 						mapW = vsmDesc.mapWidth;
