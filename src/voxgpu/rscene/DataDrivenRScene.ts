@@ -27,6 +27,15 @@ class DataDrivenRScene {
 			r.rpassparam = { multisampled: true };
 		}
 		let mtplEnabled = r.mtplEnabled === true;
+		let vsmShadow : any;// = scene.shadow;
+		if(scene.shadow && scene.shadow.type === "vsm") {
+			vsmShadow = scene.shadow;
+			mtplEnabled = true;
+		}
+		r.mtpl = {
+			enabled: mtplEnabled,
+			vsm: vsmShadow
+		}
 		this.mScene.initialize(r);
 
 		this.mResource = param.resource;
@@ -49,8 +58,8 @@ class DataDrivenRScene {
 				let lightData = parseLightData(sceneData.light);
 				console.log("lightData: ", lightData);
 				mtpl.light.lightData = lightData;
-				mtpl.shadow.intensity = 0.4;
-				mtpl.shadow.radius = 4;
+				// mtpl.shadow.intensity = 0.4;
+				// mtpl.shadow.radius = 4;
 				if(sceneData.fog) {
 					let fogData = sceneData.fog;
 					mtpl.fog.fogColor.value = fogData.color;

@@ -19,7 +19,12 @@ function parseBaseMaterialPpt(mdata: any, resource?: any): WGMaterial {
 		let ppt = mt.property;
 		ppt.lighting = mdata.lighting === true;
 		ppt.shadow = mdata.shadow === true;
-		ppt.shadowReceived = mdata.shadowReceived === true;
+		ppt.shadowReceived = !(mdata.shadowReceived === false);
+		if(!ppt.shadowReceived) {
+			ppt.shadowReceived = ppt.shadow;
+		}
+		// console.log("ppt.shadow: ", ppt.shadow);
+		// console.log("ppt.shadowReceived: ", ppt.shadowReceived);
 		ppt.fogging = mdata.fogging === true;
 		ppt.armsBase.value = [1.0, 0.2, 0.0, 0.0];
 		if (mdata.arms) {

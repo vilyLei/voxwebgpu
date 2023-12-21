@@ -6,6 +6,7 @@ export interface MtPlFogDescriptor {
     enabled?: boolean;
 }
 export interface MtPlVSMDescriptor {
+    type?: string;
     enabled?: boolean;
     intensity?: number;
     radius?: number;

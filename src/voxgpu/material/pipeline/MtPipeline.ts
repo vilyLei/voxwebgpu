@@ -49,8 +49,12 @@ class MtPipeline {
 
 					let mapW = 512;
 					let mapH = 512;
+                    
 					if (vsmDesc.radius !== undefined) {
 						shadow.radius = vsmDesc.radius;
+					}
+					if (vsmDesc.intensity !== undefined) {
+						shadow.intensity = vsmDesc.intensity;
 					}
 
 					if (vsmDesc.mapSize !== undefined) {

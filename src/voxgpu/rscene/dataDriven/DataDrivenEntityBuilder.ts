@@ -48,6 +48,7 @@ function createEntity(param: DataDrivenEntityParam, resource?: any): Entity3D {
 	if(param) {
 		let et = (param.entity === undefined ? param : param.entity) as DataDrivenEntityParamType;
 		let entityParam = et;
+		// console.log("### param.entityType: ", param.entityType);
 		let materials = createMaterials(entityParam, resource);
 		switch(param.entityType) {
 			case 'axis':
