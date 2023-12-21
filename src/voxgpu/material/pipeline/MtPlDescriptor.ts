@@ -12,4 +12,5 @@ export interface MtPlVSMDescriptor {
  */
 export interface MtPlDescriptor {
     enabled?: boolean;
+    vsm?: MtPlVSMDescriptor;
 }

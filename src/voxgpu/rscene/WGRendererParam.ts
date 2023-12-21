@@ -2,6 +2,7 @@ import { WebGPUContext } from "../gpu/WebGPUContext";
 import { WGRPipelineContextDefParam, WGRPassParam, WGRenderPassBlock } from "../render/WGRenderPassBlock";
 import { GPUCanvasConfiguration } from "../gpu/GPUCanvasConfiguration";
 import { WGRPassWrapperImpl } from "../render/pipeline/WGRPassWrapperImpl";
+import { MtPlDescriptor } from "../material/pipeline/MtPlDescriptor";
 
 interface WGCameraParam {
 	eye?: Vector3DataType;
@@ -27,6 +28,7 @@ interface WGRendererConfig {
 	rpassparam?: WGRPassParam;
 	camera?: WGCameraParam;
 	mtplEnabled?: boolean;
+	mtpl?: MtPlDescriptor;
 	/**
 	 * Possible values are: "#000000", "#335533" 
 	 */

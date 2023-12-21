@@ -19,7 +19,10 @@ export class MaterialPipelineTest {
 		this.mRscene.initialize({
 			canvasWith: 512,
 			canvasHeight: 512,
-			mtplEnabled: true,
+			mtpl: {
+				enabled: true,
+				vsm: { radius: 4, mapWidth: 128, mapHeight: 128 }
+			},
 			rpassparam: { multisampled: true }
 		});
 
@@ -151,7 +154,7 @@ export class MaterialPipelineTest {
 		material.addTextures(textures);
 		return material;
 	}
-	private mouseDown = (evt: MouseEvent): void => {}
+	private mouseDown = (evt: MouseEvent): void => { }
 	run(): void {
 		this.mRscene.run();
 	}

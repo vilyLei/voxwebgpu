@@ -19,7 +19,7 @@ class ShadowPassGraph extends WGRPassNodeGraph {
 
     private entities: Entity3D[] = [];
     private mDepthMaterials: WGMaterial[];
-    private mOccMaterials: ShadowOccBlurMaterial[];
+    private mOccMaterials: ShadowOccBlurMaterial[] = [];
     material = new WGMaterial();
     shadowDepthRTT = { uuid: "rtt-shadow-depth", rttTexture: {}, shdVarName: 'shadowData' };
     depAttachment: WGRPassColorAttachment = {
@@ -53,9 +53,9 @@ class ShadowPassGraph extends WGRPassNodeGraph {
     setMapSize(w: number, h: number) {
         this.mMapWidth = w;
         this.mMapHeight = h;
-        if(this.mOccMaterials.length > 0) {
+        if (this.mOccMaterials.length > 0) {
             let ms = this.mOccMaterials;
-            for(let i = 0; i < ms.length; ++i) {
+            for (let i = 0; i < ms.length; ++i) {
                 let ppt = ms[i].property;
                 ppt.setViewSize(this.mMapWidth, this.mMapHeight);
             }
@@ -63,9 +63,9 @@ class ShadowPassGraph extends WGRPassNodeGraph {
     }
     set radius(r: number) {
         this.mRadius = r;
-        if(this.mOccMaterials.length > 0) {
+        if (this.mOccMaterials.length > 0) {
             let ms = this.mOccMaterials;
-            for(let i = 0; i < ms.length; ++i) {
+            for (let i = 0; i < ms.length; ++i) {
                 let ppt = ms[i].property;
                 ppt.setShadowRadius(this.radius);
             }
@@ -162,7 +162,7 @@ class ShadowPassGraph extends WGRPassNodeGraph {
         // create a separate rtt rendering pass
         let multisampled = false;
         let pass = rc.createRTTPass({
-            viewport: [0,0, this.mMapWidth, this.mMapHeight],
+            viewport: [0, 0, this.mMapWidth, this.mMapHeight],
             colorAttachments,
             multisampled
         });
@@ -187,7 +187,7 @@ class ShadowPassGraph extends WGRPassNodeGraph {
         let extent = [-1, -1, 2, 2];
 
         let material = new ShadowOccBlurMaterial();
-        this.mOccMaterials = [material];
+        this.mOccMaterials.push(material);
         let ppt = material.property;
         ppt.setShadowRadius(this.radius);
         ppt.setViewSize(this.mMapWidth, this.mMapHeight);
@@ -282,7 +282,7 @@ class VSMPipeNode extends MtPlNode implements MtPlNodeImpl {
     set direction(v3d: Vector3DataType) {
         this.param.direction = v3d;
     }
-	get direction(): Vector3DataType {
+    get direction(): Vector3DataType {
         return this.param.direction;
     }
     merge(ls: WGRBufferData[]): void {
