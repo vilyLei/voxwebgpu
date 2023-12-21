@@ -171,6 +171,7 @@ export class GLBMaterialTest {
 		const aoTex = { ao: { url: `static/assets/pbr/${ns}/ao.jpg` } };
 		const roughnessTex = { roughness: { url: `static/assets/pbr/${ns}/roughness.jpg` } };
 		const metallicTex = { metallic: { url: `static/assets/pbr/${ns}/metallic.jpg` } };
+		const parallaxTex = { parallax: { url: `static/assets/pbr/${ns}/parallax.jpg` } };
 		// const emissiveTex = { emissive: { url: `static/assets/color_07.jpg` } };
 		let envTex = { specularEnv: {} };
 		let textures = [
@@ -180,7 +181,7 @@ export class GLBMaterialTest {
 			aoTex,
 			roughnessTex,
 			metallicTex,
-			// emissiveTex
+			parallaxTex
 		] as WGTextureDataDescriptor[];
 		return textures;
 	}
@@ -237,13 +238,13 @@ export class GLBMaterialTest {
 		let ppt = material.property;
 		ppt.ambient.value = [0.2, 0.2, 0.2];
 		let cvs = this.getRandomColor(1.0) as number[];// * 0.7;
-		cvs[0] = cvs[0] * 0.1 + 0.7;
-		cvs[1] = cvs[1] * 0.1 + 0.7;
-		cvs[2] = cvs[2] * 0.1 + 0.7;
+		cvs[0] = cvs[0] * 0.3 + 0.7;
+		cvs[1] = cvs[1] * 0.3 + 0.7;
+		cvs[2] = cvs[2] * 0.3 + 0.7;
 		ppt.albedo.value = cvs;
 		ppt.arms.roughness = Math.random() * 0.95 + 0.05;
 		ppt.arms.metallic = 0.2;
-		ppt.armsBase.value = [0, 0.3, 0];
+		ppt.armsBase.value = [0, 0.2, 0];
 		ppt.specularFactor.value = [0.1, 0.1, 0.1];
 
 		ppt.shadow = shadow;

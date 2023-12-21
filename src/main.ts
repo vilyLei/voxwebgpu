@@ -96,11 +96,11 @@
 
 // import { DataDrivenScene2 as Demo } from "./voxgpu/sample/DataDrivenScene2";
 // import { ParallaxTexTest as Demo } from "./voxgpu/sample/ParallaxTexTest";
-import { DataDrivenScene3 as Demo } from "./voxgpu/sample/DataDrivenScene3";
+// import { DataDrivenScene3 as Demo } from "./voxgpu/sample/DataDrivenScene3";
 
 // import { MultiLightsTest as Demo } from "./voxgpu/sample/MultiLightsTest";
 
-// import { GLBMaterialTest as Demo } from "./voxgpu/sample/GLBMaterialTest";
+import { GLBMaterialTest as Demo } from "./voxgpu/sample/GLBMaterialTest";
 
 
 
