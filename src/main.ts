@@ -77,7 +77,7 @@
 
 // import { ShaderConstructing as Demo } from "./voxgpu/sample/ShaderConstructing";
 // import { DynamicShaderBuilding as Demo } from "./voxgpu/sample/DynamicShaderBuilding";
-// import { DynamicShaderBuilding2 as Demo } from "./voxgpu/sample/DynamicShaderBuilding2";
+import { DynamicShaderBuilding2 as Demo } from "./voxgpu/sample/DynamicShaderBuilding2";
 // import { MaskTextureEffect as Demo } from "./voxgpu/sample/MaskTextureEffect";
 // import { FogTest as Demo } from "./voxgpu/sample/FogTest";
 
@@ -88,7 +88,7 @@
 // import { PBRShadowTest as Demo } from "./voxgpu/sample/PBRShadowTest";
 // import { MaterialPipelineTest as Demo } from "./voxgpu/sample/MaterialPipelineTest";
 // import { MaterialPipelineFog as Demo } from "./voxgpu/sample/MaterialPipelineFog";
-import { MaterialPipelineMultiPasses as Demo } from "./voxgpu/sample/MaterialPipelineMultiPasses";
+// import { MaterialPipelineMultiPasses as Demo } from "./voxgpu/sample/MaterialPipelineMultiPasses";
 
 // import { MultiLightsShading as Demo } from "./voxgpu/sample/MultiLightsShading";
 // import { MultiLightsShading2 as Demo } from "./voxgpu/sample/MultiLightsShading2";

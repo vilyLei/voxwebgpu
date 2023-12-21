@@ -5,7 +5,6 @@ import Vector3 from "../math/Vector3";
 import Color4 from "../material/Color4";
 import { BasePBRMaterial, LightShaderDataParam } from "../material/BasePBRMaterial";
 import { ModelEntity } from "../entity/ModelEntity";
-import { SpecularEnvBrnTexture } from "../texture/SpecularEnvBrnTexture";
 import { WGTextureDataDescriptor } from "../texture/WGTextureDataDescriptor";
 
 export class DynamicShaderBuilding2 {
@@ -18,7 +17,6 @@ export class DynamicShaderBuilding2 {
 		this.initEvent();
 	}
 
-	private hdrEnvtex = new SpecularEnvBrnTexture();
 	private createTextures(ns: string): WGTextureDataDescriptor[] {
 		const albedoTex = { albedo: { url: `static/assets/pbr/${ns}/albedo.jpg` } };
 		const normalTex = { normal: { url: `static/assets/pbr/${ns}/normal.jpg` } };
@@ -26,8 +24,9 @@ export class DynamicShaderBuilding2 {
 		const roughnessTex = { roughness: { url: `static/assets/pbr/${ns}/roughness.jpg` } };
 		const metallicTex = { metallic: { url: `static/assets/pbr/${ns}/metallic.jpg` } };
 		const emissiveTex = { emissive: { url: `static/assets/color_07.jpg` } };
+		let envTex = { specularEnv: {} };
 		let textures = [
-			this.hdrEnvtex,
+			envTex,
 			albedoTex,
 			normalTex,
 			aoTex,
@@ -42,8 +41,9 @@ export class DynamicShaderBuilding2 {
 		const normalTex = { normal: { url: `static/assets/pbrtex/rough_plaster_broken_nor_1k.jpg` } };
 		const armTex = { arm: { url: `static/assets/pbrtex/rough_plaster_broken_arm_1k.jpg` } };
 		// const emissiveTex = { emissive: { url: `static/assets/color_07.jpg` } };
+		let envTex = { specularEnv: {} };
 		let textures = [
-			this.hdrEnvtex,
+			envTex,
 			albedoTex,
 			normalTex,
 			armTex
