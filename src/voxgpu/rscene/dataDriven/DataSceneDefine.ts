@@ -6,15 +6,14 @@ import { PointLightParam } from "../../light/base/PointLightImpl";
 import { SpotLight } from "../../light/base/SpotLight";
 import { SpotLightParam } from "../../light/base/SpotLightImpl";
 import { MtLightDataDescriptor } from "../../material/mdata/MtLightDataDescriptor";
+import { MtPlVSMDescriptor } from "../../material/pipeline/MtPlDescriptor";
 import { WGRendererConfig } from "../WGRendererParam";
 import { DataDrivenEntityParamType, DataDrivenEntityParam } from "./DataDrivenEntityParam";
 
 interface SceneFogDataImpl {
     color: number[];
 }
-interface SceneShadowDataImpl {
-	intensity?: number;
-    radius?: number;
+interface SceneShadowDataImpl extends MtPlVSMDescriptor {
 }
 interface SceneLightDataImpl {
 	pointLights: PointLightParam[];
