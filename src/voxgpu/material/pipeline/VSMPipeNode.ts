@@ -34,12 +34,12 @@ class ShadowPassGraph extends WGRPassNodeGraph {
     occVEntity: FixScreenPlaneEntity;
     occHEntity: FixScreenPlaneEntity;
 
-    shadowBias = -0.0005;
-    shadowRadius = 4;
-    shadowMapW = 512;
-    shadowMapH = 512;
-    shadowViewW = 1300;
-    shadowViewH = 1300;
+    bias = -0.0005;
+    radius = 1;
+    mapWidth = 512;
+    mapHeight = 512;
+    viewWidth = 1300;
+    viewHeight = 1300;
 
     shadowCamera: Camera;
     private mMatrixData: MaterialUniformMat44Data;
@@ -82,8 +82,8 @@ class ShadowPassGraph extends WGRPassNodeGraph {
             near: 0.1,
             far: 1900,
             perspective: false,
-            viewWidth: g.shadowViewW,
-            viewHeight: g.shadowViewH
+            viewWidth: g.viewWidth,
+            viewHeight: g.viewHeight
         });
         cam.update();
         g.shadowCamera = cam;
@@ -137,7 +137,7 @@ class ShadowPassGraph extends WGRPassNodeGraph {
         // create a separate rtt rendering pass
         let multisampled = false;
         let pass = rc.createRTTPass({
-            viewport: [0,0, this.shadowMapW, this.shadowMapH],
+            viewport: [0,0, this.mapWidth, this.mapHeight],
             colorAttachments,
             multisampled
         });
@@ -163,8 +163,8 @@ class ShadowPassGraph extends WGRPassNodeGraph {
 
         let material = new ShadowOccBlurMaterial();
         let ppt = material.property;
-        ppt.setShadowRadius(this.shadowRadius);
-        ppt.setViewSize(this.shadowMapW, this.shadowMapH);
+        ppt.setShadowRadius(this.radius);
+        ppt.setViewSize(this.mapWidth, this.mapHeight);
         material.addTextures([this.shadowDepthRTT]);
         this.occVEntity = new FixScreenPlaneEntity({ extent, materials: [material] });
         this.occVEntity.visible = false;
@@ -172,8 +172,8 @@ class ShadowPassGraph extends WGRPassNodeGraph {
 
         material = new ShadowOccBlurMaterial();
         ppt = material.property;
-        ppt.setShadowRadius(this.shadowRadius);
-        ppt.setViewSize(this.shadowMapW, this.shadowMapH);
+        ppt.setShadowRadius(this.radius);
+        ppt.setViewSize(this.mapWidth, this.mapHeight);
         ppt.toHorizonal();
         material.addTextures([this.occVRTT]);
         this.occHEntity = new FixScreenPlaneEntity({ extent, materials: [material] });

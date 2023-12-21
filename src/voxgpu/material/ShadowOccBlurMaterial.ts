@@ -24,7 +24,7 @@ class BasePBRProperty implements MaterialProperty {
 		return this.mType == 0;
 	}
 	setShadowRadius(r: number): BasePBRProperty {
-		this.param.property.z = r;
+		this.param.property.w = r;
 		this.param.update();
 		return this;
 	}

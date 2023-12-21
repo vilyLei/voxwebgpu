@@ -21,14 +21,14 @@ fn VSMShadow(uv: vec2<f32>, compare: f32) -> f32 {
     if hard_shadow != 1.0 {
 
         let distance = compare - distribution.x ;
-        let variance = max(0.0001, distribution.y * distribution.y);
+        let variance = max(0.000001, distribution.y * distribution.y);
         var softness_probability = variance / (variance + distance * distance); // Chebeyshevs inequality
         softness_probability = clamp((softness_probability - 0.3) / (0.95 - 0.3), 0.0, 1.0); // 0.3 reduces light bleed
         occlusion = clamp(max(hard_shadow, softness_probability), 0.0, 1.0);
     }
     return occlusion;
 }
-fn getVSMShadow(shadowMapSize: vec2<f32>, shadowBias: f32, shadowRadius: f32, shadowCoordP: vec4<f32>) -> f32 {
+fn getVSMShadow(shadowBias: f32, shadowRadius: f32, shadowCoordP: vec4<f32>) -> f32 {
 
     var shadowCoord = vec4<f32>(shadowCoordP.xyz / vec3<f32>(shadowCoordP.w), shadowCoordP.z + shadowBias);
 
@@ -45,7 +45,7 @@ fn getVSMShadow(shadowMapSize: vec2<f32>, shadowBias: f32, shadowRadius: f32, sh
 
 fn getVSMShadowFactor(worldNormal: vec3<f32>, svPos: vec4<f32>) -> f32 {
 
-    var shadow = clamp(getVSMShadow(vsmParams[1].xy, vsmParams[0].x, vsmParams[0].z, svPos), 0.0, 1.0);
+    var shadow = clamp(getVSMShadow(vsmParams[0].x, vsmParams[0].z, svPos), 0.0, 1.0);
     var f = clamp(dot(worldNormal, normalize(vsmParams[2].xyz)), 0.001, 1.0);
     if f > 0.0001 {
         shadow = min(shadow, clamp(f, 0.0, 1.0));

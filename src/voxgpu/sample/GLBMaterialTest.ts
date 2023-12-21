@@ -70,15 +70,15 @@ export class GLBMaterialTest {
 		let ld = { pointLights: [], directionLights: [], spotLights: [] } as MtLightDataDescriptor;
 
 		let space = new CylinderRandomRange();
-		space.minRadius = 200;
-		space.maxRadius = 350;
+		space.minRadius = 130;
+		space.maxRadius = 260;
 		space.minHeight = 10;
 		space.maxHeight = 300;
 		space.initialize();
 		space.setSpaceScale(1.0, 1.0, 0.5);
 
 		let total = 5;
-		let scale = 5.0;
+		let scale = 8.0;
 		for (let i = 0; i < total; ++i) {
 			for (let j = 0; j < total; ++j) {
 				space.calc();
@@ -109,7 +109,7 @@ export class GLBMaterialTest {
 		if (type > 1) {
 			diffuseTex0 = { diffuse: { url: "static/assets/circleWave_disp.png" } };
 		}
-		let billboard = new BillboardEntity({ size: 10, textures: [diffuseTex0] });
+		let billboard = new BillboardEntity({ size: 5, textures: [diffuseTex0] });
 		billboard.color = c;
 		billboard.alpha = 1;
 		billboard.transform.setPosition(pv);
@@ -153,7 +153,7 @@ export class GLBMaterialTest {
 		
 		this.mTexType = 0;
 		position = [0, 0, 0];
-		materials = this.createMaterials(true, false, 'back');
+		materials = this.createMaterials(true);
 		let plane = new PlaneEntity({
 			axisType: 1,
 			materials,
