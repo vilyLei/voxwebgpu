@@ -1,5 +1,10 @@
 import { MtPlNodeImpl } from "./MtPlNodeImpl";
-
+export interface MtPlLightDescriptor {
+    enabled?: boolean;
+}
+export interface MtPlFogDescriptor {
+    enabled?: boolean;
+}
 export interface MtPlVSMDescriptor {
     enabled?: boolean;
     intensity?: number;
