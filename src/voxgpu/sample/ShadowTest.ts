@@ -447,7 +447,7 @@ let position = new Vector3(0, -1, 0);
 			let vsmParams = property.vsmParams;
 			vsmParams.bias = graph.shadowBias;
 			// vsmParams.setSize(graph.shadowMapW, graph.shadowMapH);
-			vsmParams.direction = cam.nv;
+			vsmParams.direction = cam.nv.clone().scaleBy(-1);
 			vsmParams.intensity = 0.5;
 		}
 	}

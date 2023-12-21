@@ -247,7 +247,7 @@ class VSMPipeNode extends MtPlNode implements MtPlNodeImpl {
     type = 'vsmShadow';
     macros = ['USE_VSM_SHADOW'];
 
-    param = new VSMUniformData();
+    private param = new VSMUniformData();
     /**
      * shadow material
      */
@@ -279,7 +279,12 @@ class VSMPipeNode extends MtPlNode implements MtPlNodeImpl {
     get intensity(): number {
         return this.param.intensity;
     }
-    //intensity
+    set direction(v3d: Vector3DataType) {
+        this.param.direction = v3d;
+    }
+	get direction(): Vector3DataType {
+        return this.param.direction;
+    }
     merge(ls: WGRBufferData[]): void {
         let end = ls.length - 1;
         this.addTo(ls, this.param, 0, end);

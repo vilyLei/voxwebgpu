@@ -31,14 +31,14 @@ class VSMUniformData extends MaterialUniformVec4ArrayData {
     //     vs[2] = shadowRadius;
 	// 	this.update();
     // }
-    set normalBias(intensity: number) {
-		let vs = this.data as Float32Array;
-        vs[1] = intensity;
-		this.update();
-    }
-	get normalBias(): number {
-		return (this.data as Float32Array)[1];
-	}
+    // set normalBias(intensity: number) {
+	// 	let vs = this.data as Float32Array;
+    //     vs[1] = intensity;
+	// 	this.update();
+    // }
+	// get normalBias(): number {
+	// 	return (this.data as Float32Array)[1];
+	// }
     set intensity(intensity: number) {
 		let vs = this.data as Float32Array;
         vs[3] = intensity;

@@ -35,7 +35,7 @@ export class MaterialPipelineFog {
 		let mtpl = rc.renderer.mtpl;
 
 		mtpl.light.data = createLocalLightsData([0, 300, 0], 600, 5.0);
-		mtpl.shadow.param.intensity = 0.7;
+		mtpl.shadow.intensity = 0.7;
 		mtpl.fog.fogColor.value = [0.3, 0.7, 0.2];
 
 		let position = [-230.0, 100.0, -200.0];
