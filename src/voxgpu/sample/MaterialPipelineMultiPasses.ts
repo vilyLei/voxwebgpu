@@ -1,8 +1,7 @@
 import MouseEvent from "../event/MouseEvent";
 import { RendererScene } from "../rscene/RendererScene";
 import { MouseInteraction } from "../ui/MouseInteraction";
-import { BaseMaterial } from "../material/BaseMaterial";
-import { SpecularEnvBrnTexture } from "../texture/SpecularEnvBrnTexture";
+import { BaseMaterial } from "../material/BaseMaterial";;
 import { WGTextureDataDescriptor } from "../texture/WGTextureDataDescriptor";
 import { SphereEntity } from "../entity/SphereEntity";
 import { TorusEntity } from "../entity/TorusEntity";
@@ -28,7 +27,6 @@ export class MaterialPipelineMultiPasses {
 		this.initEvent();
 	}
 
-	private hdrEnvtex = new SpecularEnvBrnTexture();
 	private createMaskTextures(ns: string, maskns = 'displacement_01.jpg'): WGTextureDataDescriptor[] {
 
 		const albedoTex = { albedo: { url: `static/assets/pbr/${ns}/albedo.jpg` } };
@@ -38,9 +36,9 @@ export class MaterialPipelineMultiPasses {
 		const metallicTex = { metallic: { url: `static/assets/pbr/${ns}/metallic.jpg` } };
 		// mask texture
 		const opacityTex = { opacity: { url: `static/assets/${maskns}` } };
-
+		let envTex = { specularEnv: {} };
 		let textures = [
-			this.hdrEnvtex,
+			envTex,
 			albedoTex,
 			normalTex,
 			aoTex,
@@ -55,8 +53,9 @@ export class MaterialPipelineMultiPasses {
 		const albedoTex = { albedo: { url: `static/assets/pbrtex/rough_plaster_broken_diff_1k.jpg` } };
 		const normalTex = { normal: { url: `static/assets/pbrtex/rough_plaster_broken_nor_1k.jpg` } };
 		const armTex = { arm: { url: `static/assets/pbrtex/rough_plaster_broken_arm_1k.jpg` } };
+		let envTex = { specularEnv: {} };
 		let textures = [
-			this.hdrEnvtex,
+			envTex,
 			albedoTex,
 			normalTex,
 			armTex
