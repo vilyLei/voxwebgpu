@@ -53,18 +53,20 @@ class RendererScene implements IRendererScene {
 			this.camera = renderer.camera;
 
 			let mtplDesc = config.mtpl;
-			let mtplEnabled = config.mtplEnabled === true;
-			if (mtplDesc) {
-				mtplEnabled = mtplEnabled || mtplDesc.enabled !== false;
+			if (!mtplDesc) {
+				mtplDesc = {};
 			}
-			if (mtplEnabled) {
+			mtplDesc.enabled = mtplDesc.enabled !== false || config.mtplEnabled === true;
+			let mtpl = renderer.mtpl;
+			mtpl.build(this, mtplDesc);
+			/*
+			if (mtplDesc.enabled === true) {
 
 				let mtpl = renderer.mtpl;
 				let shadow = mtpl.shadow;
 
-				if (mtplDesc && mtplDesc.vsm) {
-
-					let vsmDesc = mtplDesc.vsm;
+				let vsmDesc = mtplDesc.vsm;
+				if (vsmDesc) {
 
 					let mapW = 512;
 					let mapH = 512;
@@ -86,6 +88,7 @@ class RendererScene implements IRendererScene {
 				}
 				shadow.initialize(this);
 			}
+			//*/
 		}
 	}
 

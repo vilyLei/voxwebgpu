@@ -4,6 +4,8 @@ import { MtBuilder } from "./MtBuilder";
 import { MtPlNodePool } from "./MtPlNodePool";
 import { IWGMaterial } from "../IWGMaterial";
 import { FogPipeNode } from "./FogPipeNode";
+import { IRendererScene } from "../../rscene/IRendererScene";
+import { MtPlDescriptor } from "./MtPlDescriptor";
 
 /**
  * material pipeline
@@ -29,6 +31,42 @@ class MtPipeline {
             this.shadow = pool.getNodeByType(type) as VSMPipeNode;
             type = 'fogging';
             this.fog = pool.getNodeByType(type) as FogPipeNode;
+        }
+    }
+    build(rc: IRendererScene, mtplDesc?: MtPlDescriptor): void {
+        if(rc) {
+            if(!mtplDesc) mtplDesc = {};
+
+            // mtplDesc.enabled = mtplDesc.enabled !== false || config.mtplEnabled === true;
+
+			if (mtplDesc.enabled === true) {
+
+				let mtpl = this;
+				let shadow = mtpl.shadow;
+
+				let vsmDesc = mtplDesc.vsm;
+				if (vsmDesc) {
+
+					let mapW = 512;
+					let mapH = 512;
+					if (vsmDesc.radius !== undefined) {
+						shadow.radius = vsmDesc.radius;
+					}
+
+					if (vsmDesc.mapSize !== undefined) {
+						mapW = vsmDesc.mapSize;
+						mapH = mapW;
+					}
+					if (vsmDesc.mapWidth !== undefined) {
+						mapW = vsmDesc.mapWidth;
+					}
+					if (vsmDesc.mapHeight !== undefined) {
+						mapH = vsmDesc.mapHeight;
+					}
+					shadow.passGraph.setMapSize(mapW, mapH);
+				}
+				shadow.initialize(rc);
+			}
         }
     }
     testRMaterials(ms: IWGMaterial[]): boolean {
