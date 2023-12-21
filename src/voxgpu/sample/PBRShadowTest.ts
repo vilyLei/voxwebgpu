@@ -361,10 +361,9 @@ export class PBRShadowTest {
 		if(shadowReceived) {
 			property.shadowMatrix.shadowMatrix = this.mShadowTransMat;
 			let vsmParams = property.vsmParams;
-			vsmParams.radius = graph.shadowRadius;
 			vsmParams.bias = graph.shadowBias;
-			vsmParams.setSize(graph.shadowMapW, graph.shadowMapH);
-			vsmParams.direction = cam.nv;
+			// vsmParams.setSize(graph.shadowMapW, graph.shadowMapH);
+			vsmParams.direction = cam.nv.clone().scaleBy(-1);
 			vsmParams.intensity = 0.5;
 		}
 	}

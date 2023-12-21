@@ -28,7 +28,7 @@ fn VSMShadow(uv: vec2<f32>, compare: f32) -> f32 {
     }
     return occlusion;
 }
-fn getVSMShadow(shadowBias: f32, shadowRadius: f32, shadowCoordP: vec4<f32>) -> f32 {
+fn getVSMShadow(shadowBias: f32, shadowCoordP: vec4<f32>) -> f32 {
 
     var shadowCoord = vec4<f32>(shadowCoordP.xyz / vec3<f32>(shadowCoordP.w), shadowCoordP.z + shadowBias);
 
@@ -45,7 +45,7 @@ fn getVSMShadow(shadowBias: f32, shadowRadius: f32, shadowCoordP: vec4<f32>) -> 
 
 fn getVSMShadowFactor(worldNormal: vec3<f32>, svPos: vec4<f32>) -> f32 {
 
-    var shadow = clamp(getVSMShadow(vsmParams[0].x, vsmParams[0].z, svPos), 0.0, 1.0);
+    var shadow = clamp(getVSMShadow(vsmParams[0].x, svPos), 0.0, 1.0);
     var f = clamp(dot(worldNormal, normalize(vsmParams[2].xyz)), 0.001, 1.0);
     if f > 0.0001 {
         shadow = min(shadow, clamp(f, 0.0, 1.0));

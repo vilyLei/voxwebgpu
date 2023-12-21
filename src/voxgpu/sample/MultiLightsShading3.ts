@@ -129,8 +129,8 @@ export class MultiLightsShading3 {
 		this.mLightData = this.createLightData();
 
 		mtpl.light.lightData = this.mLightData;
-		mtpl.shadow.param.intensity = 0.4;
-		mtpl.shadow.param.radius = 4;
+		mtpl.shadow.intensity = 0.4;
+		mtpl.shadow.radius = 4;
 
 		let position = [-30, 220, -50];
 		let materials = this.createMaterials(true);

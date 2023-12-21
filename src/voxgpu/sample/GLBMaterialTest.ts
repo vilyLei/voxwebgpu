@@ -138,8 +138,8 @@ export class GLBMaterialTest {
 
 		this.createBillboards();
 		mtpl.light.lightData = this.mLightData;
-		mtpl.shadow.param.intensity = 0.4;
-		mtpl.shadow.param.radius = 4;
+		mtpl.shadow.intensity = 0.4;
+		mtpl.shadow.radius = 1;
 
 		this.mTexType = 1;
 		let position = [0, 0, 0];

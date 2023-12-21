@@ -19,6 +19,7 @@ class ShadowPassGraph extends WGRPassNodeGraph {
 
     private entities: Entity3D[] = [];
     private mDepthMaterials: WGMaterial[];
+    private mOccMaterials: ShadowOccBlurMaterial[];
     material = new WGMaterial();
     shadowDepthRTT = { uuid: "rtt-shadow-depth", rttTexture: {}, shdVarName: 'shadowData' };
     depAttachment: WGRPassColorAttachment = {
@@ -34,10 +35,10 @@ class ShadowPassGraph extends WGRPassNodeGraph {
     occVEntity: FixScreenPlaneEntity;
     occHEntity: FixScreenPlaneEntity;
 
+    private mRadius = 1;
+    private mMapWidth = 512;
+    private mMapHeight = 512;
     bias = -0.0005;
-    radius = 1;
-    mapWidth = 512;
-    mapHeight = 512;
     viewWidth = 1300;
     viewHeight = 1300;
 
@@ -48,6 +49,30 @@ class ShadowPassGraph extends WGRPassNodeGraph {
         super();
         this.mVSMParam = vsmData;
         this.mMatrixData = matrixData;
+    }
+    setMapSize(w: number, h: number) {
+        this.mMapWidth = w;
+        this.mMapHeight = h;
+        if(this.mOccMaterials.length > 0) {
+            let ms = this.mOccMaterials;
+            for(let i = 0; i < ms.length; ++i) {
+                let ppt = ms[i].property;
+                ppt.setViewSize(this.mMapWidth, this.mMapHeight);
+            }
+        }
+    }
+    set radius(r: number) {
+        this.mRadius = r;
+        if(this.mOccMaterials.length > 0) {
+            let ms = this.mOccMaterials;
+            for(let i = 0; i < ms.length; ++i) {
+                let ppt = ms[i].property;
+                ppt.setShadowRadius(this.radius);
+            }
+        }
+    }
+    get radius(): number {
+        return this.mRadius;
     }
     get texture(): WGTextureWrapper {
         let ls = this.material.textures;
@@ -137,7 +162,7 @@ class ShadowPassGraph extends WGRPassNodeGraph {
         // create a separate rtt rendering pass
         let multisampled = false;
         let pass = rc.createRTTPass({
-            viewport: [0,0, this.mapWidth, this.mapHeight],
+            viewport: [0,0, this.mMapWidth, this.mMapHeight],
             colorAttachments,
             multisampled
         });
@@ -162,18 +187,21 @@ class ShadowPassGraph extends WGRPassNodeGraph {
         let extent = [-1, -1, 2, 2];
 
         let material = new ShadowOccBlurMaterial();
+        this.mOccMaterials = [material];
         let ppt = material.property;
         ppt.setShadowRadius(this.radius);
-        ppt.setViewSize(this.mapWidth, this.mapHeight);
+        ppt.setViewSize(this.mMapWidth, this.mMapHeight);
         material.addTextures([this.shadowDepthRTT]);
         this.occVEntity = new FixScreenPlaneEntity({ extent, materials: [material] });
         this.occVEntity.visible = false;
         pass.addEntity(this.occVEntity);
 
         material = new ShadowOccBlurMaterial();
+        this.mOccMaterials.push(material);
+
         ppt = material.property;
         ppt.setShadowRadius(this.radius);
-        ppt.setViewSize(this.mapWidth, this.mapHeight);
+        ppt.setViewSize(this.mMapWidth, this.mMapHeight);
         ppt.toHorizonal();
         material.addTextures([this.occVRTT]);
         this.occHEntity = new FixScreenPlaneEntity({ extent, materials: [material] });
@@ -239,6 +267,19 @@ class VSMPipeNode extends MtPlNode implements MtPlNodeImpl {
     get texture(): WGTextureWrapper {
         return this.passGraph.texture;
     }
+    set radius(r: number) {
+        this.passGraph.radius = r;
+    }
+    get radius(): number {
+        return this.passGraph.radius;
+    }
+    set intensity(v: number) {
+        this.param.intensity = v;
+    }
+    get intensity(): number {
+        return this.param.intensity;
+    }
+    //intensity
     merge(ls: WGRBufferData[]): void {
         let end = ls.length - 1;
         this.addTo(ls, this.param, 0, end);

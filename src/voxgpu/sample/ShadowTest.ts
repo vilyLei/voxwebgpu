@@ -445,9 +445,8 @@ let position = new Vector3(0, -1, 0);
 		if(shadowReceived) {
 			property.shadowMatrix.shadowMatrix = this.mShadowTransMat;
 			let vsmParams = property.vsmParams;
-			vsmParams.radius = graph.shadowRadius;
 			vsmParams.bias = graph.shadowBias;
-			vsmParams.setSize(graph.shadowMapW, graph.shadowMapH);
+			// vsmParams.setSize(graph.shadowMapW, graph.shadowMapH);
 			vsmParams.direction = cam.nv;
 			vsmParams.intensity = 0.5;
 		}

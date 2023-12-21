@@ -49,8 +49,8 @@ class DataDrivenRScene {
 				let lightData = parseLightData(sceneData.light);
 				console.log("lightData: ", lightData);
 				mtpl.light.lightData = lightData;
-				mtpl.shadow.param.intensity = 0.4;
-				mtpl.shadow.param.radius = 4;
+				mtpl.shadow.intensity = 0.4;
+				mtpl.shadow.radius = 4;
 				if(sceneData.fog) {
 					let fogData = sceneData.fog;
 					mtpl.fog.fogColor.value = fogData.color;

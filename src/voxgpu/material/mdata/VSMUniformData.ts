@@ -10,7 +10,7 @@ class VSMUniformData extends MaterialUniformVec4ArrayData {
 		if(!data) {
 			this.data = new Float32Array([
 				-0.0001             // shadowBias
-				, 0               // shadowNormalBias
+				, 0               	// shadowNormalBias
 				, 4                 // shadowRadius
 				, 0.7               // shadow intensity
 		
@@ -24,13 +24,13 @@ class VSMUniformData extends MaterialUniformVec4ArrayData {
 		}
 		this.shared = true;
 	}
-    setParam(shadowBias: number, shadowNormalBias: number, shadowRadius: number): void {
-		let vs = this.data as Float32Array;
-        vs[0] = shadowBias;
-        vs[1] = shadowNormalBias;
-        vs[2] = shadowRadius;
-		this.update();
-    }
+    // setParam(shadowBias: number, shadowNormalBias: number, shadowRadius: number): void {
+	// 	let vs = this.data as Float32Array;
+    //     vs[0] = shadowBias;
+    //     vs[1] = shadowNormalBias;
+    //     vs[2] = shadowRadius;
+	// 	this.update();
+    // }
     set normalBias(intensity: number) {
 		let vs = this.data as Float32Array;
         vs[1] = intensity;
@@ -47,14 +47,14 @@ class VSMUniformData extends MaterialUniformVec4ArrayData {
 	get intensity(): number {
 		return (this.data as Float32Array)[3];
 	}
-    set radius(radius: number) {
-		let vs = this.data as Float32Array;
-        vs[2] = radius;
-		this.update();
-    }
-	get radius(): number {
-		return (this.data as Float32Array)[2];
-	}
+    // set radius(radius: number) {
+	// 	let vs = this.data as Float32Array;
+    //     vs[2] = radius;
+	// 	this.update();
+    // }
+	// get radius(): number {
+	// 	return (this.data as Float32Array)[2];
+	// }
     set bias(bias: number)  {
 		let vs = this.data as Float32Array;
         vs[0] = bias;
@@ -62,12 +62,12 @@ class VSMUniformData extends MaterialUniformVec4ArrayData {
 	get bias(): number {
 		return (this.data as Float32Array)[0];
 	}
-    setSize(width: number, height: number): void {
-		let vs = this.data as Float32Array;
-        vs[4] = width;
-        vs[5] = height;
-		this.update();
-    }
+    // setSize(width: number, height: number): void {
+	// 	let vs = this.data as Float32Array;
+    //     vs[4] = width;
+    //     vs[5] = height;
+	// 	this.update();
+    // }
     set direction(v3d: Vector3DataType) {
 		let v3 = new Vector3().setVector3(v3d);
 		let vs = this.data as Float32Array;
