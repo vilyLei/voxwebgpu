@@ -173,8 +173,10 @@
 			]
 		},
 		"shadow": {
+			"type": "vsm",
 			"intensity": 0.4,
-			"radius": 4
+			"radius": 4,
+			"mapSize": 128
 		},
 		"fog": {
 			"color": [
@@ -205,8 +207,7 @@
 				{
 					"type": "default",
 					"lighting": true,
-					"shadow": false,
-					"shadowReceived": true,
+					"shadow": true,
 					"fogging": true,
 					"arms": [
 						1,
@@ -243,7 +244,6 @@
 					"type": "default",
 					"lighting": true,
 					"shadow": true,
-					"shadowReceived": true,
 					"fogging": true,
 					"arms": [
 						1,
@@ -289,7 +289,6 @@
 					"type": "default",
 					"lighting": true,
 					"shadow": true,
-					"shadowReceived": true,
 					"fogging": true,
 					"arms": [
 						1,
@@ -329,7 +328,6 @@
 					"type": "default",
 					"lighting": true,
 					"shadow": true,
-					"shadowReceived": true,
 					"fogging": true,
 					"arms": [
 						1,
@@ -376,7 +374,6 @@
 					"type": "default",
 					"lighting": true,
 					"shadow": true,
-					"shadowReceived": true,
 					"fogging": true,
 					"arms": [
 						1,
