@@ -24,8 +24,8 @@ export class GLBMaterialTest {
 	initSys(): void {
 
 		this.mRscene.initialize({
-			canvasWith: 512,
-			canvasHeight: 512,
+			canvasWith: 768,
+			canvasHeight: 1024,
 			mtplEnabled: true,
 			rpassparam:
 			{
@@ -153,7 +153,7 @@ export class GLBMaterialTest {
 		
 		this.mTexType = 0;
 		position = [0, 0, 0];
-		materials = this.createMaterials(true);
+		materials = this.createMaterials(true, true, "back",[3,3]);
 		let plane = new PlaneEntity({
 			axisType: 1,
 			materials,
@@ -165,6 +165,25 @@ export class GLBMaterialTest {
 
 	}
 	
+	private createTextures(ns: string): WGTextureDataDescriptor[] {
+		const albedoTex = { albedo: { url: `static/assets/pbr/${ns}/albedo.jpg` } };
+		const normalTex = { normal: { url: `static/assets/pbr/${ns}/normal.jpg` } };
+		const aoTex = { ao: { url: `static/assets/pbr/${ns}/ao.jpg` } };
+		const roughnessTex = { roughness: { url: `static/assets/pbr/${ns}/roughness.jpg` } };
+		const metallicTex = { metallic: { url: `static/assets/pbr/${ns}/metallic.jpg` } };
+		// const emissiveTex = { emissive: { url: `static/assets/color_07.jpg` } };
+		let envTex = { specularEnv: {} };
+		let textures = [
+			envTex,
+			albedoTex,
+			normalTex,
+			aoTex,
+			roughnessTex,
+			metallicTex,
+			// emissiveTex
+		] as WGTextureDataDescriptor[];
+		return textures;
+	}
 	private createArmTextures2(): WGTextureDataDescriptor[] {
 		
 		let flipY = true;
@@ -201,7 +220,7 @@ export class GLBMaterialTest {
 	private mTexType = 0;
 	private createMaterials(shadowReceived = false, shadow = true, faceCullMode = 'back', uvParam?: number[]): BaseMaterial[] {
 
-		let textures0 = this.mTexType < 1 ? this.createArmTextures() : this.createArmTextures2();
+		let textures0 = this.mTexType < 1 ? this.createTextures("wall") : this.createArmTextures2();
 
 		let material0 = this.createMaterial(textures0, ["solid"], 'less', faceCullMode);
 		this.applyMaterialPPt(material0, shadowReceived, shadow);
