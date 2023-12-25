@@ -169,7 +169,7 @@ export class MultiLightsShading3 {
 		}
 
 		position = [0, 0, 0];
-		materials = this.createMaterials(true, false, 'back');
+		materials = this.createMaterials(true);
 		let plane = new PlaneEntity({
 			axisType: 1,
 			materials,
@@ -219,7 +219,7 @@ export class MultiLightsShading3 {
 		ppt.albedo.value = this.getRandomColor(1.0);
 		ppt.arms.roughness = Math.random() * 0.95 + 0.05;
 		ppt.arms.metallic = 0.2;
-		ppt.armsBase.value = [0, 0.0, 0];
+		ppt.armsBase.value = [0, 0.2, 0];
 		ppt.specularFactor.value = [0.1, 0.1, 0.1];
 
 		ppt.shadow = shadow;

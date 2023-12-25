@@ -24,8 +24,8 @@ export class GLBMaterialTest {
 	initSys(): void {
 
 		this.mRscene.initialize({
-			canvasWith: 768,
-			canvasHeight: 1024,
+			canvasWith: 512,
+			canvasHeight: 512,
 			mtplEnabled: true,
 			rpassparam:
 			{
@@ -153,7 +153,7 @@ export class GLBMaterialTest {
 		
 		this.mTexType = 0;
 		position = [0, 0, 0];
-		materials = this.createMaterials(true, true, "back",[3,3]);
+		materials = this.createMaterials2(true, true, "back",[6,6]);
 		let plane = new PlaneEntity({
 			axisType: 1,
 			materials,
@@ -166,56 +166,37 @@ export class GLBMaterialTest {
 	}
 	
 	private createTextures(ns: string): WGTextureDataDescriptor[] {
-		const albedoTex = { albedo: { url: `static/assets/pbr/${ns}/albedo.jpg` } };
-		const normalTex = { normal: { url: `static/assets/pbr/${ns}/normal.jpg` } };
-		const aoTex = { ao: { url: `static/assets/pbr/${ns}/ao.jpg` } };
-		const roughnessTex = { roughness: { url: `static/assets/pbr/${ns}/roughness.jpg` } };
-		const metallicTex = { metallic: { url: `static/assets/pbr/${ns}/metallic.jpg` } };
-		const parallaxTex = { parallax: { url: `static/assets/pbr/${ns}/parallax.jpg` } };
-		// const emissiveTex = { emissive: { url: `static/assets/color_07.jpg` } };
-		let envTex = { specularEnv: {} };
-		let textures = [
-			envTex,
-			albedoTex,
-			normalTex,
-			aoTex,
-			roughnessTex,
-			metallicTex,
-			parallaxTex
-		] as WGTextureDataDescriptor[];
-		return textures;
+		return [
+			{ specularEnv: {} },
+			{ albedo: { url: `static/assets/pbr/${ns}/albedo.jpg` } },
+			{ normal: { url: `static/assets/pbr/${ns}/normal.jpg` } },
+			{ ao: { url: `static/assets/pbr/${ns}/ao.jpg` } },
+			{ roughness: { url: `static/assets/pbr/${ns}/roughness.jpg` } },
+			{ metallic: { url: `static/assets/pbr/${ns}/metallic.jpg` } },
+			{ parallax: { url: `static/assets/pbr/${ns}/parallax.jpg` } }
+		];
 	}
 	private createArmTextures2(): WGTextureDataDescriptor[] {
 		
 		let flipY = true;
-		const albedoTex = { albedo: { url: `static/assets/glb/portal/portal_img2.jpg`, flipY } };
-		const normalTex = { normal: { url: `static/assets/glb/portal/portal_img3.jpg`, flipY } };
-		const armTex = { arm: { url: `static/assets/glb/portal/portal_img1.jpg`, flipY } };
-		const emissive = { emissive: { url: `static/assets/glb/portal/portal_img0.jpg`, flipY } };
-		let envTex = { specularEnv: {} };
-		let textures = [
-			envTex,
-			albedoTex,
-			normalTex,
-			armTex,
-			emissive
-		] as WGTextureDataDescriptor[];
-		return textures;
+		return [
+			{ specularEnv: {} },
+			{ albedo: { url: `static/assets/glb/portal/portal_img2.jpg`, flipY } },
+			{ normal: { url: `static/assets/glb/portal/portal_img3.jpg`, flipY } },
+			{ arm: { url: `static/assets/glb/portal/portal_img1.jpg`, flipY } },
+			{ emissive: { url: `static/assets/glb/portal/portal_img0.jpg`, flipY } }
+		];
 	}
-	private createArmTextures(): WGTextureDataDescriptor[] {
+	private createArmTextures1(): WGTextureDataDescriptor[] {
 		let flipY = false;
-		const albedoTex = { albedo: { url: `static/assets/pbrtex/rough_plaster_broken_diff_1k.jpg`, flipY } } as WGTextureDataDescriptor;
-		const normalTex = { normal: { url: `static/assets/pbrtex/rough_plaster_broken_nor_1k.jpg`, flipY } };
-		const armTex = { arm: { url: `static/assets/pbrtex/rough_plaster_broken_arm_1k.jpg`, flipY } };
-		const parallaxTex = { parallax: { url: `static/assets/pbrtex/rough_plaster_broken_disp_1k.jpg`, flipY } };
-		let envTex = { specularEnv: {} };
 		let textures = [
-			envTex,
-			albedoTex,
-			normalTex,
-			armTex,
-			parallaxTex
-		] as WGTextureDataDescriptor[];
+			{ specularEnv: {} },
+			{ albedo: { url: `static/assets/pbrtex/medieval_blocks_02_diff_1k.jpg`, flipY } },
+			{ normal: { url: `static/assets/pbrtex/medieval_blocks_02_nor_1k.jpg`, flipY } },
+			{ arm: { url: `static/assets/pbrtex/medieval_blocks_02_arm_1k.jpg`, flipY } },
+			{ parallax: { url: `static/assets/pbrtex/medieval_blocks_02_disp_1k.jpg`, flipY } },
+			{ opacity: { url: `static/assets/metal_02.jpg` } }
+		];
 		return textures;
 	}
 	private mTexType = 0;
@@ -233,11 +214,37 @@ export class GLBMaterialTest {
 		}
 		return list;
 	}
+	
+	private createMaterials2(shadowReceived = false, shadow = true, faceCullMode = 'back', uvParam?: number[]): BaseMaterial[] {
+
+		let textures0 = this.createTextures("wall");
+		let textures1 = this.createArmTextures1();
+
+		let material0 = this.createMaterial(textures0, ["solid"], 'less', faceCullMode);
+		this.applyMaterialPPt(material0, shadowReceived, shadow);
+
+		let material1 = this.createMaterial(textures1, ["transparent"], 'less-equal', faceCullMode);
+		material1.property.inverseMask = false;
+		this.applyMaterialPPt(material1, shadowReceived, shadow);
+		let list = [material0, material1];
+		if (uvParam) {
+			for (let i = 0; i < list.length; ++i) {
+				list[i].property.uvParam.value = uvParam;
+			}
+		}
+		let cvs = this.getRandomColor(1.0) as number[];
+		cvs[0] = cvs[0] * 0.7 + 0.3;
+		cvs[1] = cvs[1] * 0.7 + 0.3;
+		cvs[2] = cvs[2] * 0.7 + 0.3;
+		material1.property.albedo.value = cvs;
+		material1.property.uvParam.value = [2,2];
+		return list;
+	}
 
 	private applyMaterialPPt(material: BaseMaterial, shadowReceived = false, shadow = true): void {
 		let ppt = material.property;
 		ppt.ambient.value = [0.2, 0.2, 0.2];
-		let cvs = this.getRandomColor(1.0) as number[];// * 0.7;
+		let cvs = this.getRandomColor(1.0) as number[];
 		cvs[0] = cvs[0] * 0.3 + 0.7;
 		cvs[1] = cvs[1] * 0.3 + 0.7;
 		cvs[2] = cvs[2] * 0.3 + 0.7;
