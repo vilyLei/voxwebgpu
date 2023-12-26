@@ -40,13 +40,15 @@ interface GPUDevice {
 	createBindGroupLayout(descriptor: GPUBindGroupLayoutDescriptor): GPUBindGroupLayout;
 	createPipelineLayout(descriptor: GPUPipelineLayoutDescriptor): GPUPipelineLayout;
 	createRenderPipeline(descriptor: GPURenderPipelineDescriptor): GPURenderPipeline;
+	createRenderPipelineAsync(descriptor: GPURenderPipelineDescriptor): Promise<GPURenderPipeline>;
 	createComputePipeline(descriptor: GPUComputePipelineDescriptor): GPUComputePipeline;
+	createComputePipelineAsync(descriptor: GPUComputePipelineDescriptor): Promise<GPUComputePipeline>;
 
 	createSampler(descriptor: GPUSamplerDescriptor): GPUSampler
 
 	createRenderBundleEncoder(): GPURenderBundleEncoder;
 	createQuerySet(descriptor: GPUQuerySetDescriptor): GPUQuerySet;
-	createCommandEncoder(descriptor?:{label?:string}): GPUCommandEncoder;
+	createCommandEncoder(descriptor?: { label?: string }): GPUCommandEncoder;
 	destroy(): void;
 }
 export { GPUDevice };

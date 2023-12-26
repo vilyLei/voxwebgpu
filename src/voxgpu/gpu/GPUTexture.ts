@@ -8,7 +8,7 @@ interface GPUTexture {
 
 	depthOrArrayLayers: number;
 	/**
-	 * "1d", "2d", "3d"
+	 * Possible values are: "1d", "2d", "3d"
 	 */
 	dimension: string;
 	/**
