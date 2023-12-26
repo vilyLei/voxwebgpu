@@ -100,7 +100,9 @@
 
 // import { MultiLightsTest as Demo } from "./voxgpu/sample/MultiLightsTest";
 
-import { GLBMaterialTest as Demo } from "./voxgpu/sample/GLBMaterialTest";
+// import { GLBMaterialTest as Demo } from "./voxgpu/sample/GLBMaterialTest";
+
+import { VertexUpdateTest as Demo } from "./voxgpu/sample/VertexUpdateTest";
 
 
 
