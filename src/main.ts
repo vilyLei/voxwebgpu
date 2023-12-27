@@ -3,6 +3,8 @@
 //////////////////////////////////////////////////////////////////////////////////////////
 
 // import { VertColorTriangle as Demo } from "./voxgpu/sample/VertColorTriangle";
+import { VertColorRect as Demo } from "./voxgpu/sample/VertColorRect";
+
 // import { VertColorCube as Demo } from "./voxgpu/sample/VertColorCube";
 // import { VertEntityTest as Demo } from "./voxgpu/sample/VertEntityTest";
 
@@ -102,7 +104,7 @@
 
 // import { GLBMaterialTest as Demo } from "./voxgpu/sample/GLBMaterialTest";
 
-import { VertexUpdateTest as Demo } from "./voxgpu/sample/VertexUpdateTest";
+// import { VertexUpdateTest as Demo } from "./voxgpu/sample/VertexUpdateTest";
 
 
 
