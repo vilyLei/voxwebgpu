@@ -5,6 +5,15 @@ import { WGRenderer } from "../rscene/WGRenderer";
 import Color4 from "../material/Color4";
 
 const vertWGSL =`
+const PI = 3.14159265359;
+const factor = 0.25 / 255.0;
+const c = 43758.5453;
+const uvFactor = vec2<f32>( 12.9898 ,78.233 );
+fn randUV( uv: vec2<f32> ) -> f32{
+    let dt = dot( uv.xy, uvFactor );
+    let sn = modf( dt / PI ).fract;
+    return fract(sin(sn) * c);
+}
 struct VSOut {
     @builtin(position) Position: vec4f,
     @location(0) color: vec3f,
