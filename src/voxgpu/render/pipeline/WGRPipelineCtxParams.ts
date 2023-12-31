@@ -41,7 +41,9 @@ interface WGRPipelineParamType {
 	depthStencil?: GPUDepthStencilState;
 }
 class WGRPipelineCtxParams implements GPURenderPipelineDescriptor {
+
 	label?: string;
+	async?: boolean;
 	buildDeferred = true;
 	sampleCount = 1;
 	multisampled = false;

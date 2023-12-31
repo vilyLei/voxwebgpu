@@ -42,7 +42,10 @@ interface IWGMaterial extends WGMaterialDescripter {
 	instanceCount: number;
 
 	addTextureWithDatas(datas: WGImageTextureData[], shdVarNames?: string[]): void;
-
+	/**
+	 * @returns render pipeline enabled true or false
+	 */
+	isRPEnabled(): boolean;
 	isREnabled(): boolean;
 	getRCtx(): WGRPipelineContextImpl;
 	setDescriptor(descriptor: WGMaterialDescripter): void;

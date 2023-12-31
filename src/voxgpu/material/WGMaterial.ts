@@ -135,6 +135,12 @@ class WGMaterial implements IWGMaterial {
 		this.mREnabled = true;
 		return this.mREnabled;
 	}
+	/**
+	 * @returns render pipeline enabled true or false
+	 */
+	isRPEnabled(): boolean {
+		return this.mRCtx !== undefined && this.mRCtx.isEnabled();
+	}
 	getRCtx(): WGRPipelineContextImpl {
 		return this.mRCtx;
 	}

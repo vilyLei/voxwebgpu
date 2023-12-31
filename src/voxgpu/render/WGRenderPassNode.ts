@@ -190,7 +190,8 @@ class WGRenderPassNode implements IWGRenderPassNode {
 		return this.createRenderPipeline(pipeParams, pipelineVtxParam);
 	}
 	createRenderPipeline(pipelineParams: WGRPipelineCtxParams, vtxDesc: VtxPipelinDescParam): WGRPipelineContext {
-		const pipelineCtx = new WGRPipelineContext(this.mWGCtx);
+		
+		const pipelineCtx = new WGRPipelineContext(this.mWGCtx, pipelineParams.async === true);
 		this.pipelineCtxs.push(pipelineCtx);
 
 		if (this.mDrawing) {

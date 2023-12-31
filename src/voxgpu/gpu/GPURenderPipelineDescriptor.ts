@@ -7,7 +7,7 @@ import { GPUMultisampleObject } from "./GPUMultisampleObject";
 
 interface GPURenderPipelineDescriptor {
 	label?: string;
-
+	async?: boolean;
 	layout: GPUPipelineLayout | string;
 	vertex?: GPUVertexState;
 	fragment?: GPUFragmentState;

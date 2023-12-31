@@ -22,7 +22,7 @@ class WGRPipelineContext implements WGRPipelineContextImpl {
 	private mWGCtx: WebGPUContext;
 	private mPipelineParams: WGRPipelineCtxParams;
 	private mShader = new WGRPipelineShader();
-
+	private mPipelineAsync = false;
 	bindGroupCtx = new WGRBindGroupContext();
 	type = "render";
 	rpass: WGRendererPassImpl;
@@ -35,12 +35,14 @@ class WGRPipelineContext implements WGRPipelineContextImpl {
 	name = "PipelineContext";
 	readonly uniformCtx = new WGRUniformContext(false);
 
-	constructor(wgCtx?: WebGPUContext) {
-		// console.log("WGRPipelineContext::constructor() ...");
+	constructor(wgCtx?: WebGPUContext, pipelineAsync = false) {
+		console.log("WGRPipelineContext::constructor() ..., uid: ", this.mUid);
+		this.mPipelineAsync = pipelineAsync;
 		if (wgCtx) {
 			this.initialize(wgCtx);
 		}
 	}
+
 	private init(): void {
 		if (this.mInit) {
 			this.mInit = false;
@@ -76,22 +78,36 @@ class WGRPipelineContext implements WGRPipelineContextImpl {
 					};
 					// console.log("GPUShaderStage.COMPUTE: ", GPUShaderStage.COMPUTE);
 					console.log("WGRPipelineContext::init(), create compute pieline desc: ", desc);
-					this.comppipeline = ctx.device.createComputePipeline(desc);
+
 					this.type = "compute";
-					this.bindGroupCtx.comppipeline = this.comppipeline;
+					if (this.mPipelineAsync) {
+						ctx.device.createComputePipelineAsync(desc).then(resolve => {
+							this.comppipeline = resolve;
+							this.bindGroupCtx.comppipeline = this.comppipeline;
+						});
+					} else {
+						this.comppipeline = ctx.device.createComputePipeline(desc);
+						this.bindGroupCtx.comppipeline = this.comppipeline;
+					}
 				} else {
 					p.layout = pipeGLayout;
 					p.label = this.shadinguuid + "-pl-" + this.mUid;
 					console.log("WGRPipelineContext::init(), create rendering pieline desc: ", p);
-					// this.pipeline = ctx.device.createRenderPipeline(p);
-					// this.bindGroupCtx.pipeline = this.pipeline;
-					ctx.device.createRenderPipelineAsync(p).then(resolve => {
+					if (this.mPipelineAsync) {
+						ctx.device.createRenderPipelineAsync(p).then(resolve => {
+							this.pipeline = resolve;
+							this.bindGroupCtx.pipeline = this.pipeline;
+						});
+					} else {
 						this.pipeline = ctx.device.createRenderPipeline(p);
 						this.bindGroupCtx.pipeline = this.pipeline;
-					});
+					}
 				}
 			}
 		}
+	}
+	isEnabled(): boolean {
+		return this.pipeline !== undefined || this.pipeline !== undefined;
 	}
 	destroy(): void {
 		if (this.mWGCtx) {

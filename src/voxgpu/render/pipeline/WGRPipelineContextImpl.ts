@@ -29,6 +29,7 @@ interface WGRPipelineContextImpl {
 	rpass: WGRendererPassImpl;
 	pipeline?: GPURenderPipeline;
 	comppipeline?: GPUComputePipeline;
+	isEnabled(): boolean;
 	readonly uniformCtx: IWGRUniformContext;
 
 	destroy(): void;
