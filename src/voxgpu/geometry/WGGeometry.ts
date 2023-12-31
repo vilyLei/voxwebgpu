@@ -92,8 +92,6 @@ type WGRPrimitiveDict = {default?: WGRPrimitive, wireframe?: WGRPrimitive};
 class WGGeometry {
 	name = "WGGeometry";
 	
-	// readonly descParam: VtxPipelinDescParam = { vertex: { buffers: [] as GPUBuffer[], attributeIndicesArray: [] as number[][] } };
-	
 	dynamic = false;
 	attributes: WGGeomAttributeBlock[];
 	gpuvbufs?: GPUBuffer[];

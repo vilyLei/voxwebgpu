@@ -29,7 +29,6 @@ class WGRPrimitive implements WGRPrimitiveImpl {
 			let wgctx = this.wgctx;
 			for (let i = 0, ln = bs.length; i < ln; ++i) {
 				if(vvs[i] != vds[i].dataVer) {
-					console.log("WGRPrimitive::run(), >>> >>>");
 					vvs[i] = vds[i].dataVer;
 					wgctx.buffer.updateBuffer(bs[i], vds[i].data);
 				}

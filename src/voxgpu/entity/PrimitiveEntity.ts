@@ -1,5 +1,5 @@
 import { checkEntityMaterialsInfo, Entity3DParam, getUniformValueFromParam, Entity3D } from "./Entity3D";
-import { checkMaterialRPasses, WGMaterial } from "../material/WGMaterial";
+import { WGMaterial } from "../material/WGMaterial";
 import { WGRUniformValue } from "../render/uniform/WGRUniformValue";
 import { WGRBufferData } from "../render/buffer/WGRBufferData";
 import Color4 from "../material/Color4";
@@ -53,14 +53,10 @@ class PrimitiveEntity extends Entity3D {
 		return this.mColor;
 	}
 	setAlbedo(c: ColorDataType): PrimitiveEntity {
-		// console.log("c: ", c);
-		// console.log("this.albedoV: ", this.albedoV);
 		if (this.albedoV) {
 			if (c) {
 				this.mColor.setColor(c).toArray4(this.albedoV.data as Float32Array);
-				// console.log("this.mColor: ", this.mColor);
 				this.albedoV.version++;
-				// console.log("this.albedoV.data: ", this.albedoV.data);
 			}
 		}
 		return this;
