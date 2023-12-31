@@ -7,6 +7,7 @@ interface WGRPrimitiveImpl {
 	dynamic: boolean;
 	vdatas: WGRAttribData[];
 	vbufs: GPUBuffer[];
+	vbvers: number[];
 	ibuf: GPUBuffer;
 	indexCount: number;
 

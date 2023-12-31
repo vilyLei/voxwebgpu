@@ -100,6 +100,7 @@ class PrimitiveEntity extends Entity3D {
 					.addAttribute({ uv: geom.getUVS() })
 					.addAttribute({ normal: geom.getNVS() })
 					.setIndices(geom.getIVS());
+				g.dynamic = param.geometryDynamic === true;
 				g.bounds = geom.bounds;
 				g.drawMode = geom.drawMode;
 				g.geometryData = geom;

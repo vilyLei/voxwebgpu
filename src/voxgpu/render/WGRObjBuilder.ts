@@ -16,8 +16,9 @@ import { WGRPrimitiveDict, WGGeometry } from "../geometry/WGGeometry";
 import { WGRDrawMode } from "./Define";
 import { WGMaterial } from "../material/WGMaterial";
 import { MtPipeline } from "../material/pipeline/MtPipeline";
+import { WGRAttribData } from "./buffer/WGRAttribData";
 
-type GeomType = { indexBuffer?: GPUBuffer, vertexBuffers: GPUBuffer[], indexCount?: number, vertexCount?: number, drawMode?: WGRDrawMode };
+type GeomType = { dynamic?: boolean, vdatas: WGRAttribData[], indexBuffer?: GPUBuffer, vertexBuffers: GPUBuffer[], indexCount?: number, vertexCount?: number, drawMode?: WGRDrawMode };
 
 class WGRObjBuilder {
 
@@ -32,6 +33,8 @@ class WGRObjBuilder {
 	createPrimitive(geomParam?: GeomType): WGRPrimitive {
 		// console.log('XXXXXX createPrimitive() ...');
 		const g = new WGRPrimitive();
+		g.dynamic = geomParam.dynamic === true;
+		g.vdatas = geomParam.vdatas;
 		g.ibuf = geomParam.indexBuffer;
 		g.vbufs = geomParam.vertexBuffers;
 		if (geomParam.indexCount !== undefined) {
@@ -43,6 +46,7 @@ class WGRObjBuilder {
 		if (geomParam.drawMode !== undefined) {
 			g.drawMode = geomParam.drawMode;
 		}
+		g.update();
 		return g;
 	}
 
@@ -66,6 +70,8 @@ class WGRObjBuilder {
 			const vertexCount = vertexBuffers[0].vectorCount;
 			const gibuf = geometry.indexBuffer;
 			let drawMode = geometry.drawMode;
+			let vdatas = geometry.attributes;
+			let dynamic = geometry.dynamic;
 			if (material.wireframe === true) {
 				primitive = dict.wireframe;
 				if (!primitive) {
@@ -74,7 +80,7 @@ class WGRObjBuilder {
 					const indexBuffer = gibuf ? (gibuf.gpuwibuf ? gibuf.gpuwibuf : wgctx.buffer.createIndexBuffer(gibuf.wireframeData)) : null;
 					if (indexBuffer) gibuf.gpuwibuf = indexBuffer;
 					const indexCount = indexBuffer ? indexBuffer.elementCount : 0;
-					primitive = this.createPrimitive({ vertexBuffers, indexBuffer, indexCount, vertexCount, drawMode });
+					primitive = this.createPrimitive({ dynamic, vdatas, vertexBuffers, indexBuffer, indexCount, vertexCount, drawMode });
 					dict.wireframe = primitive;
 					// console.log("wireframe primitive.drawMode: ", primitive.drawMode, primitive);
 				}
@@ -86,7 +92,7 @@ class WGRObjBuilder {
 
 					const indexCount = indexBuffer ? indexBuffer.elementCount : 0;
 					// primitive = this.createPrimitive({ vertexBuffers, indexBuffer, indexCount, vertexCount, drawMode: geometry.drawMode });
-					primitive = this.createPrimitive({ vertexBuffers, indexBuffer, indexCount, vertexCount, drawMode });
+					primitive = this.createPrimitive({ dynamic, vdatas, vertexBuffers, indexBuffer, indexCount, vertexCount, drawMode });
 					dict.default = primitive;
 					// console.log("default primitive.drawMode: ", primitive.drawMode, primitive);
 				}
@@ -96,7 +102,6 @@ class WGRObjBuilder {
 
 		let groupIndex = 0;
 		// console.log("createRUnit(), utexes: ", utexes);
-
 
 		mtb.checkUniforms(material);
 		

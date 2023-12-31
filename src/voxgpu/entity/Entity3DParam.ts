@@ -16,6 +16,7 @@ interface Entity3DParam {
 	rstate?: WGRUnitState;
 	transufvShared?: boolean;
 	materials?: WGMaterial[];
+	geometryDynamic?: boolean;
 	geometry?: WGGeometry;
 	textures?: WGTextureDataDescriptor[];
 	/**

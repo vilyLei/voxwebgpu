@@ -10,6 +10,7 @@ class WGRPrimitive implements WGRPrimitiveImpl {
 	vbufs: GPUBuffer[];
 	ibuf: GPUBuffer;
 	vdatas: WGRAttribData[];
+	vbvers: number[];
 	indexCount = 0;
 
 	layoutUid = 0;
@@ -27,7 +28,7 @@ class WGRPrimitive implements WGRPrimitiveImpl {
 		}
 	}
 	update(): void {
-
+		this.vbvers = new Array(this.vdatas.length);
 		if(this.ibuf) {
 			this.indexCount = this.indexCount > 0 ? this.indexCount : this.ibuf.elementCount;
 		}else {
@@ -39,15 +40,5 @@ class WGRPrimitive implements WGRPrimitiveImpl {
 		this.vdatas = null;
 		this.dynamic = false;
 	}
-	// clone(): WGRPrimitive {
-	// 	const g = new WGRPrimitive();
-	// 	g.layoutUid = this.layoutUid;
-	// 	g.vbufs = this.vbufs;
-	// 	g.ibuf = this.ibuf;
-	// 	g.indexCount = this.indexCount;
-	// 	g.instanceCount = this.instanceCount;
-	// 	g.vertexCount = this.vertexCount;
-	// 	return g;
-	// }
 }
 export { WGRPrimitive }
