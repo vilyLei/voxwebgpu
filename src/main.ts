@@ -35,7 +35,7 @@
 // import { DrawInstanceTest as Demo } from "./voxgpu/sample/DrawInstanceTest";
 
 // import { ComputeEntityTest as Demo } from "./voxgpu/sample/ComputeEntityTest";
-// import { GameOfLifeTest as Demo } from "./voxgpu/sample/GameOfLifeTest";
+import { GameOfLifeTest as Demo } from "./voxgpu/sample/GameOfLifeTest";
 // import { ComputeMaterialTest as Demo } from "./voxgpu/sample/ComputeMaterialTest";
 // import { GameOfLifeMultiMaterialPass as Demo } from "./voxgpu/sample/GameOfLifeMultiMaterialPass";
 // import { GameOfLifePretty as Demo } from "./voxgpu/sample/GameOfLifePretty";
@@ -104,7 +104,7 @@
 
 // import { GLBMaterialTest as Demo } from "./voxgpu/sample/GLBMaterialTest";
 
-import { VertexUpdateTest as Demo } from "./voxgpu/sample/VertexUpdateTest";
+// import { VertexUpdateTest as Demo } from "./voxgpu/sample/VertexUpdateTest";
 
 
 

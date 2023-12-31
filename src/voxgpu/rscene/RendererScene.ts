@@ -61,19 +61,23 @@ class RendererScene implements IRendererScene {
 			mtpl.build(this, mtplDesc);
 		}
 	}
-
+	private defaultInitSc(): void {
+		if (this.mInit) {
+			this.initialize({ mtplEnabled: false, mtpl: {enabled: false} });
+		}
+	}
 	setPassNodeGraph(graph: WGRPassNodeGraph, blockIndex = 0): void {
-		this.initialize();
+		this.defaultInitSc();
 		this.mRenderer.setPassNodeGraph(graph, blockIndex);
 	}
 	createRTTPass(param?: WGRPassParam, blockIndex = 0): WGRPassWrapperImpl {
-		this.initialize();
+		this.defaultInitSc();
 		if (!param) param = {};
 		param.separate = true;
 		return this.renderer.appendRenderPass(param, blockIndex);
 	}
 	createRenderPass(param?: WGRPassParam, blockIndex = 0): WGRPassWrapperImpl {
-		this.initialize();
+		this.defaultInitSc();
 		return this.renderer.appendRenderPass(param, blockIndex);
 	}
 	getWGCtx(): WebGPUContext {
@@ -90,7 +94,7 @@ class RendererScene implements IRendererScene {
 	private addContainer(container: IRenderableEntityContainer, processid: number = 0): void {
 
 		if (container.isContainer()) {
-			this.initialize();
+			this.defaultInitSc();
 			if (container.__$wuid < 0 && container.__$contId < 1) {
 				let i = 0;
 				for (; i < this.mContainers.length; ++i) {
@@ -113,7 +117,7 @@ class RendererScene implements IRendererScene {
 	}
 	addEntity(entity: IRenderableObject, param?: WGREntityParam): RendererScene {
 		if (entity) {
-			this.initialize();
+			this.defaultInitSc();
 			if (entity.isContainer()) {
 				this.addContainer(entity as IRenderableEntityContainer);
 			} else {
@@ -136,7 +140,7 @@ class RendererScene implements IRendererScene {
 	 * @param bubbleEnabled the default value is false
 	 */
 	addEventListener(type: number, func: (evt: any) => void, captureEnabled: boolean = true, bubbleEnabled: boolean = true): void {
-		this.initialize();
+		this.defaultInitSc();
 		const st = this.racontext.getStage();
 		st.addEventListener(type, func, captureEnabled, bubbleEnabled);
 	}
