@@ -93,7 +93,7 @@ class WGRenderPassNode implements IWGRenderPassNode {
 			if (param.clearColor) {
 				this.clearColor.setColor(param.clearColor);
 			}
-			console.log('WGRenderPassNode::initialize(), param: ', param);
+			// console.log('WGRenderPassNode::initialize(), param: ', param);
 			this.rpass.initialize(wgCtx);
 			this.checkRPassParam(param);
 			this.rpass.build(param);
