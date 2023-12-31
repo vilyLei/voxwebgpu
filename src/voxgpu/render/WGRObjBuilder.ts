@@ -65,14 +65,16 @@ class WGRObjBuilder {
 			const vertexBuffers = geometry.gpuvbufs;
 			const vertexCount = vertexBuffers[0].vectorCount;
 			const gibuf = geometry.indexBuffer;
+			let drawMode = geometry.drawMode;
 			if (material.wireframe === true) {
 				primitive = dict.wireframe;
 				if (!primitive) {
 					gibuf.toWirframe();
+					drawMode = WGRDrawMode.LINES;
 					const indexBuffer = gibuf ? (gibuf.gpuwibuf ? gibuf.gpuwibuf : wgctx.buffer.createIndexBuffer(gibuf.wireframeData)) : null;
 					if (indexBuffer) gibuf.gpuwibuf = indexBuffer;
 					const indexCount = indexBuffer ? indexBuffer.elementCount : 0;
-					primitive = this.createPrimitive({ vertexBuffers, indexBuffer, indexCount, vertexCount, drawMode: WGRDrawMode.LINES });
+					primitive = this.createPrimitive({ vertexBuffers, indexBuffer, indexCount, vertexCount, drawMode });
 					dict.wireframe = primitive;
 					// console.log("wireframe primitive.drawMode: ", primitive.drawMode, primitive);
 				}
@@ -83,7 +85,8 @@ class WGRObjBuilder {
 					if (indexBuffer) gibuf.gpuibuf = indexBuffer;
 
 					const indexCount = indexBuffer ? indexBuffer.elementCount : 0;
-					primitive = this.createPrimitive({ vertexBuffers, indexBuffer, indexCount, vertexCount, drawMode: geometry.drawMode });
+					// primitive = this.createPrimitive({ vertexBuffers, indexBuffer, indexCount, vertexCount, drawMode: geometry.drawMode });
+					primitive = this.createPrimitive({ vertexBuffers, indexBuffer, indexCount, vertexCount, drawMode });
 					dict.default = primitive;
 					// console.log("default primitive.drawMode: ", primitive.drawMode, primitive);
 				}

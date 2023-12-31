@@ -16,9 +16,11 @@ interface WGGeomAttributeParam {
 	uv2?: NumberArrayViewType;
 	normal?: NumberArrayViewType;
 	color?: NumberArrayViewType;
+	attrTypeName?: string;
 }
 class WGGeomAttributeBlock {
 	shdVarName = "";
+	attrTypeName?: string;
 	bindIndex = 0;
 	strides = [3];
 	/**
@@ -97,6 +99,7 @@ class WGGeometry {
 	private filterParam(param: any, key: string, strides: number[]): void {
 		if(param[key]) {
 			param.data = param[key];
+			param.attrTypeName = key;
 			if(!param.shdVarName) {
 				param.shdVarName = key;
 			}
@@ -124,6 +127,7 @@ class WGGeometry {
 			for (var k in param) {
 				ab[k] = (param as any)[k];
 			}
+			
 			if (this.attributes) {
 				this.attributes.push(p);
 			} else {
