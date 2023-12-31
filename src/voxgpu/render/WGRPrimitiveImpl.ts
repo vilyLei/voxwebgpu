@@ -1,8 +1,11 @@
 import { GPUBuffer } from "../gpu/GPUBuffer";
+import { WGRAttribData } from "./buffer/WGRAttribData";
 // import { GPURenderPassEncoder } from "../gpu/GPURenderPassEncoder";
 
 interface WGRPrimitiveImpl {
 
+	dynamic: boolean;
+	vdatas: WGRAttribData[];
 	vbufs: GPUBuffer[];
 	ibuf: GPUBuffer;
 	indexCount: number;
@@ -13,7 +16,5 @@ interface WGRPrimitiveImpl {
 
 	drawMode: number;
 
-	// run(rc: GPURenderPassEncoder): void;
-	// update(): void;
 }
 export { WGRPrimitiveImpl }

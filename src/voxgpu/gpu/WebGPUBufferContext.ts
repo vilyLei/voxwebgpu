@@ -35,8 +35,8 @@ class WebGPUBufferContext {
 	createIndexBuffer(data: IndexArrayViewType, offset = 0, mappedAtCreation = true): GPUBuffer {
 		return this.createVtxBuffer(data, offset, GPUBufferUsage.INDEX, mappedAtCreation);
 	}
-	createVertexBuffer(data: NumberArrayViewType, offset = 0, vectorLengths?: number[], mappedAtCreation = true): GPUBuffer {
-		return this.createVtxBuffer(data, offset, GPUBufferUsage.VERTEX, mappedAtCreation, vectorLengths);
+	createVertexBuffer(data: NumberArrayViewType, offset = 0, vectorLengths?: number[], usage = GPUBufferUsage.VERTEX, mappedAtCreation = true): GPUBuffer {
+		return this.createVtxBuffer(data, offset, usage, mappedAtCreation, vectorLengths);
 	}
 
 	createVtxBuffer(

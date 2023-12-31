@@ -167,7 +167,12 @@ class WGRObjBuilder {
 				if (!gvbufs) {
 					for (let i = 0; i < gts.length; ++i) {
 						const gt = gts[i];
-						vertexBuffers[i] = wgctx.buffer.createVertexBuffer(gt.data, gt.bufferOffset, gt.strides);
+						vertexBuffers[i] = wgctx.buffer.createVertexBuffer(
+							gt.data,
+							gt.bufferOffset,
+							gt.strides,
+							gt.dataUsage
+							);
 					}
 					geometry.gpuvbufs = vertexBuffers;
 				}

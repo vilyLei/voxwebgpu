@@ -5,6 +5,7 @@ import { WGRDrawMode } from "../render/Define";
 import GeometryBase from "./primitive/GeometryBase";
 import {createIndexArray, createIndexArrayWithSize} from "../utils/CommonUtils";
 import { WGRPrimitive } from "../render/WGRPrimitive";
+import { WGRAttribData } from "../render/buffer/WGRAttribData";
 interface WGGeomAttributeParam {
 	shdVarName?: string;
 	data?: NumberArrayViewType;
@@ -18,16 +19,28 @@ interface WGGeomAttributeParam {
 	color?: NumberArrayViewType;
 	attrTypeName?: string;
 }
-class WGGeomAttributeBlock {
-	shdVarName = "";
-	attrTypeName?: string;
-	bindIndex = 0;
-	strides = [3];
-	/**
-	 * buffer bytes offset
-	 */
-	bufferOffset = 0;
-	data: NumberArrayViewType;
+class WGGeomAttributeBlock extends WGRAttribData {
+	// shdVarName = "";
+	// attrTypeName?: string;
+	// bindIndex = 0;
+	// strides = [3];
+	// /**
+	//  * buffer bytes offset
+	//  */
+	// bufferOffset = 0;
+	// dataUsage = GPUBufferUsage.VERTEX;
+	// dataVer = -3;
+	// private mData: NumberArrayViewType;
+	// set data(d: NumberArrayViewType) {
+	// 	this.mData = d;
+	// 	this.dataVer ++;
+	// }
+	// get data(): NumberArrayViewType {
+	// 	return this.mData;
+	// }
+	// update(): void {
+	// 	this.dataVer ++;
+	// }
 }
 class WGGeomIndexBuffer {
 	name? = "";
@@ -78,14 +91,16 @@ class WGGeomIndexBuffer {
 type WGRPrimitiveDict = {default?: WGRPrimitive, wireframe?: WGRPrimitive};
 class WGGeometry {
 	name = "WGGeometry";
-
-	readonly descParam: VtxPipelinDescParam = { vertex: { buffers: [] as GPUBuffer[], attributeIndicesArray: [] as number[][] } };
+	
+	// readonly descParam: VtxPipelinDescParam = { vertex: { buffers: [] as GPUBuffer[], attributeIndicesArray: [] as number[][] } };
+	
+	dynamic = false;
 	attributes: WGGeomAttributeBlock[];
 	gpuvbufs?: GPUBuffer[];
 	indexBuffer: WGGeomIndexBuffer;
 	bounds: AABB;
 	geometryData: GeometryBase;
-	// readonly primitive = {};
+	
 	primitive: WGRPrimitiveDict;
 	drawMode = WGRDrawMode.TRIANGLES;
 	setIndexBuffer(param: { name?: string, data: IndexArrayViewType }): WGGeometry {

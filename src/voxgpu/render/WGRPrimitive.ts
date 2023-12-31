@@ -1,13 +1,15 @@
 import { GPUBuffer } from "../gpu/GPUBuffer";
 import { GPURenderPassEncoder } from "../gpu/GPURenderPassEncoder";
 import { WGRDrawMode } from "./Define";
+import { WGRAttribData } from "./buffer/WGRAttribData";
 import { WGRPrimitiveImpl } from "./WGRPrimitiveImpl";
-// dynamic or static for materials?
-// shared or private for materials?
+
 class WGRPrimitive implements WGRPrimitiveImpl {
 
+	dynamic = false;
 	vbufs: GPUBuffer[];
 	ibuf: GPUBuffer;
+	vdatas: WGRAttribData[];
 	indexCount = 0;
 
 	layoutUid = 0;
@@ -32,15 +34,20 @@ class WGRPrimitive implements WGRPrimitiveImpl {
 			this.vertexCount = this.vertexCount > 0 ? this.vertexCount : this.vbufs[0].vectorCount;
 		}
 	}
-	clone(): WGRPrimitive {
-		const g = new WGRPrimitive();
-		g.layoutUid = this.layoutUid;
-		g.vbufs = this.vbufs;
-		g.ibuf = this.ibuf;
-		g.indexCount = this.indexCount;
-		g.instanceCount = this.instanceCount;
-		g.vertexCount = this.vertexCount;
-		return g;
+	destroy(): void {
+		this.vbufs = null;
+		this.vdatas = null;
+		this.dynamic = false;
 	}
+	// clone(): WGRPrimitive {
+	// 	const g = new WGRPrimitive();
+	// 	g.layoutUid = this.layoutUid;
+	// 	g.vbufs = this.vbufs;
+	// 	g.ibuf = this.ibuf;
+	// 	g.indexCount = this.indexCount;
+	// 	g.instanceCount = this.instanceCount;
+	// 	g.vertexCount = this.vertexCount;
+	// 	return g;
+	// }
 }
 export { WGRPrimitive }
