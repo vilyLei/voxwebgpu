@@ -1,6 +1,5 @@
 import { GPUBuffer } from "../../gpu/GPUBuffer";
 import { GPURenderPipeline } from "../../gpu/GPURenderPipeline";
-import { GPURenderPipelineEmpty } from "../../gpu/GPURenderPipelineEmpty";
 import { WebGPUContext } from "../../gpu/WebGPUContext";
 import { BufDataParamType, VtxDescParam, VtxPipelinDescParam, WGRPipelineContextImpl } from "./WGRPipelineContextImpl";
 import { WGRPipelineCtxParams } from "./WGRPipelineCtxParams";
@@ -27,7 +26,7 @@ class WGRPipelineContext implements WGRPipelineContextImpl {
 	bindGroupCtx = new WGRBindGroupContext();
 	type = "render";
 	rpass: WGRendererPassImpl;
-	pipeline?: GPURenderPipeline = new GPURenderPipelineEmpty();
+	pipeline?: GPURenderPipeline;
 	comppipeline?: GPUComputePipeline;
 
 	queue: GPUQueue;
@@ -84,8 +83,12 @@ class WGRPipelineContext implements WGRPipelineContextImpl {
 					p.layout = pipeGLayout;
 					p.label = this.shadinguuid + "-pl-" + this.mUid;
 					console.log("WGRPipelineContext::init(), create rendering pieline desc: ", p);
-					this.pipeline = ctx.device.createRenderPipeline(p);
-					this.bindGroupCtx.pipeline = this.pipeline;
+					// this.pipeline = ctx.device.createRenderPipeline(p);
+					// this.bindGroupCtx.pipeline = this.pipeline;
+					ctx.device.createRenderPipelineAsync(p).then(resolve => {
+						this.pipeline = ctx.device.createRenderPipeline(p);
+						this.bindGroupCtx.pipeline = this.pipeline;
+					});
 				}
 			}
 		}
