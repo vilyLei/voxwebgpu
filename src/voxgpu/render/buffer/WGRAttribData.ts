@@ -7,7 +7,7 @@ export class WGRAttribData {
 	 * buffer bytes offset
 	 */
 	bufferOffset = 0;
-	dataUsage = GPUBufferUsage.VERTEX;
+	dataUsage = GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST;
 	dataVer = -3;
 	private mData: NumberArrayViewType;
 	set data(d: NumberArrayViewType) {

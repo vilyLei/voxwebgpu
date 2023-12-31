@@ -127,6 +127,10 @@ class WebGPUBufferContext {
 		return buf;
 	}
 
+	updateBuffer(buffer: GPUBuffer, td: NumberArrayDataType, offset = 0): void {
+		console.log("WebGPUBufferContext::updateBuffer() td: ", td);
+		this.queue.writeBuffer(buffer, offset, td.buffer, td.byteOffset, td.byteLength);
+	}
 	updateUniformBuffer(buffer: GPUBuffer, td: NumberArrayDataType, index: number, offset = 0): void {
 		// console.log("WebGPUBufferContext::updateUniformBuffer() index: ", index,",segs: ", buffer.segs);
 		// console.log("WebGPUBufferContext::updateUniformBuffer() buffer.size: ", buffer.size);

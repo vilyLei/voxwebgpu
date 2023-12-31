@@ -1,9 +1,10 @@
 import { GPUBuffer } from "../gpu/GPUBuffer";
 import { WGRAttribData } from "./buffer/WGRAttribData";
-// import { GPURenderPassEncoder } from "../gpu/GPURenderPassEncoder";
+import { WebGPUContext } from "../gpu/WebGPUContext";
 
 interface WGRPrimitiveImpl {
 
+	wgctx: WebGPUContext;
 	dynamic: boolean;
 	vdatas: WGRAttribData[];
 	vbufs: GPUBuffer[];

@@ -103,6 +103,15 @@ class WGGeometry {
 	
 	primitive: WGRPrimitiveDict;
 	drawMode = WGRDrawMode.TRIANGLES;
+	getAttribDataWithTypeName(typeName: string): WGGeomAttributeBlock {
+		const ls = this.attributes;
+		for(let i = 0, ln = ls.length; i < ln; ++i) {
+			if(ls[i].attrTypeName === typeName) {
+				return ls[i];
+			}
+		}
+		return null;
+	}
 	setIndexBuffer(param: { name?: string, data: IndexArrayViewType }): WGGeometry {
 		this.indexBuffer = new WGGeomIndexBuffer(param);
 		return this;

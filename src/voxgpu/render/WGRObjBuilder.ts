@@ -33,6 +33,7 @@ class WGRObjBuilder {
 	createPrimitive(geomParam?: GeomType): WGRPrimitive {
 		// console.log('XXXXXX createPrimitive() ...');
 		const g = new WGRPrimitive();
+		g.wgctx = this.wgctx;
 		g.dynamic = geomParam.dynamic === true;
 		g.vdatas = geomParam.vdatas;
 		g.ibuf = geomParam.indexBuffer;
