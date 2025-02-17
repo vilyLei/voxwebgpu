@@ -102,7 +102,7 @@
 
 import { GLBMaterialTest as Demo } from "./voxgpu/sample/GLBMaterialTest";
 
-
+// comment info
 
 
 let demoIns = new Demo();
