@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OffscreenCanvas with Web Worker 1</title>
+</head>
+
+<body>
+    <h1>OffscreenCanvas with Web Worker Example 1</h1>
+    <canvas id="mainCanvas" width="500" height="500"></canvas>
+    <script>
+        function convertImageBitmapToJPG(imageBitmap) {
+            // 创建一个 canvas 元素
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+
+            // 设置 canvas 的尺寸为 ImageBitmap 的尺寸
+            canvas.width = imageBitmap.width;
+            canvas.height = imageBitmap.height;
+
+            // 将 ImageBitmap 绘制到 canvas 上
+            ctx.drawImage(imageBitmap, 0, 0);
+
+            // 使用 toDataURL 方法将 canvas 内容转换为 JPEG 格式的数据 URL
+            const jpgDataUrl = canvas.toDataURL('image/jpeg');
+
+            // 输出 JPG 数据 URL 或可以进一步处理
+            console.log(jpgDataUrl);
+
+            // 如果你希望将 JPEG 图像保存为文件，可以使用 Blob 或其他方法
+            canvas.toBlob(function (blob) {
+                // 创建一个下载链接
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = 'image.jpg'; // 文件名
+                link.click(); // 自动触发下载
+            }, 'image/jpeg');
+        }
+        // 创建 Web Worker
+        const worker = new Worker('worker1.js');
+
+        // 获取主页面的 canvas 元素
+        const canvas = document.getElementById('mainCanvas');
+        const offscreen = canvas.transferControlToOffscreen();
+
+        // 将 OffscreenCanvas 传递给子线程
+        // worker.postMessage({ canvas: offscreen }, [offscreen]);
+        // worker.postMessage({exec:'draw'});
+
+        // 接收来自子线程的消息
+        worker.onmessage = function (event) {
+            const message = event.data;
+            console.log('从子线程接收到的消息:', message);
+            convertImageBitmapToJPG(message.image);
+        };
+
+        worker.onerror = function (error) {
+            console.error('Worker 错误:', error.message);
+        };
+        document.onmousedown = (evt) => {
+            console.log("document.onmousedown() ...");
+            worker.postMessage({ exec: 'draw' });
+        }
+    </script>
+</body>
+
+</html>

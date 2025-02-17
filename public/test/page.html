@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OffscreenCanvas with Web Worker</title>
+</head>
+<body>
+    <h1>OffscreenCanvas with Web Worker Example</h1>
+    <canvas id="mainCanvas" width="500" height="500"></canvas>
+    <script>
+        // 创建 Web Worker
+        const worker = new Worker('worker.js');
+
+        // 获取主页面的 canvas 元素
+        const canvas = document.getElementById('mainCanvas');
+        const offscreen = canvas.transferControlToOffscreen();
+
+        // 将 OffscreenCanvas 传递给子线程
+        worker.postMessage({ canvas: offscreen }, [offscreen]);
+
+        // 接收来自子线程的消息
+        worker.onmessage = function(event) {
+            const message = event.data;
+            console.log('从子线程接收到的消息:', message);
+        };
+
+        worker.onerror = function(error) {
+            console.error('Worker 错误:', error.message);
+        };
+    </script>
+</body>
+</html>
